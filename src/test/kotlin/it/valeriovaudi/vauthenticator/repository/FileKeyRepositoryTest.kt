@@ -2,6 +2,7 @@ package it.valeriovaudi.vauthenticator.repository
 
 import org.hamcrest.core.Is
 import org.junit.Assert.assertThat
+import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
 import org.springframework.core.io.ByteArrayResource
@@ -13,6 +14,7 @@ import java.util.*
 
 class FileKeyRepositoryTest {
 
+    @Rule
     @JvmField
     var exception: ExpectedException = ExpectedException.none()
 

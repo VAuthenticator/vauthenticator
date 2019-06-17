@@ -8,9 +8,12 @@ class FileKeyRepository(val config: FileKeyPairRepositoryConfig) : KeyRepository
 
     override fun getKeyPair() = keyPairFor(keyStoreContent())
 
-    private fun  keyPairFor(it: ByteArray) =
-            KeyStoreKeyFactory(ByteArrayResource(it), keystorePassword())
-                    .getKeyPair(config.keyStorePairAlias)
+    private fun keyPairFor(it: ByteArray) = try {
+        KeyStoreKeyFactory(ByteArrayResource(it), keystorePassword())
+                .getKeyPair(config.keyStorePairAlias)
+    } catch (e: java.lang.Exception) {
+        throw KeyPairNotFoundException(e.message!!)
+    }
 
     private fun keystorePassword() = config.keyStorePassword!!.toCharArray()
 
