@@ -5,9 +5,19 @@ import org.springframework.core.io.FileSystemResource
 import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory
 
 class FileKeyRepository(val config: FileKeyPairRepositoryConfig) : KeyRepository {
-    override fun getKeyPair() =
-            FileSystemResource(config.keyStorePath!!)
-                    .inputStream.use { it.readAllBytes() }
-                    .let { KeyStoreKeyFactory(ByteArrayResource(it), config.keyStorePassword!!.toCharArray()) }
-                    .let { it.getKeyPair(config.keyStorePairAlias) }
+
+    override fun getKeyPair() = keyPairFor(keyStoreContent())
+
+    private fun keyPairFor(it: ByteArray) =
+            KeyStoreKeyFactory(ByteArrayResource(it), keystorePassword())
+                    .getKeyPair(config.keyStorePairAlias)
+
+    private fun keystorePassword() = config.keyStorePassword!!.toCharArray()
+
+    private fun keyStoreContent() = try {
+        FileSystemResource(config.keyStorePath!!)
+                .inputStream.use { it.readAllBytes() }
+    } catch (e: Exception) {
+        ByteArray(0)
+    }
 }
