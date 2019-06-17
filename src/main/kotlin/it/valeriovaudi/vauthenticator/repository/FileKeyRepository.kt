@@ -8,7 +8,7 @@ class FileKeyRepository(val config: FileKeyPairRepositoryConfig) : KeyRepository
 
     override fun getKeyPair() = keyPairFor(keyStoreContent())
 
-    private fun keyPairFor(it: ByteArray) =
+    private fun  keyPairFor(it: ByteArray) =
             KeyStoreKeyFactory(ByteArrayResource(it), keystorePassword())
                     .getKeyPair(config.keyStorePairAlias)
 
