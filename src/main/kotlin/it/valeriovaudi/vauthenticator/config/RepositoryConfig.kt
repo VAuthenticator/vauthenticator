@@ -1,7 +1,7 @@
 package it.valeriovaudi.vauthenticator.config
 
-import it.valeriovaudi.vauthenticator.repository.FileKeyPairRepositoryConfig
 import it.valeriovaudi.vauthenticator.repository.FileKeyRepository
+import it.valeriovaudi.vauthenticator.repository.KeyPairConfig
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -12,7 +12,7 @@ class RepositoryConfig {
 
     @Bean
     @ConfigurationProperties(prefix = "key-store")
-    fun fileKeyPairRepositoryConfig() = FileKeyPairRepositoryConfig()
+    fun fileKeyPairRepositoryConfig() = KeyPairConfig()
 
     @Bean("keyRepository")
     @ConditionalOnProperty(value = ["vauthenticator.keypair.repository.type"], havingValue = "FILE_SYSTEM")

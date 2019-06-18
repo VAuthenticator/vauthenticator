@@ -12,7 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner
 @SpringBootTest
 @RunWith(SpringRunner::class)
 @TestPropertySource("classpath:repoconfig.yml")
-class FileKeyPairRepositoryConfigIT {
+class KeyPairConfigIT {
 
     @Autowired
     lateinit var context: ApplicationContext

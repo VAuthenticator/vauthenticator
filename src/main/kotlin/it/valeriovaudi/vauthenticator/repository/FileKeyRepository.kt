@@ -1,10 +1,11 @@
 package it.valeriovaudi.vauthenticator.repository
 
+import it.valeriovaudi.vauthenticator.toByteArray
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.core.io.FileSystemResource
 import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory
 
-class FileKeyRepository(val config: FileKeyPairRepositoryConfig) : KeyRepository {
+class FileKeyRepository(val config: KeyPairConfig) : KeyRepository {
 
     override fun getKeyPair() = keyPairFor(keyStoreContent())
 
@@ -18,8 +19,7 @@ class FileKeyRepository(val config: FileKeyPairRepositoryConfig) : KeyRepository
     private fun keystorePassword() = config.keyStorePassword.toCharArray()
 
     private fun keyStoreContent() = try {
-        FileSystemResource(config.keyStorePath)
-                .inputStream.use { it.readAllBytes() }
+        FileSystemResource(config.keyStorePath).inputStream.toByteArray()
     } catch (e: Exception) {
         ByteArray(0)
     }
