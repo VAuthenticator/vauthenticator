@@ -12,13 +12,22 @@ class S3KeyRepository(private val keyPairConfig: KeyPairConfig,
                       private val s3client: AmazonS3) : KeyRepository {
 
     override fun getKeyPair(): KeyPair {
-        val content = getContentFor(s3Object())
+        val content = contentFor(s3Object())
 
-        val password = keyPairConfig.keyStorePassword.toCharArray()
-        val keyStoreKeyFactory = KeyStoreKeyFactory(ByteArrayResource(content), password)
+        val password = passwordFor(keyPairConfig)
+        val keyStoreKeyFactory = keyStoreKeyFactoryFor(content, password)
 
-        return keyStoreKeyFactory.getKeyPair(keyPairConfig.keyStorePairAlias)
+        return keyPairWith(keyStoreKeyFactory)
     }
+
+    private fun keyPairWith(keyStoreKeyFactory: KeyStoreKeyFactory) =
+            keyStoreKeyFactory.getKeyPair(keyPairConfig.keyStorePairAlias)
+
+    private fun keyStoreKeyFactoryFor(content: ByteArray, password: CharArray) =
+            KeyStoreKeyFactory(ByteArrayResource(content), password)
+
+    private fun passwordFor(keyPairConfig: KeyPairConfig) = keyPairConfig.keyStorePassword.toCharArray()
+
 
     private fun s3Object() = try {
         s3client.getObject(s3Config.bucketName, keyPairConfig.keyStorePath)
@@ -26,7 +35,6 @@ class S3KeyRepository(private val keyPairConfig: KeyPairConfig,
         throw KeyPairNotFoundException(e.message!!)
     }
 
-
-    private fun getContentFor(s3Object: S3Object) = s3Object.objectContent.toByteArray()
+    private fun contentFor(s3Object: S3Object) = s3Object.objectContent.toByteArray()
 
 }
