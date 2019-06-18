@@ -11,14 +11,14 @@ class FileKeyRepository(val config: FileKeyPairRepositoryConfig) : KeyRepository
     private fun keyPairFor(it: ByteArray) = try {
         KeyStoreKeyFactory(ByteArrayResource(it), keystorePassword())
                 .getKeyPair(config.keyStorePairAlias)
-    } catch (e: java.lang.Exception) {
+    } catch (e: Exception) {
         throw KeyPairNotFoundException(e.message!!)
     }
 
-    private fun keystorePassword() = config.keyStorePassword!!.toCharArray()
+    private fun keystorePassword() = config.keyStorePassword.toCharArray()
 
     private fun keyStoreContent() = try {
-        FileSystemResource(config.keyStorePath!!)
+        FileSystemResource(config.keyStorePath)
                 .inputStream.use { it.readAllBytes() }
     } catch (e: Exception) {
         ByteArray(0)
