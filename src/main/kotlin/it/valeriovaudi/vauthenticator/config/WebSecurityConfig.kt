@@ -1,5 +1,7 @@
 package it.valeriovaudi.vauthenticator.config
 
+import it.valeriovaudi.vauthenticator.integration.LogInRequestGateway
+import it.valeriovaudi.vauthenticator.security.AccountUserDetailsService
 import org.springframework.boot.autoconfigure.security.SecurityProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -42,5 +44,11 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     override fun authenticationManagerBean(): AuthenticationManager {
         return super.authenticationManagerBean()
     }
+
+
+    @Bean
+    fun accountUserDetailsService(logInRequestGateway: LogInRequestGateway) =
+            AccountUserDetailsService(logInRequestGateway)
+
 
 }
