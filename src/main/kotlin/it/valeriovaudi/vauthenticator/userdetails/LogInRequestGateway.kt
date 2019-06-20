@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator.integration
+package it.valeriovaudi.vauthenticator.userdetails
 
 import org.springframework.integration.annotation.Gateway
 import org.springframework.integration.annotation.MessagingGateway

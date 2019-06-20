@@ -1,7 +1,7 @@
 package it.valeriovaudi.vauthenticator.config
 
-import it.valeriovaudi.vauthenticator.integration.LogInRequestGateway
-import it.valeriovaudi.vauthenticator.security.AccountUserDetailsService
+import it.valeriovaudi.vauthenticator.userdetails.AccountUserDetailsService
+import it.valeriovaudi.vauthenticator.userdetails.LogInRequestGateway
 import org.springframework.boot.autoconfigure.security.SecurityProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

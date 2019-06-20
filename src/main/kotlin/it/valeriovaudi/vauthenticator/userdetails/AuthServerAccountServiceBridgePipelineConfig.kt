@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator.config
+package it.valeriovaudi.vauthenticator.userdetails
 
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.context.annotation.Bean

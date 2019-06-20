@@ -1,6 +1,5 @@
-package it.valeriovaudi.vauthenticator.security
+package it.valeriovaudi.vauthenticator.userdetails
 
-import it.valeriovaudi.vauthenticator.integration.LogInRequestGateway
 import org.hamcrest.core.Is
 import org.junit.Assert.assertThat
 import org.junit.Test

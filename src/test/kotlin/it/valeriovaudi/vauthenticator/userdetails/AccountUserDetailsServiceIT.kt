@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator.security
+package it.valeriovaudi.vauthenticator.userdetails
 
 import org.junit.ClassRule
 import org.junit.Test

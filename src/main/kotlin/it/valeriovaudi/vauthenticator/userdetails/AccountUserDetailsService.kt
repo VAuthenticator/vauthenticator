@@ -1,6 +1,5 @@
-package it.valeriovaudi.vauthenticator.security
+package it.valeriovaudi.vauthenticator.userdetails
 
-import it.valeriovaudi.vauthenticator.integration.LogInRequestGateway
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 
