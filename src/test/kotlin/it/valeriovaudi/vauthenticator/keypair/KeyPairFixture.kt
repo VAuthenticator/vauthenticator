@@ -14,11 +14,16 @@ import java.util.*
 object KeyPairFixture {
 
     fun expectedFor(content: ByteArray): Pair<PrivateKey, PublicKey> {
-        val keyStoreKeyFactory = KeyStoreKeyFactory(ByteArrayResource(content), "secret".toCharArray())
-        val keyPair = keyStoreKeyFactory.getKeyPair("secret")
+        val keyPair = keyPair(content)
         val expectedAsPrivate = keyPair.private
         val expectedAsPublic = keyPair.public
         return Pair(expectedAsPrivate, expectedAsPublic)
+    }
+
+    fun keyPair(content: ByteArray): KeyPair {
+        val keyStoreKeyFactory = KeyStoreKeyFactory(ByteArrayResource(content), "secret".toCharArray())
+        val keyPair = keyStoreKeyFactory.getKeyPair("secret")
+        return keyPair
     }
 
     fun getFileContent(path: String) = this::class.java.getResourceAsStream(path)
