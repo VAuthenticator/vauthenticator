@@ -3,10 +3,10 @@ package it.valeriovaudi.vauthenticator.config
 import com.amazonaws.auth.AWSStaticCredentialsProvider
 import com.amazonaws.auth.BasicAWSCredentials
 import com.amazonaws.services.s3.AmazonS3ClientBuilder
-import it.valeriovaudi.vauthenticator.repository.FileKeyRepository
-import it.valeriovaudi.vauthenticator.repository.KeyPairConfig
-import it.valeriovaudi.vauthenticator.repository.S3Config
-import it.valeriovaudi.vauthenticator.repository.S3KeyRepository
+import it.valeriovaudi.vauthenticator.keypair.FileKeyRepository
+import it.valeriovaudi.vauthenticator.keypair.KeyPairConfig
+import it.valeriovaudi.vauthenticator.keypair.S3Config
+import it.valeriovaudi.vauthenticator.keypair.S3KeyRepository
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean

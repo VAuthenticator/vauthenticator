@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator.repository
+package it.valeriovaudi.vauthenticator.keypair
 
 data class S3Config(var accessKey: String = "",
                     var secretKey: String = "",

@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator.repository
+package it.valeriovaudi.vauthenticator.keypair
 
 import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.model.S3Object

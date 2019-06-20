@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator.repository
+package it.valeriovaudi.vauthenticator.keypair
 
 import it.valeriovaudi.vauthenticator.toByteArray
 import org.springframework.core.io.ByteArrayResource

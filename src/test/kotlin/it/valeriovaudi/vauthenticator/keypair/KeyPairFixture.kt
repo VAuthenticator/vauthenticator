@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator.repository
+package it.valeriovaudi.vauthenticator.keypair
 
 import com.amazonaws.services.s3.model.S3Object
 import org.hamcrest.core.Is

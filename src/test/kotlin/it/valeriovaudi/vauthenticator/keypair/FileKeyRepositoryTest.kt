@@ -1,10 +1,10 @@
-package it.valeriovaudi.vauthenticator.repository
+package it.valeriovaudi.vauthenticator.keypair
 
-import it.valeriovaudi.vauthenticator.repository.KeyPairFixture.errorPathKeyPairConfig
-import it.valeriovaudi.vauthenticator.repository.KeyPairFixture.expectedFor
-import it.valeriovaudi.vauthenticator.repository.KeyPairFixture.getFileContent
-import it.valeriovaudi.vauthenticator.repository.KeyPairFixture.happyPathKeyPairConfig
-import it.valeriovaudi.vauthenticator.repository.KeyPairMatcher.assertKeyOn
+import it.valeriovaudi.vauthenticator.keypair.KeyPairFixture.errorPathKeyPairConfig
+import it.valeriovaudi.vauthenticator.keypair.KeyPairFixture.expectedFor
+import it.valeriovaudi.vauthenticator.keypair.KeyPairFixture.getFileContent
+import it.valeriovaudi.vauthenticator.keypair.KeyPairFixture.happyPathKeyPairConfig
+import it.valeriovaudi.vauthenticator.keypair.KeyPairMatcher.assertKeyOn
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
