@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator.userinfo
+package it.valeriovaudi.vauthenticator.openidconnect.userinfo
 
 import it.valeriovaudi.vauthenticator.TestAdditionalConfiguration
 import it.valeriovaudi.vauthenticator.support.WithMockOAuth2User
