@@ -1,5 +1,6 @@
 package it.valeriovaudi.vauthenticator.userdetails
 
+import it.valeriovaudi.TestAdditionalConfiguration
 import org.junit.ClassRule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -8,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.util.TestPropertyValues
 import org.springframework.context.ApplicationContextInitializer
 import org.springframework.context.ConfigurableApplicationContext
+import org.springframework.context.annotation.Import
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit4.SpringRunner
@@ -17,6 +19,7 @@ import java.io.File
 
 @SpringBootTest
 @RunWith(SpringRunner::class)
+@Import(TestAdditionalConfiguration::class)
 @ContextConfiguration(initializers = [Initializer::class])
 class AccountUserDetailsServiceIT {
 

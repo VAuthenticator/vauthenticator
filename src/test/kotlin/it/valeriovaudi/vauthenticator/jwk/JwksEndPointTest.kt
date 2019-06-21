@@ -1,6 +1,6 @@
 package it.valeriovaudi.vauthenticator.jwk
 
-import it.valeriovaudi.vauthenticator.TestAdditionalConfiguration
+import it.valeriovaudi.TestAdditionalConfiguration
 import it.valeriovaudi.vauthenticator.keypair.KeyPairFixture.getFileContent
 import it.valeriovaudi.vauthenticator.keypair.KeyPairFixture.keyPair
 import it.valeriovaudi.vauthenticator.keypair.KeyRepository

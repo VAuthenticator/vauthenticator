@@ -1,6 +1,6 @@
 package it.valeriovaudi.vauthenticator.openidconnect.discovery
 
-import it.valeriovaudi.vauthenticator.TestAdditionalConfiguration
+import it.valeriovaudi.TestAdditionalConfiguration
 import it.valeriovaudi.vauthenticator.openidconnect.discovery.OpenIdConnectDiscovery.Companion.newOpenIdConnectDiscovery
 import org.junit.Test
 import org.junit.runner.RunWith

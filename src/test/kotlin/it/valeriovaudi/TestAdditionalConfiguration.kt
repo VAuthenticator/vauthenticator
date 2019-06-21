@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator
+package it.valeriovaudi
 
 import it.valeriovaudi.vauthenticator.keypair.KeyRepository
 import org.mockito.Mockito
