@@ -20,7 +20,7 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     companion object {
 
         private val LOG_IN_URL_PAGE = "/singin"
-        private val WHITE_LIST = arrayOf("/singin", "/user-info", "/sign-key/public", "/oauth/authorize", "/oauth/confirm_access", "/webjars/**")
+        private val WHITE_LIST = arrayOf("/singin", "/user-info", "/oauth/authorize", "/oauth/confirm_access", "/webjars/**")
     }
 
     override fun configure(http: HttpSecurity) {
