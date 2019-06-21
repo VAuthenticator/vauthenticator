@@ -17,7 +17,7 @@ import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper
 @RunWith(SpringRunner::class)
 @WebMvcTest(OpenIdConnectDiscoveryEndPoint::class)
 @Import(TestAdditionalConfiguration::class)
-@TestPropertySource(properties = ["auth.oidcIss=asIssuer"])
+@TestPropertySource(properties = ["auth.oidcIss=anIssuer"])
 class OpenIdConnectDiscoveryEndPointTest {
 
     @Autowired
@@ -26,9 +26,6 @@ class OpenIdConnectDiscoveryEndPointTest {
     @Test
     fun `happy path`() {
         val objectMapper = ObjectMapper()
-        println(mockMvc.perform(get("/.well-known/openid-configuration"))
-                .andReturn().response.contentAsString)
-
         mockMvc.perform(get("/.well-known/openid-configuration"))
                 .andExpect(content().json(objectMapper.writeValueAsString(newOpenIdConnectDiscovery("anIssuer"))))
     }
