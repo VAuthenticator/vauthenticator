@@ -1,15 +1,18 @@
 package it.valeriovaudi.vauthenticator.keypair
 
+import it.valeriovaudi.vauthenticator.config.RepositoryConfig
 import org.junit.Assert.assertNotNull
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.ApplicationContext
+import org.springframework.context.annotation.Import
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit4.SpringRunner
 
-@SpringBootTest
+@SpringBootTest(classes = [KeyPairConfigIT::class])
 @RunWith(SpringRunner::class)
 @TestPropertySource(properties = ["vauthenticator.keypair.repository.type=FILE_SYSTEM"])
 class FileSystemKeyPairConfigIT {
@@ -24,7 +27,7 @@ class FileSystemKeyPairConfigIT {
     }
 }
 
-@SpringBootTest
+@SpringBootTest(classes = [KeyPairConfigIT::class])
 @RunWith(SpringRunner::class)
 @TestPropertySource(properties = ["vauthenticator.keypair.repository.type=AWS_S3"])
 class S3KeyPairConfigIT {
@@ -38,3 +41,7 @@ class S3KeyPairConfigIT {
         assertNotNull(bean)
     }
 }
+
+@SpringBootApplication
+@Import(RepositoryConfig::class)
+class KeyPairConfigIT
