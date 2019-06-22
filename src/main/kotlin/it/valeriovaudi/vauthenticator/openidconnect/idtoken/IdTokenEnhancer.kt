@@ -1,21 +1,34 @@
 package it.valeriovaudi.vauthenticator.openidconnect.idtoken
 
+import it.valeriovaudi.vauthenticator.keypair.KeyRepository
+import it.valeriovaudi.vauthenticator.time.Clock
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken
 import org.springframework.security.oauth2.common.OAuth2AccessToken
 import org.springframework.security.oauth2.provider.OAuth2Authentication
 import org.springframework.security.oauth2.provider.token.TokenEnhancer
+import java.util.*
 
-class IdTokenEnhancer : TokenEnhancer {
+class IdTokenEnhancer(private val oidcIss: String,
+                      private val keyRepository: KeyRepository,
+                      private val clock: Clock) : TokenEnhancer {
 
     override fun enhance(accessToken: OAuth2AccessToken, authentication: OAuth2Authentication): OAuth2AccessToken {
-        var defaultAccessToken = accessToken as DefaultOAuth2AccessToken
+        val defaultAccessToken = accessToken as DefaultOAuth2AccessToken
 
         val additionalInformation = defaultAccessToken.additionalInformation
-        additionalInformation["id_token"] = ""
+
+        additionalInformation["id_token"] = idTokenAsJwt(authentication)
 
         defaultAccessToken.additionalInformation = additionalInformation
 
         return defaultAccessToken
+    }
+
+    private fun idTokenAsJwt(authentication: OAuth2Authentication): String {
+        val keyPair = keyRepository.getKeyPair()
+        val idToken = IdToken.createIdToken(oidcIss, UUID.randomUUID().toString(), authentication, clock)
+        val idTokenAsJwtSignedFor = idToken.idTokenAsJwtSignedFor(keyPair)
+        return idTokenAsJwtSignedFor
     }
 
 }
