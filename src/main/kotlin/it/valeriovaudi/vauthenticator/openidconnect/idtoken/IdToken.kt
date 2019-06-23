@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory
 import org.springframework.security.oauth2.provider.OAuth2Authentication
 import java.security.KeyPair
 
+val logger = LoggerFactory.getLogger(IdToken::class.java.name)
+
 data class IdToken(val userName: String,
                    val iss: String,
                    val sub: String,
@@ -15,7 +17,7 @@ data class IdToken(val userName: String,
                    val exp: Long,
                    val iat: Long,
                    val auth_time: Long) {
-    val logger = LoggerFactory.getLogger(IdToken::class.java.name)
+
 
     companion object {
         fun createIdToken(iss: String,

@@ -1,5 +1,6 @@
 package it.valeriovaudi.vauthenticator.config
 
+import it.valeriovaudi.vauthenticator.codeservice.RedisAuthorizationCodeServices
 import it.valeriovaudi.vauthenticator.keypair.KeyRepository
 import it.valeriovaudi.vauthenticator.openidconnect.idtoken.IdTokenEnhancer
 import it.valeriovaudi.vauthenticator.time.Clock
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.data.redis.connection.RedisConnectionFactory
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer
@@ -17,7 +19,7 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter
-import org.springframework.security.oauth2.provider.token.store.JwtTokenStore
+import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore
 import javax.sql.DataSource
 
 
@@ -35,6 +37,12 @@ class SecurityOAuth2AutorizationServerConfig(private val accountUserDetailsServi
 
 
     @Autowired
+    lateinit var redisAuthorizationCodeServices: RedisAuthorizationCodeServices
+
+    @Autowired
+    lateinit var redisConnectionFactory: RedisConnectionFactory
+
+    @Autowired
     lateinit var dataSource: DataSource
 
     @Autowired
@@ -45,6 +53,7 @@ class SecurityOAuth2AutorizationServerConfig(private val accountUserDetailsServi
         tokenEnhancerChain.setTokenEnhancers(mutableListOf(accessTokenConverter(), IdTokenEnhancer(oidcIss, keyRepository, clock)))
 
         endpoints.approvalStoreDisabled()
+                .authorizationCodeServices(redisAuthorizationCodeServices)
                 .authenticationManager(authenticationManager)
                 .tokenEnhancer(tokenEnhancerChain)
                 .tokenStore(tokenStore())
@@ -67,7 +76,7 @@ class SecurityOAuth2AutorizationServerConfig(private val accountUserDetailsServi
     }
 
     @Bean
-    fun tokenStore() = JwtTokenStore(accessTokenConverter())
+    fun tokenStore() = RedisTokenStore(redisConnectionFactory)
 
     @Bean
     fun accessTokenConverter(): JwtAccessTokenConverter {
