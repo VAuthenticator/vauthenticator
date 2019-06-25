@@ -2,7 +2,7 @@ package it.valeriovaudi.vauthenticator.keypair
 
 import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.model.S3Object
-import it.valeriovaudi.vauthenticator.toByteArray
+import it.valeriovaudi.vauthenticator.extentions.toByteArray
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory

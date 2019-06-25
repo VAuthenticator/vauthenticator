@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator
+package it.valeriovaudi.vauthenticator.extentions
 
 import java.io.IOException
 import java.io.InputStream

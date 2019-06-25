@@ -1,6 +1,6 @@
 package it.valeriovaudi.vauthenticator.keypair
 
-import it.valeriovaudi.vauthenticator.toByteArray
+import it.valeriovaudi.vauthenticator.extentions.toByteArray
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.core.io.FileSystemResource
 import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory
