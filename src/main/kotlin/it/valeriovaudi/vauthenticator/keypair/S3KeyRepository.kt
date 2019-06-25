@@ -3,14 +3,16 @@ package it.valeriovaudi.vauthenticator.keypair
 import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.model.S3Object
 import it.valeriovaudi.vauthenticator.toByteArray
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory
 import java.security.KeyPair
 
-class S3KeyRepository(private val keyPairConfig: KeyPairConfig,
-                      private val s3Config: S3Config,
-                      private val s3client: AmazonS3) : KeyRepository {
+open class S3KeyRepository(private val keyPairConfig: KeyPairConfig,
+                           private val s3Config: S3Config,
+                           private val s3client: AmazonS3) : KeyRepository {
 
+    @Cacheable("keyPair")
     override fun getKeyPair(): KeyPair {
         val content = contentFor(s3Object())
 
