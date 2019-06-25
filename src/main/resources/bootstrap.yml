@@ -6,13 +6,3 @@ spring:
       discovery:
         enabled: true
       fail-fast: true
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          jwk-set-uri: http://localhost:9090/auth/sign-key/public
-security:
-  oauth2:
-    resource:
-      jwk:
-        key-set-uri: http://localhost:9090/auth/sign-key/public

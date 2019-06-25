@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: vauthenticator
   cloud:
     discovery:
       enabled: false
