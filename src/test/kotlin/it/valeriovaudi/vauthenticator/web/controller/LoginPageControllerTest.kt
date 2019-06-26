@@ -21,7 +21,7 @@ class LoginPageControllerTest {
     fun `happy path`() {
         mockMvc.perform(get("/singin"))
                 .andExpect(status().isOk)
-                .andExpect(view().name("/login/singin"))
+                .andExpect(view().name("login/singin"))
 
 
     }

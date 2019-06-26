@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping
 class LoginPageController {
 
     @GetMapping("/singin")
-    fun loginPage() = "/login/singin"
+    fun loginPage() = "login/singin"
 
 }
