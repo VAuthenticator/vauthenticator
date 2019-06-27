@@ -6,7 +6,8 @@ import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken
 import org.springframework.security.oauth2.provider.OAuth2Authentication
 import org.springframework.security.oauth2.provider.OAuth2Request
 
-class TestableDefaultOAuth2AccessToken(var additionalInfo: Map<String, Any> = mutableMapOf<String, Any>()) : DefaultOAuth2AccessToken("") {
+class TestableDefaultOAuth2AccessToken(var additionalInfo: Map<String, Any> = mutableMapOf(),
+                                       var clientAppScope: Set<String> = emptySet()) : DefaultOAuth2AccessToken("") {
 
     override fun getAdditionalInformation(): Map<String, Any> {
         return additionalInfo
@@ -15,6 +16,8 @@ class TestableDefaultOAuth2AccessToken(var additionalInfo: Map<String, Any> = mu
     override fun setAdditionalInformation(additionalInformation: Map<String, Any>) {
         additionalInfo = additionalInformation
     }
+
+    override fun getScope() = clientAppScope
 }
 
 class TestableOAuth2Authentication : OAuth2Authentication(null, TestableAuthentication("USER_NAME")) {

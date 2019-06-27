@@ -17,11 +17,20 @@ class IdTokenEnhancer(private val oidcIss: String,
 
         val additionalInformation = defaultAccessToken.additionalInformation
 
-        additionalInformation["id_token"] = idTokenAsJwt(authentication)
-
-        defaultAccessToken.additionalInformation = additionalInformation
+        addIdTokenFor(additionalInformation, authentication, defaultAccessToken)
 
         return defaultAccessToken
+    }
+
+    private fun addIdTokenFor(additionalInformation: MutableMap<String, Any>,
+                              authentication: OAuth2Authentication,
+                              defaultAccessToken: DefaultOAuth2AccessToken) {
+
+        if (defaultAccessToken.scope.contains("openid")) {
+            additionalInformation["id_token"] = idTokenAsJwt(authentication)
+            defaultAccessToken.additionalInformation = additionalInformation
+        }
+
     }
 
     private fun idTokenAsJwt(authentication: OAuth2Authentication): String {

@@ -5,9 +5,11 @@ import it.valeriovaudi.vauthenticator.keypair.KeyPairFixture.keyPair
 import it.valeriovaudi.vauthenticator.keypair.KeyRepository
 import it.valeriovaudi.vauthenticator.time.Clock
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
+import org.mockito.BDDMockito.times
 import org.mockito.Mock
 import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
@@ -30,11 +32,23 @@ class IdTokenEnhancerTest {
         given(keyRepository.getKeyPair())
                 .willReturn(keyPair(content = content))
 
-        val actual: OAuth2AccessToken = idTokenEnhancer.enhance(TestableDefaultOAuth2AccessToken(), TestableOAuth2Authentication())
+        val actual: OAuth2AccessToken = idTokenEnhancer.enhance(TestableDefaultOAuth2AccessToken(clientAppScope = setOf("openid")), TestableOAuth2Authentication())
 
         assertNotNull(actual.additionalInformation["id_token"])
 
         verify(clock).nowInSeconds()
         verify(keyRepository).getKeyPair()
+    }
+
+    @Test
+    fun `when client application does not has openid as scope`() {
+        val idTokenEnhancer = IdTokenEnhancer("AN_ISS", keyRepository, clock)
+
+        val actual: OAuth2AccessToken = idTokenEnhancer.enhance(TestableDefaultOAuth2AccessToken(), TestableOAuth2Authentication())
+
+        assertNull(actual.additionalInformation["id_token"])
+
+        verify(clock, times(0)).nowInSeconds()
+        verify(keyRepository, times(0)).getKeyPair()
     }
 }
