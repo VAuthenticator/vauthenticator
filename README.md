@@ -7,5 +7,4 @@ all written in Kotlin based on Spring Boot 2.x.
 
 ## The Architecture
 
-![The Achitecture] 
-(https://github.com/mrFlick72/vauthenticator/blob/master/images/vauhenticator-architecture.png)
+![](https://github.com/mrFlick72/vauthenticator/blob/master/images/vauhenticator-architecture.png)
