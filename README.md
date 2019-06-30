@@ -27,7 +27,7 @@ Using these two applications: VAuthenticator started whit the properties like ab
 you should be able to use vauthenticator for your sample application. The preconfigured user in testable-account-service is a 
 user with `user` as username and `secret` as password 
 
-## Feaures
+## Features
 
 The application is a Spring Cloud application build on the top of Spring Cloud Security in order to leverage the typical 
 OAuth2 Authorization server. On the top of OAuth2 feature the Vautenticator provide JWK endpoint for RSA key exchange 
