@@ -1,8 +1,8 @@
 # Vauthenticator
 
 This project is actually a journey. This is a big evolution of the oAuth2 authorization server 
-developed during the my master thesis to a OpenId Connect authentication server.
-In this new version I expand the initial project in order to use JWT token embracing OpenId Connect protocol,
+developed during the my master thesis to an OpenID Connect authentication server.
+In this new version I expand the initial project in order to use JWT token embracing OpenID Connect protocol,
 all written in Kotlin based on Spring Boot 2.x. 
 
 ## The Architecture
@@ -26,3 +26,26 @@ database and so on the repo provides a very simple account service suitable for 
 Using these two applications: VAuthenticator started whit the properties like above and the testable-account-service project, 
 you should be able to use vauthenticator for your sample application. The preconfigured user in testable-account-service is a 
 user with `user` as username and `secret` as password 
+
+## Feaures
+
+The application is a Spring Cloud application build on the top of Spring Cloud Security in order to leverage the typical 
+OAuth2 Authorization server. On the top of OAuth2 feature the Vautenticator provide JWK endpoint for RSA key exchange 
+with keystore storage on file system or AWS S3, token enhancement of OpenID Connect id_token for client application 
+that has `openid` as scope and a well known OpenID Connect discovery endpoint.  
+
+As Client Application Store Postgress Database is used while for token store, authorization code store, distributed session store and 
+distributed cache Redis is the my choice. 
+
+At the moment the application try to leverage the configuration from a configuration server discovered by Netflix Eureka.
+The User datasource as said above is supposed to provided by an `account-service`, the supported communication between 
+VAuthenticator and the account-service is via a secure RabbitMq AMQP channel, at the moment the object required is a 
+Spring Security UserDetails implementation, but this details is under develop in order to remove this coupling between 
+account-service and VAuthenticator to a Spring UserDetails implementation.
+
+## Next Features
+
+* User details exchanged between a generic account-service and VAuthenticator independent from Spring Security
+* password recovery system
+* OpenID Connect Global Login
+* OpenID Connect Global Logout
