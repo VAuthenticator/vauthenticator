@@ -12,8 +12,8 @@ all written in Kotlin based on Spring Boot 2.x.
 ## Sample Application
 
 In order to try vauthenticator, in this repo you can find a no-configserver-configuration folder with all the basic 
-configuration in order to start up the application without a config server and the needed keystore for the RSA key pair, 
-the only thing that you should do is provide these external configuration:
+configuration in order to start up the application without a config server and the needed keystore for the RSA key pair.
+The only thing that you should do is provide these external configurations:
 
 ```properties
 project.basedir=your project path
@@ -21,8 +21,8 @@ spring.cloud.bootstrap.location=${project.basedir}/no-configserver-configuration
 ```  
 
 Since that the user data source in vauthenticator is provided by a microservice and not a classical datasource like: ldap, 
-database and so on the repo proivide a very simple account service suitable for testing under testable-account-service mave project.
+database and so on the repo provides a very simple account service suitable for testing under testable-account-service maven project.
 
-Using these two application: VAuthenticator started whit the properties like above and the testable-account-service project, 
+Using these two applications: VAuthenticator started whit the properties like above and the testable-account-service project, 
 you should be able to use vauthenticator for your sample application. The preconfigured user in testable-account-service is a 
 user with `user` as username and `secret` as password 
