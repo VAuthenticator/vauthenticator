@@ -235,9 +235,13 @@
             <plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
-                <version>1.0.0</version>
+                <version>1.2.0</version>
                 <configuration>
-                    <imageName>family-budget/${project.build.finalName}:lastest</imageName>
+                    <imageName>mrflick72/${project.build.finalName}:1.0.0</imageName>
+                    <imageTags>
+                        <imageTag>1.0.0</imageTag>
+                        <imageTag>latest</imageTag>
+                    </imageTags>
                     <dockerDirectory>src/main/docker</dockerDirectory>
                     <resources>
                         <resource>
