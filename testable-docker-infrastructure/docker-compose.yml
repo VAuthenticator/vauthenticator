@@ -1,24 +1,66 @@
 version: "3.1"
 
 services:
+  vauthenticator:
+    image: mrflick72/vauthenticator:latest
+    container_name: vauthenticator
+    ports:
+      - 9090:9090
+    networks:
+      - vauthenticator
+      - messaging
+      - database
+      - in_memory_storage
+    depends_on:
+      - rabbitmq
+      - redis
+      - database
+    volumes:
+      - "${CONFIGURATION_FOLDER}:/usr/local/vauthenticator/no-configserver-configuration"
+    environment:
+      - project.basedir=/usr/local/vauthenticator
+      - spring.cloud.bootstrap.location=/usr/local/vauthenticator/no-configserver-configuration/bootstrap-docker.yml
+
+  account-service:
+      image: mrflick72/testable-account-service:latest
+      networks:
+        - vauthenticator
+        - messaging
+      depends_on:
+        - rabbitmq
+        - vauthenticator
+      environment:
+        - spring.rabbitmq.host=rabbitmq
+        - spring.security.oauth2.resourceserver.jwt.jwk-set-uri=http://vauthenticator:9090/auth/.well-known/jwks.json
+
+
   rabbitmq:
     image: rabbitmq:3-management
-    ports:
-      - 5672:5672
-      - 15671:15671
-      - 15672:15672
+    networks:
+      - messaging
 
   database:
     image: postgres
-    ports:
-      - 5432:5432
     environment:
+      POSTGRES_DB: vauthenticator
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
     volumes:
       - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    networks:
+      - database
 
   redis:
     image: redis
-    ports:
-      - 6379:6379
+    networks:
+      - in_memory_storage
+
+networks:
+  database:
+    driver: bridge
+  vauthenticator:
+    driver: bridge
+  messaging:
+    driver: bridge
+  in_memory_storage:
+    driver: bridge
