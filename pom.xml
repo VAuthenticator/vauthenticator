@@ -138,6 +138,10 @@
         </dependency>
 
         <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-kotlin</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-reflect</artifactId>
         </dependency>
@@ -239,7 +243,7 @@
                 <configuration>
                     <imageName>mrflick72/${project.build.finalName}:1.0.0</imageName>
                     <imageTags>
-                        <imageTag>1.0.0</imageTag>
+                        <imageTag>1.0.1</imageTag>
                         <imageTag>latest</imageTag>
                     </imageTags>
                     <dockerDirectory>src/main/docker</dockerDirectory>

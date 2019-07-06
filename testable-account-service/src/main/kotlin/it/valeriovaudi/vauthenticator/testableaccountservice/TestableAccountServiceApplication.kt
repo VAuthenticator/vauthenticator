@@ -1,5 +1,6 @@
 package it.valeriovaudi.vauthenticator.testableaccountservice
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.amqp.core.Queue
 import org.springframework.amqp.rabbit.annotation.RabbitListener
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -13,9 +14,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.security.core.userdetails.User
-import org.springframework.security.core.userdetails.UserDetails
-import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.web.bind.annotation.GetMapping
@@ -27,8 +25,8 @@ import java.util.*
 class TestableAccountServiceApplication {
 
     @Bean
-    fun userDetailsProcessorChannelHandler() =
-            UserDetailsProcessorChannelHandler(accountUserDetailsService())
+    fun userDetailsProcessorChannelHandler(objectMapper: ObjectMapper) =
+            UserDetailsProcessorChannelHandler(scurityAccountUser(objectMapper))
 
     @Bean
     fun accountRepository() =
@@ -40,8 +38,8 @@ class TestableAccountServiceApplication {
                     telephone = "xx-xxxx-xxxxx")))
 
     @Bean
-    fun accountUserDetailsService() =
-            AccountUserDetailsService(accountRepository())
+    fun scurityAccountUser(objectMapper: ObjectMapper) = ScurityAccountUser(accountRepository(), objectMapper)
+
 }
 
 fun main(args: Array<String>) {
@@ -90,39 +88,32 @@ class SecurityOAuth2ResourceServerConfig : WebSecurityConfigurerAdapter() {
 }
 
 
-class UserDetailsProcessorChannelHandler(private val accountUserDetailsService: AccountUserDetailsService) {
+class UserDetailsProcessorChannelHandler(private val accountUserDetailsService: ScurityAccountUser) {
 
     @RabbitListener(queues = ["authServerAccountServiceBridgeInboundQueue"])
-    fun getUserDetails(userName: String): UserDetails? {
-        var userDetails: UserDetails? = null
-        try {
-            userDetails = accountUserDetailsService.loadUserByUsername(userName)
-        } catch (e: Exception) {
-        }
-
-        return userDetails
+    fun getUserDetails(userName: String): String? {
+        return accountUserDetailsService.loadUserByUsername(userName)
     }
 
 }
 
-class AccountUserDetailsService(private val accountRepository: AccountRepository) : UserDetailsService {
+class ScurityAccountUser(private val accountRepository: AccountRepository, private val objectMapper: ObjectMapper) {
 
     private val passwordEncoder = BCryptPasswordEncoder()
 
-    @Throws(UsernameNotFoundException::class)
-    override fun loadUserByUsername(userName: String): UserDetails {
-        val account = accountRepository.findByUserName(userName)
-        return account
-                .map {
-                    User.withUsername(it.userName)
-                            .password(passwordEncoder.encode(it.password))
-                            .accountExpired(false)
-                            .authorities("USER")
-                            .build()
-                }
-                .orElseThrow({ UsernameNotFoundException("user not found") })
-    }
+    fun loadUserByUsername(userName: String) =
+            accountRepository.findByUserName(userName)
+                    .map {
+
+                        objectMapper.writeValueAsString(SecurityAccountDetails(it.userName,
+                                passwordEncoder.encode(it.password),
+                                listOf("USER")))
+                    }
+                    .orElseThrow({ UsernameNotFoundException("user not found") })
+
 }
+
+data class SecurityAccountDetails(var username: String, var password: String, var authorities: List<String>)
 
 @Configuration
 class MessagingConfig {

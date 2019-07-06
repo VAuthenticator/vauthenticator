@@ -27,6 +27,10 @@ Using these two applications: VAuthenticator started whit the properties like ab
 you should be able to use VAuthenticator for your sample application. The preconfigured user in testable-account-service is a 
 user with `user` as username and `secret` as password 
 
+It is provided an all-in-one testable solution with a docker-compose under testable-docker-infrastructure folder the only thing to do 
+is configure CONFIGURATION_FOLDER environment variable in a .env file with the path of the no-configserver-configuration folder in your 
+local environment.
+
 ## Features
 
 The application is a Spring Cloud application build on the top of Spring Cloud Security in order to leverage the typical 
