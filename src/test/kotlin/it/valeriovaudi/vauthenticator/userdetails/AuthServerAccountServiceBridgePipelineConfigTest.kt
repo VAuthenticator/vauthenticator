@@ -1,0 +1,3 @@
+package it.valeriovaudi.vauthenticator.userdetails
+
+class AuthServerAccountServiceBridgePipelineConfigTest

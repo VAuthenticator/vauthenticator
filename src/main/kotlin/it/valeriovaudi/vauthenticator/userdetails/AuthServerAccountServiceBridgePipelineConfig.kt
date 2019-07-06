@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.integration.amqp.dsl.Amqp
 import org.springframework.integration.amqp.outbound.AmqpOutboundEndpoint
 import org.springframework.integration.channel.DirectChannel
-import org.springframework.integration.dsl.IntegrationFlows
+import org.springframework.integration.dsl.IntegrationFlows.from
 
 @Configuration
 class AuthServerAccountServiceBridgePipelineConfig(private val rabbitTemplate: RabbitTemplate) {
@@ -14,7 +14,7 @@ class AuthServerAccountServiceBridgePipelineConfig(private val rabbitTemplate: R
     @Bean
     fun getUserDetailsIntegrationPipelineConfig(authServerAccountServiceBridgeInboundChannel: DirectChannel,
                                                 authServerAccountServiceBridgeOutboundChannel: DirectChannel) =
-            IntegrationFlows.from(authServerAccountServiceBridgeInboundChannel)
+            from(authServerAccountServiceBridgeInboundChannel)
                     .handle<AmqpOutboundEndpoint>(Amqp.outboundGateway(rabbitTemplate)
                             .routingKey("authServerAccountServiceBridgeInboundQueue")
                             .returnChannel(authServerAccountServiceBridgeOutboundChannel))
