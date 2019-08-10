@@ -19,7 +19,7 @@ internal class OAuth2WithSecurityContextFactory : WithSecurityContextFactory<Wit
         val securityContext = SecurityContextHolder.createEmptyContext();
 
         val jwt = Jwt("A_TOKEN", null, null,
-                mapOf("HEADER" to "VALUE"), mapOf(annotation.userNameKey to annotation.username))
+                mapOf("HEADER" to "VALUE"), mapOf(annotation.userNameKey to annotation.username, "authorities" to listOf("ROLE_USER")))
 
         securityContext.authentication = JwtAuthenticationToken(jwt)
         securityContext.authentication.isAuthenticated = true
