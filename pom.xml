@@ -243,7 +243,7 @@
                 <configuration>
                     <imageName>mrflick72/${project.build.finalName}:1.0.0</imageName>
                     <imageTags>
-                        <imageTag>1.0.1</imageTag>
+                        <imageTag>1.0.2</imageTag>
                         <imageTag>latest</imageTag>
                     </imageTags>
                     <dockerDirectory>src/main/docker</dockerDirectory>
