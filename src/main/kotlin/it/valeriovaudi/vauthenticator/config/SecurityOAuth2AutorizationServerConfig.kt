@@ -19,7 +19,7 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter
-import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore
+import org.springframework.security.oauth2.provider.token.store.JwtTokenStore
 import javax.sql.DataSource
 
 
@@ -76,7 +76,7 @@ class SecurityOAuth2AutorizationServerConfig(private val accountUserDetailsServi
     }
 
     @Bean
-    fun tokenStore() = RedisTokenStore(redisConnectionFactory)
+    fun tokenStore() = JwtTokenStore(accessTokenConverter())
 
     @Bean
     fun accessTokenConverter(): JwtAccessTokenConverter {
