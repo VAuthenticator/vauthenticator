@@ -51,7 +51,7 @@ data class IdToken(val userName: String,
     }
 
     private fun payload() = JWTClaimsSet.Builder()
-            .claim("userName", this.userName)
+            .claim("email", this.userName)
             .claim("iss", this.iss)
             .claim("sub", this.sub)
             .claim("aud", this.aud)
