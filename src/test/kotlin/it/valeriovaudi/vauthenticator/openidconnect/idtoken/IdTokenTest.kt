@@ -23,8 +23,7 @@ class IdTokenTest {
 
         val actual = IdToken.createIdToken(iss = "AN_ISS", sub = "A_SUB",
                 authentication = TestableOAuth2Authentication(),
-                clock = clock,
-                nonce = "A_NONCE")
+                clock = clock)
 
         val expected = IdToken("USER_NAME",
                 "AN_ISS", "A_SUB", "A_CLIENT_APPLICATION_ID",

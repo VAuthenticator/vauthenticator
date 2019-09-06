@@ -14,7 +14,7 @@ data class IdToken(val userName: String,
                    val iss: String,
                    val sub: String,
                    val aud: String,
-                   val nonce: String,
+                   val nonce: String?,
                    val exp: Long,
                    val iat: Long,
                    val auth_time: Long) {
@@ -23,18 +23,19 @@ data class IdToken(val userName: String,
     companion object {
         fun createIdToken(iss: String,
                           sub: String,
-                          nonce: String,
                           authentication: OAuth2Authentication,
                           clock: Clock) =
                 clock.nowInSeconds()
                         .let { now ->
                             IdToken(authentication.name,
-                                    iss, sub, authentication.oAuth2Request.clientId, nonce,
+                                    iss, sub, authentication.oAuth2Request.clientId, nonce(authentication),
                                     now * 20,
                                     now,
                                     now)
                         }
 
+        private fun nonce(authentication: OAuth2Authentication) =
+                authentication.oAuth2Request.extensions["nonce"] as String?
     }
 
     fun idTokenAsJwtSignedFor(key: KeyPair): String {

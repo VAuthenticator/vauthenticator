@@ -9,7 +9,10 @@ import org.springframework.web.bind.annotation.RestController
 class UserInfoEndPoint {
 
     @GetMapping("/user-info")
-    fun key(principal: JwtAuthenticationToken) =
-            ok(UserInfo(principal.token.claims["user_name"] as String, principal.token.claims["authorities"] as List<String>))
+    fun key(principal: JwtAuthenticationToken) {
+        println(principal)
+        ok(UserInfo(principal.token.claims["sub"] as String, principal.token.claims["user_name"] as String, principal.token.claims["authorities"] as List<String>))
+
+    }
 
 }

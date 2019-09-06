@@ -31,7 +31,7 @@ class UserInfoEndPointTest {
 
         mockMvc.perform(get("/user-info")
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(objectMapper.writeValueAsString(UserInfo("A_USER_NAME", listOf("ROLE_USER")))))
+                .andExpect(content().json(objectMapper.writeValueAsString(UserInfo("", "A_USER_NAME", listOf("ROLE_USER")))))
 
     }
 }

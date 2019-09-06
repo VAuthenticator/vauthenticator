@@ -1,18 +1,24 @@
 package it.valeriovaudi.vauthenticator.openidconnect.nonce
 
-import org.springframework.web.servlet.ModelAndView
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter
+import org.springframework.web.filter.OncePerRequestFilter
+import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-class AddNonceInAuthorizeResponseInterceptor(private val nonceStore: NonceStore) : HandlerInterceptorAdapter() {
+class AddNonceInAuthorizeResponseInterceptor(private val nonceStore: NonceStore) : OncePerRequestFilter() {
+    override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
+        if (shouldBeFiltered(request)) {
+            nonceStore.store(request.getParameter("state"), request.getParameter("nonce"))
+        }
 
-    override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any) =
-            request.getParameter("nonce") != null && request.getParameter("code") != null
-
-
-    override fun postHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any, modelAndView: ModelAndView?) {
-        print("request.getParameter(\"nonce\") ${request.getParameter("nonce")}")
-        nonceStore.store(request.getParameter("code"), request.getParameter("nonce"))
+        chain.doFilter(request, response)
     }
+
+
+    private fun shouldBeFiltered(request: HttpServletRequest) =
+            request.requestURI.equals("${request.servletPath}/oauth/authorize") &&
+                    request.getParameter("nonce") != null &&
+                    request.getParameter("state") != null
+
+
 }
