@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletResponse
 class AddNonceInAuthorizeResponseInterceptor(private val nonceStore: NonceStore) : OncePerRequestFilter() {
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
         if (shouldBeFiltered(request)) {
+            println("state ${request.getParameter("state")}")
+            println("nonce ${request.getParameter("nonce")}")
             nonceStore.store(request.getParameter("state"), request.getParameter("nonce"))
         }
 
@@ -15,8 +17,9 @@ class AddNonceInAuthorizeResponseInterceptor(private val nonceStore: NonceStore)
     }
 
 
+    //todo add servlet context path not written in the cde
     private fun shouldBeFiltered(request: HttpServletRequest) =
-            request.requestURI.equals("${request.servletPath}/oauth/authorize") &&
+            request.requestURI.equals("/vauthenticator/oauth/authorize") &&
                     request.getParameter("nonce") != null &&
                     request.getParameter("state") != null
 

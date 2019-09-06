@@ -1,11 +1,13 @@
 package it.valeriovaudi.vauthenticator.openidconnect.userinfo
 
 import it.valeriovaudi.TestAdditionalConfiguration
+import it.valeriovaudi.vauthenticator.openidconnect.nonce.NonceStore
 import it.valeriovaudi.vauthenticator.support.WithMockOAuth2User
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
@@ -23,6 +25,9 @@ class UserInfoEndPointTest {
 
     @Autowired
     lateinit var mockMvc: MockMvc
+
+    @MockBean
+    lateinit var nonceStore: NonceStore
 
     @Test
     @WithMockOAuth2User("A_USER_NAME")
