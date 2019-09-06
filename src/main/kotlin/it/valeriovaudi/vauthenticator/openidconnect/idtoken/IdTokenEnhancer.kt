@@ -27,17 +27,18 @@ class IdTokenEnhancer(private val oidcIss: String,
                               defaultAccessToken: DefaultOAuth2AccessToken) {
 
         if (defaultAccessToken.scope.contains("openid")) {
-            additionalInformation["id_token"] = idTokenAsJwt(authentication)
+            additionalInformation["id_token"] = idTokenAsJwt(authentication, defaultAccessToken.additionalInformation)
             defaultAccessToken.additionalInformation = additionalInformation
         }
 
     }
 
-    private fun idTokenAsJwt(authentication: OAuth2Authentication): String {
+    private fun idTokenAsJwt(authentication: OAuth2Authentication, additionalInformation: MutableMap<String, Any>): String {
         val keyPair = keyRepository.getKeyPair()
-        val idToken = IdToken.createIdToken(oidcIss, UUID.randomUUID().toString(), authentication, clock)
-        val idTokenAsJwtSignedFor = idToken.idTokenAsJwtSignedFor(keyPair)
-        return idTokenAsJwtSignedFor
+        val nonce = additionalInformation["nonce"] as String
+        val sub = UUID.randomUUID().toString()
+        val idToken = IdToken.createIdToken(oidcIss, sub, nonce, authentication, clock)
+        return idToken.idTokenAsJwtSignedFor(keyPair)
     }
 
 }

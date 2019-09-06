@@ -14,6 +14,7 @@ data class IdToken(val userName: String,
                    val iss: String,
                    val sub: String,
                    val aud: String,
+                   val nonce: String,
                    val exp: Long,
                    val iat: Long,
                    val auth_time: Long) {
@@ -22,12 +23,13 @@ data class IdToken(val userName: String,
     companion object {
         fun createIdToken(iss: String,
                           sub: String,
+                          nonce: String,
                           authentication: OAuth2Authentication,
                           clock: Clock) =
                 clock.nowInSeconds()
                         .let { now ->
                             IdToken(authentication.name,
-                                    iss, sub, authentication.oAuth2Request.clientId,
+                                    iss, sub, authentication.oAuth2Request.clientId, nonce,
                                     now * 20,
                                     now,
                                     now)
@@ -54,6 +56,7 @@ data class IdToken(val userName: String,
             .claim("email", this.userName)
             .claim("iss", this.iss)
             .claim("sub", this.sub)
+            .claim("nonce", this.nonce)
             .claim("aud", this.aud)
             .claim("exp", this.exp)
             .claim("iat", this.iat)
