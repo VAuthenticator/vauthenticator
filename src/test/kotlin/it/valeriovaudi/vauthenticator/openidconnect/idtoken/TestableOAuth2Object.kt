@@ -5,6 +5,7 @@ import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken
 import org.springframework.security.oauth2.provider.OAuth2Authentication
 import org.springframework.security.oauth2.provider.OAuth2Request
+import java.io.Serializable
 
 class TestableDefaultOAuth2AccessToken(var additionalInfo: Map<String, Any> = mutableMapOf(),
                                        var clientAppScope: Set<String> = emptySet()) : DefaultOAuth2AccessToken("") {
@@ -26,6 +27,7 @@ class TestableOAuth2Authentication : OAuth2Authentication(null, TestableAuthenti
     override fun getOAuth2Request() =
             object : OAuth2Request() {
                 override fun getClientId() = "A_CLIENT_APPLICATION_ID"
+                override fun getExtensions() = mutableMapOf("nonce" to "A_NONCE")
             }
 
 }

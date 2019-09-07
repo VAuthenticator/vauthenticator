@@ -4,6 +4,8 @@ import it.valeriovaudi.TestAdditionalConfiguration
 import it.valeriovaudi.vauthenticator.keypair.KeyPairFixture.getFileContent
 import it.valeriovaudi.vauthenticator.keypair.KeyPairFixture.keyPair
 import it.valeriovaudi.vauthenticator.keypair.KeyRepository
+import it.valeriovaudi.vauthenticator.openidconnect.nonce.InMemoryNonceStore
+import it.valeriovaudi.vauthenticator.openidconnect.nonce.NonceStore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
@@ -33,6 +35,9 @@ class JwksEndPointTest {
 
     @MockBean
     lateinit var jwkFactory: JwkFactory
+
+    @MockBean
+    lateinit var nonceStore: NonceStore
 
     @Test
     fun `happy path`() {

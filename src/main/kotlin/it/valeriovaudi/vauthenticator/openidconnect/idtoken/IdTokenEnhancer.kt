@@ -14,11 +14,8 @@ class IdTokenEnhancer(private val oidcIss: String,
 
     override fun enhance(accessToken: OAuth2AccessToken, authentication: OAuth2Authentication): OAuth2AccessToken {
         val defaultAccessToken = accessToken as DefaultOAuth2AccessToken
-
         val additionalInformation = defaultAccessToken.additionalInformation
-
         addIdTokenFor(additionalInformation, authentication, defaultAccessToken)
-
         return defaultAccessToken
     }
 
@@ -35,9 +32,10 @@ class IdTokenEnhancer(private val oidcIss: String,
 
     private fun idTokenAsJwt(authentication: OAuth2Authentication): String {
         val keyPair = keyRepository.getKeyPair()
-        val idToken = IdToken.createIdToken(oidcIss, UUID.randomUUID().toString(), authentication, clock)
-        val idTokenAsJwtSignedFor = idToken.idTokenAsJwtSignedFor(keyPair)
-        return idTokenAsJwtSignedFor
+        val sub = UUID.randomUUID().toString()
+        val idToken = IdToken.createIdToken(oidcIss, sub, authentication, clock)
+        println("idToken" + idToken.idTokenAsJwtSignedFor(keyPair))
+        return idToken.idTokenAsJwtSignedFor(keyPair)
     }
 
 }

@@ -6,10 +6,8 @@ import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.security.test.context.support.WithSecurityContext
 import org.springframework.security.test.context.support.WithSecurityContextFactory
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy
 
-@Retention(RetentionPolicy.RUNTIME)
+@kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
 @WithSecurityContext(factory = OAuth2WithSecurityContextFactory::class)
 annotation class WithMockOAuth2User(val username: String = "A_USER_NAME", val userNameKey: String = "user_name")
 

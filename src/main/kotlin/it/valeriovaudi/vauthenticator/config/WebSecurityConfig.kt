@@ -1,6 +1,9 @@
 package it.valeriovaudi.vauthenticator.config
 
 import it.valeriovaudi.vauthenticator.codeservice.RedisAuthorizationCodeServices
+import it.valeriovaudi.vauthenticator.openidconnect.nonce.AddNonceInAuthorizeResponseInterceptor
+import it.valeriovaudi.vauthenticator.openidconnect.nonce.InMemoryNonceStore
+import it.valeriovaudi.vauthenticator.openidconnect.nonce.NonceStore
 import it.valeriovaudi.vauthenticator.userdetails.AccountUserDetailsService
 import it.valeriovaudi.vauthenticator.userdetails.LogInRequestGateway
 import org.springframework.boot.autoconfigure.security.SecurityProperties
@@ -14,6 +17,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.provider.OAuth2Authentication
+import java.util.concurrent.ConcurrentHashMap
 
 @Configuration
 @Order(SecurityProperties.DEFAULT_FILTER_ORDER)
@@ -49,12 +53,14 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     }
 
     @Bean
-    fun redisAuthorizationCodeServices(redisTemplate: RedisTemplate<*, *>) =
-            RedisAuthorizationCodeServices(redisTemplate as RedisTemplate<String, OAuth2Authentication>)
+    fun redisAuthorizationCodeServices(redisTemplate: RedisTemplate<*, *>, nonceStore: NonceStore) =
+            RedisAuthorizationCodeServices(redisTemplate as RedisTemplate<String, OAuth2Authentication>, nonceStore)
 
     @Bean
     fun accountUserDetailsService(logInRequestGateway: LogInRequestGateway) =
             AccountUserDetailsService(logInRequestGateway)
 
 
+    @Bean
+    fun nonceStore() = InMemoryNonceStore(ConcurrentHashMap())
 }

@@ -6,10 +6,11 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class UserInfoEndPoint {
+class UserInfoEndPoint(private val userInfoFactory: UserInfoFactory) {
 
     @GetMapping("/user-info")
     fun key(principal: JwtAuthenticationToken) =
-            ok(UserInfo(principal.token.claims["user_name"] as String, principal.token.claims["authorities"] as List<String>))
+            ok(userInfoFactory.newUserInfo(principal))
+
 
 }

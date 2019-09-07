@@ -27,6 +27,7 @@ class IdTokenTest {
 
         val expected = IdToken("USER_NAME",
                 "AN_ISS", "A_SUB", "A_CLIENT_APPLICATION_ID",
+                "A_NONCE",
                 clockTime * 20,
                 clockTime,
                 clockTime)
