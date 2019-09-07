@@ -10,7 +10,7 @@ import java.security.KeyPair
 
 val logger = LoggerFactory.getLogger(IdToken::class.java.name)
 
-data class IdToken(val userName: String,
+data class IdToken(val email: String,
                    val iss: String,
                    val sub: String,
                    val aud: String,
@@ -27,11 +27,14 @@ data class IdToken(val userName: String,
                           clock: Clock) =
                 clock.nowInSeconds()
                         .let { now ->
-                            IdToken(authentication.name,
-                                    iss, sub, authentication.oAuth2Request.clientId, nonce(authentication),
-                                    now * 20,
-                                    now,
-                                    now)
+                            IdToken(email = authentication.name,
+                                    iss = iss,
+                                    sub = sub,
+                                    aud = authentication.oAuth2Request.clientId,
+                                    nonce = nonce(authentication),
+                                    exp = now * 20,
+                                    iat = now,
+                                    auth_time = now)
                         }
 
         private fun nonce(authentication: OAuth2Authentication) =
@@ -53,16 +56,26 @@ data class IdToken(val userName: String,
         return JWSHeader(JWSAlgorithm.RS256)
     }
 
-    private fun payload() = JWTClaimsSet.Builder()
-            .claim("email", this.userName)
-            .claim("iss", this.iss)
-            .claim("sub", this.sub)
-            .claim("nonce", this.nonce)
-            .claim("aud", this.aud)
-            .claim("exp", this.exp)
-            .claim("iat", this.iat)
-            .claim("auth_time", this.auth_time)
-            .build()
-            .let { Payload(it.toJSONObject()) }
+    private fun payload(): Payload {
+        val jwtClaimsBuilder = JWTClaimsSet.Builder()
+                .claim("email", this.email)
+                .claim("iss", this.iss)
+                .claim("sub", this.sub)
+                .claim("aud", this.aud)
+                .claim("exp", this.exp)
+                .claim("iat", this.iat)
+                .claim("auth_time", this.auth_time)
 
+        applyNonce(nonce, jwtClaimsBuilder)
+
+        val jwtClaims = jwtClaimsBuilder.build()
+        return Payload(jwtClaims.toJSONObject())
+    }
+
+    private fun applyNonce(nonce: String?, jwtClaimsSetBuilder: JWTClaimsSet.Builder) {
+        if ((nonce ?: "").isNotBlank()) {
+            jwtClaimsSetBuilder.claim("nonce", this.nonce)
+        }
+
+    }
 }
