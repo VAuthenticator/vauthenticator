@@ -1,9 +1,8 @@
 package it.valeriovaudi.vauthenticator.config
 
 import it.valeriovaudi.vauthenticator.codeservice.RedisAuthorizationCodeServices
-import it.valeriovaudi.vauthenticator.openidconnect.nonce.AddNonceInAuthorizeResponseInterceptor
-import it.valeriovaudi.vauthenticator.openidconnect.nonce.InMemoryNonceStore
-import it.valeriovaudi.vauthenticator.openidconnect.nonce.NonceStore
+import it.valeriovaudi.vauthenticator.openid.connect.nonce.InMemoryNonceStore
+import it.valeriovaudi.vauthenticator.openid.connect.nonce.NonceStore
 import it.valeriovaudi.vauthenticator.userdetails.AccountUserDetailsService
 import it.valeriovaudi.vauthenticator.userdetails.LogInRequestGateway
 import org.springframework.boot.autoconfigure.security.SecurityProperties

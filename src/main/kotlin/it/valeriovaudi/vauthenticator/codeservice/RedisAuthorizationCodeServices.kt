@@ -1,7 +1,7 @@
 package it.valeriovaudi.vauthenticator.codeservice
 
 import it.valeriovaudi.vauthenticator.extentions.toSha256
-import it.valeriovaudi.vauthenticator.openidconnect.nonce.NonceStore
+import it.valeriovaudi.vauthenticator.openid.connect.nonce.NonceStore
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.security.oauth2.provider.OAuth2Authentication
 import org.springframework.security.oauth2.provider.code.RandomValueAuthorizationCodeServices

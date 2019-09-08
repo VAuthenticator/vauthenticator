@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator.openidconnect.nonce
+package it.valeriovaudi.vauthenticator.openid.connect.nonce
 
 interface NonceStore {
 

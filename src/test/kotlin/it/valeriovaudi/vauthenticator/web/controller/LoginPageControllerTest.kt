@@ -1,6 +1,6 @@
 package it.valeriovaudi.vauthenticator.web.controller
 
-import it.valeriovaudi.vauthenticator.openidconnect.nonce.NonceStore
+import it.valeriovaudi.vauthenticator.openid.connect.nonce.NonceStore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired

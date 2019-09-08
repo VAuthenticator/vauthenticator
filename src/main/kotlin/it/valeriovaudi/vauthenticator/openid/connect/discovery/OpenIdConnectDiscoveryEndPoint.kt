@@ -1,6 +1,6 @@
-package it.valeriovaudi.vauthenticator.openidconnect.discovery
+package it.valeriovaudi.vauthenticator.openid.connect.discovery
 
-import it.valeriovaudi.vauthenticator.openidconnect.discovery.OpenIdConnectDiscovery.Companion.newOpenIdConnectDiscovery
+import it.valeriovaudi.vauthenticator.openid.connect.discovery.OpenIdConnectDiscovery.Companion.newOpenIdConnectDiscovery
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.web.bind.annotation.GetMapping

@@ -2,7 +2,7 @@ package it.valeriovaudi.vauthenticator.config
 
 import it.valeriovaudi.vauthenticator.codeservice.RedisAuthorizationCodeServices
 import it.valeriovaudi.vauthenticator.keypair.KeyRepository
-import it.valeriovaudi.vauthenticator.openidconnect.idtoken.IdTokenEnhancer
+import it.valeriovaudi.vauthenticator.openid.connect.idtoken.IdTokenEnhancer
 import it.valeriovaudi.vauthenticator.time.Clock
 import it.valeriovaudi.vauthenticator.userdetails.AccountUserDetailsService
 import org.springframework.beans.factory.annotation.Autowired

@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator.openidconnect.idtoken
+package it.valeriovaudi.vauthenticator.openid.connect.idtoken
 
 import it.valeriovaudi.vauthenticator.keypair.KeyPairFixture.getFileContent
 import it.valeriovaudi.vauthenticator.keypair.KeyPairFixture.keyPair

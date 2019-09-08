@@ -4,7 +4,6 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider
 import com.amazonaws.auth.BasicAWSCredentials
 import com.amazonaws.services.s3.AmazonS3ClientBuilder
 import com.fasterxml.jackson.databind.ObjectMapper
-import it.valeriovaudi.vauthenticator.account.Account
 import it.valeriovaudi.vauthenticator.account.GetAccount
 import it.valeriovaudi.vauthenticator.account.RabbitAccountRepository
 import it.valeriovaudi.vauthenticator.account.RabbitMessageAccountAdapter
@@ -12,9 +11,8 @@ import it.valeriovaudi.vauthenticator.keypair.FileKeyRepository
 import it.valeriovaudi.vauthenticator.keypair.KeyPairConfig
 import it.valeriovaudi.vauthenticator.keypair.S3Config
 import it.valeriovaudi.vauthenticator.keypair.S3KeyRepository
-import it.valeriovaudi.vauthenticator.openidconnect.userinfo.UserInfoFactory
+import it.valeriovaudi.vauthenticator.openid.connect.userinfo.UserInfoFactory
 import it.valeriovaudi.vauthenticator.userdetails.AccountUserDetailsServiceAdapter
-import it.valeriovaudi.vauthenticator.userdetails.NotParsableAccountDetails
 import org.springframework.amqp.core.Queue
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.Autowired

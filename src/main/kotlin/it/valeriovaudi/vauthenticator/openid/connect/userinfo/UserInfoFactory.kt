@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator.openidconnect.userinfo
+package it.valeriovaudi.vauthenticator.openid.connect.userinfo
 
 import it.valeriovaudi.vauthenticator.account.AccountRepository
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken

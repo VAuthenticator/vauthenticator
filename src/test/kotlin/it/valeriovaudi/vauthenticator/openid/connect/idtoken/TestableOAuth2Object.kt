@@ -1,11 +1,10 @@
-package it.valeriovaudi.vauthenticator.openidconnect.idtoken
+package it.valeriovaudi.vauthenticator.openid.connect.idtoken
 
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken
 import org.springframework.security.oauth2.provider.OAuth2Authentication
 import org.springframework.security.oauth2.provider.OAuth2Request
-import java.io.Serializable
 
 class TestableDefaultOAuth2AccessToken(var additionalInfo: Map<String, Any> = mutableMapOf(),
                                        var clientAppScope: Set<String> = emptySet()) : DefaultOAuth2AccessToken("") {

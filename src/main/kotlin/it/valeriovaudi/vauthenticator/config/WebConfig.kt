@@ -1,8 +1,7 @@
 package it.valeriovaudi.vauthenticator.config
 
-import it.valeriovaudi.vauthenticator.openidconnect.nonce.AddNonceInAuthorizeResponseInterceptor
-import it.valeriovaudi.vauthenticator.openidconnect.nonce.InMemoryNonceStore
-import it.valeriovaudi.vauthenticator.openidconnect.nonce.NonceStore
+import it.valeriovaudi.vauthenticator.openid.connect.nonce.AddNonceInAuthorizeResponseInterceptor
+import it.valeriovaudi.vauthenticator.openid.connect.nonce.NonceStore
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator.openidconnect.idtoken
+package it.valeriovaudi.vauthenticator.openid.connect.idtoken
 
 import com.nimbusds.jose.*
 import com.nimbusds.jose.crypto.RSASSASigner

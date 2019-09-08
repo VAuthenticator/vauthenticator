@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator.openidconnect.userinfo
+package it.valeriovaudi.vauthenticator.openid.connect.userinfo
 
 import java.time.LocalDateTime
 

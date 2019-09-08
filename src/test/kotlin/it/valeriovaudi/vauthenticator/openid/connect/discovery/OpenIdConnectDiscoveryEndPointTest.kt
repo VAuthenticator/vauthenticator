@@ -1,7 +1,7 @@
-package it.valeriovaudi.vauthenticator.openidconnect.discovery
+package it.valeriovaudi.vauthenticator.openid.connect.discovery
 
 import it.valeriovaudi.TestAdditionalConfiguration
-import it.valeriovaudi.vauthenticator.openidconnect.discovery.OpenIdConnectDiscovery.Companion.newOpenIdConnectDiscovery
+import it.valeriovaudi.vauthenticator.openid.connect.discovery.OpenIdConnectDiscovery.Companion.newOpenIdConnectDiscovery
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired

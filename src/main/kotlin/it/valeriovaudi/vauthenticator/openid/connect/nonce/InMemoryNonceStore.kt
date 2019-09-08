@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator.openidconnect.nonce
+package it.valeriovaudi.vauthenticator.openid.connect.nonce
 
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
