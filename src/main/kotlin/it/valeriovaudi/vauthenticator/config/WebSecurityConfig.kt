@@ -1,6 +1,7 @@
 package it.valeriovaudi.vauthenticator.config
 
 import it.valeriovaudi.vauthenticator.codeservice.RedisAuthorizationCodeServices
+import it.valeriovaudi.vauthenticator.openid.connect.logout.BackChannelGlobalLogoutHandler
 import it.valeriovaudi.vauthenticator.openid.connect.nonce.InMemoryNonceStore
 import it.valeriovaudi.vauthenticator.openid.connect.nonce.NonceStore
 import it.valeriovaudi.vauthenticator.userdetails.AccountUserDetailsService
@@ -16,6 +17,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.provider.OAuth2Authentication
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher
+import org.springframework.web.client.RestTemplate
 import java.util.concurrent.ConcurrentHashMap
 
 @Configuration
@@ -25,7 +28,7 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     companion object {
 
         private val LOG_IN_URL_PAGE = "/singin"
-        private val WHITE_LIST = arrayOf("/singin", "/user-info", "/oauth/authorize", "/oauth/confirm_access", "/webjars/**")
+        private val WHITE_LIST = arrayOf("/logout", "/singin", "/user-info", "/oauth/authorize", "/oauth/confirm_access", "/webjars/**")
 
     }
 
@@ -34,6 +37,10 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
                 .formLogin().loginPage(LOG_IN_URL_PAGE)
                 .loginProcessingUrl(LOG_IN_URL_PAGE)
                 .permitAll()
+                .and()
+                .logout()
+                .addLogoutHandler(backChannelGlobalLogoutHandler())
+                .logoutRequestMatcher(AntPathRequestMatcher("/logout", "GET"))
                 .and()
                 .requestMatchers().antMatchers(*WHITE_LIST)
                 .and()
@@ -62,4 +69,8 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
 
     @Bean
     fun nonceStore() = InMemoryNonceStore(ConcurrentHashMap())
+
+    @Bean
+    fun backChannelGlobalLogoutHandler() =
+            BackChannelGlobalLogoutHandler(RestTemplate(), listOf("http://localhost:8080/family-budget/logout", "http://localhost:8080/account/logout"))
 }
