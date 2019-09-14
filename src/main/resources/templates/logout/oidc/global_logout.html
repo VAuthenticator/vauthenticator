@@ -7,12 +7,11 @@
 <body>
 <script th:src="@{/webjars/jquery/3.0.0/jquery.js}"></script>
 
-<script>
-    [
-        "http://localhost:8080/family-budget/logout",
-        "http://localhost:8080/account/logout",
-        "http://localhost:8080/vauthenticator/logout"
-    ]
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var federatedServers = [[${federatedServers}]];
+
+    federatedServers
         .forEach(function (logoutUrl) {
             $.ajax({
                 method: "POST",
@@ -38,6 +37,7 @@
 
     console.log("redirectUri: " + redirectUri)
     window.top.location.href = redirectUri
+    /*]]>*/
 </script>
 </body>
 </html>
