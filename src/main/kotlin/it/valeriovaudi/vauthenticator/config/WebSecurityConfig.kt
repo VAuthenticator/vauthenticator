@@ -1,6 +1,6 @@
 package it.valeriovaudi.vauthenticator.config
 
-import it.valeriovaudi.vauthenticator.codeservice.RedisAuthorizationCodeServices
+import it.valeriovaudi.vauthenticator.oauth2.codeservice.RedisAuthorizationCodeServices
 import it.valeriovaudi.vauthenticator.openid.connect.nonce.InMemoryNonceStore
 import it.valeriovaudi.vauthenticator.openid.connect.nonce.NonceStore
 import it.valeriovaudi.vauthenticator.userdetails.AccountUserDetailsService
@@ -16,20 +16,14 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.provider.OAuth2Authentication
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher
-import org.springframework.web.client.RestTemplate
 import java.util.concurrent.ConcurrentHashMap
 
 @Configuration
 @Order(SecurityProperties.DEFAULT_FILTER_ORDER)
 class WebSecurityConfig : WebSecurityConfigurerAdapter() {
 
-    companion object {
-
-        private val LOG_IN_URL_PAGE = "/singin"
-        private val WHITE_LIST = arrayOf("/logout", "/logout/oidc/logout", "/singin", "/user-info", "/oauth/authorize", "/oauth/confirm_access", "/webjars/**")
-
-    }
+    private val LOG_IN_URL_PAGE = "/singin"
+    private val WHITE_LIST = arrayOf("/logout", "/oidc/logout", "/singin", "/user-info", "/oauth/authorize", "/oauth/confirm_access", "/webjars/**")
 
     override fun configure(http: HttpSecurity) {
         http.csrf().disable()

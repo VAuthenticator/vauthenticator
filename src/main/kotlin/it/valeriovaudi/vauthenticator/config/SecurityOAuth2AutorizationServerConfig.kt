@@ -1,6 +1,6 @@
 package it.valeriovaudi.vauthenticator.config
 
-import it.valeriovaudi.vauthenticator.codeservice.RedisAuthorizationCodeServices
+import it.valeriovaudi.vauthenticator.oauth2.codeservice.RedisAuthorizationCodeServices
 import it.valeriovaudi.vauthenticator.keypair.KeyRepository
 import it.valeriovaudi.vauthenticator.openid.connect.idtoken.IdTokenEnhancer
 import it.valeriovaudi.vauthenticator.time.Clock
@@ -22,7 +22,6 @@ import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenCo
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore
 import javax.sql.DataSource
 
-
 @Configuration
 @EnableAuthorizationServer
 class SecurityOAuth2AutorizationServerConfig(private val accountUserDetailsService: AccountUserDetailsService,
@@ -35,13 +34,8 @@ class SecurityOAuth2AutorizationServerConfig(private val accountUserDetailsServi
     @Autowired
     lateinit var keyRepository: KeyRepository
 
-
     @Autowired
     lateinit var redisAuthorizationCodeServices: RedisAuthorizationCodeServices
-
-    @Autowired
-    lateinit var redisConnectionFactory: RedisConnectionFactory
-
     @Autowired
     lateinit var dataSource: DataSource
 

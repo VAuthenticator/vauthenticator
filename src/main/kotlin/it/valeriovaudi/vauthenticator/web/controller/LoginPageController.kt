@@ -12,7 +12,7 @@ class LoginPageController {
     fun loginPage() = "login/singin"
 
 
-    @GetMapping("/logout/oidc/global_logout")
+    @GetMapping("/oidc/logout")
     fun forntChannelGlobalLogout(model: Model): String {
         var federatedServers =
                 listOf("http://localhost:8080/family-budget/logout",
