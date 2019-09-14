@@ -1,7 +1,6 @@
 package it.valeriovaudi.vauthenticator.config
 
 import it.valeriovaudi.vauthenticator.codeservice.RedisAuthorizationCodeServices
-import it.valeriovaudi.vauthenticator.openid.connect.logout.BackChannelGlobalLogoutHandler
 import it.valeriovaudi.vauthenticator.openid.connect.nonce.InMemoryNonceStore
 import it.valeriovaudi.vauthenticator.openid.connect.nonce.NonceStore
 import it.valeriovaudi.vauthenticator.userdetails.AccountUserDetailsService
@@ -28,7 +27,7 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     companion object {
 
         private val LOG_IN_URL_PAGE = "/singin"
-        private val WHITE_LIST = arrayOf("/logout", "/singin", "/user-info", "/oauth/authorize", "/oauth/confirm_access", "/webjars/**")
+        private val WHITE_LIST = arrayOf("/logout", "/logout/oidc/logout", "/singin", "/user-info", "/oauth/authorize", "/oauth/confirm_access", "/webjars/**")
 
     }
 
@@ -39,8 +38,6 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
                 .permitAll()
                 .and()
                 .logout()
-                .addLogoutHandler(backChannelGlobalLogoutHandler())
-                .logoutRequestMatcher(AntPathRequestMatcher("/logout", "GET"))
                 .and()
                 .requestMatchers().antMatchers(*WHITE_LIST)
                 .and()
@@ -70,7 +67,4 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     @Bean
     fun nonceStore() = InMemoryNonceStore(ConcurrentHashMap())
 
-    @Bean
-    fun backChannelGlobalLogoutHandler() =
-            BackChannelGlobalLogoutHandler(RestTemplate(), listOf("http://localhost:8080/family-budget/logout", "http://localhost:8080/account/logout"))
 }

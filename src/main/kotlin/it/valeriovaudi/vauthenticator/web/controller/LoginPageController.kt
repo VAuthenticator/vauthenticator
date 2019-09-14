@@ -10,4 +10,9 @@ class LoginPageController {
     @GetMapping("/singin")
     fun loginPage() = "login/singin"
 
+
+    @GetMapping("/logout/oidc/global_logout")
+    fun forntChannelGlobalLogout() = "/logout/oidc/global_logout"
+
+
 }
