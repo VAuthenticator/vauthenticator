@@ -10,7 +10,6 @@
 <script th:inline="javascript">
     /*<![CDATA[*/
     var federatedServers = [[${federatedServers}]];
-
     federatedServers
         .forEach(function (logoutUrl) {
             $.ajax({

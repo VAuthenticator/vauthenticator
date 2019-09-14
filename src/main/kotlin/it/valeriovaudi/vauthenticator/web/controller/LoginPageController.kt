@@ -11,7 +11,6 @@ class LoginPageController {
     @GetMapping("/singin")
     fun loginPage() = "login/singin"
 
-
     @GetMapping("/oidc/logout")
     fun forntChannelGlobalLogout(model: Model): String {
         var federatedServers =
@@ -23,6 +22,5 @@ class LoginPageController {
         model.addAttribute("federatedServers", federatedServers)
         return "/logout/oidc/global_logout"
     }
-
 
 }
