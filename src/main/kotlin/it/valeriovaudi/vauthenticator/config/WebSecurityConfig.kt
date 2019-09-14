@@ -1,6 +1,6 @@
 package it.valeriovaudi.vauthenticator.config
 
-import it.valeriovaudi.vauthenticator.codeservice.RedisAuthorizationCodeServices
+import it.valeriovaudi.vauthenticator.oauth2.codeservice.RedisAuthorizationCodeServices
 import it.valeriovaudi.vauthenticator.openid.connect.nonce.InMemoryNonceStore
 import it.valeriovaudi.vauthenticator.openid.connect.nonce.NonceStore
 import it.valeriovaudi.vauthenticator.userdetails.AccountUserDetailsService
@@ -22,18 +22,16 @@ import java.util.concurrent.ConcurrentHashMap
 @Order(SecurityProperties.DEFAULT_FILTER_ORDER)
 class WebSecurityConfig : WebSecurityConfigurerAdapter() {
 
-    companion object {
-
-        private val LOG_IN_URL_PAGE = "/singin"
-        private val WHITE_LIST = arrayOf("/singin", "/user-info", "/oauth/authorize", "/oauth/confirm_access", "/webjars/**")
-
-    }
+    private val LOG_IN_URL_PAGE = "/singin"
+    private val WHITE_LIST = arrayOf("/logout", "/oidc/logout", "/singin", "/user-info", "/oauth/authorize", "/oauth/confirm_access", "/webjars/**")
 
     override fun configure(http: HttpSecurity) {
         http.csrf().disable()
                 .formLogin().loginPage(LOG_IN_URL_PAGE)
                 .loginProcessingUrl(LOG_IN_URL_PAGE)
                 .permitAll()
+                .and()
+                .logout()
                 .and()
                 .requestMatchers().antMatchers(*WHITE_LIST)
                 .and()
@@ -62,4 +60,5 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
 
     @Bean
     fun nonceStore() = InMemoryNonceStore(ConcurrentHashMap())
+
 }

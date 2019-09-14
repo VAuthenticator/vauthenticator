@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator.codeservice
+package it.valeriovaudi.vauthenticator.oauth2.codeservice
 
 import it.valeriovaudi.vauthenticator.extentions.toSha256
 import it.valeriovaudi.vauthenticator.openid.connect.nonce.NonceStore
