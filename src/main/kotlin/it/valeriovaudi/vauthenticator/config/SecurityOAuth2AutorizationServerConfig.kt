@@ -3,6 +3,8 @@ package it.valeriovaudi.vauthenticator.config
 import it.valeriovaudi.vauthenticator.oauth2.codeservice.RedisAuthorizationCodeServices
 import it.valeriovaudi.vauthenticator.keypair.KeyRepository
 import it.valeriovaudi.vauthenticator.openid.connect.idtoken.IdTokenEnhancer
+import it.valeriovaudi.vauthenticator.openid.connect.logout.FrontChannelLogout
+import it.valeriovaudi.vauthenticator.openid.connect.logout.JdbcFrontChannelLogout
 import it.valeriovaudi.vauthenticator.time.Clock
 import it.valeriovaudi.vauthenticator.userdetails.AccountUserDetailsService
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.redis.connection.RedisConnectionFactory
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer
@@ -80,4 +83,6 @@ class SecurityOAuth2AutorizationServerConfig(private val accountUserDetailsServi
         return jwtAccessTokenConverter
     }
 
+    @Bean
+    fun frontChannelLogout(dataSource: DataSource) = JdbcFrontChannelLogout(JdbcTemplate(dataSource))
 }
