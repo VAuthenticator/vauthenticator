@@ -7,16 +7,28 @@
 <body>
 <script th:src="@{/webjars/jquery/3.0.0/jquery.js}"></script>
 
+</body>
+<div id="logoutBox">
+
+</div>
+
 <script th:inline="javascript">
     /*<![CDATA[*/
     var federatedServers = [[${federatedServers}]];
+    var logoutIframe = $("<iframe ></iframe>")
+
+    function newLogoutIFrame(logoutUrl) {
+        var clone = logoutIframe.clone();
+        clone.attr("src", logoutUrl);
+        clone.attr("style", "visibility: hidden;");
+        return clone;
+    }
+
     federatedServers
         .forEach(function (logoutUrl) {
-            $.ajax({
-                method: "POST",
-                url: logoutUrl
-            })
-        });
+            $("#logoutBox")
+                .append(newLogoutIFrame(logoutUrl));
+        })
 
     var getParams = function (url) {
         var params = {};
@@ -38,5 +50,4 @@
     window.top.location.href = redirectUri
     /*]]>*/
 </script>
-</body>
 </html>
