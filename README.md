@@ -36,9 +36,11 @@ local environment.
 The application is a Spring Cloud application build on the top of Spring Cloud Security in order to leverage the typical 
 OAuth2 Authorization server. On the top of OAuth2 feature the VAuthenticator provide JWK endpoint for RSA key exchange 
 with keystore storage on file system or AWS S3, token enhancement of OpenID Connect id_token for client application 
-that has `openid` as scope and a well known OpenID Connect discovery endpoint.  
+that has `openid` as scope and a well known OpenID Connect discovery endpoint.
 
-As Client Application Store Postgress Database is used while for token store, authorization code store, distributed session store and 
+The Authentication server supports SSO via authorization_code, and global front channel logout. 
+
+As Client Application Store Postgress Database is used while for authorization code store, distributed session store and 
 distributed cache Redis is the my choice. 
 
 At the moment the application try to leverage the configuration from a configuration server discovered by Netflix Eureka.
@@ -47,9 +49,9 @@ VAuthenticator and the account-service is via a secure RabbitMq AMQP channel, at
 Spring Security UserDetails implementation, but this details is under develop in order to remove this coupling between 
 account-service and VAuthenticator to a Spring UserDetails implementation.
 
-## Next Features
+## Support
 
-* User details exchanged between a generic account-service and VAuthenticator independent from Spring Security
+I have tested VAuthenticator in order to give SSO capability with my personal onlyone-portal, jenkins, Liferay 7.2 and Grafana 
+ 
+## Next Features
 * Password recovery system
-* OpenID Connect Global Login
-* OpenID Connect Global Logout
