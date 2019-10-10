@@ -3,6 +3,7 @@ package it.valeriovaudi.vauthenticator.config
 import it.valeriovaudi.vauthenticator.oauth2.codeservice.RedisAuthorizationCodeServices
 import it.valeriovaudi.vauthenticator.openid.connect.nonce.InMemoryNonceStore
 import it.valeriovaudi.vauthenticator.openid.connect.nonce.NonceStore
+import it.valeriovaudi.vauthenticator.openid.connect.nonce.RedisNonceStore
 import it.valeriovaudi.vauthenticator.userdetails.AccountUserDetailsService
 import it.valeriovaudi.vauthenticator.userdetails.LogInRequestGateway
 import org.springframework.boot.autoconfigure.security.SecurityProperties
@@ -59,6 +60,6 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
 
 
     @Bean
-    fun nonceStore() = InMemoryNonceStore(ConcurrentHashMap())
+    fun nonceStore(redisTemplate: RedisTemplate<String, String>) = RedisNonceStore(redisTemplate)
 
 }
