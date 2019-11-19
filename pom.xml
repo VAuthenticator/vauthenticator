@@ -10,7 +10,7 @@
     </parent>
     <groupId>it.valeriovaudi</groupId>
     <artifactId>vauthenticator</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.3</version>
     <name>vauthenticator</name>
     <description>Demo project for Spring Boot</description>
 
@@ -233,7 +233,7 @@
                 <configuration>
                     <imageName>mrflick72/${project.build.finalName}:latest</imageName>
                     <imageTags>
-                        <imageTag>1.0.2</imageTag>
+                        <imageTag>1.0.3</imageTag>
                         <imageTag>latest</imageTag>
                     </imageTags>
                     <dockerDirectory>src/main/docker</dockerDirectory>
