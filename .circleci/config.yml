@@ -10,3 +10,9 @@ jobs:
     machine: true
     steps:
       - run: docker build -t mrflick72/vauthenticator:1.0.3 .
+
+workflows:
+  build-and-publish:
+    jobs:
+      - build
+      - docker-publish
