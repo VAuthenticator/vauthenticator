@@ -6,6 +6,10 @@ jobs:
     steps:
       - checkout
       - run: mvn clean install -DskipTests
+      - store_artifacts:
+          path: target/vauthenticator.jar
+          destination: vauthenticator.jar
+
   docker-publish:
     machine: true
     steps:
