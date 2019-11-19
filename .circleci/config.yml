@@ -3,7 +3,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/openjdk:8-jdk-stretch
+      - image: circleci/openjdk:12-jdk-stretch
     steps:
       - checkout
       - run: mvn clean install docker:build docker:push
