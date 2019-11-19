@@ -1,5 +1,4 @@
 version: 2
-
 jobs:
   build:
     docker:
@@ -7,3 +6,4 @@ jobs:
     steps:
       - checkout
       - run: mvn clean install -DskipTests
+      - run: docker build -t mrflick72/vauthenticator:1.0.3 .
