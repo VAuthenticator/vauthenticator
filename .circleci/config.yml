@@ -1,9 +1,9 @@
 version: 2
-
+executorType: machine
 jobs:
   build:
     docker:
       - image: circleci/openjdk:11-jdk-stretch
     steps:
       - checkout
-      - run: mvn clean install docker:build docker:push -DskipTests
+      - run: mvn clean install docker:build docker:push
