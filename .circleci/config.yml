@@ -1,5 +1,4 @@
 version: 2
-executorType: machine
 jobs:
   build:
     docker:
