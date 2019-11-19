@@ -1,11 +1,5 @@
 version: 2
 
-variables:
-  # Instruct Testcontainers to use the daemon of DinD.
-  DOCKER_HOST: "tcp://docker:2375"
-  # Improve performance with overlayfs.
-  DOCKER_DRIVER: overlay2
-
 jobs:
   build:
     docker:
@@ -13,4 +7,3 @@ jobs:
     steps:
       - checkout
       - run: mvn clean install -DskipTests
-      - run: docker build -t mrflick72/vauthenticator:1.0.3 .
