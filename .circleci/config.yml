@@ -15,4 +15,6 @@ workflows:
   build-and-publish:
     jobs:
       - build
-      - docker-publish
+      - docker-publish:
+          requires:
+            - build
