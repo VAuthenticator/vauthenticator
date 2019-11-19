@@ -6,13 +6,16 @@ jobs:
     steps:
       - checkout
       - run: mvn clean install -DskipTests
-      - store_artifacts:
-          path: target/vauthenticator.jar
-          destination: vauthenticator.jar
+      - persist_to_workspace:
+          root: workspace
+          paths:
+            - target
 
   docker-publish:
     machine: true
     steps:
+      - attach_workspace:
+          - /tmp/workspace/target
       - checkout
       - run: docker build -t mrflick72/vauthenticator:1.0.3 .
 
