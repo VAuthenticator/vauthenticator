@@ -7,4 +7,4 @@ jobs:
       - checkout
       - run: mvn clean install -DskipTests
       - setup_remote_docker
-      - run: docker build -t mrflick72/vauthenticator:1.0.3 .
+      - run: mvn docker:build
