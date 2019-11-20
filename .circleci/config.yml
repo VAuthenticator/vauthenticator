@@ -7,4 +7,5 @@ jobs:
       - checkout
       - setup_remote_docker
       - run: mvn clean install
+      - run: docker login -u $DOCKER_HUB_USERNAME --password $DOCKER_HUB_PASSWORD
       - run: mvn docker:build docker:push
