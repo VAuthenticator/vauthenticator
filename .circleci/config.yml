@@ -3,7 +3,6 @@ jobs:
   build:
     docker:
       - image: circleci/openjdk:11-jdk-stretch
-    working_directory: /tmp
     steps:
       - checkout
       - run: mvn clean install -DskipTests
@@ -14,7 +13,6 @@ jobs:
 
   docker-publish:
     machine: true
-    working_directory: /tmp
     steps:
       - attach_workspace:
           at: /tmp/target/vauthenticator.jar
