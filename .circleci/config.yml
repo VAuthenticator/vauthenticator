@@ -17,7 +17,7 @@ jobs:
     working_directory: /tmp
     steps:
       - attach_workspace:
-          - /tmp/target/vauthenticator.jar
+        at: /tmp/target/vauthenticator.jar
       - checkout
       - run: docker build -t mrflick72/vauthenticator:1.0.3 .
 
