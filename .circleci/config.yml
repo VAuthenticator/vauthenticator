@@ -7,4 +7,4 @@ jobs:
       - checkout
       - setup_remote_docker
       - run: mvn clean install
-      - run: mvn docker:build
+      - run: mvn docker:build docker:push
