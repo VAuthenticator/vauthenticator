@@ -13,7 +13,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.view
 
 @RunWith(SpringRunner::class)
-@WebMvcTest(LoginPageController::class, secure = false)
+@WebMvcTest(LoginPageController::class)
 class LoginPageControllerTest {
 
     @Autowired

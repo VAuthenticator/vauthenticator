@@ -23,7 +23,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @RunWith(SpringRunner::class)
 @TestPropertySource(properties = ["key-store.keyStorePairAlias=ALIAS"])
 @Import(TestAdditionalConfiguration::class)
-@WebMvcTest(JwksEndPoint::class, secure = false)
+@WebMvcTest(JwksEndPoint::class)
 class JwksEndPointTest {
 
     @Autowired
