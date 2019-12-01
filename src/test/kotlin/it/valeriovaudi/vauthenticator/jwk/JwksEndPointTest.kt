@@ -5,6 +5,7 @@ import it.valeriovaudi.vauthenticator.keypair.KeyPairFixture.getFileContent
 import it.valeriovaudi.vauthenticator.keypair.KeyPairFixture.keyPair
 import it.valeriovaudi.vauthenticator.keypair.KeyRepository
 import it.valeriovaudi.vauthenticator.openid.connect.nonce.NonceStore
+import it.valeriovaudi.vauthenticator.support.WithMockOAuth2User
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.context.annotation.Import
+import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
@@ -37,6 +39,9 @@ class JwksEndPointTest {
 
     @MockBean
     lateinit var nonceStore: NonceStore
+
+    @MockBean
+    lateinit var redisTemplate: RedisTemplate<*,*>
 
     @Test
     fun `happy path`() {
