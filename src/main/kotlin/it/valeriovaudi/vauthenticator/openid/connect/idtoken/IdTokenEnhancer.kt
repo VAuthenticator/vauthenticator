@@ -32,7 +32,7 @@ class IdTokenEnhancer(private val oidcIss: String,
 
     private fun idTokenAsJwt(authentication: OAuth2Authentication): String {
         val keyPair = keyRepository.getKeyPair()
-        val sub = UUID.randomUUID().toString()
+        val sub = authentication.name
         val idToken = IdToken.createIdToken(oidcIss, sub, authentication, clock)
         println("idToken" + idToken.idTokenAsJwtSignedFor(keyPair))
         return idToken.idTokenAsJwtSignedFor(keyPair)

@@ -1,7 +1,6 @@
 package it.valeriovaudi.vauthenticator.openid.connect.userinfo
 
 import it.valeriovaudi.vauthenticator.account.Account
-import java.util.*
 
 typealias ClaimsProvider = (Account, UserInfo) -> UserInfo
 
@@ -30,7 +29,8 @@ object ProfileClaimsProvider : ClaimsProvider {
 object OpenIdClaimsProvider : ClaimsProvider {
     override fun invoke(account: Account, userInfo: UserInfo): UserInfo {
         return userInfo.copy(
-                sub = UUID.randomUUID().toString())
+                sub = account.mail
+        )
 
     }
 
