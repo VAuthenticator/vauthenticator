@@ -1,6 +1,8 @@
 package it.valeriovaudi.vauthenticator.openid.connect.userinfo
 
 import it.valeriovaudi.vauthenticator.account.Account
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 typealias ClaimsProvider = (Account, UserInfo) -> UserInfo
 
@@ -19,7 +21,8 @@ object ProfileClaimsProvider : ClaimsProvider {
                 name = "${account.firstName} ${account.lastName}",
                 given_name = account.firstName,
                 family_name = account.lastName,
-                middle_name = ""
+                middle_name = "",
+                updated_at = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
         )
 
     }

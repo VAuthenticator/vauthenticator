@@ -1,6 +1,6 @@
 package it.valeriovaudi.vauthenticator.openid.connect.userinfo
 
-import java.time.LocalDateTime
+import java.time.Instant
 
 data class UserInfo(var sub: String = "",
 
@@ -18,7 +18,7 @@ data class UserInfo(var sub: String = "",
                     var birthdate: String? = null,
                     var zoneinfo: String? = null,
                     var locale: String? = null,
-                    var updated_at: LocalDateTime? = null,
+                    var updated_at: Long? = null,
 
         // email claims
                     var email: String? = null,
