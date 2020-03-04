@@ -23,7 +23,7 @@ class FrontChannelLogoutController(private val frontChannelLogout: FrontChannelL
     fun forntChannelGlobalLogout(model: Model,
                                  @RequestParam("post_logout_redirect_uri") postLogoutRedirectUri: String,
                                  @RequestParam("id_token_hint") idTokenHint: String): String {
-        var federatedServers = frontChannelLogout.getFederatedLogoutUrls(idTokenHint)
+        val federatedServers = frontChannelLogout.getFederatedLogoutUrls(idTokenHint)
 
         model.addAttribute("federatedServers", federatedServers)
         return "logout/oidc/global_logout"
