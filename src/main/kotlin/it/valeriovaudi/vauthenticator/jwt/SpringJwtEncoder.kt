@@ -17,9 +17,9 @@ class SpringJwtEncoder(
         private val objectMapper: JsonParser,
         private val verifier: SignatureVerifier) : JwtEncoder {
 
-    override fun claimsFor(token: String): Map<String, Any?> {
+    override fun claimsFor(token: String): Map<String, Any> {
         return try {
-            val jwt = JwtHelper.decode(token)
+            val jwt = JwtHelper.decodeAndVerify(token, verifier)
             val claimsStr = jwt.claims
             val claims = objectMapper.parseMap(claimsStr)
             if (claims.containsKey(AccessTokenConverter.EXP) && claims[AccessTokenConverter.EXP] is Int) {
@@ -39,8 +39,10 @@ class SpringJwtEncoder(
         try {
             content = objectMapper.formatMap(tokenConverter.convertAccessToken(accessToken, authentication))
         } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+
             throw IllegalStateException("Cannot convert access token to JSON", e)
         }
-        return JwtHelper.encode(content, signer).encoded
+        return JwtHelper.encode(content, signer, mapOf("kid" to "myKid")).encoded
     }
 }

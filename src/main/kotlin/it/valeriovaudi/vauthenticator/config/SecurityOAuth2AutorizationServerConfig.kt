@@ -81,6 +81,7 @@ class SecurityOAuth2AutorizationServerConfig(private val accountUserDetailsServi
                 .passwordEncoder(passwordEncoder)
     }
 
+
     @Bean
     fun tokenStore() = JwtTokenStore(accessTokenConverter())
 

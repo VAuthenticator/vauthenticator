@@ -35,6 +35,7 @@ class VAuthenticatorJwtAccessTokenConverter(private val jwtEncoder: JwtEncoder) 
                     encodedRefreshToken.value = claims.get(TOKEN_ID).toString()
                 }
             } catch (e: RuntimeException) {
+                e.printStackTrace()
             }
             val refreshTokenInfo: MutableMap<String, Any?> = LinkedHashMap(
                     accessToken.additionalInformation)
@@ -52,5 +53,13 @@ class VAuthenticatorJwtAccessTokenConverter(private val jwtEncoder: JwtEncoder) 
             result.refreshToken = token
         }
         return result
+    }
+
+    override fun decode(token: String): Map<String, Any> {
+        return jwtEncoder.claimsFor(token)
+    }
+
+    override fun encode(accessToken: OAuth2AccessToken, authentication: OAuth2Authentication): String {
+        return jwtEncoder.encode(accessToken, authentication)
     }
 }
