@@ -9,14 +9,14 @@ import org.springframework.web.bind.annotation.RestController
 
 
 @RestController
-class JwksEndPoint(@Value("\${key-store.keyStorePairAlias:}") private var aslias: String,
+class JwksEndPoint(@Value("\${key-store.keyStorePairAlias:}") private var alias: String,
                    private val keyRepository: KeyRepository,
                    private val jwkFactory: JwkFactory) {
 
     @GetMapping("/.well-known/jwks.json")
     fun jwks(): ResponseEntity<Jwks> {
         val keyPair = keyRepository.getKeyPair()
-        val createJwks = jwkFactory.createJwks(keyPair, aslias)
+        val createJwks = jwkFactory.createJwks(keyPair, alias)
         return ok(Jwks(listOf(createJwks)))
     }
 }

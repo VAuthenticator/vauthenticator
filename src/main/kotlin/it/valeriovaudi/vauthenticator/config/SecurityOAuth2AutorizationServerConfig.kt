@@ -1,8 +1,11 @@
 package it.valeriovaudi.vauthenticator.config
 
-import it.valeriovaudi.vauthenticator.keypair.KeyRepository
+import it.valeriovaudi.vauthenticator.jwt.SpringJwtEncoder
 import it.valeriovaudi.vauthenticator.oauth2.codeservice.RedisAuthorizationCodeServices
+import it.valeriovaudi.vauthenticator.keypair.KeyRepository
+import it.valeriovaudi.vauthenticator.oauth2.token.VAuthenticatorJwtAccessTokenConverter
 import it.valeriovaudi.vauthenticator.openid.connect.idtoken.IdTokenEnhancer
+import it.valeriovaudi.vauthenticator.openid.connect.logout.FrontChannelLogout
 import it.valeriovaudi.vauthenticator.openid.connect.logout.JdbcFrontChannelLogout
 import it.valeriovaudi.vauthenticator.time.Clock
 import it.valeriovaudi.vauthenticator.userdetails.AccountUserDetailsService
@@ -10,17 +13,25 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.data.redis.connection.RedisConnectionFactory
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.jwt.crypto.sign.RsaSigner
+import org.springframework.security.jwt.crypto.sign.RsaVerifier
+import org.springframework.security.oauth2.common.util.JsonParserFactory
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer
+import org.springframework.security.oauth2.provider.token.DefaultAccessTokenConverter
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter
+import org.springframework.security.oauth2.provider.token.store.JwtClaimsSetVerifier
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore
+import java.security.interfaces.RSAPrivateKey
+import java.security.interfaces.RSAPublicKey
 import javax.sql.DataSource
 
 @Configuration
@@ -31,6 +42,9 @@ class SecurityOAuth2AutorizationServerConfig(private val accountUserDetailsServi
 
     @Value("\${auth.oidcIss:}")
     lateinit var oidcIss: String
+
+    @Value("\${key-store.keyStorePairAlias:}")
+    lateinit var alias: String
 
     @Autowired
     lateinit var keyRepository: KeyRepository
@@ -70,15 +84,25 @@ class SecurityOAuth2AutorizationServerConfig(private val accountUserDetailsServi
                 .passwordEncoder(passwordEncoder)
     }
 
+
     @Bean
     fun tokenStore() = JwtTokenStore(accessTokenConverter())
+
 
     @Bean
     fun accessTokenConverter(): JwtAccessTokenConverter {
         val keyPair = keyRepository.getKeyPair()
-        val jwtAccessTokenConverter = JwtAccessTokenConverter()
-        jwtAccessTokenConverter.setKeyPair(keyPair)
-        return jwtAccessTokenConverter
+
+        val jwtClaimsSetVerifier = JwtClaimsSetVerifier {}
+        val privateKey = keyPair.private
+        val rsaSigner = RsaSigner(privateKey as RSAPrivateKey)
+        val publicKey = keyPair.public as RSAPublicKey
+        val verifier = RsaVerifier(publicKey)
+        val tokenConverter = DefaultAccessTokenConverter()
+        val jsonParser = JsonParserFactory.create()
+        val jwtEncoder = SpringJwtEncoder(alias, tokenConverter, rsaSigner, jwtClaimsSetVerifier, jsonParser, verifier)
+
+        return VAuthenticatorJwtAccessTokenConverter(jwtEncoder)
     }
 
     @Bean
