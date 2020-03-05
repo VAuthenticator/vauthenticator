@@ -43,6 +43,9 @@ class SecurityOAuth2AutorizationServerConfig(private val accountUserDetailsServi
     @Value("\${auth.oidcIss:}")
     lateinit var oidcIss: String
 
+    @Value("\${key-store.keyStorePairAlias:}")
+    lateinit var alias: String
+
     @Autowired
     lateinit var keyRepository: KeyRepository
 
@@ -85,13 +88,6 @@ class SecurityOAuth2AutorizationServerConfig(private val accountUserDetailsServi
     @Bean
     fun tokenStore() = JwtTokenStore(accessTokenConverter())
 
- /*   @Bean
-    fun accessTokenConverter(): JwtAccessTokenConverter {
-        val keyPair = keyRepository.getKeyPair()
-        val jwtAccessTokenConverter = JwtAccessTokenConverter()
-        jwtAccessTokenConverter.setKeyPair(keyPair)
-        return jwtAccessTokenConverter
-    }*/
 
     @Bean
     fun accessTokenConverter(): JwtAccessTokenConverter {
@@ -104,7 +100,7 @@ class SecurityOAuth2AutorizationServerConfig(private val accountUserDetailsServi
         val verifier = RsaVerifier(publicKey)
         val tokenConverter = DefaultAccessTokenConverter()
         val jsonParser = JsonParserFactory.create()
-        val jwtEncoder = SpringJwtEncoder(tokenConverter, rsaSigner, jwtClaimsSetVerifier, jsonParser, verifier)
+        val jwtEncoder = SpringJwtEncoder(alias, tokenConverter, rsaSigner, jwtClaimsSetVerifier, jsonParser, verifier)
 
         return VAuthenticatorJwtAccessTokenConverter(jwtEncoder)
     }

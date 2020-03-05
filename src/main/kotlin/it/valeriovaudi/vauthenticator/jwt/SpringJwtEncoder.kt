@@ -10,7 +10,10 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication
 import org.springframework.security.oauth2.provider.token.AccessTokenConverter
 import org.springframework.security.oauth2.provider.token.store.JwtClaimsSetVerifier
 
+const val KID = "kid"
+
 class SpringJwtEncoder(
+        private val kid: String,
         private val tokenConverter: AccessTokenConverter,
         private val signer: Signer,
         private val jwtClaimsSetVerifier: JwtClaimsSetVerifier,
@@ -43,6 +46,6 @@ class SpringJwtEncoder(
 
             throw IllegalStateException("Cannot convert access token to JSON", e)
         }
-        return JwtHelper.encode(content, signer, mapOf("kid" to "myKid")).encoded
+        return JwtHelper.encode(content, signer, mapOf(KID to kid)).encoded
     }
 }
