@@ -6,3 +6,19 @@ spring:
       discovery:
         enabled: true
       fail-fast: true
+
+management:
+  server:
+    servlet:
+      context-path: /
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    logfile:
+      external-file: ${logging.file}
+    shutdown:
+      enabled: true
+    health:
+      show-details: ALWAYS
