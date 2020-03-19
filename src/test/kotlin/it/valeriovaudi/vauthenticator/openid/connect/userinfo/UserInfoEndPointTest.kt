@@ -43,7 +43,7 @@ class UserInfoEndPointTest {
     @WithMockOAuth2User("A_USER_NAME")
     fun `happy path`() {
         val objectMapper = ObjectMapper()
-        val userInfo = UserInfo(sub = "", userName = "A_USER_NAME", authorities = listOf("ROLE_USER"))
+        val userInfo = UserInfo(sub = "", username = "A_USER_NAME", authorities = listOf("ROLE_USER"))
 
         val principal = SecurityContextHolder.getContext().authentication as JwtAuthenticationToken
         given(userInfoFactory.newUserInfo(principal))
