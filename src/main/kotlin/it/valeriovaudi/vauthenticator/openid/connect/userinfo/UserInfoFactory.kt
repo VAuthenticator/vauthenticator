@@ -8,7 +8,7 @@ open class UserInfoFactory(private val accountRepository: AccountRepository) {
     open fun newUserInfo(principal: JwtAuthenticationToken) =
             accountRepository.accountFor(userName(principal))
                     .let { account ->
-                        var userInfo = UserInfo(userName = userName(principal), authorities = authorities(principal))
+                        var userInfo = UserInfo(username = userName(principal), authorities = authorities(principal))
 
                         userInfo = OpenIdClaimsProvider(account, userInfo)
                         userInfo = EmailClaimsProvider(account, userInfo)

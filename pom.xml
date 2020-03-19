@@ -160,6 +160,11 @@
         <profile>
             <id>netflix</id>
 
+            <properties>
+                <imageName>mrflick72/${project.build.finalName}:latest</imageName>
+            </properties>
+
+
             <dependencies>
                 <dependency>
                     <groupId>org.springframework.cloud</groupId>
@@ -192,42 +197,14 @@
                     <version>1.1.1</version>
                 </dependency>
             </dependencies>
-
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.spotify</groupId>
-                        <artifactId>docker-maven-plugin</artifactId>
-                        <version>1.2.1</version>
-                        <configuration>
-                            <imageName>mrflick72/${project.build.finalName}:latest</imageName>
-                            <imageTags>
-                                <imageTag>${pom.version}</imageTag>
-                                <imageTag>latest</imageTag>
-                            </imageTags>
-                            <dockerDirectory>src/main/docker</dockerDirectory>
-                            <resources>
-                                <resource>
-                                    <targetPath>/</targetPath>
-                                    <directory>${project.build.directory}</directory>
-                                    <include>${project.build.finalName}.jar</include>
-                                </resource>
-                            </resources>
-                        </configuration>
-                        <dependencies>
-                            <dependency>
-                                <groupId>javax.activation</groupId>
-                                <artifactId>activation</artifactId>
-                                <version>1.1.1</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
 
         <profile>
             <id>kubernetes</id>
+
+            <properties>
+                <imageName>mrflick72/${project.build.finalName}-k8s:latest</imageName>
+            </properties>
 
             <dependencies>
                 <dependency>
@@ -239,38 +216,6 @@
                     <artifactId>spring-cloud-starter-kubernetes-config</artifactId>
                 </dependency>
             </dependencies>
-
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.spotify</groupId>
-                        <artifactId>docker-maven-plugin</artifactId>
-                        <version>1.2.1</version>
-                        <configuration>
-                            <imageName>mrflick72/${project.build.finalName}-k8s:latest</imageName>
-                            <imageTags>
-                                <imageTag>${pom.version}</imageTag>
-                                <imageTag>latest</imageTag>
-                            </imageTags>
-                            <dockerDirectory>src/main/docker</dockerDirectory>
-                            <resources>
-                                <resource>
-                                    <targetPath>/</targetPath>
-                                    <directory>${project.build.directory}</directory>
-                                    <include>${project.build.finalName}.jar</include>
-                                </resource>
-                            </resources>
-                        </configuration>
-                        <dependencies>
-                            <dependency>
-                                <groupId>javax.activation</groupId>
-                                <artifactId>activation</artifactId>
-                                <version>1.1.1</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
     </profiles>
 
@@ -302,6 +247,34 @@
                         <groupId>org.jetbrains.kotlin</groupId>
                         <artifactId>kotlin-maven-allopen</artifactId>
                         <version>${kotlin.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <configuration>
+                    <imageName>${imageName}</imageName>
+                    <imageTags>
+                        <imageTag>${pom.version}</imageTag>
+                        <imageTag>latest</imageTag>
+                    </imageTags>
+                    <dockerDirectory>src/main/docker</dockerDirectory>
+                    <resources>
+                        <resource>
+                            <targetPath>/</targetPath>
+                            <directory>${project.build.directory}</directory>
+                            <include>${project.build.finalName}.jar</include>
+                        </resource>
+                    </resources>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>javax.activation</groupId>
+                        <artifactId>activation</artifactId>
+                        <version>1.1.1</version>
                     </dependency>
                 </dependencies>
             </plugin>

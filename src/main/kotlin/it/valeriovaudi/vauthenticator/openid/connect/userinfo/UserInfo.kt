@@ -1,7 +1,5 @@
 package it.valeriovaudi.vauthenticator.openid.connect.userinfo
 
-import java.time.Instant
-
 data class UserInfo(var sub: String = "",
 
         // profile scope claims
@@ -25,5 +23,5 @@ data class UserInfo(var sub: String = "",
                     var email_verified: Boolean? = null,
 
         // my custom claims
-                    var userName: String = "",
+                    var username: String = "",
                     var authorities: List<String>)
