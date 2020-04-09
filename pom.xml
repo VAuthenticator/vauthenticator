@@ -5,12 +5,12 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.2.5.RELEASE</version>
+        <version>2.2.6.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>it.valeriovaudi</groupId>
     <artifactId>vauthenticator</artifactId>
-    <version>1.2.2</version>
+    <version>1.2.3</version>
     <name>vauthenticator</name>
     <description>Demo project for Spring Boot</description>
 
@@ -207,6 +207,10 @@
             </properties>
 
             <dependencies>
+                <dependency>
+                    <groupId>io.micrometer</groupId>
+                    <artifactId>micrometer-registry-graphite</artifactId>
+                </dependency>
                 <dependency>
                     <groupId>org.springframework.cloud</groupId>
                     <artifactId>spring-cloud-kubernetes-core</artifactId>
