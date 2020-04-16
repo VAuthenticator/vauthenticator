@@ -1,5 +1,7 @@
 package it.valeriovaudi.vauthenticator.jwt
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.security.jwt.JwtHelper
 import org.springframework.security.jwt.crypto.sign.SignatureVerifier
 import org.springframework.security.jwt.crypto.sign.Signer
@@ -20,6 +22,8 @@ class SpringJwtEncoder(
         private val objectMapper: JsonParser,
         private val verifier: SignatureVerifier) : JwtEncoder {
 
+    private val logger : Logger = LoggerFactory.getLogger(SpringJwtEncoder::class.java)
+
     override fun claimsFor(token: String): Map<String, Any> {
         return try {
             val jwt = JwtHelper.decodeAndVerify(token, verifier)
@@ -32,7 +36,7 @@ class SpringJwtEncoder(
             this.jwtClaimsSetVerifier.verify(claims)
             claims
         } catch (e: Exception) {
-            e.printStackTrace()
+            logger.error("Cannot convert access token to JSON", e)
             throw InvalidTokenException("Cannot convert access token to JSON", e)
         }
     }
@@ -41,9 +45,8 @@ class SpringJwtEncoder(
         val content: String
         try {
             content = objectMapper.formatMap(tokenConverter.convertAccessToken(accessToken, authentication))
-        } catch (e: java.lang.Exception) {
-            e.printStackTrace()
-
+        } catch (e: Exception) {
+            logger.error("Cannot convert access token to JSON", e)
             throw IllegalStateException("Cannot convert access token to JSON", e)
         }
         return JwtHelper.encode(content, signer, mapOf(KID to kid)).encoded
