@@ -4,8 +4,9 @@ data class Account(var accountNonExpired: Boolean = true,
                    var accountNonLocked: Boolean = true,
                    var credentialsNonExpired: Boolean = true,
                    var enabled: Boolean = true,
-
-                   var userRoles: List<String>,
+                   var username: String,
+                   var password: String,
+                   var authorities: List<String>,
 
         // needed for email oidc profile
                    var mail: String,
@@ -14,6 +15,5 @@ data class Account(var accountNonExpired: Boolean = true,
 
                    var firstName: String,
                    var lastName: String
-
 )
 

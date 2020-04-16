@@ -2,6 +2,7 @@ package it.valeriovaudi.vauthenticator.openid.connect.userinfo
 
 import it.valeriovaudi.TestAdditionalConfiguration
 import it.valeriovaudi.vauthenticator.account.AccountRepository
+import it.valeriovaudi.vauthenticator.account.MongoUserRepository
 import it.valeriovaudi.vauthenticator.openid.connect.nonce.NonceStore
 import it.valeriovaudi.vauthenticator.support.WithMockOAuth2User
 import org.junit.Test
@@ -38,6 +39,9 @@ class UserInfoEndPointTest {
 
     @MockBean
     lateinit var accountRepository: AccountRepository
+
+    @MockBean
+    lateinit var mongoUserRepository: MongoUserRepository
 
     @Test
     @WithMockOAuth2User("A_USER_NAME")

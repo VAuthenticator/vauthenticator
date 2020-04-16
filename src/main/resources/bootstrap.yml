@@ -1,4 +1,7 @@
 spring:
+  data:
+    mongodb:
+      database: vauthenticator
   application:
     name: vauthenticator
   cloud:

@@ -1,11 +1,11 @@
 package it.valeriovaudi.vauthenticator.jwk
 
 import it.valeriovaudi.TestAdditionalConfiguration
+import it.valeriovaudi.vauthenticator.account.MongoUserRepository
 import it.valeriovaudi.vauthenticator.keypair.KeyPairFixture.getFileContent
 import it.valeriovaudi.vauthenticator.keypair.KeyPairFixture.keyPair
 import it.valeriovaudi.vauthenticator.keypair.KeyRepository
 import it.valeriovaudi.vauthenticator.openid.connect.nonce.NonceStore
-import it.valeriovaudi.vauthenticator.support.WithMockOAuth2User
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
@@ -41,7 +41,10 @@ class JwksEndPointTest {
     lateinit var nonceStore: NonceStore
 
     @MockBean
-    lateinit var redisTemplate: RedisTemplate<*,*>
+    lateinit var redisTemplate: RedisTemplate<*, *>
+
+    @MockBean
+    lateinit var mongoUserRepository: MongoUserRepository
 
     @Test
     fun `happy path`() {

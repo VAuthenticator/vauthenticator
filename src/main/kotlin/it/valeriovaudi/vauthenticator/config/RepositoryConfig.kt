@@ -4,15 +4,15 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider
 import com.amazonaws.auth.BasicAWSCredentials
 import com.amazonaws.services.s3.AmazonS3ClientBuilder
 import com.fasterxml.jackson.databind.ObjectMapper
+import it.valeriovaudi.vauthenticator.account.CompositeAccountRepository
 import it.valeriovaudi.vauthenticator.account.GetAccount
-import it.valeriovaudi.vauthenticator.account.RabbitAccountRepository
+import it.valeriovaudi.vauthenticator.account.MongoUserRepository
 import it.valeriovaudi.vauthenticator.account.RabbitMessageAccountAdapter
 import it.valeriovaudi.vauthenticator.keypair.FileKeyRepository
 import it.valeriovaudi.vauthenticator.keypair.KeyPairConfig
 import it.valeriovaudi.vauthenticator.keypair.S3Config
 import it.valeriovaudi.vauthenticator.keypair.S3KeyRepository
 import it.valeriovaudi.vauthenticator.openid.connect.userinfo.UserInfoFactory
-import it.valeriovaudi.vauthenticator.userdetails.AccountUserDetailsServiceAdapter
 import org.springframework.amqp.core.Queue
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,7 +21,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.integration.amqp.dsl.Amqp
-import org.springframework.integration.amqp.outbound.AmqpOutboundEndpoint
 import org.springframework.integration.channel.DirectChannel
 import org.springframework.integration.dsl.IntegrationFlows
 import org.springframework.integration.dsl.MessageChannels
@@ -30,12 +29,12 @@ import org.springframework.integration.dsl.MessageChannels
 class RepositoryConfig {
 
     @Bean
-    fun userInfoFactory(accountRepository: RabbitAccountRepository) =
+    fun userInfoFactory(accountRepository: CompositeAccountRepository) =
             UserInfoFactory(accountRepository)
 
     @Bean
-    fun accountRepository(getAccount: GetAccount) =
-            RabbitAccountRepository(getAccount)
+    fun accountRepository(getAccount: GetAccount, mongoUserRepository: MongoUserRepository) =
+            CompositeAccountRepository(getAccount, mongoUserRepository)
 
     @Bean
     @ConfigurationProperties(prefix = "key-store")
@@ -93,12 +92,11 @@ class AccountRepositoryConfig {
             RabbitMessageAccountAdapter(objectMapper)
 
     @Bean
-    fun getAccountPipelineConfig(accountUserDetailsServiceAdapter: AccountUserDetailsServiceAdapter,
-                                 rabbitMessageAccountAdapter: RabbitMessageAccountAdapter,
+    fun getAccountPipelineConfig(rabbitMessageAccountAdapter: RabbitMessageAccountAdapter,
                                  getAccountInboundChannel: DirectChannel,
                                  getAccountOutboundChannel: DirectChannel) =
             IntegrationFlows.from(getAccountInboundChannel)
-                    .handle<AmqpOutboundEndpoint>(Amqp.outboundGateway(rabbitTemplate)
+                    .handle(Amqp.outboundGateway(rabbitTemplate)
                             .routingKey("getAccountInboundQueue")
                             .returnChannel(getAccountOutboundChannel))
                     .transform(rabbitMessageAccountAdapter, "convert")
