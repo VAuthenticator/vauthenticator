@@ -32,7 +32,7 @@ object ProfileClaimsProvider : ClaimsProvider {
 object OpenIdClaimsProvider : ClaimsProvider {
     override fun invoke(account: Account, userInfo: UserInfo): UserInfo {
         return userInfo.copy(
-                sub = account.sub
+                sub = account.email
         )
 
     }
