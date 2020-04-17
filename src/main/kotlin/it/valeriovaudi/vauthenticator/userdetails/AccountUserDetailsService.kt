@@ -10,7 +10,12 @@ open class AccountUserDetailsService(private val mongoUserRepository: MongoAccou
 
     override fun loadUserByUsername(username: String) =
             mongoUserRepository.accountFor(username)
-                    .map { User(it.username, it.password, it.authorities.map { SimpleGrantedAuthority(it) }) }
+                    .map {
+                        println("Account: $it")
+                        User(it.username,
+                                it.password,
+                                it.authorities.map { SimpleGrantedAuthority(it) })
+                    }
                     .orElseThrow { UsernameNotFoundException("the user $username not found") }
 
 

@@ -14,8 +14,9 @@ data class Account(var accountNonExpired: Boolean = true,
 
                    @Id
                    var sub: String,
+
         // needed for email oidc profile
-                   var mail: String,
+                   var email: String,
 
         // needed for profile oidc profile
 

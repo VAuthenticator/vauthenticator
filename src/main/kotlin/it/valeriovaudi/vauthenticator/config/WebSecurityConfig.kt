@@ -53,7 +53,8 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
             RedisAuthorizationCodeServices(redisTemplate as RedisTemplate<String, OAuth2Authentication>, nonceStore)
 
     @Bean
-    fun accountUserDetailsService(mongoUserRepository: MongoAccountRepository) =
+    fun accountUserDetailsService(passwordEncoder: PasswordEncoder,
+                                  mongoUserRepository: MongoAccountRepository) =
             AccountUserDetailsService(mongoUserRepository)
 
 
