@@ -1,7 +1,8 @@
 package it.valeriovaudi.vauthenticator.web.controller
 
-import it.valeriovaudi.vauthenticator.account.MongoUserRepository
+import it.valeriovaudi.vauthenticator.account.MongoAccountRepositoryDelegate
 import it.valeriovaudi.vauthenticator.openid.connect.nonce.NonceStore
+import it.valeriovaudi.vauthenticator.userdetails.AccountUserDetailsService
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -32,7 +33,10 @@ class LoginPageControllerTest {
     lateinit var jwtDecoder: JwtDecoder
 
     @MockBean
-    lateinit var mongoUserRepository: MongoUserRepository
+    lateinit var accountRepository: MongoAccountRepositoryDelegate
+
+    @MockBean
+    lateinit var accountUserDetailsService: AccountUserDetailsService
 
     @Test
     fun `happy path`() {

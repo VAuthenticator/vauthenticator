@@ -1,8 +1,9 @@
 package it.valeriovaudi.vauthenticator.openid.connect.discovery
 
 import it.valeriovaudi.TestAdditionalConfiguration
-import it.valeriovaudi.vauthenticator.account.MongoUserRepository
+import it.valeriovaudi.vauthenticator.account.MongoAccountRepositoryDelegate
 import it.valeriovaudi.vauthenticator.openid.connect.discovery.OpenIdConnectDiscovery.Companion.newOpenIdConnectDiscovery
+import it.valeriovaudi.vauthenticator.userdetails.AccountUserDetailsService
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -28,7 +29,10 @@ class OpenIdConnectDiscoveryEndPointTest {
     lateinit var mockMvc: MockMvc
 
     @MockBean
-    lateinit var mongoUserRepository: MongoUserRepository
+    lateinit var accountRepository: MongoAccountRepositoryDelegate
+
+    @MockBean
+    lateinit var accountUserDetailsService: AccountUserDetailsService
 
     @Test
     fun `happy path`() {

@@ -3,11 +3,8 @@ package it.valeriovaudi.vauthenticator.config
 import com.amazonaws.auth.AWSStaticCredentialsProvider
 import com.amazonaws.auth.BasicAWSCredentials
 import com.amazonaws.services.s3.AmazonS3ClientBuilder
-import com.fasterxml.jackson.databind.ObjectMapper
-import it.valeriovaudi.vauthenticator.account.CompositeAccountRepository
-import it.valeriovaudi.vauthenticator.account.GetAccount
-import it.valeriovaudi.vauthenticator.account.MongoUserRepository
-import it.valeriovaudi.vauthenticator.account.RabbitMessageAccountAdapter
+import it.valeriovaudi.vauthenticator.account.MongoAccountRepository
+import it.valeriovaudi.vauthenticator.account.MongoAccountRepositoryDelegate
 import it.valeriovaudi.vauthenticator.keypair.FileKeyRepository
 import it.valeriovaudi.vauthenticator.keypair.KeyPairConfig
 import it.valeriovaudi.vauthenticator.keypair.S3Config
@@ -20,21 +17,18 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.integration.amqp.dsl.Amqp
-import org.springframework.integration.channel.DirectChannel
-import org.springframework.integration.dsl.IntegrationFlows
 import org.springframework.integration.dsl.MessageChannels
 
 @Configuration
 class RepositoryConfig {
 
     @Bean
-    fun userInfoFactory(accountRepository: CompositeAccountRepository) =
+    fun userInfoFactory(accountRepository: MongoAccountRepository) =
             UserInfoFactory(accountRepository)
 
     @Bean
-    fun accountRepository(getAccount: GetAccount, mongoUserRepository: MongoUserRepository) =
-            CompositeAccountRepository(getAccount, mongoUserRepository)
+    fun accountRepository(delegate: MongoAccountRepositoryDelegate) =
+            MongoAccountRepository(delegate)
 
     @Bean
     @ConfigurationProperties(prefix = "key-store")
@@ -87,7 +81,7 @@ class AccountRepositoryConfig {
             MessageChannels.direct().get()
 
 
-    @Bean
+/*    @Bean
     fun rabbitMessageAccountAdapter(objectMapper: ObjectMapper) =
             RabbitMessageAccountAdapter(objectMapper)
 
@@ -100,5 +94,5 @@ class AccountRepositoryConfig {
                             .routingKey("getAccountInboundQueue")
                             .returnChannel(getAccountOutboundChannel))
                     .transform(rabbitMessageAccountAdapter, "convert")
-                    .get()
+                    .get()*/
 }
