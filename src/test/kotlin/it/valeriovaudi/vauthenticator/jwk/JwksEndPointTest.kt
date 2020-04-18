@@ -1,7 +1,6 @@
 package it.valeriovaudi.vauthenticator.jwk
 
 import it.valeriovaudi.TestAdditionalConfiguration
-import it.valeriovaudi.vauthenticator.account.MongoAccountRepositoryDelegate
 import it.valeriovaudi.vauthenticator.keypair.KeyPairFixture.getFileContent
 import it.valeriovaudi.vauthenticator.keypair.KeyPairFixture.keyPair
 import it.valeriovaudi.vauthenticator.keypair.KeyRepository
@@ -42,9 +41,6 @@ class JwksEndPointTest {
 
     @MockBean
     lateinit var redisTemplate: RedisTemplate<*, *>
-
-    @MockBean
-    lateinit var accountRepository: MongoAccountRepositoryDelegate
 
     @MockBean
     lateinit var accountUserDetailsService: AccountUserDetailsService

@@ -1,6 +1,5 @@
 package it.valeriovaudi.vauthenticator.web.controller
 
-import it.valeriovaudi.vauthenticator.account.MongoAccountRepositoryDelegate
 import it.valeriovaudi.vauthenticator.openid.connect.nonce.NonceStore
 import it.valeriovaudi.vauthenticator.userdetails.AccountUserDetailsService
 import org.junit.Test
@@ -31,9 +30,6 @@ class LoginPageControllerTest {
 
     @MockBean
     lateinit var jwtDecoder: JwtDecoder
-
-    @MockBean
-    lateinit var accountRepository: MongoAccountRepositoryDelegate
 
     @MockBean
     lateinit var accountUserDetailsService: AccountUserDetailsService

@@ -1,7 +1,6 @@
 package it.valeriovaudi.vauthenticator.openid.connect.discovery
 
 import it.valeriovaudi.TestAdditionalConfiguration
-import it.valeriovaudi.vauthenticator.account.MongoAccountRepositoryDelegate
 import it.valeriovaudi.vauthenticator.openid.connect.discovery.OpenIdConnectDiscovery.Companion.newOpenIdConnectDiscovery
 import it.valeriovaudi.vauthenticator.userdetails.AccountUserDetailsService
 import org.junit.Test
@@ -27,9 +26,6 @@ class OpenIdConnectDiscoveryEndPointTest {
 
     @Autowired
     lateinit var mockMvc: MockMvc
-
-    @MockBean
-    lateinit var accountRepository: MongoAccountRepositoryDelegate
 
     @MockBean
     lateinit var accountUserDetailsService: AccountUserDetailsService
