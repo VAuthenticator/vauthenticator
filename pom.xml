@@ -10,7 +10,7 @@
     </parent>
     <groupId>it.valeriovaudi</groupId>
     <artifactId>vauthenticator</artifactId>
-    <version>1.2.3</version>
+    <version>2.0.0</version>
     <name>vauthenticator</name>
     <description>Demo project for Spring Boot</description>
 
@@ -244,6 +244,49 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>1.9.1</version>
+
+                <configuration>
+                    <workingDirectory>src/main/frontend</workingDirectory>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <id>install node and npm</id>
+                        <goals>
+                            <goal>install-node-and-npm</goal>
+                        </goals>
+                        <configuration>
+                            <nodeVersion>v12.16.2</nodeVersion>
+                            <npmVersion>5.8.0</npmVersion>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>npm install</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>install</arguments>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>npm build</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>run-script build</arguments>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
