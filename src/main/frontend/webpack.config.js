@@ -7,6 +7,7 @@ module.exports = {
     mode: 'production',
     entry: {
         login: path.resolve(__dirname, './app/login/index.js'),
+        registration: path.resolve(__dirname, './app/registration/index.js'),
     },
     resolve: {
         extensions: [".js", ".jsx"]
@@ -16,6 +17,11 @@ module.exports = {
             chunks: ['login'],
             filename: "login.html",
             template: path.resolve(__dirname, "../resources/static/login.html")
+        }),
+        new HtmlWebpackPlugin({
+            chunks: ['registration'],
+            filename: "registration.html",
+            template: path.resolve(__dirname, "../resources/static/registration.html")
         })
     ],
     module: {

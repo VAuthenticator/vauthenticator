@@ -15,6 +15,10 @@ const styles = theme => ({
 });
 
 class Login extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
     render() {
         const {classes} = this.props;
         return (
@@ -26,7 +30,7 @@ class Login extends React.Component {
 
                     <Divider />
 
-                    <form action="/vauthenticator/login" method="post">
+                    <form action="login" method="post">
                         <div className={classes.margin}>
                             <Grid container spacing={8} alignItems="flex-end">
                                 <Grid item>
