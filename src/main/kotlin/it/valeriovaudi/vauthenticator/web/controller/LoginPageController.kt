@@ -1,7 +1,6 @@
 package it.valeriovaudi.vauthenticator.web.controller
 
 import it.valeriovaudi.vauthenticator.openid.connect.logout.FrontChannelLogout
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -11,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestParam
 @Controller
 class LoginPageController {
 
-    @GetMapping("/singin")
-    fun loginPage() = "login/singin"
+    @GetMapping("/login")
+    fun loginPage() = "login"
 
 }
 

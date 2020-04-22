@@ -15,13 +15,14 @@ module.exports = {
     plugins: [
         new HtmlWebpackPlugin({
             chunks: ['login'],
-            filename: "login.html",
-            template: path.resolve(__dirname, "../resources/static/login.html")
+            filename: "../templates/login.html",
+            template: path.resolve(__dirname, "../resources/templates/template.html")
         }),
         new HtmlWebpackPlugin({
             chunks: ['registration'],
-            filename: "registration.html",
-            template: path.resolve(__dirname, "../resources/static/registration.html")
+            filename: "../templates/signup.html",
+
+            template: path.resolve(__dirname, "../resources/templates/template.html")
         })
     ],
     module: {
@@ -45,6 +46,7 @@ module.exports = {
     },
     output: {
         filename: 'vauthenticator/[name]_bundle.js',
+        publicPath:"/",
         path: BUID_DIR
     }
 };
