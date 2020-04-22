@@ -22,11 +22,13 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication
 class WebSecurityConfig : WebSecurityConfigurerAdapter() {
 
     private val LOG_IN_URL_PAGE = "/login.html"
-    private val WHITE_LIST = arrayOf("/logout", "/oidc/logout", "/login.html", "/user-info", "/oauth/authorize", "/oauth/confirm_access", "/webjars/**")
+    private val WHITE_LIST = arrayOf("/logout", "/oidc/logout", "/login.html", "/login","/user-info", "/oauth/authorize", "/oauth/confirm_access", "/webjars/**")
 
     override fun configure(http: HttpSecurity) {
         http.csrf().disable()
-                .formLogin().loginPage(LOG_IN_URL_PAGE)
+                .formLogin()
+                    .loginProcessingUrl("/login")
+                    .loginPage(LOG_IN_URL_PAGE)
                 .permitAll()
                 .and()
                 .logout()

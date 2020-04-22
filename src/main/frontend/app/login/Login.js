@@ -26,14 +26,14 @@ class Login extends React.Component {
 
                     <Divider />
 
-                    <form action="login" method="POST">
+                    <form action="/vauthenticator/login" method="post">
                         <div className={classes.margin}>
                             <Grid container spacing={8} alignItems="flex-end">
                                 <Grid item>
                                     <Person fontSize="large"/>
                                 </Grid>
                                 <Grid item md={true} sm={true} xs={true}>
-                                    <TextField id="username" label="Username" type="email" variant="outlined"  fullWidth autoFocus required/>
+                                    <TextField name="username" id="username" label="Username" type="email" variant="outlined"  fullWidth autoFocus required/>
                                 </Grid>
                             </Grid>
                             <Grid container spacing={8} alignItems="flex-end">
@@ -41,7 +41,7 @@ class Login extends React.Component {
                                     <Fingerprint fontSize="large"/>
                                 </Grid>
                                 <Grid item md={true} sm={true} xs={true}>
-                                    <TextField id="username" label="Password" type="password" variant="outlined" fullWidth required/>
+                                    <TextField name="password" id="password" label="Password" type="password" variant="outlined" fullWidth required/>
                                 </Grid>
                             </Grid>
 
