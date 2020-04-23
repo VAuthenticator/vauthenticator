@@ -5,7 +5,7 @@ import it.valeriovaudi.vauthenticator.keypair.KeyPairFixture.getFileContent
 import it.valeriovaudi.vauthenticator.keypair.KeyPairFixture.keyPair
 import it.valeriovaudi.vauthenticator.keypair.KeyRepository
 import it.valeriovaudi.vauthenticator.openid.connect.nonce.NonceStore
-import it.valeriovaudi.vauthenticator.userdetails.AccountUserDetailsService
+import it.valeriovaudi.vauthenticator.security.userdetails.AccountUserDetailsService
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given

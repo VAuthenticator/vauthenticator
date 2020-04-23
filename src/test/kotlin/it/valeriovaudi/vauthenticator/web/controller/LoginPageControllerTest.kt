@@ -1,7 +1,8 @@
 package it.valeriovaudi.vauthenticator.web.controller
 
 import it.valeriovaudi.vauthenticator.openid.connect.nonce.NonceStore
-import it.valeriovaudi.vauthenticator.userdetails.AccountUserDetailsService
+import it.valeriovaudi.vauthenticator.security.login.LoginPageController
+import it.valeriovaudi.vauthenticator.security.userdetails.AccountUserDetailsService
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired

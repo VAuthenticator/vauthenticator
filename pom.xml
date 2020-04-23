@@ -70,17 +70,6 @@
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>bootstrap</artifactId>
-            <version>4.0.0-1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>font-awesome</artifactId>
-            <version>5.0.6</version>
-        </dependency>
 
         <!-- start  security dependencies -->
         <dependency>

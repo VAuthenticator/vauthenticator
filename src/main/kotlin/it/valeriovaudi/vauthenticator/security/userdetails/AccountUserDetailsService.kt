@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator.userdetails
+package it.valeriovaudi.vauthenticator.security.userdetails
 
 import it.valeriovaudi.vauthenticator.account.MongoAccountRepository
 import org.springframework.security.core.authority.SimpleGrantedAuthority

@@ -2,8 +2,8 @@ package it.valeriovaudi.vauthenticator.openid.connect.userinfo
 
 import it.valeriovaudi.TestAdditionalConfiguration
 import it.valeriovaudi.vauthenticator.openid.connect.nonce.NonceStore
+import it.valeriovaudi.vauthenticator.security.userdetails.AccountUserDetailsService
 import it.valeriovaudi.vauthenticator.support.WithMockOAuth2User
-import it.valeriovaudi.vauthenticator.userdetails.AccountUserDetailsService
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given

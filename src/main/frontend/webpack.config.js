@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const BUID_DIR = path.resolve(__dirname + "../../../../target/classes/static");
 
+const templatePath = path.resolve(__dirname, "../resources/templates/template.html");
 module.exports = {
     mode: 'production',
     entry: {
@@ -16,13 +17,17 @@ module.exports = {
         new HtmlWebpackPlugin({
             chunks: ['login'],
             filename: "../templates/login.html",
-            template: path.resolve(__dirname, "../resources/templates/template.html")
+            template: templatePath
         }),
         new HtmlWebpackPlugin({
             chunks: ['registration'],
             filename: "../templates/signup.html",
-
-            template: path.resolve(__dirname, "../resources/templates/template.html")
+            template: templatePath
+        }),
+        new HtmlWebpackPlugin({
+            chunks: ['thank-you'],
+            filename: "../templates/thank-you.html",
+            template: templatePath
         })
     ],
     module: {

@@ -6,8 +6,8 @@ import it.valeriovaudi.vauthenticator.oauth2.codeservice.RedisAuthorizationCodeS
 import it.valeriovaudi.vauthenticator.oauth2.token.VAuthenticatorJwtAccessTokenConverter
 import it.valeriovaudi.vauthenticator.openid.connect.idtoken.IdTokenEnhancer
 import it.valeriovaudi.vauthenticator.openid.connect.logout.JdbcFrontChannelLogout
+import it.valeriovaudi.vauthenticator.security.userdetails.AccountUserDetailsService
 import it.valeriovaudi.vauthenticator.time.Clock
-import it.valeriovaudi.vauthenticator.userdetails.AccountUserDetailsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean

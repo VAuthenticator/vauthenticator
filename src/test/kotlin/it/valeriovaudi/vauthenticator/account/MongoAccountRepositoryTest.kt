@@ -19,15 +19,8 @@ class MongoAccountRepositoryTest {
     lateinit var mongoTemplate: MongoTemplate
 
     private val sub = UUID.randomUUID().toString()
-    private val account = Account(
-            username = "email@domail.com",
-            password = "secret",
-            authorities = emptyList(),
-            sub = sub,
-            email = "email@domail.com",
-            firstName = "A First Name",
-            lastName = "A Last Name"
-    )
+    private val account = AccountTestFixture.anAccount(sub)
+
     lateinit var mongoAccountRepository: MongoAccountRepository
 
     @Before

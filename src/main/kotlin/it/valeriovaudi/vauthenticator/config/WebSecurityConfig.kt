@@ -4,7 +4,7 @@ import it.valeriovaudi.vauthenticator.account.MongoAccountRepository
 import it.valeriovaudi.vauthenticator.oauth2.codeservice.RedisAuthorizationCodeServices
 import it.valeriovaudi.vauthenticator.openid.connect.nonce.NonceStore
 import it.valeriovaudi.vauthenticator.openid.connect.nonce.RedisNonceStore
-import it.valeriovaudi.vauthenticator.userdetails.AccountUserDetailsService
+import it.valeriovaudi.vauthenticator.security.userdetails.AccountUserDetailsService
 import org.springframework.boot.autoconfigure.security.SecurityProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
