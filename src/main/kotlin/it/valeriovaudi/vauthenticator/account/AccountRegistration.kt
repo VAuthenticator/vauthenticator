@@ -1,7 +1,7 @@
 package it.valeriovaudi.vauthenticator.account
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.springframework.amqp.core.*
+import org.springframework.amqp.rabbit.annotation.RabbitListener
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -11,6 +11,7 @@ import org.springframework.integration.core.MessagingTemplate
 import org.springframework.integration.dsl.IntegrationFlows
 import org.springframework.integration.dsl.MessageChannels
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.stereotype.Component
 import org.springframework.stereotype.Service
 
 
@@ -28,27 +29,6 @@ class MessagingAccountRegistration(private val passwordEncoder: PasswordEncoder,
 
 @Configuration
 class MessagingAccountRegistrationPipeline {
-
-    @Bean
-    fun accountRegistrationSender() = MessagingTemplate()
-
-    @Bean
-    fun accountRegistrationQueue(): Queue = Queue("account-registration", false, false, false)
-
-    @Bean
-    fun vauthenticatorRegistrationExchange(): Exchange =
-            DirectExchange("vauthenticator-registration", false, false)
-
-    @Bean
-    fun storeMetricsBinder(accountRegistrationQueue: Queue,
-                           vauthenticatorRegistrationExchange: Exchange) =
-            Declarables(accountRegistrationQueue, vauthenticatorRegistrationExchange,
-                    BindingBuilder
-                            .bind(accountRegistrationQueue)
-                            .to(vauthenticatorRegistrationExchange)
-                            .with("account-registration")
-                            .noargs()
-            )
 
     @Bean
     fun accountRegistrationRequestChannel() = MessageChannels.direct()
@@ -70,4 +50,17 @@ class MessagingAccountRegistrationPipeline {
                     .exchangeName("vauthenticator-registration")
                     .routingKey("account-registration"))
             .get()
+}
+
+@Component
+class AccountStoredListener(private val objectMapper: ObjectMapper) {
+
+    @RabbitListener(queues = ["account-stored"])
+    fun accountStored(message: String) {
+        println(message)
+        val readTree = objectMapper.readTree(message)
+        val email = readTree.get("email")
+        println("email $email")
+        //send to mail sender
+    }
 }
