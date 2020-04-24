@@ -1,28 +1,26 @@
 package it.valeriovaudi.vauthenticator.account
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.amqp.core.*
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.integration.amqp.dsl.Amqp
 import org.springframework.integration.channel.DirectChannel
+import org.springframework.integration.core.MessagingTemplate
 import org.springframework.integration.dsl.IntegrationFlows
 import org.springframework.integration.dsl.MessageChannels
-import org.springframework.messaging.simp.SimpMessagingTemplate
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
 
-interface AccountRegistration {
-
-    fun execute(account: Account)
-
-}
-
 @Service
-class MessagingAccountRegistration(private val accountRegistrationSender: SimpMessagingTemplate) : AccountRegistration {
+class MessagingAccountRegistration(private val passwordEncoder: PasswordEncoder,
+                                   private val messagingTemplate: MessagingTemplate,
+                                   private val accountRegistrationRequestChannel: DirectChannel) : AccountRegistration {
 
     override fun execute(account: Account) {
-        accountRegistrationSender.convertAndSend(account)
+        messagingTemplate.convertAndSend(accountRegistrationRequestChannel, account.copy(password = passwordEncoder.encode(account.password)))
     }
 
 }
@@ -32,11 +30,10 @@ class MessagingAccountRegistration(private val accountRegistrationSender: SimpMe
 class MessagingAccountRegistrationPipeline {
 
     @Bean
-    fun accountRegistrationSender(accountRegistrationRequestChannel: DirectChannel) =
-            SimpMessagingTemplate(accountRegistrationRequestChannel)
+    fun accountRegistrationSender() = MessagingTemplate()
 
     @Bean
-    fun accountRegistrationQueue(): Queue = Queue("account-registration", false, false, true)
+    fun accountRegistrationQueue(): Queue = Queue("account-registration", false, false, false)
 
     @Bean
     fun vauthenticatorRegistrationExchange(): Exchange =
@@ -58,12 +55,16 @@ class MessagingAccountRegistrationPipeline {
 
     @Bean
     fun storeAccountProcess(
+            objectMapper: ObjectMapper,
             rabbitTemplate: RabbitTemplate,
             accountRepository: MongoAccountRepository
     ) = IntegrationFlows.from(accountRegistrationRequestChannel())
             .handle { account: Account ->
                 accountRepository.save(account)
                 AccountConverter.fromDomainToRepresentation(account)
+                        .let {
+                            objectMapper.writeValueAsString(it)
+                        }
             }
             .handle(Amqp.outboundAdapter(rabbitTemplate)
                     .exchangeName("vauthenticator-registration")

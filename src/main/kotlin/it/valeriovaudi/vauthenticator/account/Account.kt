@@ -29,3 +29,7 @@ interface AccountRepository {
     fun accountFor(username: String): Optional<Account>
     fun save(account: Account)
 }
+
+interface AccountRegistration {
+    fun execute(account: Account)
+}

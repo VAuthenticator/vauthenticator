@@ -3,12 +3,12 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const BUID_DIR = path.resolve(__dirname + "../../../../target/classes/static");
 
-const templatePath = path.resolve(__dirname, "../resources/templates/template.html");
 module.exports = {
     mode: 'production',
     entry: {
         login: path.resolve(__dirname, './app/login/index.js'),
-        registration: path.resolve(__dirname, './app/registration/index.js'),
+        signup: path.resolve(__dirname, './app/registration/index.js'),
+        thankyou: path.resolve(__dirname, './app/thankyou/index.js'),
     },
     resolve: {
         extensions: [".js", ".jsx"]
@@ -17,17 +17,17 @@ module.exports = {
         new HtmlWebpackPlugin({
             chunks: ['login'],
             filename: "../templates/login.html",
-            template: templatePath
+            template: path.resolve(__dirname, "../resources/templates/template.html")
         }),
         new HtmlWebpackPlugin({
-            chunks: ['registration'],
+            chunks: ['signup'],
             filename: "../templates/signup.html",
-            template: templatePath
+            template: path.resolve(__dirname, "../resources/templates/template.html")
         }),
         new HtmlWebpackPlugin({
-            chunks: ['thank-you'],
+            chunks: ['thankyou'],
             filename: "../templates/thank-you.html",
-            template: templatePath
+            template: path.resolve(__dirname, "../resources/templates/template.html")
         })
     ],
     module: {
@@ -50,8 +50,8 @@ module.exports = {
         ]
     },
     output: {
-        filename: 'vauthenticator/[name]_bundle.js',
-        publicPath:"/",
+        filename: 'asset/[name]_[hash]_bundle.js',
+        publicPath:"/vauthenticator/",
         path: BUID_DIR
     }
 };
