@@ -30,7 +30,7 @@ const AccountPage = withStyles(styles)((props) => {
 
                 <div className={classes.margin}>
                     <Typography variant="h3" component="h3">
-                       Thank you to have been registrated soon you will recive an email
+                        Thank you to have been registered soon you will receive an email
                     </Typography>
                 </div>
             </Paper>

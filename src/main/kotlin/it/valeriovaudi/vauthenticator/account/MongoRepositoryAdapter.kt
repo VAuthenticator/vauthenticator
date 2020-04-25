@@ -63,8 +63,12 @@ class MongoAccountRepository(private val mongoTemplate: MongoTemplate) : Account
                     mongoTemplate.findOne(Query.query(Criteria.where("username").`is`(username)), Document::class.java, collectionName)
             ).map { document -> fromDocumentToDomain(document) }
 
-    override fun create(account: Account) {
-        mongoTemplate.insert(fromDomainToDocument(account), collectionName)
-    }
+    override fun create(account: Account): Unit =
+            try {
+                mongoTemplate.insert(fromDomainToDocument(account), collectionName); Unit
+            } catch (e: RuntimeException) {
+                throw UserAlreadyRegistered()
+            }
+
 }
 
