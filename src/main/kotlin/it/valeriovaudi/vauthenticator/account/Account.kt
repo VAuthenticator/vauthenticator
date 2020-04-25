@@ -27,7 +27,7 @@ data class Account(var accountNonExpired: Boolean = true,
 
 interface AccountRepository {
     fun accountFor(username: String): Optional<Account>
-    fun save(account: Account)
+    fun create(account: Account)
 }
 
 interface AccountRegistration {

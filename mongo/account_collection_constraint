@@ -1,0 +1,3 @@
+db.account.createIndex( { "email": 1 }, { unique: true } )
+db.account.createIndex( { "username": 1 }, { unique: true } )
+db.account.createIndex( { "sub": 1 }, { unique: true } )

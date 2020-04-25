@@ -40,7 +40,7 @@ class MessagingAccountRegistrationPipeline {
             accountRepository: MongoAccountRepository
     ) = IntegrationFlows.from(accountRegistrationRequestChannel())
             .handle { account: Account ->
-                accountRepository.save(account)
+                accountRepository.create(account)
                 AccountConverter.fromDomainToRepresentation(account)
                         .let {
                             objectMapper.writeValueAsString(it)

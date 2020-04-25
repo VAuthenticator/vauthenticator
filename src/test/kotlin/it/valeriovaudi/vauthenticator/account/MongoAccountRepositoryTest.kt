@@ -30,7 +30,7 @@ class MongoAccountRepositoryTest {
 
     @Test
     fun `find an account by email`() {
-        mongoAccountRepository.save(account)
+        mongoAccountRepository.create(account)
 
         val findByUsername: Account = mongoAccountRepository.accountFor(account.username).orElseThrow()
         assertThat(findByUsername, equalTo(account))

@@ -6,7 +6,6 @@ import org.bson.Document
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
-import org.springframework.data.mongodb.core.query.Update
 import java.util.*
 
 object AccountMapper {
@@ -64,11 +63,8 @@ class MongoAccountRepository(private val mongoTemplate: MongoTemplate) : Account
                     mongoTemplate.findOne(Query.query(Criteria.where("username").`is`(username)), Document::class.java, collectionName)
             ).map { document -> fromDocumentToDomain(document) }
 
-    override fun save(account: Account) {
-        mongoTemplate.upsert(findById(account.sub),
-                Update.fromDocument(fromDomainToDocument(account)),
-                collectionName
-        )
+    override fun create(account: Account) {
+        mongoTemplate.insert(fromDomainToDocument(account), collectionName)
     }
 }
 
