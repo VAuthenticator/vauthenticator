@@ -20,27 +20,30 @@ class AccountRegistrationException(e: RuntimeException) : RuntimeException(e)
 
 object AccountMapper {
     fun fromDomainToDocument(account: Account) =
-            Document(mutableMapOf(
-                    "_id" to account.sub,
+            UUID.randomUUID().toString()
+                    .let {
+                        Document(mutableMapOf(
+                                "_id" to it,
 
-                    "accountNonExpired" to account.accountNonExpired,
-                    "accountNonLocked" to account.accountNonLocked,
-                    "credentialsNonExpired" to account.credentialsNonExpired,
-                    "enabled" to account.enabled,
+                                "accountNonExpired" to account.accountNonExpired,
+                                "accountNonLocked" to account.accountNonLocked,
+                                "credentialsNonExpired" to account.credentialsNonExpired,
+                                "enabled" to account.enabled,
 
-                    "username" to account.username,
-                    "password" to account.password,
-                    "authorities" to account.authorities,
+                                "username" to account.username,
+                                "password" to account.password,
+                                "authorities" to account.authorities,
 
-                    "sub" to account.sub,
+                                "sub" to it,
 
-                    "email" to account.email,
-                    "emailVerified" to true,
+                                "email" to account.email,
+                                "emailVerified" to true,
 
-                    "firstName" to account.firstName,
-                    "lastName" to account.lastName
-            )
-                    as Map<String, Any>?)
+                                "firstName" to account.firstName,
+                                "lastName" to account.lastName
+                        ) as Map<String, Any>?)
+                    }
+
 
     fun fromDocumentToDomain(document: Document) =
             Account(accountNonExpired = document.getBoolean("accountNonExpired"),
@@ -68,7 +71,7 @@ class MongoAccountRepository(private val mongoTemplate: MongoTemplate) : Account
 
     companion object {
         fun findById(id: String) = Query.query(Criteria.where("_id").`is`(id))
-        fun findByUserName(username: String) = Query.query(Criteria.where("userName").`is`(username))
+        fun findByUserName(username: String) = Query.query(Criteria.where("username").`is`(username))
         const val collectionName = "account"
     }
 

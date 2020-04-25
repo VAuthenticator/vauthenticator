@@ -1,8 +1,8 @@
 package it.valeriovaudi.vauthenticator.account
 
-data class Account(var accountNonExpired: Boolean = true,
-                   var accountNonLocked: Boolean = true,
-                   var credentialsNonExpired: Boolean = true,
+data class Account(var accountNonExpired: Boolean = false,
+                   var accountNonLocked: Boolean = false,
+                   var credentialsNonExpired: Boolean = false,
                    var enabled: Boolean = true,
 
                    var username: String,
