@@ -56,7 +56,7 @@ const AccountPage = withStyles(styles)((props) => {
                                 <Face fontSize="large"/>
                             </Grid>
                             <Grid item md={true} sm={true} xs={true}>
-                                <TextField id="firstname" name="firstname" type="text" label="First Name"
+                                <TextField id="firstName" name="firstName" type="text" label="First Name"
                                            fullWidth={true} variant="outlined"/>
                             </Grid>
                         </Grid>
@@ -66,7 +66,7 @@ const AccountPage = withStyles(styles)((props) => {
                                 <Face fontSize="large"/>
                             </Grid>
                             <Grid item md={true} sm={true} xs={true}>
-                                <TextField id="lastname" name="lastname" type="text" label="Last Name" fullWidth={true}
+                                <TextField id="lastName" name="lastName" type="text" label="Last Name" fullWidth={true}
                                            variant="outlined"/>
                             </Grid>
                         </Grid>

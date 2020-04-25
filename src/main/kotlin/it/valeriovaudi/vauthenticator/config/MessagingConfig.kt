@@ -33,19 +33,31 @@ class MessagingConfig {
     fun accountStoredQueue(): Queue = Queue("account-stored", false, false, false)
 
     @Bean
+    fun accountOnAuthSystemCreationError(): Queue = Queue("account-on-auth-system-creation-error", false, false, false)
+
+    @Bean
     fun vauthenticatorRegistrationExchange(): Exchange =
             DirectExchange("vauthenticator-registration", false, false)
 
     @Bean
-    fun accountRegistrationBinder(accountRegistrationQueue: Queue,
+    fun accountStoredQueueBinder(accountRegistrationQueue: Queue,
                                   vauthenticatorRegistrationExchange: Exchange) =
             Declarables(accountRegistrationQueue, vauthenticatorRegistrationExchange,
                     BindingBuilder
                             .bind(accountRegistrationQueue)
                             .to(vauthenticatorRegistrationExchange)
                             .with("account-registration")
-                            .noargs()
-            )
+                            .noargs())
+
+    @Bean
+    fun accountOnAuthSystemCreationErrorBinder(accountOnAuthSystemCreationError: Queue,
+                                  vauthenticatorRegistrationExchange: Exchange) =
+            Declarables(accountOnAuthSystemCreationError, vauthenticatorRegistrationExchange,
+                    BindingBuilder
+                            .bind(accountOnAuthSystemCreationError)
+                            .to(vauthenticatorRegistrationExchange)
+                            .with("account-on-auth-system-creation-error")
+                            .noargs())
 
     @Bean
     fun accountStoredBinder(accountStoredQueue: Queue,

@@ -3,10 +3,20 @@ package it.valeriovaudi.vauthenticator.account
 import it.valeriovaudi.vauthenticator.account.AccountMapper.fromDocumentToDomain
 import it.valeriovaudi.vauthenticator.account.AccountMapper.fromDomainToDocument
 import org.bson.Document
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
 import java.util.*
+
+interface AccountRepository {
+    fun accountFor(username: String): Optional<Account>
+    fun create(account: Account)
+}
+
+class AccountRegistrationException(e: RuntimeException) : RuntimeException(e)
+
 
 object AccountMapper {
     fun fromDomainToDocument(account: Account) =
@@ -53,21 +63,26 @@ object AccountMapper {
 }
 
 class MongoAccountRepository(private val mongoTemplate: MongoTemplate) : AccountRepository {
+
+    private val logger: Logger = LoggerFactory.getLogger(MongoAccountRepository::class.java)
+
     companion object {
         fun findById(id: String) = Query.query(Criteria.where("_id").`is`(id))
+        fun findByUserName(username: String) = Query.query(Criteria.where("userName").`is`(username))
         const val collectionName = "account"
     }
 
-    override fun accountFor(username: String): Optional<Account> =
+    override fun accountFor(userName: String): Optional<Account> =
             Optional.ofNullable(
-                    mongoTemplate.findOne(Query.query(Criteria.where("username").`is`(username)), Document::class.java, collectionName)
+                    mongoTemplate.findOne(findByUserName(userName), Document::class.java, collectionName)
             ).map { document -> fromDocumentToDomain(document) }
 
-    override fun create(account: Account): Unit =
+    override fun create(account: Account) =
             try {
                 mongoTemplate.insert(fromDomainToDocument(account), collectionName); Unit
             } catch (e: RuntimeException) {
-                throw UserAlreadyRegistered()
+                logger.error(e.message, e)
+                throw AccountRegistrationException(e)
             }
 
 }

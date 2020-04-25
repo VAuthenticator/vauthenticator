@@ -3,97 +3,87 @@ package it.valeriovaudi.vauthenticator.account
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.amqp.rabbit.annotation.RabbitListener
 import org.springframework.amqp.rabbit.core.RabbitTemplate
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
-import org.springframework.integration.amqp.dsl.Amqp
-import org.springframework.integration.annotation.Gateway
-import org.springframework.integration.annotation.MessagingGateway
-import org.springframework.integration.channel.DirectChannel
-import org.springframework.integration.core.MessagingTemplate
-import org.springframework.integration.dsl.IntegrationFlows.from
-import org.springframework.integration.dsl.MessageChannels
-import org.springframework.messaging.Message
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.stereotype.Component
-import org.springframework.stereotype.Service
 
+class AccountRegistration(private val accountRepository: AccountRepository,
+                          private val passwordEncoder: AccountPasswordEncoder,
+                          private val eventPublisher: AccountRegistrationEventPublisher) {
 
-@Service
-class MessagingAccountRegistration(private val passwordEncoder: PasswordEncoder,
-                                   private val messagingTemplate: MessagingTemplate,
-                                   private val accountRegistrationRequestChannel: DirectChannel,
-                                   private val accountRegistrationGateway: AccountRegistrationGateway
-) : AccountRegistration {
+    fun execute(account: Account) {
+        try {
+            accountRepository.create(account.copy(password = passwordEncoder.encode(account.password)))
+            eventPublisher.accountCreated(
+                    AccountCreated(email = account.email,
+                            firstName = account.firstName,
+                            lastName = account.lastName)
+            )
+        } catch (e: AccountRegistrationException) {
+            eventPublisher.accountCreationErrorOnAuthSystem(
+                    AccountCreationErrorOnAuthSystem(email = account.email,
+                            firstName = account.firstName,
+                            lastName = account.lastName,
+                            error = AccountRegistrationError(e.message!!))
+            )
+        }
+    }
+}
 
-    override fun execute(account: Account) {
-        val payload = account.copy(password = passwordEncoder.encode(account.password))
+sealed class AccountEvents
+data class AccountCreated(val email: String, val firstName: String, val lastName: String) : AccountEvents()
+data class AccountCreationErrorOnAuthSystem(val email: String, val firstName: String, val lastName: String, val error: AccountRegistrationError) : AccountEvents()
 
-        /*val message = withPayload(payload)
-                .setHeader("errorChannel", "accountRegistrationErrorChannel")
-                .build()
+data class AccountRegistrationError(val message: String) : AccountEvents()
 
-        messagingTemplate.send(accountRegistrationRequestChannel, message)*/
+interface AccountRegistrationEventPublisher {
+    fun accountCreated(accountCreated: AccountCreated)
+    fun accountCreationErrorOnAuthSystem(accountCreationErrorOnAuthSystem: AccountCreationErrorOnAuthSystem)
+}
 
-        accountRegistrationGateway.execute(payload)
+interface AccountPasswordEncoder {
+    fun encode(password: String): String
+}
+
+class RabbitMqAccountRegistrationEventPublisher(
+        private val objectMapper: ObjectMapper,
+        private val rabbitTemplate: RabbitTemplate
+) : AccountRegistrationEventPublisher {
+    val exchange = "vauthenticator-registration"
+
+    override fun accountCreated(accountCreated: AccountCreated) {
+        rabbitTemplate.convertAndSend(
+                exchange, "account-registration",
+                objectMapper.writeValueAsString(accountCreated)
+        )
     }
 
+    override fun accountCreationErrorOnAuthSystem(accountCreationErrorOnAuthSystem: AccountCreationErrorOnAuthSystem) =
+            rabbitTemplate.convertAndSend(
+                    exchange, "account-on-auth-system-creation-error",
+                    objectMapper.writeValueAsString(accountCreationErrorOnAuthSystem)
+            )
 }
 
-@MessagingGateway(errorChannel = "accountRegistrationErrorChannel")
-interface AccountRegistrationGateway {
+class BcryptAccountPasswordEncoder(private val passwordEncoder: PasswordEncoder) : AccountPasswordEncoder {
 
-    @Gateway(requestChannel = "accountRegistrationRequestChannel")
-    fun execute(account: Account)
+    override fun encode(password: String) = passwordEncoder.encode(password)
 
 }
 
-@Configuration
-class MessagingAccountRegistrationPipeline {
+class AccountRegistrationEventsListener(private val objectMapper: ObjectMapper) {
 
-    @Bean
-    fun accountRegistrationRequestChannel() = MessageChannels.direct().get()
-
-    @Bean
-    fun accountRegistrationErrorChannel() = MessageChannels.publishSubscribe().get()
-
-    @Autowired
-    lateinit var objectMapper: ObjectMapper;
-
-    @Autowired
-    lateinit var rabbitTemplate: RabbitTemplate;
-
-    @Autowired
-    lateinit var accountRepository: MongoAccountRepository;
-
-    @Bean
-    fun storeAccountProcess() = from(accountRegistrationRequestChannel())
-            .handle { account: Account -> storeAccount(account) }
-            .handle(Amqp.outboundAdapter(rabbitTemplate)
-                    .exchangeName("vauthenticator-registration")
-                    .routingKey("account-registration"))
-            .get()
-
-    @Bean
-    fun storeAccountErrorHandlingProcess() = from(accountRegistrationErrorChannel())
-            .handle { errorMessage: Message<*> -> print(" $errorMessage") }
-            .get()
-
-    private fun storeAccount(account: Account) {
-        accountRepository.create(account)
-        AccountConverter.fromDomainToRepresentation(account)
-                .let {
-                    objectMapper.writeValueAsString(it)
-                }
+    @RabbitListener(queues = ["account-on-auth-system-creation-error"])
+    fun accountCreationErrorOnAuthSystem(message: String) {
+        println("account-on-auth-system-creation-error")
+        println(message)
+        val readTree = objectMapper.readTree(message)
+        val email = readTree.get("email")
+        println("email $email")
+        //send to mail sender
     }
-
-}
-
-@Component
-class AccountStoredListener(private val objectMapper: ObjectMapper) {
 
     @RabbitListener(queues = ["account-stored"])
     fun accountStored(message: String) {
+        println("account-stored")
         println(message)
         val readTree = objectMapper.readTree(message)
         val email = readTree.get("email")

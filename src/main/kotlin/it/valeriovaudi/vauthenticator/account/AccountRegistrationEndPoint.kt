@@ -26,8 +26,8 @@ object AccountConverter {
             email = representation.email,
             password = representation.password,
             username = representation.email,
-            firstName = representation.firstname,
-            lastName = representation.lastname,
+            firstName = representation.firstName,
+            lastName = representation.lastName,
             sub = representation.email,
             authorities = listOf("ROLE_USER"),
             accountNonExpired = false,
@@ -38,9 +38,9 @@ object AccountConverter {
     fun fromDomainToRepresentation(account: Account): AccountRepresentation =
             AccountRepresentation(email = account.username,
                     password = "",
-                    firstname = account.firstName,
-                    lastname = account.lastName
+                    firstName = account.firstName,
+                    lastName = account.lastName
             )
 }
 
-class AccountRepresentation(var email: String, var password: String, var firstname: String, var lastname: String)
+class AccountRepresentation(var email: String, var password: String, var firstName: String, var lastName: String)

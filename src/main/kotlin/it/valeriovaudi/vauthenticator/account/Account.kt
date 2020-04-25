@@ -1,8 +1,5 @@
 package it.valeriovaudi.vauthenticator.account
 
-
-import java.util.*
-
 data class Account(var accountNonExpired: Boolean = true,
                    var accountNonLocked: Boolean = true,
                    var credentialsNonExpired: Boolean = true,
@@ -24,16 +21,3 @@ data class Account(var accountNonExpired: Boolean = true,
                    var firstName: String,
                    var lastName: String
 )
-
-interface AccountRepository {
-    fun accountFor(username: String): Optional<Account>
-    fun create(account: Account)
-}
-
-interface AccountRegistration {
-    fun execute(account: Account)
-}
-
-class UserAlreadyRegistered : RuntimeException() {
-
-}
