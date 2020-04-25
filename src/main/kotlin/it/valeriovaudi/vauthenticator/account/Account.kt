@@ -1,7 +1,6 @@
 package it.valeriovaudi.vauthenticator.account
 
 
-import org.springframework.messaging.MessagingException
 import java.util.*
 
 data class Account(var accountNonExpired: Boolean = true,
@@ -35,6 +34,6 @@ interface AccountRegistration {
     fun execute(account: Account)
 }
 
-class UserAlreadyRegistered : MessagingException("") {
+class UserAlreadyRegistered : RuntimeException() {
 
 }

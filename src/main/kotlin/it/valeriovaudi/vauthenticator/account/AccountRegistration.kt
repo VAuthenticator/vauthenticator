@@ -7,16 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.integration.amqp.dsl.Amqp
-import org.springframework.integration.annotation.ServiceActivator
+import org.springframework.integration.annotation.Gateway
+import org.springframework.integration.annotation.MessagingGateway
 import org.springframework.integration.channel.DirectChannel
 import org.springframework.integration.core.MessagingTemplate
-import org.springframework.integration.dsl.EnricherSpec
 import org.springframework.integration.dsl.IntegrationFlows.from
 import org.springframework.integration.dsl.MessageChannels
-import org.springframework.integration.dsl.Pollers
 import org.springframework.messaging.Message
-import org.springframework.messaging.MessageHandler
-import org.springframework.messaging.MessageHeaders
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
 import org.springframework.stereotype.Service
@@ -25,11 +22,29 @@ import org.springframework.stereotype.Service
 @Service
 class MessagingAccountRegistration(private val passwordEncoder: PasswordEncoder,
                                    private val messagingTemplate: MessagingTemplate,
-                                   private val accountRegistrationRequestChannel: DirectChannel) : AccountRegistration {
+                                   private val accountRegistrationRequestChannel: DirectChannel,
+                                   private val accountRegistrationGateway: AccountRegistrationGateway
+) : AccountRegistration {
 
     override fun execute(account: Account) {
-        messagingTemplate.convertAndSend(accountRegistrationRequestChannel, account.copy(password = passwordEncoder.encode(account.password)))
+        val payload = account.copy(password = passwordEncoder.encode(account.password))
+
+        /*val message = withPayload(payload)
+                .setHeader("errorChannel", "accountRegistrationErrorChannel")
+                .build()
+
+        messagingTemplate.send(accountRegistrationRequestChannel, message)*/
+
+        accountRegistrationGateway.execute(payload)
     }
+
+}
+
+@MessagingGateway(errorChannel = "accountRegistrationErrorChannel")
+interface AccountRegistrationGateway {
+
+    @Gateway(requestChannel = "accountRegistrationRequestChannel")
+    fun execute(account: Account)
 
 }
 
@@ -37,10 +52,10 @@ class MessagingAccountRegistration(private val passwordEncoder: PasswordEncoder,
 class MessagingAccountRegistrationPipeline {
 
     @Bean
-    fun accountRegistrationRequestChannel() = MessageChannels.direct()
+    fun accountRegistrationRequestChannel() = MessageChannels.direct().get()
 
     @Bean
-    fun accountRegistrationErrorChannel() = MessageChannels.publishSubscribe()
+    fun accountRegistrationErrorChannel() = MessageChannels.publishSubscribe().get()
 
     @Autowired
     lateinit var objectMapper: ObjectMapper;
@@ -53,8 +68,6 @@ class MessagingAccountRegistrationPipeline {
 
     @Bean
     fun storeAccountProcess() = from(accountRegistrationRequestChannel())
-            .enrich { t: EnricherSpec -> t.header(MessageHeaders.ERROR_CHANNEL, "accountRegistrationErrorChannel", true) }
-            .log()
             .handle { account: Account -> storeAccount(account) }
             .handle(Amqp.outboundAdapter(rabbitTemplate)
                     .exchangeName("vauthenticator-registration")
@@ -62,8 +75,8 @@ class MessagingAccountRegistrationPipeline {
             .get()
 
     @Bean
-    fun accountAlreadystoredPipeline() = from(accountRegistrationErrorChannel())
-            .handle { e: Message<*> -> println("Errror: $e") }
+    fun storeAccountErrorHandlingProcess() = from(accountRegistrationErrorChannel())
+            .handle { errorMessage: Message<*> -> print(" $errorMessage") }
             .get()
 
     private fun storeAccount(account: Account) {
@@ -74,12 +87,6 @@ class MessagingAccountRegistrationPipeline {
                 }
     }
 
-    @Bean
-    fun poller() = Pollers.fixedRate(10);
-
-    @Bean
-    @ServiceActivator(inputChannel = "accountRegistrationErrorChannel")
-    fun scatterGatherDistribution(): MessageHandler = MessageHandler { message -> println("Errror: $message") }
 }
 
 @Component
