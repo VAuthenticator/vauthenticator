@@ -1,7 +1,6 @@
-package it.valeriovaudi.vauthenticator.web.controller
+package it.valeriovaudi.vauthenticator.security.login
 
 import it.valeriovaudi.vauthenticator.openid.connect.nonce.NonceStore
-import it.valeriovaudi.vauthenticator.security.login.LoginPageController
 import it.valeriovaudi.vauthenticator.security.userdetails.AccountUserDetailsService
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -37,10 +36,8 @@ class LoginPageControllerTest {
 
     @Test
     fun `happy path`() {
-        mockMvc.perform(get("/singin"))
+        mockMvc.perform(get("/login"))
                 .andExpect(status().isOk)
-                .andExpect(view().name("login/singin"))
-
-
+                .andExpect(view().name("login"))
     }
 }

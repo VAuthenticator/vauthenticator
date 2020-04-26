@@ -20,29 +20,26 @@ class AccountRegistrationException(e: RuntimeException) : RuntimeException(e)
 
 object AccountMapper {
     fun fromDomainToDocument(account: Account) =
-            UUID.randomUUID().toString()
-                    .let {
-                        Document(mutableMapOf(
-                                "_id" to it,
+            Document(mutableMapOf(
+                    "_id" to account.sub,
 
-                                "accountNonExpired" to account.accountNonExpired,
-                                "accountNonLocked" to account.accountNonLocked,
-                                "credentialsNonExpired" to account.credentialsNonExpired,
-                                "enabled" to account.enabled,
+                    "accountNonExpired" to account.accountNonExpired,
+                    "accountNonLocked" to account.accountNonLocked,
+                    "credentialsNonExpired" to account.credentialsNonExpired,
+                    "enabled" to account.enabled,
 
-                                "username" to account.username,
-                                "password" to account.password,
-                                "authorities" to account.authorities,
+                    "username" to account.username,
+                    "password" to account.password,
+                    "authorities" to account.authorities,
 
-                                "sub" to it,
+                    "sub" to account.sub,
 
-                                "email" to account.email,
-                                "emailVerified" to true,
+                    "email" to account.email,
+                    "emailVerified" to true,
 
-                                "firstName" to account.firstName,
-                                "lastName" to account.lastName
-                        ) as Map<String, Any>?)
-                    }
+                    "firstName" to account.firstName,
+                    "lastName" to account.lastName
+            ) as Map<String, Any>?)
 
 
     fun fromDocumentToDomain(document: Document) =

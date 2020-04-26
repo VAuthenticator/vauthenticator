@@ -11,7 +11,8 @@ class AccountRegistration(private val accountRepository: AccountRepository,
 
     fun execute(account: Account) {
         try {
-            accountRepository.create(account.copy(password = passwordEncoder.encode(account.password)))
+            val password = passwordEncoder.encode(account.password)
+            accountRepository.create(account.copy(password = password))
             eventPublisher.accountCreated(
                     AccountCreated(email = account.email,
                             firstName = account.firstName,
