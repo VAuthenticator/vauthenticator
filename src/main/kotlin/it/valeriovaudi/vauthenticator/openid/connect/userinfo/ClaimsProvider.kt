@@ -8,7 +8,7 @@ typealias ClaimsProvider = (Account, UserInfo) -> UserInfo
 
 object EmailClaimsProvider : ClaimsProvider {
     override fun invoke(account: Account, userInfo: UserInfo): UserInfo {
-        return userInfo.copy(email = account.mail, email_verified = true);
+        return userInfo.copy(email = account.email, email_verified = true);
     }
 
 }
@@ -32,9 +32,8 @@ object ProfileClaimsProvider : ClaimsProvider {
 object OpenIdClaimsProvider : ClaimsProvider {
     override fun invoke(account: Account, userInfo: UserInfo): UserInfo {
         return userInfo.copy(
-                sub = account.mail
+                sub = account.sub
         )
-
     }
 
 }

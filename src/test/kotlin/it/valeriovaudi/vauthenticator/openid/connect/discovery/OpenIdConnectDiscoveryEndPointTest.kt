@@ -2,10 +2,12 @@ package it.valeriovaudi.vauthenticator.openid.connect.discovery
 
 import it.valeriovaudi.TestAdditionalConfiguration
 import it.valeriovaudi.vauthenticator.openid.connect.discovery.OpenIdConnectDiscovery.Companion.newOpenIdConnectDiscovery
+import it.valeriovaudi.vauthenticator.security.userdetails.AccountUserDetailsService
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestPropertySource
@@ -24,6 +26,9 @@ class OpenIdConnectDiscoveryEndPointTest {
 
     @Autowired
     lateinit var mockMvc: MockMvc
+
+    @MockBean
+    lateinit var accountUserDetailsService: AccountUserDetailsService
 
     @Test
     fun `happy path`() {

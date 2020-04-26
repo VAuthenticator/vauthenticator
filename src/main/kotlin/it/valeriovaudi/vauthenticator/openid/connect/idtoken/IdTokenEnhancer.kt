@@ -1,14 +1,15 @@
 package it.valeriovaudi.vauthenticator.openid.connect.idtoken
 
+import it.valeriovaudi.vauthenticator.account.AccountRepository
 import it.valeriovaudi.vauthenticator.keypair.KeyRepository
 import it.valeriovaudi.vauthenticator.time.Clock
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken
 import org.springframework.security.oauth2.common.OAuth2AccessToken
 import org.springframework.security.oauth2.provider.OAuth2Authentication
 import org.springframework.security.oauth2.provider.token.TokenEnhancer
-import java.util.*
 
 class IdTokenEnhancer(private val oidcIss: String,
+                      private val accountRepository : AccountRepository,
                       private val keyRepository: KeyRepository,
                       private val clock: Clock) : TokenEnhancer {
 
@@ -32,7 +33,7 @@ class IdTokenEnhancer(private val oidcIss: String,
 
     private fun idTokenAsJwt(authentication: OAuth2Authentication): String {
         val keyPair = keyRepository.getKeyPair()
-        val sub = authentication.name
+        val sub = accountRepository.accountFor(authentication.name).map { it.sub }.orElse("")
         val idToken = IdToken.createIdToken(oidcIss, sub, authentication, clock)
         println("idToken" + idToken.idTokenAsJwtSignedFor(keyPair))
         return idToken.idTokenAsJwtSignedFor(keyPair)

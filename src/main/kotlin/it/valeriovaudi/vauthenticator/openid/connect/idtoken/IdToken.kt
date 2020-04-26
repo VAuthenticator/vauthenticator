@@ -32,7 +32,7 @@ data class IdToken(val email: String,
                                     sub = sub,
                                     aud = authentication.oAuth2Request.clientId,
                                     nonce = nonce(authentication),
-                                    exp = now * 20,
+                                    exp = now * 20, //todo
                                     iat = now,
                                     auth_time = now)
                         }

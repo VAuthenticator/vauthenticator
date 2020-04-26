@@ -5,7 +5,7 @@ import it.valeriovaudi.vauthenticator.keypair.KeyPairFixture.getFileContent
 import it.valeriovaudi.vauthenticator.keypair.KeyPairFixture.keyPair
 import it.valeriovaudi.vauthenticator.keypair.KeyRepository
 import it.valeriovaudi.vauthenticator.openid.connect.nonce.NonceStore
-import it.valeriovaudi.vauthenticator.support.WithMockOAuth2User
+import it.valeriovaudi.vauthenticator.security.userdetails.AccountUserDetailsService
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
@@ -20,7 +20,6 @@ import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-
 
 @RunWith(SpringRunner::class)
 @TestPropertySource(properties = ["key-store.keyStorePairAlias=ALIAS"])
@@ -41,7 +40,10 @@ class JwksEndPointTest {
     lateinit var nonceStore: NonceStore
 
     @MockBean
-    lateinit var redisTemplate: RedisTemplate<*,*>
+    lateinit var redisTemplate: RedisTemplate<*, *>
+
+    @MockBean
+    lateinit var accountUserDetailsService: AccountUserDetailsService
 
     @Test
     fun `happy path`() {

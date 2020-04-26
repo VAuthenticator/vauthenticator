@@ -1,6 +1,8 @@
 package it.valeriovaudi.vauthenticator.web.controller
 
 import it.valeriovaudi.vauthenticator.openid.connect.nonce.NonceStore
+import it.valeriovaudi.vauthenticator.security.login.LoginPageController
+import it.valeriovaudi.vauthenticator.security.userdetails.AccountUserDetailsService
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -29,6 +31,9 @@ class LoginPageControllerTest {
 
     @MockBean
     lateinit var jwtDecoder: JwtDecoder
+
+    @MockBean
+    lateinit var accountUserDetailsService: AccountUserDetailsService
 
     @Test
     fun `happy path`() {
