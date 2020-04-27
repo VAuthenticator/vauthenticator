@@ -5,12 +5,12 @@ import Typography from "@material-ui/core/Typography";
 import {GroupAdd} from "@material-ui/icons";
 import Divider from "@material-ui/core/Divider";
 import vauthenticatorStyles from "../component/styles";
-import Container from "../component/Container";
+import Template from "../component/Template";
 
 const AccountPage = withStyles(vauthenticatorStyles)((props) => {
     const {classes} = props;
     return (
-        <Container maxWidth="md">
+        <Template maxWidth="sm" classes={classes}>
             <Typography variant="h3" component="h3">
                 <GroupAdd fontSize="large"/> Account Registration
             </Typography>
@@ -22,7 +22,7 @@ const AccountPage = withStyles(vauthenticatorStyles)((props) => {
                     Thank you to have been registered soon you will receive an email
                 </Typography>
             </div>
-        </Container>
+        </Template>
     );
 })
 

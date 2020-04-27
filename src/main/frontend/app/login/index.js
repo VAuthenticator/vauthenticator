@@ -5,13 +5,13 @@ import Typography from "@material-ui/core/Typography";
 import {Fingerprint, Person, VpnKey} from "@material-ui/icons";
 import Divider from "@material-ui/core/Divider";
 import vauthenticatorStyles from "../component/styles";
-import Container from "../component/Container";
+import Template from "../component/Template";
 
 const Login = withStyles(vauthenticatorStyles)((props) => {
     const {classes} = props;
 
     return (
-        <Container maxWidth="sm">
+        <Template maxWidth="sm" classes={classes}>
             <Typography variant="h3" component="h3">
                 <VpnKey fontSize="large"/> VAuthenticator
             </Typography>
@@ -56,7 +56,7 @@ const Login = withStyles(vauthenticatorStyles)((props) => {
 
                 </div>
             </form>
-        </Container>
+        </Template>
     )
 })
 

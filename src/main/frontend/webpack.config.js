@@ -50,7 +50,7 @@ module.exports = {
         ]
     },
     output: {
-        filename: 'asset/[name]_[hash]_bundle.js',
+        filename: 'asset/[name]_bundle.js',
         publicPath:"/vauthenticator/",
         path: BUID_DIR
     }

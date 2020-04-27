@@ -1,8 +1,7 @@
-import {Paper} from "@material-ui/core";
-import Container from "@material-ui/core/Container";
+import {Container, Paper} from "@material-ui/core";
 import React from "react";
 
-export default Container = (props) => {
+export default (props) => {
     const {classes} = props;
 
     return (
