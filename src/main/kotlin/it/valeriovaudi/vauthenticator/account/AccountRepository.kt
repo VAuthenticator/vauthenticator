@@ -72,9 +72,9 @@ class MongoAccountRepository(private val mongoTemplate: MongoTemplate) : Account
         const val collectionName = "account"
     }
 
-    override fun accountFor(userName: String): Optional<Account> =
+    override fun accountFor(username: String): Optional<Account> =
             Optional.ofNullable(
-                    mongoTemplate.findOne(findByUserName(userName), Document::class.java, collectionName)
+                    mongoTemplate.findOne(findByUserName(username), Document::class.java, collectionName)
             ).map { document -> fromDocumentToDomain(document) }
 
     override fun create(account: Account) =
