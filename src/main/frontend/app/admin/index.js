@@ -12,6 +12,8 @@ const VAuthenticatorAdminApp = withStyles(vauthenticatorStyles)((props) => {
     return (
         <HashRouter>
             <Switch>
+                <Route exact={true} path="/"
+                       render={(props) => <ClientAppManagementPage {...props} />}/>
 
                 <Route exact={true} path="/client-application"
                        render={(props) => <ClientAppManagementPage {...props} />}/>
