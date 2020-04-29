@@ -62,7 +62,11 @@ class SecurityOAuth2AutorizationServerConfig(private val accountUserDetailsServi
 
     override fun configure(endpoints: AuthorizationServerEndpointsConfigurer) {
         val tokenEnhancerChain = TokenEnhancerChain()
-        tokenEnhancerChain.setTokenEnhancers(mutableListOf(accessTokenConverter(), IdTokenEnhancer(oidcIss, accountRepository, keyRepository, clock)))
+        val enanchers = mutableListOf(
+                accessTokenConverter(),
+                IdTokenEnhancer(oidcIss, accountRepository, keyRepository, clock)
+        )
+        tokenEnhancerChain.setTokenEnhancers(enanchers)
 
         endpoints.approvalStoreDisabled()
                 .authorizationCodeServices(redisAuthorizationCodeServices)
