@@ -126,7 +126,8 @@ class JdbcClientApplicationRepository(private val jdbcTemplate: JdbcTemplate) : 
                 ClientApplication(
                         clientAppId = ClientAppId(rs.getString("client_id")),
                         secret = Secret(rs.getString("client_secret")),
-                        authorizedGrantTypes = AuthorizedGrantTypes(listFor(rs, "authorized_grant_types").map { AuthorizedGrantType.valueOf(it.toUpperCase()) }),
+                        authorizedGrantTypes = AuthorizedGrantTypes(listFor(rs, "authorized_grant_types")
+                                .map { AuthorizedGrantType.valueOf(it.toUpperCase()) }),
                         scope = Scopes(listFor(rs, "scope").map { Scope(it) }),
                         autoApprove = AutoApprove(rs.getBoolean("autoapprove")),
                         accessTokenValidity = TokenTimeToLive(rs.getInt("access_token_validity")),

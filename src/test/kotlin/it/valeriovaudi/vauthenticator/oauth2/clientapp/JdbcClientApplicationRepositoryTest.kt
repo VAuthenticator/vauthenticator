@@ -25,11 +25,6 @@ class JdbcClientApplicationRepositoryTest {
 
     @Before
     fun setUp() {
-        /**
-         * I prefer do not use docker port redirect in order to prevents the port conflicts on container start,
-         * imaging it on a concurrent test suite, the code below is necessary in order to get the host and port
-         * that the docker runtime assign to the container
-         * */
         val serviceHost = container.getServiceHost("postgres_1", 5432)
         val servicePort = container.getServicePort("postgres_1", 5432)
         val dataSource = DataSourceBuilder.create()
@@ -42,7 +37,7 @@ class JdbcClientApplicationRepositoryTest {
     @Test
     fun `find a client application`() {
         val clientAppId = ClientAppId("client_id")
-        val clientApp: ClientApplication = ClientApplication(
+        val clientApp = ClientApplication(
                 clientAppId,
                 Secret("secret"),
                 Scopes.from(Scope.OPEN_ID, Scope.PROFILE, Scope.EMAIL),
@@ -64,7 +59,7 @@ class JdbcClientApplicationRepositoryTest {
     }
 
     @Test
-    fun `wheb try yo find a client application that does not exist`() {
+    fun `when try to find a client application that does not exist`() {
         val clientAppId = ClientAppId("a not exist client_id")
         val actual: Optional<ClientApplication> = clientApplicationRepository.findOne(clientAppId)
         assertThat(actual, equalTo(Optional.empty()))
