@@ -97,32 +97,12 @@ interface ClientApplicationRepository {
 data class Page<T>(val content: Iterable<T>, val page: Int, val size: Int, val total: Long)
 
 class JdbcClientApplicationRepository(private val jdbcTemplate: JdbcTemplate) : ClientApplicationRepository {
-    override fun findOne(clientAppId: ClientAppId): Optional<ClientApplication> {
-        return Optional.ofNullable(jdbcTemplate.query("SELECT * FROM oauth_client_details WHERE client_id = ?", arrayOf(clientAppId.content))
-        { rs: ResultSet, i: Int ->
-            ClientApplication(
-                    clientAppId = ClientAppId(rs.getString("client_id")),
-                    secret = Secret(rs.getString("client_secret")),
-                    authorizedGrantTypes = AuthorizedGrantTypes(listFor(rs, "authorized_grant_types").map { AuthorizedGrantType.valueOf(it.toUpperCase()) }),
-                    scope = Scopes(listFor(rs, "scope").map { Scope(it) }),
-                    autoApprove = AutoApprove(rs.getBoolean("autoapprove")),
-                    accessTokenValidity = TokenTimeToLive(rs.getInt("access_token_validity")),
-                    refreshTokenValidity = TokenTimeToLive(rs.getInt("refresh_token_validity")),
-                    webServerRedirectUri = CallbackUri(rs.getString("web_server_redirect_uri")),
-                    logoutUri = LogoutUri(rs.getString("logout_uris")),
-                    postLogoutRedirectUri = PostLogoutRedirectUri(rs.getString("post_logout_redirect_uris")),
-                    authorities = Authorities(listFor(rs, "authorities").map { Authority(it) }),
-                    federation = Federation(rs.getString("federation")),
-                    resourceIds = ResourceIds.from(ResourceId(rs.getString("resource_ids"))),
-                    additionalInformation = emptyMap()
-            )
-        }.firstOrNull())
-    }
 
-    private fun listFor(rs: ResultSet, fieldName: String): List<String> {
-        return Optional.ofNullable(rs.getString(fieldName))
-                .map { it.split(",") }
-                .orElse(listOf())
+    override fun findOne(clientAppId: ClientAppId): Optional<ClientApplication> {
+        return Optional.ofNullable(
+                jdbcTemplate.query("SELECT * FROM oauth_client_details WHERE client_id = ?",
+                        arrayOf(clientAppId.content),
+                        mapper).firstOrNull())
     }
 
     override fun findByFederation(federation: Federation): Page<ClientApplication> {
@@ -139,6 +119,32 @@ class JdbcClientApplicationRepository(private val jdbcTemplate: JdbcTemplate) : 
 
     override fun delete(clientAppId: ClientAppId) {
         TODO("Not yet implemented")
+    }
+
+    private val mapper: (ResultSet, Int) -> ClientApplication =
+            { rs: ResultSet, i: Int ->
+                ClientApplication(
+                        clientAppId = ClientAppId(rs.getString("client_id")),
+                        secret = Secret(rs.getString("client_secret")),
+                        authorizedGrantTypes = AuthorizedGrantTypes(listFor(rs, "authorized_grant_types").map { AuthorizedGrantType.valueOf(it.toUpperCase()) }),
+                        scope = Scopes(listFor(rs, "scope").map { Scope(it) }),
+                        autoApprove = AutoApprove(rs.getBoolean("autoapprove")),
+                        accessTokenValidity = TokenTimeToLive(rs.getInt("access_token_validity")),
+                        refreshTokenValidity = TokenTimeToLive(rs.getInt("refresh_token_validity")),
+                        webServerRedirectUri = CallbackUri(rs.getString("web_server_redirect_uri")),
+                        logoutUri = LogoutUri(rs.getString("logout_uris")),
+                        postLogoutRedirectUri = PostLogoutRedirectUri(rs.getString("post_logout_redirect_uris")),
+                        authorities = Authorities(listFor(rs, "authorities").map { Authority(it) }),
+                        federation = Federation(rs.getString("federation")),
+                        resourceIds = ResourceIds.from(ResourceId(rs.getString("resource_ids"))),
+                        additionalInformation = emptyMap()
+                )
+            }
+
+    private fun listFor(rs: ResultSet, fieldName: String): List<String> {
+        return Optional.ofNullable(rs.getString(fieldName))
+                .map { it.split(",") }
+                .orElse(listOf())
     }
 
 }
