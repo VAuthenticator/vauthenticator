@@ -85,7 +85,7 @@ interface ClientApplicationRepository {
 
     fun findOne(clientAppId: ClientAppId): Optional<ClientApplication>
 
-    fun findByFederation(federation: Federation): Page<ClientApplication>
+    fun findByFederation(federation: Federation): Iterable<ClientApplication>
 
     fun findAll(): Page<ClientApplication>
 
@@ -105,9 +105,10 @@ class JdbcClientApplicationRepository(private val jdbcTemplate: JdbcTemplate) : 
                         mapper).firstOrNull())
     }
 
-    override fun findByFederation(federation: Federation): Page<ClientApplication> {
-        TODO("Not yet implemented")
-    }
+    override fun findByFederation(federation: Federation) =
+            jdbcTemplate.query("SELECT * FROM oauth_client_details WHERE federation = ?",
+                    arrayOf(federation.name),
+                    mapper)
 
     override fun findAll(): Page<ClientApplication> {
         TODO("Not yet implemented")

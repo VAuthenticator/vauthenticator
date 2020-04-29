@@ -37,25 +37,8 @@ class JdbcClientApplicationRepositoryTest {
     @Test
     fun `find a client application`() {
         val clientAppId = ClientAppId("client_id")
-        val clientApp = ClientApplication(
-                clientAppId,
-                Secret("secret"),
-                Scopes.from(Scope.OPEN_ID, Scope.PROFILE, Scope.EMAIL),
-                AuthorizedGrantTypes.from(AuthorizedGrantType.PASSWORD),
-                CallbackUri("http://an_uri"),
-                Authorities(listOf(Authority("AN_AUTHORITY"))),
-                TokenTimeToLive(10),
-                TokenTimeToLive(10),
-                emptyMap(),
-                AutoApprove.approve,
-                PostLogoutRedirectUri("http://an_uri"),
-                LogoutUri("http://an_uri"),
-                Federation("A_FEDERATION"),
-                ResourceIds.from(ResourceId("oauth2-resource"))
-        )
-
         val actual: Optional<ClientApplication> = clientApplicationRepository.findOne(clientAppId)
-        assertThat(actual, equalTo(Optional.of(clientApp)))
+        assertThat(actual, equalTo(Optional.of(aClientApp(clientAppId))))
     }
 
     @Test
@@ -64,4 +47,31 @@ class JdbcClientApplicationRepositoryTest {
         val actual: Optional<ClientApplication> = clientApplicationRepository.findOne(clientAppId)
         assertThat(actual, equalTo(Optional.empty()))
     }
+
+    @Test
+    fun `when try to find a client application in a federation`() {
+        val actual: Iterable<ClientApplication> = clientApplicationRepository.findByFederation(Federation("ANOTHER_FEDERATION"))
+        val clientApplications: Iterable<ClientApplication> = listOf(
+                aClientApp(ClientAppId("federated_client_id1"), Federation("ANOTHER_FEDERATION")),
+                aClientApp(ClientAppId("federated_client_id2"), Federation("ANOTHER_FEDERATION"))
+        )
+        assertThat(actual, equalTo(clientApplications))
+    }
+
+    fun aClientApp(clientAppId: ClientAppId, federation: Federation = Federation("A_FEDERATION")) = ClientApplication(
+            clientAppId,
+            Secret("secret"),
+            Scopes.from(Scope.OPEN_ID, Scope.PROFILE, Scope.EMAIL),
+            AuthorizedGrantTypes.from(AuthorizedGrantType.PASSWORD),
+            CallbackUri("http://an_uri"),
+            Authorities(listOf(Authority("AN_AUTHORITY"))),
+            TokenTimeToLive(10),
+            TokenTimeToLive(10),
+            emptyMap(),
+            AutoApprove.approve,
+            PostLogoutRedirectUri("http://an_uri"),
+            LogoutUri("http://an_uri"),
+            federation,
+            ResourceIds.from(ResourceId("oauth2-resource"))
+    )
 }
