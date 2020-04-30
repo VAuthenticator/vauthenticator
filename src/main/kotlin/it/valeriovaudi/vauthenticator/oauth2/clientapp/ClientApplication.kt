@@ -113,7 +113,21 @@ class JdbcClientApplicationRepository(private val jdbcTemplate: JdbcTemplate) : 
         logout_uris,
         federation
     )
-     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?) 
+     ON CONFLICT (client_id) DO UPDATE SET 
+        client_secret=?,
+        resource_ids=?,
+        scope=?,
+        authorized_grant_types=?,
+        web_server_redirect_uri=?,
+        authorities=?,
+        access_token_validity=?, 
+        refresh_token_validity=?,
+        additional_information=?, 
+        autoapprove=?,
+        post_logout_redirect_uris=?,
+        logout_uris=?,
+        federation=?
 """.trimIndent()
 
     override fun findOne(clientAppId: ClientAppId): Optional<ClientApplication> {
@@ -133,9 +147,7 @@ class JdbcClientApplicationRepository(private val jdbcTemplate: JdbcTemplate) : 
 
     override fun save(clientApp: ClientApplication) {
         clientApp.let {
-            jdbcTemplate.update(INSERT_QUERY,
-                    it.clientAppId.content,
-                    it.secret.content,
+            val parametes = listOf(it.secret.content,
                     it.resourceIds.content.map { it.content }.reduce(joinWithComma()),
                     it.scopes.content.map { it.content }.reduce(joinWithComma()),
                     it.authorizedGrantTypes.content.map { it.name.toLowerCase() }.reduce(joinWithComma()),
@@ -147,15 +159,20 @@ class JdbcClientApplicationRepository(private val jdbcTemplate: JdbcTemplate) : 
                     it.autoApprove.content,
                     it.postLogoutRedirectUri.content,
                     it.logoutUri.content,
-                    it.federation.name
-            )
+                    it.federation.name)
+
+            val list = listOf(
+                    it.clientAppId.content
+            ) + parametes + parametes
+
+            jdbcTemplate.update(INSERT_QUERY, *list.toTypedArray())
         }
     }
 
     private fun joinWithComma() = { acc: String, s: String -> "$acc,$s" }
 
     override fun delete(clientAppId: ClientAppId) {
-        jdbcTemplate.update("DELETE FROM oauth_client_details WHERE client_id=?",clientAppId.content)
+        jdbcTemplate.update("DELETE FROM oauth_client_details WHERE client_id=?", clientAppId.content)
     }
 
     private val mapper: (ResultSet, Int) -> ClientApplication =
