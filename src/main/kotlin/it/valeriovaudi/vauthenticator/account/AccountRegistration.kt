@@ -1,12 +1,12 @@
 package it.valeriovaudi.vauthenticator.account
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import it.valeriovaudi.vauthenticator.extentions.VAuthenticatorPasswordEncoder
 import org.springframework.amqp.rabbit.annotation.RabbitListener
 import org.springframework.amqp.rabbit.core.RabbitTemplate
-import org.springframework.security.crypto.password.PasswordEncoder
 
 class AccountRegistration(private val accountRepository: AccountRepository,
-                          private val passwordEncoder: AccountPasswordEncoder,
+                          private val passwordEncoder: VAuthenticatorPasswordEncoder,
                           private val eventPublisher: AccountRegistrationEventPublisher) {
 
     fun execute(account: Account) {
@@ -40,9 +40,6 @@ interface AccountRegistrationEventPublisher {
     fun accountCreationErrorOnAuthSystem(accountCreationErrorOnAuthSystem: AccountCreationErrorOnAuthSystem)
 }
 
-interface AccountPasswordEncoder {
-    fun encode(password: String): String
-}
 
 class RabbitMqAccountRegistrationEventPublisher(
         private val objectMapper: ObjectMapper,
@@ -64,11 +61,6 @@ class RabbitMqAccountRegistrationEventPublisher(
             )
 }
 
-class BcryptAccountPasswordEncoder(private val passwordEncoder: PasswordEncoder) : AccountPasswordEncoder {
-
-    override fun encode(password: String) = passwordEncoder.encode(password)
-
-}
 
 class AccountRegistrationEventsListener(private val objectMapper: ObjectMapper) {
 

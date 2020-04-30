@@ -1,10 +1,12 @@
 package it.valeriovaudi.vauthenticator.oauth2.clientapp
 
+import it.valeriovaudi.vauthenticator.extentions.VAuthenticatorPasswordEncoder
 import org.hamcrest.Matchers.equalTo
 import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.ClassRule
 import org.junit.Test
+import org.mockito.Mockito.*
 import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.jdbc.core.JdbcTemplate
 import org.testcontainers.containers.DockerComposeContainer
@@ -22,6 +24,7 @@ class JdbcClientApplicationRepositoryTest {
     }
 
     lateinit var clientApplicationRepository: JdbcClientApplicationRepository
+    lateinit var passwordEncoder: VAuthenticatorPasswordEncoder
 
     @Before
     fun setUp() {
@@ -30,7 +33,8 @@ class JdbcClientApplicationRepositoryTest {
         val dataSource = DataSourceBuilder.create()
                 .url("jdbc:postgresql://$serviceHost:$servicePort/vauthenticator?user=root&password=root")
                 .build()
-        clientApplicationRepository = JdbcClientApplicationRepository(JdbcTemplate(dataSource))
+        passwordEncoder = mock(VAuthenticatorPasswordEncoder::class.java)
+        clientApplicationRepository = JdbcClientApplicationRepository(JdbcTemplate(dataSource), passwordEncoder)
     }
 
 
@@ -52,8 +56,8 @@ class JdbcClientApplicationRepositoryTest {
     fun `when try to find a client application in a federation`() {
         val actual: Iterable<ClientApplication> = clientApplicationRepository.findByFederation(Federation("ANOTHER_FEDERATION"))
         val clientApplications: Iterable<ClientApplication> = listOf(
-                aClientApp(ClientAppId("federated_client_id1"), Federation("ANOTHER_FEDERATION")),
-                aClientApp(ClientAppId("federated_client_id2"), Federation("ANOTHER_FEDERATION"))
+                aClientApp(clientAppId = ClientAppId("federated_client_id1"), federation = Federation("ANOTHER_FEDERATION")),
+                aClientApp(clientAppId = ClientAppId("federated_client_id2"), federation = Federation("ANOTHER_FEDERATION"))
         )
         assertThat(actual, equalTo(clientApplications))
     }
@@ -63,32 +67,34 @@ class JdbcClientApplicationRepositoryTest {
         val actual: Iterable<ClientApplication> = clientApplicationRepository.findAll()
         val clientApplications: Iterable<ClientApplication> = listOf(
                 aClientApp(ClientAppId("client_id")),
-                aClientApp(ClientAppId("federated_client_id1"), Federation("ANOTHER_FEDERATION")),
-                aClientApp(ClientAppId("federated_client_id2"), Federation("ANOTHER_FEDERATION"))
+                aClientApp(clientAppId = ClientAppId("federated_client_id1"), federation = Federation("ANOTHER_FEDERATION")),
+                aClientApp(clientAppId = ClientAppId("federated_client_id2"), federation = Federation("ANOTHER_FEDERATION"))
         )
         assertThat(actual, equalTo(clientApplications))
     }
 
     @Test
     fun `save a new applications in VAuthenticator`() {
-        clientApplicationRepository.save(aClientApp(ClientAppId("a new client")))
+        clientApplicationRepository.save(aClientApp(clientAppId = ClientAppId("a new client"), password = FilledSecret("secret")))
 
         val actual: Optional<ClientApplication> = clientApplicationRepository.findOne(ClientAppId("a new client"))
         val clientApplications: Optional<ClientApplication> = Optional.of(aClientApp(ClientAppId("a new client")))
         assertThat(actual, equalTo(clientApplications))
+        verify(passwordEncoder).encode("secret")
     }
 
     @Test
     fun `when try to save more that onese a new applications in VAuthenticator`() {
-        clientApplicationRepository.save(aClientApp(ClientAppId("a new client")))
+        clientApplicationRepository.save(aClientApp(clientAppId = ClientAppId("a new client"), password = FilledSecret("secret")))
         var actual: Optional<ClientApplication> = clientApplicationRepository.findOne(ClientAppId("a new client"))
         var clientApplications: Optional<ClientApplication> = Optional.of(aClientApp(ClientAppId("a new client")))
         assertThat(actual, equalTo(clientApplications))
 
-        clientApplicationRepository.save(aClientApp(ClientAppId("a new client"), Federation("a new federation")))
+        clientApplicationRepository.save(aClientApp(clientAppId = ClientAppId("a new client"), password = FilledSecret("secret"), federation = Federation("a new federation")))
         actual = clientApplicationRepository.findOne(ClientAppId("a new client"))
-        clientApplications = Optional.of(aClientApp(ClientAppId("a new client"), Federation("a new federation")))
+        clientApplications = Optional.of(aClientApp(clientAppId = ClientAppId("a new client"), federation = Federation("a new federation")))
         assertThat(actual, equalTo(clientApplications))
+        verify(passwordEncoder, times(2)).encode("secret")
     }
 
     @Test
@@ -98,15 +104,18 @@ class JdbcClientApplicationRepositoryTest {
 
         val actual: Iterable<ClientApplication> = clientApplicationRepository.findAll()
         val clientApplications: Iterable<ClientApplication> = listOf(
-                aClientApp(ClientAppId("federated_client_id1"), Federation("ANOTHER_FEDERATION")),
-                aClientApp(ClientAppId("federated_client_id2"), Federation("ANOTHER_FEDERATION"))
+                aClientApp(clientAppId = ClientAppId("federated_client_id1"), federation = Federation("ANOTHER_FEDERATION")),
+                aClientApp(clientAppId = ClientAppId("federated_client_id2"), federation = Federation("ANOTHER_FEDERATION"))
         )
         assertThat(actual, equalTo(clientApplications))
     }
 
-    fun aClientApp(clientAppId: ClientAppId, federation: Federation = Federation("A_FEDERATION")) = ClientApplication(
+    fun aClientApp(clientAppId: ClientAppId,
+                   password: Secret = EmptySecret,
+                   federation: Federation = Federation("A_FEDERATION")
+    ) = ClientApplication(
             clientAppId,
-            Secret("secret"),
+            password,
             Scopes.from(Scope.OPEN_ID, Scope.PROFILE, Scope.EMAIL),
             AuthorizedGrantTypes.from(AuthorizedGrantType.PASSWORD),
             CallbackUri("http://an_uri"),

@@ -2,6 +2,8 @@ package it.valeriovaudi.vauthenticator.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import it.valeriovaudi.vauthenticator.account.*
+import it.valeriovaudi.vauthenticator.extentions.BcryptVAuthenticatorPasswordEncoder
+import it.valeriovaudi.vauthenticator.extentions.VAuthenticatorPasswordEncoder
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -12,7 +14,7 @@ class AccountRegistrationConfig {
 
     @Bean
     fun bcryptAccountPasswordEncoder(passwordEncoder: PasswordEncoder) =
-            BcryptAccountPasswordEncoder(passwordEncoder)
+            BcryptVAuthenticatorPasswordEncoder(passwordEncoder)
 
     @Bean
     fun accountRegistrationEventsListener(objectMapper: ObjectMapper) =
@@ -25,7 +27,7 @@ class AccountRegistrationConfig {
 
     @Bean
     fun accountRegistration(accountRepository: AccountRepository,
-                            passwordEncoder: AccountPasswordEncoder,
+                            passwordEncoder: VAuthenticatorPasswordEncoder,
                             eventPublisher: AccountRegistrationEventPublisher) =
             AccountRegistration(accountRepository, passwordEncoder, eventPublisher)
 }

@@ -1,5 +1,6 @@
 package it.valeriovaudi.vauthenticator.account
 
+import it.valeriovaudi.vauthenticator.extentions.VAuthenticatorPasswordEncoder
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
@@ -18,7 +19,7 @@ class AccountRegistrationTest {
     lateinit var accountRepository: AccountRepository
 
     @Mock
-    lateinit var passwordEncoder: AccountPasswordEncoder
+    lateinit var passwordEncoder: VAuthenticatorPasswordEncoder
 
     @Mock
     lateinit var eventPublisher: AccountRegistrationEventPublisher
