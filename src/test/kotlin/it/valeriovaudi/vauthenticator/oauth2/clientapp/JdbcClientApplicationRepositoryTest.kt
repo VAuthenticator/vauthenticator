@@ -58,6 +58,17 @@ class JdbcClientApplicationRepositoryTest {
         assertThat(actual, equalTo(clientApplications))
     }
 
+    @Test
+    fun `find all client applications in VAuthenticator`() {
+        val actual: Iterable<ClientApplication> = clientApplicationRepository.findAll()
+        val clientApplications: Iterable<ClientApplication> = listOf(
+                aClientApp(ClientAppId("client_id")),
+                aClientApp(ClientAppId("federated_client_id1"), Federation("ANOTHER_FEDERATION")),
+                aClientApp(ClientAppId("federated_client_id2"), Federation("ANOTHER_FEDERATION"))
+        )
+        assertThat(actual, equalTo(clientApplications))
+    }
+
     fun aClientApp(clientAppId: ClientAppId, federation: Federation = Federation("A_FEDERATION")) = ClientApplication(
             clientAppId,
             Secret("secret"),

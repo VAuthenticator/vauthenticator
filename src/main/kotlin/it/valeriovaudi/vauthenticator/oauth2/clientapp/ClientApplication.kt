@@ -87,14 +87,12 @@ interface ClientApplicationRepository {
 
     fun findByFederation(federation: Federation): Iterable<ClientApplication>
 
-    fun findAll(): Page<ClientApplication>
+    fun findAll(): Iterable<ClientApplication>
 
     fun save(clientApp: ClientApplication)
 
     fun delete(clientAppId: ClientAppId)
 }
-
-data class Page<T>(val content: Iterable<T>, val page: Int, val size: Int, val total: Long)
 
 class JdbcClientApplicationRepository(private val jdbcTemplate: JdbcTemplate) : ClientApplicationRepository {
 
@@ -110,9 +108,8 @@ class JdbcClientApplicationRepository(private val jdbcTemplate: JdbcTemplate) : 
                     arrayOf(federation.name),
                     mapper)
 
-    override fun findAll(): Page<ClientApplication> {
-        TODO("Not yet implemented")
-    }
+    override fun findAll(): Iterable<ClientApplication> =
+            jdbcTemplate.query("SELECT * FROM oauth_client_details", mapper)
 
     override fun save(clientApp: ClientApplication) {
         TODO("Not yet implemented")
