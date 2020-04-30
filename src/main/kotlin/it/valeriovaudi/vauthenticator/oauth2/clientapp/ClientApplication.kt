@@ -19,7 +19,7 @@ post_logout_redirect_uris
 logout_uris*/
 data class ClientApplication(val clientAppId: ClientAppId,
                              val secret: Secret,
-                             val scope: Scopes,
+                             val scopes: Scopes,
                              val authorizedGrantTypes: AuthorizedGrantTypes,
                              val webServerRedirectUri: CallbackUri,
                              val authorities: Authorities,
@@ -95,6 +95,26 @@ interface ClientApplicationRepository {
 }
 
 class JdbcClientApplicationRepository(private val jdbcTemplate: JdbcTemplate) : ClientApplicationRepository {
+    val INSERT_QUERY: String = """
+    INSERT INTO oauth_client_details 
+    (
+        client_id,
+        client_secret,
+        resource_ids,
+        scope,
+        authorized_grant_types,
+        web_server_redirect_uri,
+        authorities,
+        access_token_validity, 
+        refresh_token_validity,
+        additional_information, 
+        autoapprove,
+        post_logout_redirect_uris,
+        logout_uris,
+        federation
+    )
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+""".trimIndent()
 
     override fun findOne(clientAppId: ClientAppId): Optional<ClientApplication> {
         return Optional.ofNullable(
@@ -112,11 +132,30 @@ class JdbcClientApplicationRepository(private val jdbcTemplate: JdbcTemplate) : 
             jdbcTemplate.query("SELECT * FROM oauth_client_details", mapper)
 
     override fun save(clientApp: ClientApplication) {
-        TODO("Not yet implemented")
+        clientApp.let {
+            jdbcTemplate.update(INSERT_QUERY,
+                    it.clientAppId.content,
+                    it.secret.content,
+                    it.resourceIds.content.map { it.content }.reduce(joinWithComma()),
+                    it.scopes.content.map { it.content }.reduce(joinWithComma()),
+                    it.authorizedGrantTypes.content.map { it.name.toLowerCase() }.reduce(joinWithComma()),
+                    it.webServerRedirectUri.content,
+                    it.authorities.content.map { it.content }.reduce(joinWithComma()),
+                    it.accessTokenValidity.content,
+                    it.refreshTokenValidity.content,
+                    null,
+                    it.autoApprove.content,
+                    it.postLogoutRedirectUri.content,
+                    it.logoutUri.content,
+                    it.federation.name
+            )
+        }
     }
 
+    private fun joinWithComma() = { acc: String, s: String -> "$acc,$s" }
+
     override fun delete(clientAppId: ClientAppId) {
-        TODO("Not yet implemented")
+        jdbcTemplate.update("DELETE FROM oauth_client_details WHERE client_id=?",clientAppId.content)
     }
 
     private val mapper: (ResultSet, Int) -> ClientApplication =
@@ -126,7 +165,7 @@ class JdbcClientApplicationRepository(private val jdbcTemplate: JdbcTemplate) : 
                         secret = Secret(rs.getString("client_secret")),
                         authorizedGrantTypes = AuthorizedGrantTypes(listFor(rs, "authorized_grant_types")
                                 .map { AuthorizedGrantType.valueOf(it.toUpperCase()) }),
-                        scope = Scopes(listFor(rs, "scope").map { Scope(it) }),
+                        scopes = Scopes(listFor(rs, "scope").map { Scope(it) }),
                         autoApprove = AutoApprove(rs.getBoolean("autoapprove")),
                         accessTokenValidity = TokenTimeToLive(rs.getInt("access_token_validity")),
                         refreshTokenValidity = TokenTimeToLive(rs.getInt("refresh_token_validity")),

@@ -69,6 +69,27 @@ class JdbcClientApplicationRepositoryTest {
         assertThat(actual, equalTo(clientApplications))
     }
 
+    @Test
+    fun `save a new applications in VAuthenticator`() {
+        clientApplicationRepository.save(aClientApp(ClientAppId("a new client")))
+
+        val actual: Optional<ClientApplication> = clientApplicationRepository.findOne(ClientAppId("a new client"))
+        val clientApplications: Optional<ClientApplication> = Optional.of(aClientApp(ClientAppId("a new client")))
+        assertThat(actual, equalTo(clientApplications))
+    }
+
+    @Test
+    fun `delete an application in VAuthenticator`() {
+        clientApplicationRepository.delete(ClientAppId("client_id"))
+
+        val actual: Iterable<ClientApplication> = clientApplicationRepository.findAll()
+        val clientApplications: Iterable<ClientApplication> = listOf(
+                aClientApp(ClientAppId("federated_client_id1"), Federation("ANOTHER_FEDERATION")),
+                aClientApp(ClientAppId("federated_client_id2"), Federation("ANOTHER_FEDERATION"))
+        )
+        assertThat(actual, equalTo(clientApplications))
+    }
+
     fun aClientApp(clientAppId: ClientAppId, federation: Federation = Federation("A_FEDERATION")) = ClientApplication(
             clientAppId,
             Secret("secret"),
