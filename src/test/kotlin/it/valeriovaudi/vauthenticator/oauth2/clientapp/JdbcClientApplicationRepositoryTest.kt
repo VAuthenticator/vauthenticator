@@ -1,6 +1,7 @@
 package it.valeriovaudi.vauthenticator.oauth2.clientapp
 
 import it.valeriovaudi.vauthenticator.extentions.VAuthenticatorPasswordEncoder
+import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppFixture.aClientApp
 import org.hamcrest.Matchers.equalTo
 import org.junit.Assert.assertThat
 import org.junit.Before
@@ -110,23 +111,4 @@ class JdbcClientApplicationRepositoryTest {
         assertThat(actual, equalTo(clientApplications))
     }
 
-    fun aClientApp(clientAppId: ClientAppId,
-                   password: Secret = EmptySecret,
-                   federation: Federation = Federation("A_FEDERATION")
-    ) = ClientApplication(
-            clientAppId,
-            password,
-            Scopes.from(Scope.OPEN_ID, Scope.PROFILE, Scope.EMAIL),
-            AuthorizedGrantTypes.from(AuthorizedGrantType.PASSWORD),
-            CallbackUri("http://an_uri"),
-            Authorities(listOf(Authority("AN_AUTHORITY"))),
-            TokenTimeToLive(10),
-            TokenTimeToLive(10),
-            emptyMap(),
-            AutoApprove.approve,
-            PostLogoutRedirectUri("http://an_uri"),
-            LogoutUri("http://an_uri"),
-            federation,
-            ResourceIds.from(ResourceId("oauth2-resource"))
-    )
 }

@@ -98,8 +98,8 @@ class JdbcClientApplicationRepository(private val jdbcTemplate: JdbcTemplate,
     private fun secretFor(clientApp: ClientApplication) =
             clientApp.secret.let {
                 when (it) {
-                    is EmptySecret -> ""
-                    is FilledSecret -> passwordEncoder.encode(it.content)
+                    is EmptySecret -> it.content()
+                    is FilledSecret -> passwordEncoder.encode(it.content())
                 }
             }
 
