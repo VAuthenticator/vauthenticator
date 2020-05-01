@@ -31,7 +31,8 @@ class ClientApplicationEndPoint(private val clientApplicationRepository: ClientA
 
 }
 
-data class ClientAppRepresentation(var secret: String,
+data class ClientAppRepresentation(var clientAppName: String,
+                                   var secret: String,
                                    var setSecret: Boolean,
                                    var scopes: List<String>,
                                    var authorizedGrantTypes: List<String>,
@@ -45,6 +46,7 @@ data class ClientAppRepresentation(var secret: String,
     companion object {
         fun fromDomainToRepresentation(clientApplication: ClientApplication) =
                 ClientAppRepresentation(
+                        clientAppName = clientApplication.clientAppId.content,
                         secret = clientApplication.secret.content(),
                         setSecret = false,
                         scopes = clientApplication.scopes.content.map { it.content },
@@ -62,12 +64,14 @@ data class ClientAppRepresentation(var secret: String,
 
 
 data class ClientAppInListRepresentation(var clientAppId: String,
+                                         var clientAppName: String,
                                          var scopes: List<String>,
                                          var authorizedGrantTypes: List<String>,
                                          var federation: String) {
     companion object {
         fun fromDomainToRepresentation(clientApplication: ClientApplication) =
                 ClientAppInListRepresentation(
+                        clientAppName = clientApplication.clientAppId.content,
                         clientAppId = clientApplication.clientAppId.content,
                         scopes = clientApplication.scopes.content.map { it.content },
                         authorizedGrantTypes = clientApplication.authorities.content.map { it.content },

@@ -4,6 +4,18 @@ const vauthenticatorStyles = theme => ({
     },
     padding: {
         padding: theme.spacing.unit
+    },
+    root: {
+        flexGrow: 1,
+    },
+    menuButton: {
+        textDecoration: 'none',
+        color: 'white',
+        marginRight: theme.spacing(2),
+        paddingLeft: 13
+    },
+    title: {
+        flexGrow: 1,
     }
 });
 

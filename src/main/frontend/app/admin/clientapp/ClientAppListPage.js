@@ -21,7 +21,7 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
         <Template maxWidth="lg" classes={classes}>
 
             <Typography variant="h3" component="h3">
-                <GroupAdd fontSize="large"/> VAuthenticator Admin
+                <GroupAdd fontSize="large"/> VAuthenticator Client Application Admin
             </Typography>
 
             <StickyHeadTable rows={applications}/>

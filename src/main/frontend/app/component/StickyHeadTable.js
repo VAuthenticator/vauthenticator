@@ -8,18 +8,23 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-
+import EditIcon from '@material-ui/icons/Edit';
+import Link from "react-router-dom/Link";
 
 const columns = [
-    { id: 'clientAppName', label: 'Client Application Name', minWidth: 170 },
-    { id: 'clientAppId', label: 'Client Application Id', minWidth: 170 },
-    { id: 'scopes', label: 'Client Scopes', minWidth: 170 },
-    { id: 'authorizedGrantTypes', label: 'Client Application Autorized Grant Type', minWidth: 170 },
-    { id: 'federation', label: 'Client Application Federation', minWidth: 170 },
+    {id: 'clientAppName', label: 'Client Application Name', minWidth: 170},
+    {id: 'clientAppId', label: 'Client Application Id', minWidth: 170},
+    {id: 'scopes', label: 'Client Scopes', minWidth: 170},
+    {id: 'authorizedGrantTypes', label: 'Client Application Autorized Grant Type', minWidth: 170},
+    {id: 'federation', label: 'Client Application Federation', minWidth: 170},
 ];
 
+const opsColumn = [
+    {id: 'edit', label: 'Edit Application', minWidth: 170}
+]
+
 function createData(clientAppName, clientAppId, scopes, authorizedGrantTypes, federation) {
-    return { clientAppName, clientAppId, scopes, authorizedGrantTypes, federation };
+    return {clientAppName, clientAppId, scopes, authorizedGrantTypes, federation};
 }
 
 
@@ -56,8 +61,15 @@ export default function StickyHeadTable({rows}) {
                                 <TableCell
                                     key={column.id}
                                     align={column.align}
-                                    style={{ minWidth: column.minWidth }}
-                                >
+                                    style={{minWidth: column.minWidth}}>
+                                    {column.label}
+                                </TableCell>
+                            ))}
+                            {opsColumn.map((column) => (
+                                <TableCell
+                                    key={column.id}
+                                    align={column.align}
+                                    style={{minWidth: column.minWidth}}>
                                     {column.label}
                                 </TableCell>
                             ))}
@@ -71,7 +83,16 @@ export default function StickyHeadTable({rows}) {
                                         const value = row[column.id];
                                         return (
                                             <TableCell key={column.id} align={column.align}>
-                                                {column.format && typeof value === 'number' ? column.format(value) : value}
+                                                {value}
+                                            </TableCell>
+                                        );
+                                    })}
+                                    {opsColumn.map((column) => {
+                                        return (
+                                            <TableCell key={column.id} align={column.align}>
+                                                <Link to={`client-application/${row["clientAppId"]}`} style={{ "text-decoration": "none" }}>
+                                                    <EditIcon />
+                                                </Link>
                                             </TableCell>
                                         );
                                     })}
