@@ -9,6 +9,7 @@ import FormInputTextField from "../../component/FormInputTextField";
 import AdminTemplate from "../../component/AdminTemplate";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
+import CardHeader from "@material-ui/core/CardHeader";
 
 const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
     const {classes} = props;
@@ -47,10 +48,11 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
 
             <div className={classes.margin}>
                 <Card className={classes.card}>
+                    <CardHeader title="Client Application base definition"
+                                className={classes.title}
+                                color="textSecondary">
+                    </CardHeader>
                     <CardContent>
-                        <Typography className={classes.title} color="textSecondary" gutterBottom>
-                            Client Application base definition
-                        </Typography>
                         <FormInputTextField id="clientAppName"
                                             label="Client Application Displayed Name"
                                             required={true}
@@ -75,9 +77,11 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
 
                 <Card className={classes.card}>
                     <CardContent>
-                        <Typography className={classes.title} color="textSecondary" gutterBottom>
-                            Client Application permission specification
-                        </Typography>
+                        <CardHeader title="Client Application permission specification"
+                                    className={classes.title}
+                                    color="textSecondary">
+                        </CardHeader>
+
                         <FormInputTextField id="scopes"
                                             label="Scopes"
                                             required={true}
@@ -108,9 +112,11 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
 
                 <Card className={classes.card}>
                     <CardContent>
-                        <Typography className={classes.title} color="textSecondary" gutterBottom>
-                            Client Application urls definitions
-                        </Typography>
+                        <CardHeader title="Client Application urls definitions"
+                                    className={classes.title}
+                                    color="textSecondary">
+                        </CardHeader>
+
                         <FormInputTextField id="webServerRedirectUri"
                                             label="Web Server Redirect Uri"
                                             required={true}
