@@ -3,11 +3,11 @@ import {withStyles} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import {GroupAdd} from "@material-ui/icons";
 import vauthenticatorStyles from "../../component/styles";
-import Template from "../../component/Template";
 import StickyHeadTable from "../../component/StickyHeadTable";
 import {findAllClientApplications} from "./ClientAppRepository";
 import Link from "react-router-dom/Link";
 import EditIcon from "@material-ui/icons/Edit";
+import AdminTemplate from "../../component/AdminTemplate";
 
 const columns = [
     {id: 'clientAppName', label: 'Client Application Name', minWidth: 170},
@@ -18,7 +18,7 @@ const columns = [
     {id: 'edit', label: 'Edit Application', minWidth: 170}
 ];
 const getEditLinkFor = (clientAppId) => {
-    return <Link to={`client-application/${clientAppId}`}
+    return <Link to={`client-applications/edit/${clientAppId}`}
                  style={{"text-decoration": "none"}}>
         <EditIcon/>
     </Link>;
@@ -42,7 +42,7 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
 
 
     return (
-        <Template maxWidth="lg" classes={classes}>
+        <AdminTemplate maxWidth="lg" classes={classes}>
 
             <Typography variant="h3" component="h3">
                 <GroupAdd fontSize="large"/> VAuthenticator Client Application Admin
@@ -50,7 +50,7 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
 
             <StickyHeadTable columns={columns} rows={applications}/>
 
-        </Template>
+        </AdminTemplate>
     );
 })
 

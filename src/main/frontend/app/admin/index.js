@@ -16,10 +16,13 @@ const VAuthenticatorAdminApp = withStyles(vauthenticatorStyles)((props) => {
                 <Route exact={true} path="/"
                        render={(props) => <ClientAppListPage {...props} />}/>
 
-                <Route exact={true} path="/client-application"
+                <Route exact={true} path="/client-applications/list"
                        render={(props) => <ClientAppListPage {...props} />}/>
 
-                <Route exact={true} path="/client-application/:clientAppId"
+                <Route exact={true} path="/client-applications/save"
+                       render={(props) => <ClientAppManagementPage {...props} />}/>
+
+                <Route exact={true} path="/client-applications/edit/:clientAppId"
                        render={(props) => <ClientAppManagementPage {...props} />}/>
             </Switch>
         </HashRouter>)
