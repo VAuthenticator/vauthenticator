@@ -8,6 +8,10 @@ const vauthenticatorStyles = theme => ({
     root: {
         flexGrow: 1,
     },
+    card: {
+        marginBottom: 12
+    },
+
     menuButton: {
         textDecoration: 'none',
         color: 'white',

@@ -7,6 +7,8 @@ import {useParams} from "react-router";
 import {findClientApplicationFor} from "./ClientAppRepository";
 import FormInputTextField from "../../component/FormInputTextField";
 import AdminTemplate from "../../component/AdminTemplate";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
 
 const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
     const {classes} = props;
@@ -40,69 +42,92 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
         <AdminTemplate maxWidth="xl" classes={classes}>
 
             <Typography variant="h3" component="h3">
-                <GroupAdd fontSize="large"/> VAuthenticator Admin {clientAppId}
+                <GroupAdd fontSize="large"/> Client Application: {clientAppId}
             </Typography>
 
             <div className={classes.margin}>
-                <FormInputTextField id="clientAppName"
-                                    label="Client Application Displayed Name"
-                                    required={true}
-                                    value={clientApplication.clientAppName}/>
+                <Card className={classes.card}>
+                    <CardContent>
+                        <Typography className={classes.title} color="textSecondary" gutterBottom>
+                            Client Application base definition
+                        </Typography>
+                        <FormInputTextField id="clientAppName"
+                                            label="Client Application Displayed Name"
+                                            required={true}
+                                            value={clientApplication.clientAppName}/>
 
-                <FormInputTextField id="clientAppId"
-                                    label="Client Application Id"
-                                    required={true}
-                                    value={clientAppId || ""}/>
+                        <FormInputTextField id="clientAppId"
+                                            label="Client Application Id"
+                                            required={true}
+                                            value={clientAppId || ""}/>
 
-                <FormInputTextField id="secret"
-                                    label="Password"
-                                    required={true}
-                                    type="Password"
-                                    value={clientApplication.secret}/>
+                        <FormInputTextField id="secret"
+                                            label="Password"
+                                            required={true}
+                                            type="Password"
+                                            value={clientApplication.secret}/>
 
-                <FormInputTextField id="scopes"
-                                    label="Scopes"
-                                    required={true}
-                                    value={clientApplication.scopes}/>
+                        <FormInputTextField id="federation"
+                                            label="Federation"
+                                            value={clientApplication.federation}/>
+                    </CardContent>
+                </Card>
 
-                <FormInputTextField id="authorizedGrantTypes"
-                                    label="Authorized Grant Types"
-                                    required={true}
-                                    value={clientApplication.authorizedGrantTypes}/>
+                <Card className={classes.card}>
+                    <CardContent>
+                        <Typography className={classes.title} color="textSecondary" gutterBottom>
+                            Client Application permission specification
+                        </Typography>
+                        <FormInputTextField id="scopes"
+                                            label="Scopes"
+                                            required={true}
+                                            value={clientApplication.scopes}/>
 
-                <FormInputTextField id="webServerRedirectUri"
-                                    label="Web Server Redirect Uri"
-                                    required={true}
-                                    value={clientApplication.webServerRedirectUri}/>
+                        <FormInputTextField id="authorizedGrantTypes"
+                                            label="Authorized Grant Types"
+                                            required={true}
+                                            value={clientApplication.authorizedGrantTypes}/>
 
-                <FormInputTextField id="authorities"
-                                    label="Authorities"
-                                    required={true}
-                                    value={clientApplication.authorities}/>
 
-                <FormInputTextField id="accessTokenValidity"
-                                    label="Access Token Validity"
-                                    required={true}
-                                    value={clientApplication.accessTokenValidity}/>
+                        <FormInputTextField id="authorities"
+                                            label="Authorities"
+                                            required={true}
+                                            value={clientApplication.authorities}/>
 
-                <FormInputTextField id="refreshTokenValidity"
-                                    label="Refresh Token Validity"
-                                    required={true}
-                                    value={clientApplication.refreshTokenValidity}/>
+                        <FormInputTextField id="accessTokenValidity"
+                                            label="Access Token Validity"
+                                            required={true}
+                                            value={clientApplication.accessTokenValidity}/>
 
-                <FormInputTextField id="postLogoutRedirectUri"
-                                    label="Post Logout Redirect Uri"
-                                    required={true}
-                                    value={clientApplication.postLogoutRedirectUri}/>
+                        <FormInputTextField id="refreshTokenValidity"
+                                            label="Refresh Token Validity"
+                                            required={true}
+                                            value={clientApplication.refreshTokenValidity}/>
+                    </CardContent>
+                </Card>
 
-                <FormInputTextField id="logoutUri"
-                                    label="Logout Uri"
-                                    required={true}
-                                    value={clientApplication.logoutUri}/>
+                <Card className={classes.card}>
+                    <CardContent>
+                        <Typography className={classes.title} color="textSecondary" gutterBottom>
+                            Client Application urls definitions
+                        </Typography>
+                        <FormInputTextField id="webServerRedirectUri"
+                                            label="Web Server Redirect Uri"
+                                            required={true}
+                                            value={clientApplication.webServerRedirectUri}/>
 
-                <FormInputTextField id="federation"
-                                    label="Federation"
-                                    value={clientApplication.federation}/>
+                        <FormInputTextField id="postLogoutRedirectUri"
+                                            label="Post Logout Redirect Uri"
+                                            required={true}
+                                            value={clientApplication.postLogoutRedirectUri}/>
+
+                        <FormInputTextField id="logoutUri"
+                                            label="Logout Uri"
+                                            required={true}
+                                            value={clientApplication.logoutUri}/>
+                    </CardContent>
+                </Card>
+
             </div>
         </AdminTemplate>
     );
