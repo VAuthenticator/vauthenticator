@@ -6,6 +6,7 @@ import {ContactMail, Face, GroupAdd, Lock} from "@material-ui/icons";
 import Divider from "@material-ui/core/Divider";
 import vauthenticatorStyles from "../component/styles";
 import Template from "../component/Template";
+import Separator from "../component/Separator";
 
 const AccountPage = withStyles(vauthenticatorStyles)((props) => {
     const {classes} = props;
@@ -16,7 +17,7 @@ const AccountPage = withStyles(vauthenticatorStyles)((props) => {
                 <GroupAdd fontSize="large"/> Account Registration
             </Typography>
 
-            <Divider/>
+            <Separator />
 
             <div className={classes.margin}>
 

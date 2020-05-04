@@ -10,6 +10,8 @@ import AdminTemplate from "../../component/AdminTemplate";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import CardHeader from "@material-ui/core/CardHeader";
+import Separator from "../../component/Separator";
+import FormButton from "../../component/FormButton";
 
 const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
     const {classes} = props;
@@ -30,6 +32,9 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
         federation: ""
     };
     const [clientApplication, setClientApplication] = useState(emptyClientApplication)
+
+    const saveClientApp = () => {
+    }
 
     useEffect(() => {
         findClientApplicationFor(clientAppId)
@@ -134,6 +139,9 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                     </CardContent>
                 </Card>
 
+                <Separator/>
+
+                <FormButton lable="Save Client Application" onClickHandler={saveClientApp}/>
             </div>
         </AdminTemplate>
     );
