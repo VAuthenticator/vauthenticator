@@ -8,7 +8,6 @@ import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
-import org.mockito.Mockito
 import org.mockito.Mockito.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -17,8 +16,7 @@ import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.*
@@ -50,13 +48,13 @@ class ClientApplicationEndPointTest {
 
     @Test
     @Ignore("todo to finish")
-    fun `store a new clientapp`() {
+    fun `store a new client app`() {
         mockMvc.perform(put("/api/client-applications/clientAppId"))
                 .andExpect(status().isNoContent)
     }
 
     @Test
-    fun `view all clientapp`() {
+    fun `view all client app`() {
         val clientApplication = aClientApp(ClientAppId("clientApp"))
         val body = listOf(
                 ClientAppInListRepresentation.fromDomainToRepresentation(clientApplication),
@@ -75,7 +73,7 @@ class ClientApplicationEndPointTest {
     }
 
     @Test
-    fun `view a specific clientapp`() {
+    fun `view a specific client app`() {
         val clientApplication = aClientApp(ClientAppId("clientApp"))
         val body = ClientAppRepresentation.fromDomainToRepresentation(clientApplication)
 
@@ -87,6 +85,15 @@ class ClientApplicationEndPointTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(body)))
 
         verify(clientApplicationRepository).findOne(ClientAppId("clientApp"))
+    }
+
+    @Test
+    fun `delete a specific client app`() {
+
+        mockMvc.perform(delete("/api/client-applications/clientApp"))
+                .andExpect(status().isNoContent)
+
+        verify(clientApplicationRepository).delete(ClientAppId("clientApp"))
     }
 
 }

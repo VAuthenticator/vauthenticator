@@ -1,10 +1,7 @@
 package it.valeriovaudi.vauthenticator.oauth2.clientapp
 
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 class ClientApplicationEndPoint(private val clientApplicationRepository: ClientApplicationRepository) {
@@ -28,6 +25,12 @@ class ClientApplicationEndPoint(private val clientApplicationRepository: ClientA
                     .let {
                         ResponseEntity.ok(it)
                     }
+
+    @DeleteMapping("/api/client-applications/{clientAppId}")
+    fun deleteAClientApplication(@PathVariable("clientAppId") clientAppId: String): ResponseEntity<Unit> {
+        clientApplicationRepository.delete(ClientAppId(clientAppId))
+        return ResponseEntity.noContent().build()
+    }
 
 }
 

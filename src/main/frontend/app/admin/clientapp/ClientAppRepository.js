@@ -23,3 +23,11 @@ export function findClientApplicationFor(clientAppId) {
         return response.json()
     })
 }
+
+export function deleteClientApplicationFor(clientAppId) {
+    return fetch(`/vauthenticator/api/client-applications/${clientAppId}`,
+        {
+            method: "DELETE",
+            credentials: 'same-origin'
+        })
+}

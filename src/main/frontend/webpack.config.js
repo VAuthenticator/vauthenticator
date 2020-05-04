@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const BUID_DIR = path.resolve(__dirname + "../../../../target/classes/static");
 
 module.exports = {
-    mode: 'production',
+    mode: 'development',
     entry: {
         login: path.resolve(__dirname, './app/login/index.js'),
         signup: path.resolve(__dirname, './app/registration/index.js'),
