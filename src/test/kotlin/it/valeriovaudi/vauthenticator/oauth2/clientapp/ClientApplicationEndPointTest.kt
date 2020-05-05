@@ -43,6 +43,9 @@ class ClientApplicationEndPointTest {
     @MockBean
     lateinit var clientApplicationRepository: ClientApplicationRepository
 
+    @MockBean
+    lateinit var readClientApplication : ReadClientApplication
+
     @Autowired
     lateinit var objectMapper: ObjectMapper
 
@@ -62,14 +65,14 @@ class ClientApplicationEndPointTest {
                 ClientAppInListRepresentation.fromDomainToRepresentation(clientApplication)
         )
 
-        given(clientApplicationRepository.findAll())
+        given(readClientApplication.findAll())
                 .willReturn(listOf(clientApplication, clientApplication, clientApplication))
 
         mockMvc.perform(get("/api/client-applications"))
                 .andExpect(status().isOk)
                 .andExpect(content().json(objectMapper.writeValueAsString(body)))
 
-        verify(clientApplicationRepository).findAll()
+        verify(readClientApplication).findAll()
     }
 
     @Test
@@ -77,14 +80,14 @@ class ClientApplicationEndPointTest {
         val clientApplication = aClientApp(ClientAppId("clientApp"))
         val body = ClientAppRepresentation.fromDomainToRepresentation(clientApplication)
 
-        given(clientApplicationRepository.findOne(ClientAppId("clientApp")))
+        given(readClientApplication.findOne(ClientAppId("clientApp")))
                 .willReturn(Optional.of(aClientApp(ClientAppId("clientApp"))))
 
         mockMvc.perform(get("/api/client-applications/clientApp"))
                 .andExpect(status().isOk)
                 .andExpect(content().json(objectMapper.writeValueAsString(body)))
 
-        verify(clientApplicationRepository).findOne(ClientAppId("clientApp"))
+        verify(readClientApplication).findOne(ClientAppId("clientApp"))
     }
 
     @Test

@@ -4,7 +4,8 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-class ClientApplicationEndPoint(private val clientApplicationRepository: ClientApplicationRepository) {
+class ClientApplicationEndPoint(private val clientApplicationRepository: ClientApplicationRepository,
+                                private val readClientApplication : ReadClientApplication) {
 
     @PutMapping("/api/client-applications/{clientAppId}")
     fun storeClientApplication(@PathVariable("clientAppId") clientAppId: String, clientAppRepresentation: ClientAppRepresentation) =
@@ -12,7 +13,7 @@ class ClientApplicationEndPoint(private val clientApplicationRepository: ClientA
 
     @GetMapping("/api/client-applications")
     fun viewAllClientApplications() =
-            clientApplicationRepository.findAll()
+            readClientApplication.findAll()
                     .map { ClientAppInListRepresentation.fromDomainToRepresentation(it) }
                     .let {
                         ResponseEntity.ok(it)
@@ -20,7 +21,7 @@ class ClientApplicationEndPoint(private val clientApplicationRepository: ClientA
 
     @GetMapping("/api/client-applications/{clientAppId}")
     fun viewAClientApplication(@PathVariable("clientAppId") clientAppId: String) =
-            clientApplicationRepository.findOne(ClientAppId(clientAppId))
+            readClientApplication.findOne(ClientAppId(clientAppId))
                     .map { ClientAppRepresentation.fromDomainToRepresentation(it) }
                     .let {
                         ResponseEntity.ok(it)
