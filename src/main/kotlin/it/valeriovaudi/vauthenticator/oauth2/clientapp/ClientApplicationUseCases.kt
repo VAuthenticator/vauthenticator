@@ -1,8 +1,18 @@
 package it.valeriovaudi.vauthenticator.oauth2.clientapp
 
+import it.valeriovaudi.vauthenticator.extentions.VAuthenticatorPasswordEncoder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import java.util.*
+
+class StoreClientApplication(private val clientApplicationRepository: ClientApplicationRepository,
+                             private val passwordEncoder: VAuthenticatorPasswordEncoder) {
+    fun store() {
+        TODO("Not yet implemented")
+    }
+
+
+}
 
 open class ReadClientApplication(private val clientApplicationRepository: ClientApplicationRepository) {
     open fun findOne(clientAppId: ClientAppId): Optional<ClientApplication> =
