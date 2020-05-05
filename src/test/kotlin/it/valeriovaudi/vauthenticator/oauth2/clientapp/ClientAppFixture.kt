@@ -2,7 +2,7 @@ package it.valeriovaudi.vauthenticator.oauth2.clientapp
 
 object ClientAppFixture {
     fun aClientApp(clientAppId: ClientAppId,
-                   password: Secret = EmptySecret,
+                   password: Secret = Secret("secret"),
                    federation: Federation = Federation("A_FEDERATION")
     ) = ClientApplication(
             clientAppId,

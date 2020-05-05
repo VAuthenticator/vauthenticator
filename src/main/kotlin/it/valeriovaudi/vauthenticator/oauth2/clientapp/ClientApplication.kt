@@ -39,15 +39,7 @@ data class ResourceIds(val content: List<ResourceId>) {
     }
 }
 
-sealed class Secret {
-    fun content(): String = when (this) {
-        is EmptySecret -> "*********"
-        is FilledSecret -> this.content
-    }
-}
-
-data class FilledSecret(val content: String) : Secret()
-object EmptySecret : Secret()
+data class Secret(val content: String)
 
 data class ResourceId(val content: String)
 data class ClientAppId(val content: String)

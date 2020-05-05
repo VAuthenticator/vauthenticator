@@ -50,7 +50,7 @@ data class ClientAppRepresentation(var clientAppName: String,
         fun fromDomainToRepresentation(clientApplication: ClientApplication) =
                 ClientAppRepresentation(
                         clientAppName = clientApplication.clientAppId.content,
-                        secret = clientApplication.secret.content(),
+                        secret = clientApplication.secret.content,
                         setSecret = false,
                         scopes = clientApplication.scopes.content.map { it.content },
                         authorizedGrantTypes = clientApplication.authorizedGrantTypes.content.map { it.name.toLowerCase() },

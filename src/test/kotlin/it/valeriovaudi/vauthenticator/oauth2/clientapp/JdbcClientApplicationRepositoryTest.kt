@@ -1,13 +1,11 @@
 package it.valeriovaudi.vauthenticator.oauth2.clientapp
 
-import it.valeriovaudi.vauthenticator.extentions.VAuthenticatorPasswordEncoder
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppFixture.aClientApp
 import org.hamcrest.Matchers.equalTo
 import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.ClassRule
 import org.junit.Test
-import org.mockito.Mockito.*
 import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.jdbc.core.JdbcTemplate
 import org.testcontainers.containers.DockerComposeContainer
@@ -25,7 +23,6 @@ class JdbcClientApplicationRepositoryTest {
     }
 
     lateinit var clientApplicationRepository: JdbcClientApplicationRepository
-    lateinit var passwordEncoder: VAuthenticatorPasswordEncoder
 
     @Before
     fun setUp() {
@@ -34,8 +31,7 @@ class JdbcClientApplicationRepositoryTest {
         val dataSource = DataSourceBuilder.create()
                 .url("jdbc:postgresql://$serviceHost:$servicePort/vauthenticator?user=root&password=root")
                 .build()
-        passwordEncoder = mock(VAuthenticatorPasswordEncoder::class.java)
-        clientApplicationRepository = JdbcClientApplicationRepository(JdbcTemplate(dataSource), passwordEncoder)
+        clientApplicationRepository = JdbcClientApplicationRepository(JdbcTemplate(dataSource))
     }
 
 
@@ -76,26 +72,24 @@ class JdbcClientApplicationRepositoryTest {
 
     @Test
     fun `save a new applications in VAuthenticator`() {
-        clientApplicationRepository.save(aClientApp(clientAppId = ClientAppId("a new client"), password = FilledSecret("secret")))
+        clientApplicationRepository.save(aClientApp(clientAppId = ClientAppId("a new client"), password = Secret("secret")))
 
         val actual: Optional<ClientApplication> = clientApplicationRepository.findOne(ClientAppId("a new client"))
         val clientApplications: Optional<ClientApplication> = Optional.of(aClientApp(ClientAppId("a new client")))
         assertThat(actual, equalTo(clientApplications))
-        verify(passwordEncoder).encode("secret")
     }
 
     @Test
     fun `when try to save more that onese a new applications in VAuthenticator`() {
-        clientApplicationRepository.save(aClientApp(clientAppId = ClientAppId("a new client"), password = FilledSecret("secret")))
+        clientApplicationRepository.save(aClientApp(clientAppId = ClientAppId("a new client"), password = Secret("secret")))
         var actual: Optional<ClientApplication> = clientApplicationRepository.findOne(ClientAppId("a new client"))
         var clientApplications: Optional<ClientApplication> = Optional.of(aClientApp(ClientAppId("a new client")))
         assertThat(actual, equalTo(clientApplications))
 
-        clientApplicationRepository.save(aClientApp(clientAppId = ClientAppId("a new client"), password = FilledSecret("secret"), federation = Federation("a new federation")))
+        clientApplicationRepository.save(aClientApp(clientAppId = ClientAppId("a new client"), password = Secret("secret"), federation = Federation("a new federation")))
         actual = clientApplicationRepository.findOne(ClientAppId("a new client"))
         clientApplications = Optional.of(aClientApp(clientAppId = ClientAppId("a new client"), federation = Federation("a new federation")))
         assertThat(actual, equalTo(clientApplications))
-        verify(passwordEncoder, times(2)).encode("secret")
     }
 
     @Test

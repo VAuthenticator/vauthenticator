@@ -1,6 +1,5 @@
 package it.valeriovaudi.vauthenticator.oauth2.clientapp
 
-import it.valeriovaudi.vauthenticator.extentions.VAuthenticatorPasswordEncoder
 import org.springframework.jdbc.core.JdbcTemplate
 import java.sql.ResultSet
 import java.util.*
@@ -18,8 +17,7 @@ interface ClientApplicationRepository {
     fun delete(clientAppId: ClientAppId)
 }
 
-class JdbcClientApplicationRepository(private val jdbcTemplate: JdbcTemplate,
-                                      private val passwordEncoder: VAuthenticatorPasswordEncoder) : ClientApplicationRepository {
+class JdbcClientApplicationRepository(private val jdbcTemplate: JdbcTemplate) : ClientApplicationRepository {
     val INSERT_QUERY: String = """
     INSERT INTO oauth_client_details 
     (
@@ -73,7 +71,7 @@ class JdbcClientApplicationRepository(private val jdbcTemplate: JdbcTemplate,
     override fun save(clientApp: ClientApplication) {
         clientApp.let {
             val parametes = listOf(
-                    secretFor(it),
+                    it.secret.content,
                     it.resourceIds.content.map { it.content }.reduce(joinWithComma()),
                     it.scopes.content.map { it.content }.reduce(joinWithComma()),
                     it.authorizedGrantTypes.content.map { it.name.toLowerCase() }.reduce(joinWithComma()),
@@ -95,14 +93,6 @@ class JdbcClientApplicationRepository(private val jdbcTemplate: JdbcTemplate,
         }
     }
 
-    private fun secretFor(clientApp: ClientApplication) =
-            clientApp.secret.let {
-                when (it) {
-                    is EmptySecret -> it.content()
-                    is FilledSecret -> passwordEncoder.encode(it.content())
-                }
-            }
-
     private fun joinWithComma() = { acc: String, s: String -> "$acc,$s" }
 
     override fun delete(clientAppId: ClientAppId) {
@@ -113,7 +103,7 @@ class JdbcClientApplicationRepository(private val jdbcTemplate: JdbcTemplate,
             { rs: ResultSet, i: Int ->
                 ClientApplication(
                         clientAppId = ClientAppId(rs.getString("client_id")),
-                        secret = EmptySecret,
+                        secret = Secret(rs.getString("client_secret")),
                         authorizedGrantTypes = AuthorizedGrantTypes(listFor(rs, "authorized_grant_types")
                                 .map { AuthorizedGrantType.valueOf(it.toUpperCase()) }),
                         scopes = Scopes(listFor(rs, "scope").map { Scope(it) }),
