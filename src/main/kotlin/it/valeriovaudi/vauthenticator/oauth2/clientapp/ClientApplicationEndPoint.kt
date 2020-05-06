@@ -5,11 +5,15 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 class ClientApplicationEndPoint(private val clientApplicationRepository: ClientApplicationRepository,
-                                private val readClientApplication : ReadClientApplication) {
+                                private var storeClientApplication: StoreClientApplication,
+                                private val readClientApplication: ReadClientApplication) {
 
     @PutMapping("/api/client-applications/{clientAppId}")
-    fun storeClientApplication(@PathVariable("clientAppId") clientAppId: String, clientAppRepresentation: ClientAppRepresentation) =
-            ResponseEntity.noContent().build<Unit>()
+    fun storeClientApplication(@PathVariable("clientAppId") clientAppId: String,
+                               @RequestBody clientAppRepresentation: ClientAppRepresentation): ResponseEntity<Unit> {
+        storeClientApplication.store(ClientAppRepresentation.fromRepresentationToDomain(clientAppId, clientAppRepresentation), clientAppRepresentation.setSecret)
+        return ResponseEntity.noContent().build()
+    }
 
     @GetMapping("/api/client-applications")
     fun viewAllClientApplications() =
@@ -48,11 +52,11 @@ data class ClientAppRepresentation(var clientAppName: String,
                                    var logoutUri: String,
                                    var federation: String) {
     companion object {
-        fun fromDomainToRepresentation(clientApplication: ClientApplication) =
+        fun fromDomainToRepresentation(clientApplication: ClientApplication, setSecret: Boolean = false) =
                 ClientAppRepresentation(
                         clientAppName = clientApplication.clientAppId.content,
                         secret = clientApplication.secret.content,
-                        setSecret = false,
+                        setSecret = setSecret,
                         scopes = clientApplication.scopes.content.map { it.content },
                         authorizedGrantTypes = clientApplication.authorizedGrantTypes.content.map { it.name.toLowerCase() },
                         webServerRedirectUri = clientApplication.webServerRedirectUri.content,
@@ -62,6 +66,22 @@ data class ClientAppRepresentation(var clientAppName: String,
                         postLogoutRedirectUri = clientApplication.postLogoutRedirectUri.content,
                         logoutUri = clientApplication.logoutUri.content,
                         federation = clientApplication.federation.name
+                )
+
+        fun fromRepresentationToDomain(clientAppId: String, representation: ClientAppRepresentation) =
+                ClientApplication(
+                        clientAppId = ClientAppId(clientAppId),
+                        secret = Secret(representation.secret),
+                        scopes = Scopes(representation.scopes.map { Scope(it) }),
+                        authorizedGrantTypes = AuthorizedGrantTypes(representation.authorizedGrantTypes.map { it.toUpperCase() }.map { AuthorizedGrantType.valueOf(it) }),
+                        webServerRedirectUri = CallbackUri(representation.webServerRedirectUri),
+                        authorities = Authorities(representation.authorities.map(::Authority)),
+                        accessTokenValidity = TokenTimeToLive(representation.accessTokenValidity),
+                        refreshTokenValidity = TokenTimeToLive(representation.refreshTokenValidity),
+                        postLogoutRedirectUri = PostLogoutRedirectUri(representation.postLogoutRedirectUri),
+                        logoutUri = LogoutUri(representation.logoutUri),
+                        federation = Federation(representation.federation),
+                        resourceIds = ResourceIds.from(ResourceId("oauth2-resource"))//todo
                 )
     }
 }

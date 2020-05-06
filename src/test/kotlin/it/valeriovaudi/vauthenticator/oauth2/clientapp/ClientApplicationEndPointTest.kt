@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppFixture.aClientApp
 import it.valeriovaudi.vauthenticator.openid.connect.nonce.NonceStore
 import it.valeriovaudi.vauthenticator.security.userdetails.AccountUserDetailsService
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
@@ -13,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.http.MediaType
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
@@ -44,16 +44,25 @@ class ClientApplicationEndPointTest {
     lateinit var clientApplicationRepository: ClientApplicationRepository
 
     @MockBean
-    lateinit var readClientApplication : ReadClientApplication
+    lateinit var storeClientApplication: StoreClientApplication
+
+    @MockBean
+    lateinit var readClientApplication: ReadClientApplication
 
     @Autowired
     lateinit var objectMapper: ObjectMapper
 
     @Test
-    @Ignore("todo to finish")
     fun `store a new client app`() {
-        mockMvc.perform(put("/api/client-applications/clientAppId"))
+        val clientApplication = aClientApp(ClientAppId("clientApp"))
+        val representation = ClientAppRepresentation.fromDomainToRepresentation(clientApplication).copy(setSecret = true)
+
+        mockMvc.perform(put("/api/client-applications/clientAppId")
+                .content(objectMapper.writeValueAsString(representation))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent)
+
+        verify(storeClientApplication).store(clientApplication, true)
     }
 
     @Test
