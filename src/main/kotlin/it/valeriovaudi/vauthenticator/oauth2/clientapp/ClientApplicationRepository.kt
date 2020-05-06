@@ -1,6 +1,7 @@
 package it.valeriovaudi.vauthenticator.oauth2.clientapp
 
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.transaction.annotation.Transactional
 import java.sql.ResultSet
 import java.util.*
 
@@ -17,6 +18,7 @@ interface ClientApplicationRepository {
     fun delete(clientAppId: ClientAppId)
 }
 
+@Transactional
 class JdbcClientApplicationRepository(private val jdbcTemplate: JdbcTemplate) : ClientApplicationRepository {
     val INSERT_QUERY: String = """
     INSERT INTO oauth_client_details 
