@@ -11,7 +11,9 @@ class ClientApplicationEndPoint(private val clientApplicationRepository: ClientA
     @PutMapping("/api/client-applications/{clientAppId}")
     fun storeClientApplication(@PathVariable("clientAppId") clientAppId: String,
                                @RequestBody clientAppRepresentation: ClientAppRepresentation): ResponseEntity<Unit> {
-        storeClientApplication.store(ClientAppRepresentation.fromRepresentationToDomain(clientAppId, clientAppRepresentation), clientAppRepresentation.setSecret)
+        val aClientApp = ClientAppRepresentation.fromRepresentationToDomain(clientAppId, clientAppRepresentation)
+        val storeWithPassword = clientAppRepresentation.setSecret
+        storeClientApplication.store(aClientApp, storeWithPassword)
         return ResponseEntity.noContent().build()
     }
 
@@ -81,7 +83,7 @@ data class ClientAppRepresentation(var clientAppName: String,
                         postLogoutRedirectUri = PostLogoutRedirectUri(representation.postLogoutRedirectUri),
                         logoutUri = LogoutUri(representation.logoutUri),
                         federation = Federation(representation.federation),
-                        resourceIds = ResourceIds.from(ResourceId("oauth2-resource"))//todo
+                        resourceIds = ResourceIds.from(ResourceId("oauth2-resource"))
                 )
     }
 }
