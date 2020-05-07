@@ -24,6 +24,21 @@ export function findClientApplicationFor(clientAppId) {
     })
 }
 
+export function saveClientApplicationFor(clientAppId, clientApp) {
+    return fetch(`/vauthenticator/api/client-applications/${clientAppId}`,
+        {
+            method: "PUT",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(clientApp),
+            credentials: 'same-origin'
+        }).then(response => {
+        return response.json()
+    })
+}
+
 export function deleteClientApplicationFor(clientAppId) {
     return fetch(`/vauthenticator/api/client-applications/${clientAppId}`,
         {

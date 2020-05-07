@@ -8,6 +8,7 @@ import {deleteClientApplicationFor, findAllClientApplications} from "./ClientApp
 import Link from "react-router-dom/Link";
 import EditIcon from "@material-ui/icons/Edit";
 import AdminTemplate from "../../component/AdminTemplate";
+import FormButton from "../../component/FormButton";
 
 const columns = [
     {id: 'clientAppName', label: 'Client Application Name', minWidth: 170},
@@ -61,8 +62,13 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
         <AdminTemplate maxWidth="lg" classes={classes}>
 
             <Typography variant="h3" component="h3">
-                <GroupAdd fontSize="large"/> VAuthenticator Client Application Admin
+                VAuthenticator Client Application Admin
             </Typography>
+            <Link to={"/client-applications/save"}>
+                <FormButton type="button"
+                            labelPrefix={<GroupAdd fontSize="large"/>}
+                            lable={"New Client Application"}/>
+            </Link>
 
             <StickyHeadTable columns={columns} rows={applications}/>
 
