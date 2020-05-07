@@ -4,7 +4,7 @@ import Typography from "@material-ui/core/Typography";
 import {GroupAdd} from "@material-ui/icons";
 import vauthenticatorStyles from "../../component/styles";
 import {useParams} from "react-router";
-import {findClientApplicationFor} from "./ClientAppRepository";
+import {findClientApplicationFor, saveClientApplicationFor} from "./ClientAppRepository";
 import FormInputTextField from "../../component/FormInputTextField";
 import AdminTemplate from "../../component/AdminTemplate";
 import Card from "@material-ui/core/Card";
@@ -17,30 +17,56 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
     const {classes} = props;
     let {clientAppId} = useParams();
 
-    let emptyClientApplication = {
-        clientAppName: "",
-        secret: "*********",
-        setSecret: false,
-        scopes: [],
-        authorizedGrantTypes: [],
-        webServerRedirectUri: "",
-        authorities: [],
-        accessTokenValidity: "",
-        refreshTokenValidity: "",
-        postLogoutRedirectUri: "",
-        logoutUri: "",
-        federation: ""
-    };
-    const [clientApplication, setClientApplication] = useState(emptyClientApplication)
+    const [clientApplicationId, setClientApplicationId] = useState(clientAppId)
+    const [clientAppName, setClientAppName] = useState("")
+    const [secret, setSecret] = useState("*********")
+    const [scopes, setScopes] = useState([])
+    const [authorizedGrantTypes, setAuthorizedGrantTypes] = useState([])
+    const [webServerRedirectUri, setWebServerRedirectUri] = useState("")
+    const [authorities, setAuthorities] = useState([])
+    const [accessTokenValidity, setAccessTokenValidity] = useState("")
+    const [refreshTokenValidity, setRefreshTokenValidity] = useState("")
+    const [postLogoutRedirectUri, setPostLogoutRedirectUri] = useState("")
+    const [logoutUri, setLogoutUri] = useState("")
+    const [federation, setFederation] = useState("")
 
     const saveClientApp = () => {
+        let clientApplication = {
+            "clientAppName": clientAppName,
+            "secret": secret,
+            "scopes": scopes,
+            "authorizedGrantTypes": authorizedGrantTypes,
+            "webServerRedirectUri": webServerRedirectUri,
+            "authorities": authorities,
+            "accessTokenValidity": accessTokenValidity,
+            "refreshTokenValidity": refreshTokenValidity,
+            "postLogoutRedirectUri": postLogoutRedirectUri,
+            "logoutUri": logoutUri,
+            "federation": federation
+        }
+        saveClientApplicationFor(clientApplicationId, clientApplication)
+            .then(response => {
+                if (response.status === 204) {
+
+                }
+            })
     }
 
     useEffect(() => {
-        findClientApplicationFor(clientAppId)
+        findClientApplicationFor(clientApplicationId)
             .then(value => {
                 console.log(value)
-                setClientApplication(value || emptyClientApplication)
+                setClientAppName(value.clientAppName)
+                setSecret(value.secret)
+                setScopes(value.scopes)
+                setAuthorizedGrantTypes(value.authorizedGrantTypes)
+                setWebServerRedirectUri(value.webServerRedirectUri)
+                setAuthorities(value.authorities)
+                setAccessTokenValidity(value.accessTokenValidity)
+                setRefreshTokenValidity(value.refreshTokenValidity)
+                setPostLogoutRedirectUri(value.postLogoutRedirectUri)
+                setLogoutUri(value.logoutUri)
+                setFederation(value.federation)
             })
     }, {})
 
@@ -48,7 +74,7 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
         <AdminTemplate maxWidth="xl" classes={classes}>
 
             <Typography variant="h3" component="h3">
-                <GroupAdd fontSize="large"/> Client Application: {clientAppId}
+                <GroupAdd fontSize="large"/> Client Application: {clientApplicationId}
             </Typography>
 
             <div className={classes.margin}>
@@ -61,22 +87,34 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                         <FormInputTextField id="clientAppName"
                                             label="Client Application Displayed Name"
                                             required={true}
-                                            value={clientApplication.clientAppName}/>
+                                            handler={(value) => {
+                                                setClientAppName(value.target.value)
+                                            }}
+                                            value={clientAppName}/>
 
                         <FormInputTextField id="clientAppId"
                                             label="Client Application Id"
                                             required={true}
-                                            value={clientAppId || ""}/>
+                                            handler={(value) => {
+                                                setClientApplicationId(value.target.value)
+                                            }}
+                                            value={clientApplicationId || ""}/>
 
                         <FormInputTextField id="secret"
                                             label="Password"
                                             required={true}
                                             type="Password"
-                                            value={clientApplication.secret}/>
+                                            handler={(value) => {
+                                                setSecret(value.target.value)
+                                            }}
+                                            value={secret}/>
 
                         <FormInputTextField id="federation"
                                             label="Federation"
-                                            value={clientApplication.federation}/>
+                                            handler={(value) => {
+                                                setFederation(value.target.value)
+                                            }}
+                                            value={federation}/>
                     </CardContent>
                 </Card>
 
@@ -90,28 +128,43 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                         <FormInputTextField id="scopes"
                                             label="Scopes"
                                             required={true}
-                                            value={clientApplication.scopes}/>
+                                            handler={(value) => {
+                                                setScopes(value.target.value)
+                                            }}
+                                            value={scopes}/>
 
                         <FormInputTextField id="authorizedGrantTypes"
                                             label="Authorized Grant Types"
                                             required={true}
-                                            value={clientApplication.authorizedGrantTypes}/>
+                                            handler={(value) => {
+                                                setAuthorizedGrantTypes(value.target.value)
+                                            }}
+                                            value={authorizedGrantTypes}/>
 
 
                         <FormInputTextField id="authorities"
                                             label="Authorities"
                                             required={true}
-                                            value={clientApplication.authorities}/>
+                                            handler={(value) => {
+                                                setAuthorities(value.target.value)
+                                            }}
+                                            value={authorities}/>
 
                         <FormInputTextField id="accessTokenValidity"
                                             label="Access Token Validity"
                                             required={true}
-                                            value={clientApplication.accessTokenValidity}/>
+                                            handler={(value) => {
+                                                setAccessTokenValidity(value.target.value)
+                                            }}
+                                            value={accessTokenValidity}/>
 
                         <FormInputTextField id="refreshTokenValidity"
                                             label="Refresh Token Validity"
                                             required={true}
-                                            value={clientApplication.refreshTokenValidity}/>
+                                            handler={(value) => {
+                                                setRefreshTokenValidity(value.target.value)
+                                            }}
+                                            value={refreshTokenValidity}/>
                     </CardContent>
                 </Card>
 
@@ -125,17 +178,26 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                         <FormInputTextField id="webServerRedirectUri"
                                             label="Web Server Redirect Uri"
                                             required={true}
-                                            value={clientApplication.webServerRedirectUri}/>
+                                            handler={(value) => {
+                                                setWebServerRedirectUri(value.target.value)
+                                            }}
+                                            value={webServerRedirectUri}/>
 
                         <FormInputTextField id="postLogoutRedirectUri"
                                             label="Post Logout Redirect Uri"
                                             required={true}
-                                            value={clientApplication.postLogoutRedirectUri}/>
+                                            handler={(value) => {
+                                                setPostLogoutRedirectUri(value.target.value)
+                                            }}
+                                            value={postLogoutRedirectUri}/>
 
                         <FormInputTextField id="logoutUri"
                                             label="Logout Uri"
                                             required={true}
-                                            value={clientApplication.logoutUri}/>
+                                            handler={(value) => {
+                                                setLogoutUri(value.target.value)
+                                            }}
+                                            value={logoutUri}/>
                     </CardContent>
                 </Card>
 
