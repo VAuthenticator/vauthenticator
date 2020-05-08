@@ -18,6 +18,13 @@ class ClientApplicationEndPoint(private val clientApplicationRepository: ClientA
         return ResponseEntity.noContent().build()
     }
 
+    @PatchMapping("/api/client-applications/{clientAppId}")
+    fun resetPasswordForClientApplication(@PathVariable("clientAppId") clientAppId: String,
+                                          @RequestBody body: Map<String, String>): ResponseEntity<Unit> {
+        storeClientApplication.resetPassword(ClientAppId(clientAppId), Secret(body.get("secret")!!))
+        return ResponseEntity.noContent().build()
+    }
+
     @GetMapping("/api/client-applications")
     fun viewAllClientApplications() =
             readClientApplication.findAll()

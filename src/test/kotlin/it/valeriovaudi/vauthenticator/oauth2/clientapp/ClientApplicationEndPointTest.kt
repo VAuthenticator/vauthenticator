@@ -66,6 +66,16 @@ class ClientApplicationEndPointTest {
     }
 
     @Test
+    fun `reset password for a client app`() {
+        mockMvc.perform(patch("/api/client-applications/clientApp")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(mapOf("secret" to "secret"))))
+                .andExpect(status().isNoContent)
+
+        verify(storeClientApplication).resetPassword(ClientAppId("clientApp"), Secret("secret"))
+    }
+
+    @Test
     fun `view all client app`() {
         val clientApplication = aClientApp(ClientAppId("clientApp"))
         val body = listOf(
@@ -107,5 +117,4 @@ class ClientApplicationEndPointTest {
 
         verify(clientApplicationRepository).delete(ClientAppId("clientApp"))
     }
-
 }
