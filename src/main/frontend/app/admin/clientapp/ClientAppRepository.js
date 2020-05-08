@@ -34,9 +34,7 @@ export function saveClientApplicationFor(clientAppId, clientApp) {
             },
             body: JSON.stringify(clientApp),
             credentials: 'same-origin'
-        }).then(response => {
-        return response.json()
-    })
+        })
 }
 
 export function deleteClientApplicationFor(clientAppId) {

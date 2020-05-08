@@ -12,7 +12,8 @@ class ClientApplicationEndPoint(private val clientApplicationRepository: ClientA
     fun storeClientApplication(@PathVariable("clientAppId") clientAppId: String,
                                @RequestBody clientAppRepresentation: ClientAppRepresentation): ResponseEntity<Unit> {
         val aClientApp = ClientAppRepresentation.fromRepresentationToDomain(clientAppId, clientAppRepresentation)
-        val storeWithPassword = clientAppRepresentation.setSecret
+        val storeWithPassword = clientAppRepresentation.storePassword
+        println("storeWithPassword: $storeWithPassword")
         storeClientApplication.store(aClientApp, storeWithPassword)
         return ResponseEntity.noContent().build()
     }
@@ -43,7 +44,7 @@ class ClientApplicationEndPoint(private val clientApplicationRepository: ClientA
 
 data class ClientAppRepresentation(var clientAppName: String,
                                    var secret: String,
-                                   var setSecret: Boolean,
+                                   var storePassword: Boolean,
                                    var scopes: List<String>,
                                    var authorizedGrantTypes: List<String>,
                                    var webServerRedirectUri: String,
@@ -54,11 +55,11 @@ data class ClientAppRepresentation(var clientAppName: String,
                                    var logoutUri: String,
                                    var federation: String) {
     companion object {
-        fun fromDomainToRepresentation(clientApplication: ClientApplication, setSecret: Boolean = false) =
+        fun fromDomainToRepresentation(clientApplication: ClientApplication, storePassword: Boolean = false) =
                 ClientAppRepresentation(
                         clientAppName = clientApplication.clientAppId.content,
                         secret = clientApplication.secret.content,
-                        setSecret = setSecret,
+                        storePassword = storePassword,
                         scopes = clientApplication.scopes.content.map { it.content },
                         authorizedGrantTypes = clientApplication.authorizedGrantTypes.content.map { it.name.toLowerCase() },
                         webServerRedirectUri = clientApplication.webServerRedirectUri.content,

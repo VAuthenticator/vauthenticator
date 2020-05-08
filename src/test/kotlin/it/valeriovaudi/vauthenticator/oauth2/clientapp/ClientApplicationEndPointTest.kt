@@ -55,7 +55,7 @@ class ClientApplicationEndPointTest {
     @Test
     fun `store a new client app`() {
         val clientApplication = aClientApp(ClientAppId("clientAppId"))
-        val representation = ClientAppRepresentation.fromDomainToRepresentation(clientApplication, setSecret = true)
+        val representation = ClientAppRepresentation.fromDomainToRepresentation(clientApplication, storePassword = true)
 
         mockMvc.perform(put("/api/client-applications/clientAppId")
                 .content(objectMapper.writeValueAsString(representation))

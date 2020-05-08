@@ -5,7 +5,7 @@ import {Delete, GroupAdd} from "@material-ui/icons";
 import vauthenticatorStyles from "../../component/styles";
 import StickyHeadTable from "../../component/StickyHeadTable";
 import {deleteClientApplicationFor, findAllClientApplications} from "./ClientAppRepository";
-import Link from "react-router-dom/Link";
+import {Link} from "react-router-dom";
 import EditIcon from "@material-ui/icons/Edit";
 import AdminTemplate from "../../component/AdminTemplate";
 import FormButton from "../../component/FormButton";

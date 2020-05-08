@@ -3,7 +3,7 @@ import {withStyles} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import {GroupAdd} from "@material-ui/icons";
 import vauthenticatorStyles from "../../component/styles";
-import {useParams} from "react-router";
+import {useHistory, useParams} from "react-router";
 import {findClientApplicationFor, saveClientApplicationFor} from "./ClientAppRepository";
 import FormInputTextField from "../../component/FormInputTextField";
 import AdminTemplate from "../../component/AdminTemplate";
@@ -16,7 +16,10 @@ import FormButton from "../../component/FormButton";
 const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
     const {classes} = props;
     let {clientAppId} = useParams();
+    const storePassword = !clientAppId
+    const history = useHistory();
 
+    console.log("storePassword: " + storePassword)
     const [clientApplicationId, setClientApplicationId] = useState(clientAppId)
     const [clientAppName, setClientAppName] = useState("")
     const [secret, setSecret] = useState("*********")
@@ -42,12 +45,13 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
             "refreshTokenValidity": refreshTokenValidity,
             "postLogoutRedirectUri": postLogoutRedirectUri,
             "logoutUri": logoutUri,
-            "federation": federation
+            "federation": federation,
+            "storePassword": storePassword
         }
         saveClientApplicationFor(clientApplicationId, clientApplication)
             .then(response => {
                 if (response.status === 204) {
-
+                    history.replace("/client-applications/list");
                 }
             })
     }
@@ -129,7 +133,7 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                                             label="Scopes"
                                             required={true}
                                             handler={(value) => {
-                                                setScopes(value.target.value)
+                                                setScopes(value.target.value.split(","))
                                             }}
                                             value={scopes}/>
 
@@ -137,7 +141,7 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                                             label="Authorized Grant Types"
                                             required={true}
                                             handler={(value) => {
-                                                setAuthorizedGrantTypes(value.target.value)
+                                                setAuthorizedGrantTypes(value.target.value.split(","))
                                             }}
                                             value={authorizedGrantTypes}/>
 
@@ -146,7 +150,7 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                                             label="Authorities"
                                             required={true}
                                             handler={(value) => {
-                                                setAuthorities(value.target.value)
+                                                setAuthorities(value.target.value.split(","))
                                             }}
                                             value={authorities}/>
 
