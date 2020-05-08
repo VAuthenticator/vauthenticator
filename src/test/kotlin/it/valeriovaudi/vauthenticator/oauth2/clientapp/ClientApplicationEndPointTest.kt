@@ -76,6 +76,18 @@ class ClientApplicationEndPointTest {
     }
 
     @Test
+    fun `reset password for a not existing client app`() {
+        given(storeClientApplication.resetPassword(ClientAppId("clientApp"), Secret("secret")))
+                .willThrow(ClientApplicationNotFound("the client application clientApp was not found"))
+
+        mockMvc.perform(patch("/api/client-applications/clientApp")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(mapOf("secret" to "secret"))))
+                .andExpect(status().isNotFound)
+
+    }
+
+    @Test
     fun `view all client app`() {
         val clientApplication = aClientApp(ClientAppId("clientApp"))
         val body = listOf(

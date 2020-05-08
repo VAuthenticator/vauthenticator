@@ -1,7 +1,9 @@
 package it.valeriovaudi.vauthenticator.oauth2.clientapp
 
 import it.valeriovaudi.vauthenticator.extentions.VAuthenticatorPasswordEncoder
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.ExpectedException
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.verify
@@ -12,6 +14,10 @@ import java.util.*
 
 @RunWith(MockitoJUnitRunner::class)
 class StoreClientApplicationTest {
+
+    @Rule
+    @JvmField
+    val expectedException = ExpectedException.none()
 
     @Mock
     lateinit var clientApplicationRepository: ClientApplicationRepository
@@ -46,5 +52,38 @@ class StoreClientApplicationTest {
         verify(passwordEncoder, times(0)).encode(aClientApp.secret.content)
         verify(clientApplicationRepository).findOne(clientAppId)
         verify(clientApplicationRepository).save(aClientApp)
+    }
+
+    @Test
+    fun `reset password fot a client application`() {
+        val storeClientApplication = StoreClientApplication(clientApplicationRepository, passwordEncoder)
+        val clientAppId = ClientAppId("AN_ID")
+        val aClientApp = ClientAppFixture.aClientApp(clientAppId)
+        val updatedClientApp = ClientAppFixture.aClientApp(clientAppId, password = Secret("A_NEW_PASSWORD"))
+
+        given(clientApplicationRepository.findOne(clientAppId))
+                .willReturn(Optional.of(aClientApp))
+
+        given(passwordEncoder.encode("A_NEW_PASSWORD"))
+                .willReturn("A_NEW_PASSWORD")
+
+        storeClientApplication.resetPassword(clientAppId, Secret("A_NEW_PASSWORD"))
+
+        verify(passwordEncoder).encode("A_NEW_PASSWORD")
+        verify(clientApplicationRepository).findOne(clientAppId)
+        verify(clientApplicationRepository).save(updatedClientApp)
+    }
+
+    @Test
+    fun `reset password fot a not found client application`() {
+        val storeClientApplication = StoreClientApplication(clientApplicationRepository, passwordEncoder)
+        val clientAppId = ClientAppId("AN_ID")
+
+        given(clientApplicationRepository.findOne(clientAppId))
+                .willReturn(Optional.empty())
+
+        expectedException.expect(ClientApplicationNotFound::class.java)
+
+        storeClientApplication.resetPassword(clientAppId, Secret("A_NEW_PASSWORD"))
     }
 }

@@ -47,6 +47,9 @@ class ClientApplicationEndPoint(private val clientApplicationRepository: ClientA
         return ResponseEntity.noContent().build()
     }
 
+    @ExceptionHandler(ClientApplicationNotFound::class)
+    fun clientApplicationNotFoundHandler() = ResponseEntity.notFound().build<Unit>()
+
 }
 
 data class ClientAppRepresentation(var clientAppName: String,

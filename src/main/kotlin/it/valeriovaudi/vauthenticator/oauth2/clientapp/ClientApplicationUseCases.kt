@@ -23,8 +23,13 @@ class StoreClientApplication(private val clientApplicationRepository: ClientAppl
         }
     }
 
-    fun resetPassword(aClientAppId: ClientAppId, secret: Secret) {
-        TODO("Not yet implemented")
+    fun resetPassword(clientAppId: ClientAppId, secret: Secret) {
+        clientApplicationRepository.findOne(clientAppId)
+                .map { it.copy(secret = Secret(passwordEncoder.encode(secret.content))) }
+                .ifPresentOrElse(
+                        { clientApplicationRepository.save(it) },
+                        { throw  ClientApplicationNotFound("the client application ${clientAppId.content} was not found") }
+                )
     }
 
 }

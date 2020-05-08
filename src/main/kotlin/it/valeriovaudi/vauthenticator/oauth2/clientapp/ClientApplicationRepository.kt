@@ -18,6 +18,8 @@ interface ClientApplicationRepository {
     fun delete(clientAppId: ClientAppId)
 }
 
+class ClientApplicationNotFound(message: String) : RuntimeException(message)
+
 @Transactional
 class JdbcClientApplicationRepository(private val jdbcTemplate: JdbcTemplate) : ClientApplicationRepository {
     val INSERT_QUERY: String = """
