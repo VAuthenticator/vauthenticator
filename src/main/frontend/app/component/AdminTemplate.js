@@ -14,7 +14,7 @@ export default (props) => {
             <AppBar position="static">
                 <Toolbar variant="dense">
                     <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
-                        <MenuIcon />
+                        <MenuIcon/>
                     </IconButton>
                     <Typography variant="h6" className={classes.title}>
                         VAuthenticator Administration

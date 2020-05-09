@@ -59,7 +59,7 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
     }, []);
 
     return (
-        <AdminTemplate maxWidth="lg" classes={classes}>
+        <AdminTemplate maxWidth="xl" classes={classes}>
 
             <Typography variant="h3" component="h3">
                 VAuthenticator Client Application Admin

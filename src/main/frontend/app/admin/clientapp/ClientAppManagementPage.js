@@ -19,7 +19,6 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
     const storePassword = !clientAppId
     const history = useHistory();
 
-    console.log("storePassword: " + storePassword)
     const [clientApplicationId, setClientApplicationId] = useState(clientAppId)
     const [clientAppName, setClientAppName] = useState("")
     const [secret, setSecret] = useState("*********")
