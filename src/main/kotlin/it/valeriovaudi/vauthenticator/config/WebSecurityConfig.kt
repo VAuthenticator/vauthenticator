@@ -22,18 +22,24 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication
 class WebSecurityConfig : WebSecurityConfigurerAdapter() {
 
     private val LOG_IN_URL_PAGE = "/login"
-    private val WHITE_LIST = arrayOf("/logout", "/oidc/logout", "/login","/user-info", "/oauth/authorize", "/oauth/confirm_access", "/webjars/**")
+    private val WHITE_LIST = arrayOf("/logout", "/oidc/logout", "/login", "/user-info", "/oauth/authorize", "/oauth/confirm_access", "/webjars/**")
 
     override fun configure(http: HttpSecurity) {
         http.csrf().disable()
                 .formLogin()
-                    .loginProcessingUrl("/login")
-                    .loginPage(LOG_IN_URL_PAGE)
+                .loginProcessingUrl("/login")
+                .loginPage(LOG_IN_URL_PAGE)
                 .permitAll()
                 .and()
                 .logout()
                 .and()
                 .requestMatchers().antMatchers(*WHITE_LIST)
+                .and()
+                .requestMatchers().antMatchers("/api/**", "/secure/**")
+                .and()
+                .authorizeRequests()
+                .mvcMatchers("/api/**", "/secure/**")
+                .hasAuthority("VAUTHENTICATOR_ADMIN")
                 .and()
                 .authorizeRequests().anyRequest().permitAll()
                 .and().oauth2ResourceServer().jwt()
