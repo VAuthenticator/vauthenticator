@@ -88,13 +88,6 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                                 color="textSecondary">
                     </CardHeader>
                     <CardContent>
-                        <FormInputTextField id="clientAppName"
-                                            label="Client Application Displayed Name"
-                                            required={true}
-                                            handler={(value) => {
-                                                setClientAppName(value.target.value)
-                                            }}
-                                            value={clientAppName}/>
 
                         <FormInputTextField id="clientAppId"
                                             label="Client Application Id"
@@ -108,10 +101,19 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                                             label="Password"
                                             required={true}
                                             type="Password"
+                                            disabled={clientAppId}
                                             handler={(value) => {
                                                 setSecret(value.target.value)
                                             }}
                                             value={secret}/>
+
+                        <FormInputTextField id="clientAppName"
+                                            label="Client Application Displayed Name"
+                                            required={true}
+                                            handler={(value) => {
+                                                setClientAppName(value.target.value)
+                                            }}
+                                            value={clientAppName}/>
 
                         <FormInputTextField id="federation"
                                             label="Federation"
