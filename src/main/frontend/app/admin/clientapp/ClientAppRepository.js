@@ -37,6 +37,19 @@ export function saveClientApplicationFor(clientAppId, clientApp) {
         })
 }
 
+export function resetSecretKeyFor(clientAppId, secretKey) {
+    return fetch(`/vauthenticator/api/client-applications/${clientAppId}`,
+        {
+            method: "PATCH",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({"secret": secretKey}),
+            credentials: 'same-origin'
+        })
+}
+
 export function deleteClientApplicationFor(clientAppId) {
     return fetch(`/vauthenticator/api/client-applications/${clientAppId}`,
         {

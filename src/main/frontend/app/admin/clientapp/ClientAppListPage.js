@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {withStyles} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
-import {Delete, GroupAdd} from "@material-ui/icons";
+import {Delete, GroupAdd, VpnKey} from "@material-ui/icons";
 import vauthenticatorStyles from "../../component/styles";
 import StickyHeadTable from "../../component/StickyHeadTable";
 import {deleteClientApplicationFor, findAllClientApplications} from "./ClientAppRepository";
@@ -9,6 +9,7 @@ import {Link} from "react-router-dom";
 import EditIcon from "@material-ui/icons/Edit";
 import AdminTemplate from "../../component/AdminTemplate";
 import FormButton from "../../component/FormButton";
+import ResetPasswordDialog from "../../component/ResetPasswordDialog";
 
 const columns = [
     {id: 'clientAppName', label: 'Client Application Name', minWidth: 170},
@@ -17,7 +18,8 @@ const columns = [
     {id: 'authorizedGrantTypes', label: 'Client Application Autorized Grant Type', minWidth: 170},
     {id: 'federation', label: 'Client Application Federation', minWidth: 170},
     {id: 'edit', label: 'Edit Application', minWidth: 170},
-    {id: 'delete', label: 'Delete Application', minWidth: 170}
+    {id: 'delete', label: 'Delete Application', minWidth: 170},
+    {id: 'secretKey', label: 'Reset Password', minWidth: 170}
 ];
 
 const getEditLinkFor = (clientAppId) => {
@@ -30,6 +32,16 @@ const getEditLinkFor = (clientAppId) => {
 const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
     const {classes} = props;
     const [applications, setApplications] = React.useState([])
+    const [open, setOpen] = React.useState(false)
+    const [currentClientAppId, setCurrentClientAppId] = React.useState("")
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     const getDeleteLinkFor = (clientAppId) => {
         return <Delete onClick={() => {
@@ -41,6 +53,12 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                 })
         }}/>;
     }
+    const resetSecretKeyFor = (clientAppId) => {
+        return <VpnKey onClick={() => {
+            setOpen(true)
+            setCurrentClientAppId(clientAppId)
+        }}/>;
+    }
 
     const fetchAllApplications = () => {
         findAllClientApplications()
@@ -48,6 +66,7 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                 let rows = val.map(value => {
                     value.edit = getEditLinkFor(value["clientAppId"])
                     value.delete = getDeleteLinkFor(value["clientAppId"])
+                    value.secretKey = resetSecretKeyFor(value["clientAppId"])
                     return value
                 })
                 setApplications(rows)
@@ -60,6 +79,7 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
 
     return (
         <AdminTemplate maxWidth="xl" classes={classes}>
+            <ResetPasswordDialog open={open} onClose={handleClose} clientAppId={currentClientAppId}/>
 
             <Typography variant="h3" component="h3">
                 VAuthenticator Client Application Admin
