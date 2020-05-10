@@ -8,30 +8,30 @@ import FormButton from "./FormButton";
 import Separator from "./Separator";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
-import {resetSecretKeyFor} from "../admin/clientapp/ClientAppRepository";
+import {resetSecretFor} from "../admin/clientapp/ClientAppRepository";
 
-export default function ResetPasswordDialog({onClose, open, clientAppId}) {
-    const [secretKey, setSecretKey] = useState("")
+export default function ResetClientAppSecretDialog({onClose, open, clientAppId}) {
+    const [secret, setSecret] = useState("")
     return (
         <Dialog onClose={onClose} aria-labelledby="simple-dialog-title" open={open} maxWidth="lg">
             <DialogTitle id="simple-dialog-title">Reset Client App <b>{clientAppId}</b> Secret-Key</DialogTitle>
             <DialogContent>
                 <DialogContentText id="alert-dialog-description">
-                    Put hear the new client app secret-key for client app: <b>{clientAppId}</b>
+                    Put hear the new client app secret for client app: <b>{clientAppId}</b>
                 </DialogContentText>
 
                 <FormInputTextField id="resetSecretKeyField"
-                                    label="Client App Secret-Key"
+                                    label="Client App Secret"
                                     required={true}
                                     handler={(value) => {
-                                        setSecretKey(value.target.value)
+                                        setSecret(value.target.value)
                                     }}/>
 
                 <Separator/>
 
                 <DialogActions>
                     <FormButton lable="Save" onClickHandler={() => {
-                        resetSecretKeyFor(clientAppId, secretKey)
+                        resetSecretFor(clientAppId, secret)
                             .then(value => onClose())
                     }}/>
                     <FormButton lable="Close" onClickHandler={onClose}/>

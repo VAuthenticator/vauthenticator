@@ -9,7 +9,7 @@ import {Link} from "react-router-dom";
 import EditIcon from "@material-ui/icons/Edit";
 import AdminTemplate from "../../component/AdminTemplate";
 import FormButton from "../../component/FormButton";
-import ResetPasswordDialog from "../../component/ResetPasswordDialog";
+import ResetClientAppSecretDialog from "../../component/ResetClientAppSecretDialog";
 
 const columns = [
     {id: 'clientAppName', label: 'Client Application Name', minWidth: 170},
@@ -79,7 +79,7 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
 
     return (
         <AdminTemplate maxWidth="xl" classes={classes}>
-            <ResetPasswordDialog open={open} onClose={handleClose} clientAppId={currentClientAppId}/>
+            <ResetClientAppSecretDialog open={open} onClose={handleClose} clientAppId={currentClientAppId}/>
 
             <Typography variant="h3" component="h3">
                 VAuthenticator Client Application Admin
