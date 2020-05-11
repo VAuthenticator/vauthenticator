@@ -102,26 +102,25 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                       aria-label="wrapped label tabs example">
                     <Tab
                         value="0"
-                        label="Client Application Credentials Section"
+                        label="1) Client Application Credentials Section"
                         wrapped
                         {...a11yProps('0')}
                     />
                     <Tab value="1"
-                         label="Client Application Permission Definition Section"
+                         label="2) Client Application Permission Definition Section"
                          {...a11yProps('1')} />
 
                     <Tab value="2"
-                         label="Client Application Uri Section"
+                         label="3) Client Application Uri Section"
                          {...a11yProps('2')} />
                 </Tabs>
                 <TabPanel value={value} index={'0'}>
-                    <Card className={classes.card}>
+                    <Card className={classes.card} >
                         <CardHeader title="Client Application base definition"
                                     className={classes.title}
                                     color="textSecondary">
                         </CardHeader>
                         <CardContent>
-
                             <FormInputTextField id="clientAppId"
                                                 label="Client Application Id"
                                                 required={true}

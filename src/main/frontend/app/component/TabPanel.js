@@ -4,10 +4,11 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 
 export default function TabPanel(props) {
-    const { children, value, index, ...other } = props;
+    const {children, value, index, ...other} = props;
 
     return (
         <div
+            style={{width: "100%"}}
             role="tabpanel"
             hidden={value !== index}
             id={`simple-tabpanel-${index}`}
