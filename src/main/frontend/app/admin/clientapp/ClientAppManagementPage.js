@@ -12,6 +12,17 @@ import CardContent from "@material-ui/core/CardContent";
 import CardHeader from "@material-ui/core/CardHeader";
 import Separator from "../../component/Separator";
 import FormButton from "../../component/FormButton";
+import Tab from "@material-ui/core/Tab";
+import Tabs from "@material-ui/core/Tabs";
+import TabPanel from "../../component/TabPanel";
+
+function a11yProps(index) {
+    return {
+        id: `vertical-tab-${index}`,
+        'aria-controls': `vertical-tabpanel-${index}`,
+    };
+}
+
 
 const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
     const {classes} = props;
@@ -72,6 +83,10 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                 setFederation(value.federation)
             })
     }, {})
+    const [value, setValue] = React.useState('0');
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
 
     return (
         <AdminTemplate maxWidth="xl" classes={classes}>
@@ -80,135 +95,158 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                 <GroupAdd fontSize="large"/> Client Application: {clientApplicationId}
             </Typography>
 
-            <div className={classes.margin}>
-                <Card className={classes.card}>
-                    <CardHeader title="Client Application base definition"
-                                className={classes.title}
-                                color="textSecondary">
-                    </CardHeader>
-                    <CardContent>
+            <div className={classes.tabs} >
+                <Tabs value={value}
+                      orientation="vertical"
+                      onChange={handleChange}
+                      aria-label="wrapped label tabs example">
+                    <Tab
+                        value="0"
+                        label="Client Application Credentials Section"
+                        wrapped
+                        {...a11yProps('0')}
+                    />
+                    <Tab value="1"
+                         label="Client Application Permission Definition Section"
+                         {...a11yProps('1')} />
 
-                        <FormInputTextField id="clientAppId"
-                                            label="Client Application Id"
-                                            required={true}
-                                            handler={(value) => {
-                                                setClientApplicationId(value.target.value)
-                                            }}
-                                            value={clientApplicationId || ""}/>
-
-                        <FormInputTextField id="secret"
-                                            label="Password"
-                                            required={true}
-                                            type="Password"
-                                            disabled={clientAppId}
-                                            handler={(value) => {
-                                                setSecret(value.target.value)
-                                            }}
-                                            value={secret}/>
-
-                        <FormInputTextField id="clientAppName"
-                                            label="Client Application Displayed Name"
-                                            required={true}
-                                            handler={(value) => {
-                                                setClientAppName(value.target.value)
-                                            }}
-                                            value={clientAppName}/>
-
-                        <FormInputTextField id="federation"
-                                            label="Federation"
-                                            handler={(value) => {
-                                                setFederation(value.target.value)
-                                            }}
-                                            value={federation}/>
-                    </CardContent>
-                </Card>
-
-                <Card className={classes.card}>
-                    <CardContent>
-                        <CardHeader title="Client Application permission specification"
+                    <Tab value="2"
+                         label="Client Application Uri Section"
+                         {...a11yProps('2')} />
+                </Tabs>
+                <TabPanel value={value} index={'0'}>
+                    <Card className={classes.card}>
+                        <CardHeader title="Client Application base definition"
                                     className={classes.title}
                                     color="textSecondary">
                         </CardHeader>
+                        <CardContent>
 
-                        <FormInputTextField id="scopes"
-                                            label="Scopes"
-                                            required={true}
-                                            handler={(value) => {
-                                                setScopes(value.target.value.split(","))
-                                            }}
-                                            value={scopes}/>
+                            <FormInputTextField id="clientAppId"
+                                                label="Client Application Id"
+                                                required={true}
+                                                handler={(value) => {
+                                                    setClientApplicationId(value.target.value)
+                                                }}
+                                                value={clientApplicationId || ""}/>
 
-                        <FormInputTextField id="authorizedGrantTypes"
-                                            label="Authorized Grant Types"
-                                            required={true}
-                                            handler={(value) => {
-                                                setAuthorizedGrantTypes(value.target.value.split(","))
-                                            }}
-                                            value={authorizedGrantTypes}/>
+                            <FormInputTextField id="secret"
+                                                label="Password"
+                                                required={true}
+                                                type="Password"
+                                                disabled={clientAppId}
+                                                handler={(value) => {
+                                                    setSecret(value.target.value)
+                                                }}
+                                                value={secret}/>
+
+                            <FormInputTextField id="clientAppName"
+                                                label="Client Application Displayed Name"
+                                                required={true}
+                                                handler={(value) => {
+                                                    setClientAppName(value.target.value)
+                                                }}
+                                                value={clientAppName}/>
+
+                            <FormInputTextField id="federation"
+                                                label="Federation"
+                                                handler={(value) => {
+                                                    setFederation(value.target.value)
+                                                }}
+                                                value={federation}/>
+                        </CardContent>
+                    </Card>
+                </TabPanel>
+
+                <TabPanel value={value} index={'1'}>
+                    <Card className={classes.card}>
+                        <CardContent>
+                            <CardHeader title="Client Application permission specification"
+                                        className={classes.title}
+                                        color="textSecondary">
+                            </CardHeader>
+
+                            <FormInputTextField id="scopes"
+                                                label="Scopes"
+                                                required={true}
+                                                handler={(value) => {
+                                                    setScopes(value.target.value.split(","))
+                                                }}
+                                                value={scopes}/>
+
+                            <FormInputTextField id="authorizedGrantTypes"
+                                                label="Authorized Grant Types"
+                                                required={true}
+                                                handler={(value) => {
+                                                    setAuthorizedGrantTypes(value.target.value.split(","))
+                                                }}
+                                                value={authorizedGrantTypes}/>
 
 
-                        <FormInputTextField id="authorities"
-                                            label="Authorities"
-                                            required={true}
-                                            handler={(value) => {
-                                                setAuthorities(value.target.value.split(","))
-                                            }}
-                                            value={authorities}/>
+                            <FormInputTextField id="authorities"
+                                                label="Authorities"
+                                                required={true}
+                                                handler={(value) => {
+                                                    setAuthorities(value.target.value.split(","))
+                                                }}
+                                                value={authorities}/>
 
-                        <FormInputTextField id="accessTokenValidity"
-                                            label="Access Token Validity"
-                                            required={true}
-                                            handler={(value) => {
-                                                setAccessTokenValidity(value.target.value)
-                                            }}
-                                            value={accessTokenValidity}/>
+                            <FormInputTextField id="accessTokenValidity"
+                                                label="Access Token Validity"
+                                                required={true}
+                                                handler={(value) => {
+                                                    setAccessTokenValidity(value.target.value)
+                                                }}
+                                                value={accessTokenValidity}/>
 
-                        <FormInputTextField id="refreshTokenValidity"
-                                            label="Refresh Token Validity"
-                                            required={true}
-                                            handler={(value) => {
-                                                setRefreshTokenValidity(value.target.value)
-                                            }}
-                                            value={refreshTokenValidity}/>
-                    </CardContent>
-                </Card>
+                            <FormInputTextField id="refreshTokenValidity"
+                                                label="Refresh Token Validity"
+                                                required={true}
+                                                handler={(value) => {
+                                                    setRefreshTokenValidity(value.target.value)
+                                                }}
+                                                value={refreshTokenValidity}/>
+                        </CardContent>
+                    </Card>
+                </TabPanel>
+                <TabPanel value={value} index={'2'}>
+                    <Card className={classes.card}>
+                        <CardContent>
+                            <CardHeader title="Client Application urls definitions"
+                                        className={classes.title}
+                                        color="textSecondary">
+                            </CardHeader>
 
-                <Card className={classes.card}>
-                    <CardContent>
-                        <CardHeader title="Client Application urls definitions"
-                                    className={classes.title}
-                                    color="textSecondary">
-                        </CardHeader>
+                            <FormInputTextField id="webServerRedirectUri"
+                                                label="Web Server Redirect Uri"
+                                                required={true}
+                                                handler={(value) => {
+                                                    setWebServerRedirectUri(value.target.value)
+                                                }}
+                                                value={webServerRedirectUri}/>
 
-                        <FormInputTextField id="webServerRedirectUri"
-                                            label="Web Server Redirect Uri"
-                                            required={true}
-                                            handler={(value) => {
-                                                setWebServerRedirectUri(value.target.value)
-                                            }}
-                                            value={webServerRedirectUri}/>
+                            <FormInputTextField id="postLogoutRedirectUri"
+                                                label="Post Logout Redirect Uri"
+                                                required={true}
+                                                handler={(value) => {
+                                                    setPostLogoutRedirectUri(value.target.value)
+                                                }}
+                                                value={postLogoutRedirectUri}/>
 
-                        <FormInputTextField id="postLogoutRedirectUri"
-                                            label="Post Logout Redirect Uri"
-                                            required={true}
-                                            handler={(value) => {
-                                                setPostLogoutRedirectUri(value.target.value)
-                                            }}
-                                            value={postLogoutRedirectUri}/>
+                            <FormInputTextField id="logoutUri"
+                                                label="Logout Uri"
+                                                required={true}
+                                                handler={(value) => {
+                                                    setLogoutUri(value.target.value)
+                                                }}
+                                                value={logoutUri}/>
+                        </CardContent>
+                    </Card>
+                    <Separator/>
+                    <FormButton lable="Save Client Application" onClickHandler={saveClientApp}/>
+                </TabPanel>
 
-                        <FormInputTextField id="logoutUri"
-                                            label="Logout Uri"
-                                            required={true}
-                                            handler={(value) => {
-                                                setLogoutUri(value.target.value)
-                                            }}
-                                            value={logoutUri}/>
-                    </CardContent>
-                </Card>
 
-                <Separator/>
-
-                <FormButton lable="Save Client Application" onClickHandler={saveClientApp}/>
             </div>
         </AdminTemplate>
     );
