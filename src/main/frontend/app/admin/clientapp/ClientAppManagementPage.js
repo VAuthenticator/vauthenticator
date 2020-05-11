@@ -155,6 +155,8 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                                                 value={federation}/>
                         </CardContent>
                     </Card>
+                    <Separator />
+                    <FormButton lable="Next Tab" onClickHandler={() => setValue('1')}/>
                 </TabPanel>
 
                 <TabPanel value={value} index={'1'}>
@@ -207,6 +209,16 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                                                 value={refreshTokenValidity}/>
                         </CardContent>
                     </Card>
+                    <Separator/>
+
+                    <div style={{flex: "0 0 auto",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "flex-end"
+                    }}>
+                        <FormButton lable="Previous Tab" onClickHandler={() => setValue('0')}/>
+                        <FormButton lable="Next Tab" onClickHandler={() => setValue('2')}/>
+                    </div>
                 </TabPanel>
                 <TabPanel value={value} index={'2'}>
                     <Card className={classes.card}>
@@ -242,7 +254,15 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                         </CardContent>
                     </Card>
                     <Separator/>
-                    <FormButton lable="Save Client Application" onClickHandler={saveClientApp}/>
+                    <div style={{flex: "0 0 auto",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "flex-end"
+                    }}>
+                        <FormButton lable="Previous Tab" onClickHandler={() => setValue('1')}/>
+                        <FormButton lable="Save Client Application" onClickHandler={saveClientApp}/>
+                    </div>
+
                 </TabPanel>
 
 
