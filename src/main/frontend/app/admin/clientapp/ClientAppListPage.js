@@ -87,7 +87,7 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
             <Link to={"/client-applications/save"}>
                 <FormButton type="button"
                             labelPrefix={<GroupAdd fontSize="large"/>}
-                            lable={"New Client Application"}/>
+                            label={"New Client Application"}/>
             </Link>
 
             <StickyHeadTable columns={columns} rows={applications}/>

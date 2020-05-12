@@ -15,6 +15,7 @@ import FormButton from "../../component/FormButton";
 import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
 import TabPanel from "../../component/TabPanel";
+import LeftRightComponentRow from "../../component/LeftRightComponentRow";
 
 function a11yProps(index) {
     return {
@@ -95,7 +96,7 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                 <GroupAdd fontSize="large"/> Client Application: {clientApplicationId}
             </Typography>
 
-            <div className={classes.tabs} >
+            <div className={classes.tabs}>
                 <Tabs value={value}
                       orientation="vertical"
                       onChange={handleChange}
@@ -115,7 +116,7 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                          {...a11yProps('2')} />
                 </Tabs>
                 <TabPanel value={value} index={'0'}>
-                    <Card className={classes.card} >
+                    <Card className={classes.card}>
                         <CardHeader title="Client Application base definition"
                                     className={classes.title}
                                     color="textSecondary">
@@ -155,8 +156,14 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                                                 value={federation}/>
                         </CardContent>
                     </Card>
-                    <Separator />
-                    <FormButton lable="Next Tab" onClickHandler={() => setValue('1')}/>
+                    <Separator/>
+
+                    <LeftRightComponentRow leftComponentColumnsSize={2}
+                                           leftComponents={<FormButton label="Next Tab"
+                                                                       onClickHandler={() => setValue('1')}/>}
+                                           rightComponentsColumnSize={2}
+                                           rightComponents={<FormButton label="Save Client Application" direction="rtl"
+                                                                        onClickHandler={saveClientApp}/>}/>
                 </TabPanel>
 
                 <TabPanel value={value} index={'1'}>
@@ -211,13 +218,15 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                     </Card>
                     <Separator/>
 
-                    <div style={{flex: "0 0 auto",
+                    <div style={{
+                        flex: "0 0 auto",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "flex-end"
                     }}>
-                        <FormButton lable="Previous Tab" onClickHandler={() => setValue('0')}/>
-                        <FormButton lable="Next Tab" onClickHandler={() => setValue('2')}/>
+                        <FormButton label="Previous Tab" onClickHandler={() => setValue('0')}/>
+                        <FormButton label="Next Tab" onClickHandler={() => setValue('2')}/>
+                        <FormButton label="Save Client Application" onClickHandler={saveClientApp}/>
                     </div>
                 </TabPanel>
                 <TabPanel value={value} index={'2'}>
@@ -254,13 +263,14 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                         </CardContent>
                     </Card>
                     <Separator/>
-                    <div style={{flex: "0 0 auto",
+                    <div style={{
+                        flex: "0 0 auto",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "flex-end"
                     }}>
-                        <FormButton lable="Previous Tab" onClickHandler={() => setValue('1')}/>
-                        <FormButton lable="Save Client Application" onClickHandler={saveClientApp}/>
+                        <FormButton label="Previous Tab" onClickHandler={() => setValue('1')}/>
+                        <FormButton label="Save Client Application" onClickHandler={saveClientApp}/>
                     </div>
 
                 </TabPanel>

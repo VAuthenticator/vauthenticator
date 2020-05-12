@@ -30,11 +30,11 @@ export default function ResetClientAppSecretDialog({onClose, open, clientAppId})
                 <Separator/>
 
                 <DialogActions>
-                    <FormButton lable="Save" onClickHandler={() => {
+                    <FormButton label="Save" onClickHandler={() => {
                         resetSecretFor(clientAppId, secret)
                             .then(value => onClose())
                     }}/>
-                    <FormButton lable="Close" onClickHandler={onClose}/>
+                    <FormButton label="Close" onClickHandler={onClose}/>
                 </DialogActions>
             </DialogContent>
         </Dialog>

@@ -37,7 +37,7 @@ const Login = withStyles(vauthenticatorStyles)((props) => {
 
                     <Separator />
 
-                    <FormButton type="submit" lable="Login" />
+                    <FormButton type="submit" label="Login" />
                 </div>
             </form>
         </Template>

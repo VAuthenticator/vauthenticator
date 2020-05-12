@@ -1,8 +1,8 @@
 import {Button, Grid} from "@material-ui/core";
 import React from "react";
 
-export default function FormButton({labelPrefix, lable, type, onClickHandler}) {
-    return <div dir="rtl">
+export default function FormButton({labelPrefix, label, type, onClickHandler, direction}) {
+    return <div dir={direction || ""}>
         <Grid container alignItems="flex-end" style={{marginTop: '10px'}}>
             <Grid item md={true} sm={true} xs={true} justify="flex-end">
                 <Button type={type || "button"}
@@ -10,7 +10,7 @@ export default function FormButton({labelPrefix, lable, type, onClickHandler}) {
                         color="primary"
                         onClick={onClickHandler || {}}
                         style={{textTransform: "none"}}>
-                    {labelPrefix} {lable}
+                    {labelPrefix} {label}
                 </Button>
             </Grid>
         </Grid>
