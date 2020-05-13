@@ -218,16 +218,20 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                     </Card>
                     <Separator/>
 
-                    <div style={{
-                        flex: "0 0 auto",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "flex-end"
-                    }}>
-                        <FormButton label="Previous Tab" onClickHandler={() => setValue('0')}/>
-                        <FormButton label="Next Tab" onClickHandler={() => setValue('2')}/>
-                        <FormButton label="Save Client Application" onClickHandler={saveClientApp}/>
-                    </div>
+                    <LeftRightComponentRow leftComponentColumnsSize={2}
+                                           leftComponents={
+                                               <div style={{
+                                                   flex: "0 0 auto",
+                                                   display: "flex",
+                                               }}>
+                                                   <FormButton label="Previous Tab" onClickHandler={() => setValue('0')}/>
+                                                   <FormButton label="Next Tab" onClickHandler={() => setValue('2')}/>
+                                               </div>
+                                           }
+                                           rightComponentsColumnSize={2}
+                                           rightComponents={<FormButton label="Save Client Application" direction="rtl"
+                                                                        onClickHandler={saveClientApp}/>}/>
+
                 </TabPanel>
                 <TabPanel value={value} index={'2'}>
                     <Card className={classes.card}>
@@ -263,19 +267,12 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                         </CardContent>
                     </Card>
                     <Separator/>
-                    <div style={{
-                        flex: "0 0 auto",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "flex-end"
-                    }}>
-                        <FormButton label="Previous Tab" onClickHandler={() => setValue('1')}/>
-                        <FormButton label="Save Client Application" onClickHandler={saveClientApp}/>
-                    </div>
-
+                    <LeftRightComponentRow leftComponentColumnsSize={2}
+                                           leftComponents={<FormButton label="Previous Tab" onClickHandler={() => setValue('1')}/>}
+                                           rightComponentsColumnSize={2}
+                                           rightComponents={<FormButton label="Save Client Application" direction="rtl"
+                                                                        onClickHandler={saveClientApp}/>}/>
                 </TabPanel>
-
-
             </div>
         </AdminTemplate>
     );
