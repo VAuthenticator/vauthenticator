@@ -24,7 +24,7 @@ export default (props) => {
                     </Link>
 
                     <Typography variant="h6" className={classes.title}>
-                        VAuthenticator Administration
+                        VAuthenticator Administration {props.page}
                     </Typography>
 
                     <Link href="/vauthenticator/logout">

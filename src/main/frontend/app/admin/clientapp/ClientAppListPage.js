@@ -1,6 +1,5 @@
 import React, {useEffect} from 'react';
 import {withStyles} from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
 import {Delete, GroupAdd, VpnKey} from "@material-ui/icons";
 import vauthenticatorStyles from "../../component/styles";
 import StickyHeadTable from "../../component/StickyHeadTable";
@@ -78,12 +77,9 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
     }, []);
 
     return (
-        <AdminTemplate maxWidth="xl" classes={classes}>
+        <AdminTemplate maxWidth="xl" classes={classes} page=": Client Application Admin">
             <ResetClientAppSecretDialog open={open} onClose={handleClose} clientAppId={currentClientAppId}/>
 
-            <Typography variant="h3" component="h3">
-                VAuthenticator Client Application Admin
-            </Typography>
             <Link to={"/client-applications/save"}>
                 <FormButton type="button"
                             labelPrefix={<GroupAdd fontSize="large"/>}

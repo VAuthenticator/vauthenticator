@@ -89,8 +89,11 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
         setValue(newValue);
     };
 
+    let pageTitle = clientApplicationId ? `: Client Application: ${clientApplicationId}` : "";
+
     return (
-        <AdminTemplate maxWidth="xl" classes={classes}>
+        <AdminTemplate maxWidth="xl" classes={classes}
+                       page={pageTitle}>
 
             <Typography variant="h3" component="h3">
                 <GroupAdd fontSize="large"/> Client Application: {clientApplicationId}
