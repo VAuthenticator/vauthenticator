@@ -122,8 +122,7 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                     <Card className={classes.card}>
                         <CardHeader title="Client Application base definition"
                                     className={classes.title}
-                                    color="textSecondary">
-                        </CardHeader>
+                                    color="textSecondary"/>
                         <CardContent>
                             <FormInputTextField id="clientAppId"
                                                 label="Client Application Id"
@@ -174,8 +173,8 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                         <CardContent>
                             <CardHeader title="Client Application permission specification"
                                         className={classes.title}
-                                        color="textSecondary">
-                            </CardHeader>
+                                        color="textSecondary"/>
+
 
                             <FormInputTextField id="scopes"
                                                 label="Scopes"
@@ -241,8 +240,7 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                         <CardContent>
                             <CardHeader title="Client Application urls definitions"
                                         className={classes.title}
-                                        color="textSecondary">
-                            </CardHeader>
+                                        color="textSecondary"/>
 
                             <FormInputTextField id="webServerRedirectUri"
                                                 label="Web Server Redirect Uri"
