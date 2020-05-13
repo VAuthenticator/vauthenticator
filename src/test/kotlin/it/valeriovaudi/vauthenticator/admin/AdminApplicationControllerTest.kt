@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.security.oauth2.jwt.JwtDecoder
+import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -34,6 +35,7 @@ class AdminApplicationControllerTest {
     lateinit var accountUserDetailsService: AccountUserDetailsService
 
     @Test
+    @WithMockUser(authorities = ["VAUTHENTICATOR_ADMIN"])
     fun `happy path`() {
         mockMvc.perform(get("/secure/admin/index"))
                 .andExpect(MockMvcResultMatchers.status().isOk)
