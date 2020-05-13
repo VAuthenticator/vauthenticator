@@ -204,6 +204,15 @@
                 </dependency>
             </dependencies>
         </profile>
+
+        <profile>
+            <id>kubernetes</id>
+
+            <properties>
+                <imageName>mrflick72/${project.build.finalName}-k8s:latest</imageName>
+            </properties>
+
+        </profile>
     </profiles>
 
     <build>
