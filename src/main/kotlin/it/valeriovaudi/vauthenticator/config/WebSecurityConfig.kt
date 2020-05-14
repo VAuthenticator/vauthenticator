@@ -31,7 +31,7 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
                 .loginPage(LOG_IN_URL_PAGE)
                 .permitAll()
                 .and()
-                .logout()
+                .logout().logoutSuccessUrl("/secure/admin/index")
                 .and()
                 .requestMatchers().antMatchers(*WHITE_LIST)
                 .and()
