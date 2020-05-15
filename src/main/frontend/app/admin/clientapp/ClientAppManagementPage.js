@@ -16,6 +16,8 @@ import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
 import TabPanel from "../../component/TabPanel";
 import LeftRightComponentRow from "../../component/LeftRightComponentRow";
+import CheckboxesGroup from "../../component/CheckboxesGroup";
+import {authorizedGrantTypesParam, authorizedGrantTypesRegistry} from "./AuthorizedGrantTypes";
 
 function a11yProps(index) {
     return {
@@ -23,7 +25,6 @@ function a11yProps(index) {
         'aria-controls': `vertical-tabpanel-${index}`,
     };
 }
-
 
 const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
     const {classes} = props;
@@ -35,21 +36,21 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
     const [clientAppName, setClientAppName] = useState("")
     const [secret, setSecret] = useState("*********")
     const [scopes, setScopes] = useState([])
-    const [authorizedGrantTypes, setAuthorizedGrantTypes] = useState([])
+    const [authorizedGrantTypes, setAuthorizedGrantTypes] = useState(authorizedGrantTypesRegistry)
     const [webServerRedirectUri, setWebServerRedirectUri] = useState("")
     const [authorities, setAuthorities] = useState([])
     const [accessTokenValidity, setAccessTokenValidity] = useState("")
     const [refreshTokenValidity, setRefreshTokenValidity] = useState("")
     const [postLogoutRedirectUri, setPostLogoutRedirectUri] = useState("")
     const [logoutUri, setLogoutUri] = useState("")
-    const [federation, setFederation] = useState("")
 
+    const [federation, setFederation] = useState("")
     const saveClientApp = () => {
         let clientApplication = {
             "clientAppName": clientAppName,
             "secret": secret,
             "scopes": scopes,
-            "authorizedGrantTypes": authorizedGrantTypes,
+            "authorizedGrantTypes": authorizedGrantTypesParam(authorizedGrantTypes),
             "webServerRedirectUri": webServerRedirectUri,
             "authorities": authorities,
             "accessTokenValidity": accessTokenValidity,
@@ -70,11 +71,10 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
     useEffect(() => {
         findClientApplicationFor(clientApplicationId)
             .then(value => {
-                console.log(value)
                 setClientAppName(value.clientAppName)
                 setSecret(value.secret)
                 setScopes(value.scopes)
-                setAuthorizedGrantTypes(value.authorizedGrantTypes)
+                setAuthorizedGrantTypes(authorizedGrantTypesRegistry(value.authorizedGrantTypes))
                 setWebServerRedirectUri(value.webServerRedirectUri)
                 setAuthorities(value.authorities)
                 setAccessTokenValidity(value.accessTokenValidity)
@@ -184,6 +184,20 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                                                 }}
                                                 value={scopes}/>
 
+                            <CheckboxesGroup id="authorizedGrantTypes"
+                                             handler={(value) => {
+                                                 console.log(value)
+                                                 console.log(value.target.name)
+                                                 console.log(value.target.checked)
+                                                 setAuthorizedGrantTypes({
+                                                     ...authorizedGrantTypes,
+                                                     [value.target.name]: value.target.checked
+                                                 })
+                                             }}
+                                             choicesRegistry={authorizedGrantTypes}
+                                             legend="Authorized Grant Types"/>
+
+                            {/*
                             <FormInputTextField id="authorizedGrantTypes"
                                                 label="Authorized Grant Types"
                                                 required={true}
@@ -191,6 +205,7 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                                                     setAuthorizedGrantTypes(value.target.value.split(","))
                                                 }}
                                                 value={authorizedGrantTypes}/>
+*/}
 
 
                             <FormInputTextField id="authorities"
@@ -226,7 +241,8 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                                                    flex: "0 0 auto",
                                                    display: "flex",
                                                }}>
-                                                   <FormButton label="Previous Tab" onClickHandler={() => setValue('0')}/>
+                                                   <FormButton label="Previous Tab"
+                                                               onClickHandler={() => setValue('0')}/>
                                                    <FormButton label="Next Tab" onClickHandler={() => setValue('2')}/>
                                                </div>
                                            }
@@ -269,7 +285,8 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                     </Card>
                     <Separator/>
                     <LeftRightComponentRow leftComponentColumnsSize={2}
-                                           leftComponents={<FormButton label="Previous Tab" onClickHandler={() => setValue('1')}/>}
+                                           leftComponents={<FormButton label="Previous Tab"
+                                                                       onClickHandler={() => setValue('1')}/>}
                                            rightComponentsColumnSize={2}
                                            rightComponents={<FormButton label="Save Client Application" direction="rtl"
                                                                         onClickHandler={saveClientApp}/>}/>
