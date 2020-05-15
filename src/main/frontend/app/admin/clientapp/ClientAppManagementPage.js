@@ -63,7 +63,7 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
         saveClientApplicationFor(clientApplicationId, clientApplication)
             .then(response => {
                 if (response.status === 204) {
-                    history.replace("/client-applications/list");
+                    history.goBack();
                 }
             })
     }
