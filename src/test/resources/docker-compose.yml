@@ -3,3 +3,11 @@ version: "2"
 services:
   rabbitmq:
     image: rabbitmq:3-management
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_DB: vauthenticator
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    volumes:
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql

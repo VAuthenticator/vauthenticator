@@ -1,11 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Button, Grid, TextField, withStyles} from "@material-ui/core";
+import {Grid, withStyles} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import {Fingerprint, Person, VpnKey} from "@material-ui/icons";
 import Divider from "@material-ui/core/Divider";
 import vauthenticatorStyles from "../component/styles";
 import Template from "../component/Template";
+import FormInputTextField from "../component/FormInputTextField";
+import Separator from "../component/Separator";
+import FormButton from "../component/FormButton";
 
 const Login = withStyles(vauthenticatorStyles)((props) => {
     const {classes} = props;
@@ -22,38 +25,19 @@ const Login = withStyles(vauthenticatorStyles)((props) => {
 
             <form action="login" method="post">
                 <div className={classes.margin}>
-                    <Grid container spacing={8} alignItems="flex-end">
-                        <Grid item>
-                            <Person fontSize="large"/>
-                        </Grid>
-                        <Grid item md={true} sm={true} xs={true}>
-                            <TextField name="username" id="username" label="Username" type="email"
-                                       variant="outlined" fullWidth autoFocus required/>
-                        </Grid>
-                    </Grid>
-                    <Grid container spacing={8} alignItems="flex-end">
-                        <Grid item>
-                            <Fingerprint fontSize="large"/>
-                        </Grid>
-                        <Grid item md={true} sm={true} xs={true}>
-                            <TextField name="password" id="password" label="Password" type="password"
-                                       variant="outlined" fullWidth required/>
-                        </Grid>
-                    </Grid>
+                    <FormInputTextField id="username"
+                                        label="Username"
+                                        type="email"
+                                        suffix={<Person fontSize="large"/>}/>
 
-                    <Grid style={{marginTop: '10px'}}>
-                        <Divider/>
-                    </Grid>
+                    <FormInputTextField id="password"
+                                        label="password"
+                                        type="password"
+                                        suffix={<Fingerprint fontSize="large"/>}/>
 
-                    <div dir="rtl">
-                        <Grid container alignItems="flex-end" style={{marginTop: '10px'}}>
-                            <Grid item md={true} sm={true} xs={true} justify="flex-end">
-                                <Button type={"submit"} variant="outlined" color="primary"
-                                        style={{textTransform: "none"}}>Login</Button>
-                            </Grid>
-                        </Grid>
-                    </div>
+                    <Separator />
 
+                    <FormButton type="submit" label="Login" />
                 </div>
             </form>
         </Template>
