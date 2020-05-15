@@ -197,16 +197,6 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                                              choicesRegistry={authorizedGrantTypes}
                                              legend="Authorized Grant Types"/>
 
-                            {/*
-                            <FormInputTextField id="authorizedGrantTypes"
-                                                label="Authorized Grant Types"
-                                                required={true}
-                                                handler={(value) => {
-                                                    setAuthorizedGrantTypes(value.target.value.split(","))
-                                                }}
-                                                value={authorizedGrantTypes}/>
-*/}
-
 
                             <FormInputTextField id="authorities"
                                                 label="Authorities"
