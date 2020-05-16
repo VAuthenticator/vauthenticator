@@ -13,7 +13,6 @@ class ClientApplicationEndPoint(private val clientApplicationRepository: ClientA
                                @RequestBody clientAppRepresentation: ClientAppRepresentation): ResponseEntity<Unit> {
         val aClientApp = ClientAppRepresentation.fromRepresentationToDomain(clientAppId, clientAppRepresentation)
         val storeWithPassword = clientAppRepresentation.storePassword
-        println("storeWithPassword: $storeWithPassword")
         storeClientApplication.store(aClientApp, storeWithPassword)
         return ResponseEntity.noContent().build()
     }
@@ -88,7 +87,7 @@ data class ClientAppRepresentation(var clientAppName: String,
                         scopes = Scopes(representation.scopes.map { Scope(it) }),
                         authorizedGrantTypes = AuthorizedGrantTypes(representation.authorizedGrantTypes.map { it.toUpperCase() }.map { AuthorizedGrantType.valueOf(it) }),
                         webServerRedirectUri = CallbackUri(representation.webServerRedirectUri),
-                        authorities = Authorities(representation.authorities.map(::Authority)),
+                        authorities = Authorities(representation.authorities.map { it.toUpperCase() }.map(::Authority)),
                         accessTokenValidity = TokenTimeToLive(representation.accessTokenValidity),
                         refreshTokenValidity = TokenTimeToLive(representation.refreshTokenValidity),
                         postLogoutRedirectUri = PostLogoutRedirectUri(representation.postLogoutRedirectUri),
@@ -111,7 +110,7 @@ data class ClientAppInListRepresentation(var clientAppId: String,
                         clientAppName = clientApplication.clientAppId.content,
                         clientAppId = clientApplication.clientAppId.content,
                         scopes = clientApplication.scopes.content.map { it.content },
-                        authorizedGrantTypes = clientApplication.authorities.content.map { it.content },
+                        authorizedGrantTypes = clientApplication.authorizedGrantTypes.content.map { it.name.toLowerCase() },
                         federation = clientApplication.federation.name
                 )
     }

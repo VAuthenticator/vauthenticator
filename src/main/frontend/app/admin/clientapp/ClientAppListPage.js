@@ -63,6 +63,8 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
         findAllClientApplications()
             .then(val => {
                 let rows = val.map(value => {
+                    value.scopes = value.scopes.join(",")
+                    value.authorizedGrantTypes = value.authorizedGrantTypes.join(",")
                     value.edit = getEditLinkFor(value["clientAppId"])
                     value.delete = getDeleteLinkFor(value["clientAppId"])
                     value.secretKey = resetSecretKeyFor(value["clientAppId"])
