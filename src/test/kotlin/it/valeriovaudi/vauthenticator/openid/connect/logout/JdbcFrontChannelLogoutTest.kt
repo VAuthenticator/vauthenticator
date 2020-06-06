@@ -54,7 +54,7 @@ class JdbcFrontChannelLogoutTest {
         val federatedLogoutUrls = fontEndChannelLogout.getFederatedLogoutUrls(idToken.idTokenAsJwtSignedFor(keyPair))
         val expected = listOf(
                 "http://localhost/vauthenticator/logout",
-                "http://an_uri",
+                "http://an_uri123",
                 "http://an_uri",
                 "http://an_uri"
         )

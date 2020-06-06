@@ -9,6 +9,7 @@ import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import java.sql.ResultSet
+import java.util.*
 
 interface FrontChannelLogout {
     fun getFederatedLogoutUrls(clientId: String): List<String>
@@ -29,24 +30,33 @@ class FrontChannelLogoutController(private val frontChannelLogout: FrontChannelL
 
 }
 
-const val SELECT_QUERY = "SELECT logout_uris FROM oauth_client_details where federation = (SELECT federation FROM oauth_client_details where client_id=?)"
+const val SELECT_QUERY = "SELECT client_id, logout_uris FROM oauth_client_details where federation = (SELECT federation FROM oauth_client_details where client_id=?)"
 
 class JdbcFrontChannelLogout(private val authServerBaseUrl: String, private val jdbcTemplate: JdbcTemplate) : FrontChannelLogout {
 
-    val logger : Logger = LoggerFactory.getLogger(JdbcFrontChannelLogout::class.java)
+    val logger: Logger = LoggerFactory.getLogger(JdbcFrontChannelLogout::class.java)
 
     override fun getFederatedLogoutUrls(idTokenHint: String): List<String> {
         val audience = audFor(idTokenHint)
-        val logoutUris = getPostLogoutRedirectUrisFor(audience).toTypedArray()
-        val logoutUrisWithAuthServer = listOf("$authServerBaseUrl/logout", *logoutUris)
+        val logoutUris = getPostLogoutRedirectUrisFor(audience)
+                .groupBy { it.first == audience }
+
+        val complemetaryClientAppLogoutUri = Optional.ofNullable(logoutUris[false])
+                .map { it.map { it.second }.toTypedArray() }
+                .orElse(emptyArray())
+
+        val clientAppLogoutUri = Optional.ofNullable(logoutUris[true])
+                .map { it.map { it.second }.toTypedArray() }
+                .orElse(emptyArray())
+
+        val logoutUrisWithAuthServer = listOf("$authServerBaseUrl/logout", *clientAppLogoutUri, *complemetaryClientAppLogoutUri)
         logger.debug("logoutUrisWithAuthServer: $logoutUrisWithAuthServer")
         return logoutUrisWithAuthServer
     }
 
     private fun getPostLogoutRedirectUrisFor(audience: String) =
             jdbcTemplate.query(SELECT_QUERY, arrayOf(audience))
-            { resultSet: ResultSet, _: Int -> resultSet.getString("logout_uris") }
-                    .flatMap { it.split(",") }
+            { resultSet: ResultSet, _: Int -> resultSet.getString("client_id") to resultSet.getString("logout_uris") }
 
     private fun audFor(idTokenHint: String) =
             JWSObject.parse(idTokenHint).payload.toJSONObject().getAsString("aud") as String
