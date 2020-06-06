@@ -54,7 +54,8 @@ class JdbcClientApplicationRepositoryTest {
         val actual: Iterable<ClientApplication> = clientApplicationRepository.findByFederation(Federation("ANOTHER_FEDERATION"))
         val clientApplications: Iterable<ClientApplication> = listOf(
                 aClientApp(clientAppId = ClientAppId("federated_client_id1"), federation = Federation("ANOTHER_FEDERATION")),
-                aClientApp(clientAppId = ClientAppId("federated_client_id2"), federation = Federation("ANOTHER_FEDERATION"))
+                aClientApp(clientAppId = ClientAppId("federated_client_id2"), federation = Federation("ANOTHER_FEDERATION")),
+                aClientApp(clientAppId = ClientAppId("A_CLIENT_APPLICATION_ID"), federation = Federation("ANOTHER_FEDERATION"))
         )
         assertThat(actual, equalTo(clientApplications))
     }
@@ -65,7 +66,8 @@ class JdbcClientApplicationRepositoryTest {
         val clientApplications: Iterable<ClientApplication> = listOf(
                 aClientApp(ClientAppId("client_id")),
                 aClientApp(clientAppId = ClientAppId("federated_client_id1"), federation = Federation("ANOTHER_FEDERATION")),
-                aClientApp(clientAppId = ClientAppId("federated_client_id2"), federation = Federation("ANOTHER_FEDERATION"))
+                aClientApp(clientAppId = ClientAppId("federated_client_id2"), federation = Federation("ANOTHER_FEDERATION")),
+                aClientApp(clientAppId = ClientAppId("A_CLIENT_APPLICATION_ID"), federation = Federation("ANOTHER_FEDERATION"))
         )
         assertThat(actual, equalTo(clientApplications))
     }
@@ -80,7 +82,7 @@ class JdbcClientApplicationRepositoryTest {
     }
 
     @Test
-    fun `when try to save more that onese a new applications in VAuthenticator`() {
+    fun `when try to save more that onece a new applications in VAuthenticator`() {
         clientApplicationRepository.save(aClientApp(clientAppId = ClientAppId("a new client"), password = Secret("secret")))
         var actual: Optional<ClientApplication> = clientApplicationRepository.findOne(ClientAppId("a new client"))
         var clientApplications: Optional<ClientApplication> = Optional.of(aClientApp(ClientAppId("a new client")))
@@ -100,7 +102,8 @@ class JdbcClientApplicationRepositoryTest {
         val actual: Iterable<ClientApplication> = clientApplicationRepository.findAll()
         val clientApplications: Iterable<ClientApplication> = listOf(
                 aClientApp(clientAppId = ClientAppId("federated_client_id1"), federation = Federation("ANOTHER_FEDERATION")),
-                aClientApp(clientAppId = ClientAppId("federated_client_id2"), federation = Federation("ANOTHER_FEDERATION"))
+                aClientApp(clientAppId = ClientAppId("federated_client_id2"), federation = Federation("ANOTHER_FEDERATION")),
+                aClientApp(clientAppId = ClientAppId("A_CLIENT_APPLICATION_ID"), federation = Federation("ANOTHER_FEDERATION"))
         )
         assertThat(actual, equalTo(clientApplications))
     }

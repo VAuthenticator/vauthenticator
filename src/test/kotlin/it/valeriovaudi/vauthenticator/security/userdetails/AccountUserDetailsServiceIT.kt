@@ -16,7 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner
 import org.testcontainers.containers.DockerComposeContainer
 import java.io.File
 
-
+//fixme
 @SpringBootTest
 @RunWith(SpringRunner::class)
 @Import(TestAdditionalConfiguration::class)

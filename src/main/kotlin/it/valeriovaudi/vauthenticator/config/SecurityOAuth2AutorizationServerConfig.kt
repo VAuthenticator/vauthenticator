@@ -113,5 +113,5 @@ class SecurityOAuth2AutorizationServerConfig(private val accountUserDetailsServi
     }
 
     @Bean
-    fun frontChannelLogout(dataSource: DataSource) = JdbcFrontChannelLogout(JdbcTemplate(dataSource))
+    fun frontChannelLogout(dataSource: DataSource) = JdbcFrontChannelLogout(oidcIss, JdbcTemplate(dataSource))
 }

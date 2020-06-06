@@ -1,6 +1,8 @@
 package it.valeriovaudi.vauthenticator.openid.connect.logout
 
 import com.nimbusds.jose.JWSObject
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -27,13 +29,18 @@ class FrontChannelLogoutController(private val frontChannelLogout: FrontChannelL
 
 }
 
-const val SELECT_QUERY = "SELECT logout_uris FROM oauth_client_details where client_id=?"
+const val SELECT_QUERY = "SELECT logout_uris FROM oauth_client_details where federation = (SELECT federation FROM oauth_client_details where client_id=?)"
 
-class JdbcFrontChannelLogout(private val jdbcTemplate: JdbcTemplate) : FrontChannelLogout {
+class JdbcFrontChannelLogout(private val authServerBaseUrl: String, private val jdbcTemplate: JdbcTemplate) : FrontChannelLogout {
+
+    val logger : Logger = LoggerFactory.getLogger(JdbcFrontChannelLogout::class.java)
 
     override fun getFederatedLogoutUrls(idTokenHint: String): List<String> {
         val audience = audFor(idTokenHint)
-        return getPostLogoutRedirectUrisFor(audience)
+        val logoutUris = getPostLogoutRedirectUrisFor(audience).toTypedArray()
+        val logoutUrisWithAuthServer = listOf("$authServerBaseUrl/logout", *logoutUris)
+        logger.debug("logoutUrisWithAuthServer: $logoutUrisWithAuthServer")
+        return logoutUrisWithAuthServer
     }
 
     private fun getPostLogoutRedirectUrisFor(audience: String) =
