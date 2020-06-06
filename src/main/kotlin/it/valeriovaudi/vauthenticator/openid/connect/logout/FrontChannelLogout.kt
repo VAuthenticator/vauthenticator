@@ -41,18 +41,21 @@ class JdbcFrontChannelLogout(private val authServerBaseUrl: String, private val 
         val logoutUris = getPostLogoutRedirectUrisFor(audience)
                 .groupBy { it.first == audience }
 
-        val complemetaryClientAppLogoutUri = Optional.ofNullable(logoutUris[false])
-                .map { it.map { it.second }.toTypedArray() }
-                .orElse(emptyArray())
+        val clientAppLogoutUri = clientAppLogoutUriFor(logoutUris, true)
+        val complementaryClientAppLogoutUri = clientAppLogoutUriFor(logoutUris, false)
 
-        val clientAppLogoutUri = Optional.ofNullable(logoutUris[true])
-                .map { it.map { it.second }.toTypedArray() }
-                .orElse(emptyArray())
-
-        val logoutUrisWithAuthServer = listOf("$authServerBaseUrl/logout", *clientAppLogoutUri, *complemetaryClientAppLogoutUri)
+        val logoutUrisWithAuthServer = listOf("$authServerBaseUrl/logout", *clientAppLogoutUri, *complementaryClientAppLogoutUri)
         logger.debug("logoutUrisWithAuthServer: $logoutUrisWithAuthServer")
         return logoutUrisWithAuthServer
     }
+
+    private fun clientAppLogoutUriFor(
+            logoutUris: Map<Boolean, List<Pair<String, String>>>,
+            clientAppInFederation: Boolean
+    ) =
+            Optional.ofNullable(logoutUris[clientAppInFederation])
+                    .map { it.map { it.second }.toTypedArray() }
+                    .orElse(emptyArray())
 
     private fun getPostLogoutRedirectUrisFor(audience: String) =
             jdbcTemplate.query(SELECT_QUERY, arrayOf(audience))

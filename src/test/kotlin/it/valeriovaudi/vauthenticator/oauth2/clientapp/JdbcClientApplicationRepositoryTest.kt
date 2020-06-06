@@ -1,8 +1,8 @@
 package it.valeriovaudi.vauthenticator.oauth2.clientapp
 
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppFixture.aClientApp
+import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
-import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.ClassRule
 import org.junit.Test
@@ -55,7 +55,7 @@ class JdbcClientApplicationRepositoryTest {
         val clientApplications: Iterable<ClientApplication> = listOf(
                 aClientApp(clientAppId = ClientAppId("federated_client_id1"), federation = Federation("ANOTHER_FEDERATION")),
                 aClientApp(clientAppId = ClientAppId("federated_client_id2"), federation = Federation("ANOTHER_FEDERATION")),
-                aClientApp(clientAppId = ClientAppId("A_CLIENT_APPLICATION_ID"), federation = Federation("ANOTHER_FEDERATION"))
+                aClientApp(clientAppId = ClientAppId("A_CLIENT_APPLICATION_ID"), federation = Federation("ANOTHER_FEDERATION"), logoutUri = LogoutUri("http://an_uri123"))
         )
         assertThat(actual, equalTo(clientApplications))
     }
@@ -67,7 +67,7 @@ class JdbcClientApplicationRepositoryTest {
                 aClientApp(ClientAppId("client_id")),
                 aClientApp(clientAppId = ClientAppId("federated_client_id1"), federation = Federation("ANOTHER_FEDERATION")),
                 aClientApp(clientAppId = ClientAppId("federated_client_id2"), federation = Federation("ANOTHER_FEDERATION")),
-                aClientApp(clientAppId = ClientAppId("A_CLIENT_APPLICATION_ID"), federation = Federation("ANOTHER_FEDERATION"))
+                aClientApp(clientAppId = ClientAppId("A_CLIENT_APPLICATION_ID"), federation = Federation("ANOTHER_FEDERATION"), logoutUri = LogoutUri("http://an_uri123"))
         )
         assertThat(actual, equalTo(clientApplications))
     }
@@ -103,7 +103,7 @@ class JdbcClientApplicationRepositoryTest {
         val clientApplications: Iterable<ClientApplication> = listOf(
                 aClientApp(clientAppId = ClientAppId("federated_client_id1"), federation = Federation("ANOTHER_FEDERATION")),
                 aClientApp(clientAppId = ClientAppId("federated_client_id2"), federation = Federation("ANOTHER_FEDERATION")),
-                aClientApp(clientAppId = ClientAppId("A_CLIENT_APPLICATION_ID"), federation = Federation("ANOTHER_FEDERATION"))
+                aClientApp(clientAppId = ClientAppId("A_CLIENT_APPLICATION_ID"), federation = Federation("ANOTHER_FEDERATION"), logoutUri = LogoutUri("http://an_uri123"))
         )
         assertThat(actual, equalTo(clientApplications))
     }
