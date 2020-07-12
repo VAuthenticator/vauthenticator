@@ -1,6 +1,5 @@
 package it.valeriovaudi.vauthenticator.keypair
 
-import com.amazonaws.services.s3.model.S3Object
 import org.hamcrest.core.Is
 import org.junit.Assert
 import org.springframework.core.io.ByteArrayResource
@@ -37,12 +36,6 @@ object KeyPairFixture {
 
     fun errorPathKeyPairConfig() =
             KeyPairConfig(keyStorePath = "file.jsk", keyStorePairAlias = "secret", keyStorePassword = "secret")
-
-    fun s3Object(): S3Object {
-        val s3Object = S3Object()
-        s3Object.setObjectContent(getFileContent("/keystore/keystore.jks").inputStream())
-        return s3Object
-    }
 
 }
 
