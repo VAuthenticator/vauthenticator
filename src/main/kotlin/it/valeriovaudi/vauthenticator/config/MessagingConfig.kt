@@ -11,7 +11,6 @@ import org.springframework.boot.autoconfigure.amqp.RabbitProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Scope
-import org.springframework.integration.core.MessagingTemplate
 
 
 @Configuration
@@ -22,9 +21,6 @@ class MessagingConfig {
 
     @Autowired
     lateinit var messageConverter: ObjectProvider<MessageConverter>
-
-    @Bean
-    fun accountRegistrationSender() = MessagingTemplate()
 
     @Bean
     fun accountRegistrationQueue(): Queue = Queue("account-registration", false, false, false)
