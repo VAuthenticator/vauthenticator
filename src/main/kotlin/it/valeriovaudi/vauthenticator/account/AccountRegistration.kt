@@ -29,17 +29,10 @@ class AccountRegistration(private val accountRepository: AccountRepository,
     }
 }
 
-sealed class AccountEvents
-data class AccountCreated(val email: String, val firstName: String, val lastName: String) : AccountEvents()
-data class AccountCreationErrorOnAuthSystem(val email: String, val firstName: String, val lastName: String, val error: AccountRegistrationError) : AccountEvents()
-
-data class AccountRegistrationError(val message: String) : AccountEvents()
-
 interface AccountRegistrationEventPublisher {
     fun accountCreated(accountCreated: AccountCreated)
     fun accountCreationErrorOnAuthSystem(accountCreationErrorOnAuthSystem: AccountCreationErrorOnAuthSystem)
 }
-
 
 class RabbitMqAccountRegistrationEventPublisher(
         private val objectMapper: ObjectMapper,
