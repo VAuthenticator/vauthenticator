@@ -2,6 +2,8 @@ package it.valeriovaudi.vauthenticator.account
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import it.valeriovaudi.vauthenticator.extentions.VAuthenticatorPasswordEncoder
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.amqp.rabbit.annotation.RabbitListener
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 
@@ -57,6 +59,8 @@ class RabbitMqAccountRegistrationEventPublisher(
 
 class AccountRegistrationEventsListener(private val objectMapper: ObjectMapper) {
 
+    private val LOGGER : Logger = LoggerFactory.getLogger(AccountRegistrationEventsListener::class.java)
+
     @RabbitListener(queues = ["account-on-auth-system-creation-error"])
     fun accountCreationErrorOnAuthSystem(message: String) {
         println("account-on-auth-system-creation-error")
@@ -69,11 +73,12 @@ class AccountRegistrationEventsListener(private val objectMapper: ObjectMapper) 
 
     @RabbitListener(queues = ["account-stored"])
     fun accountStored(message: String) {
-        println("account-stored")
-        println(message)
+
+        LOGGER.debug("account-stored listener fired")
+        LOGGER.debug(message)
+
         val readTree = objectMapper.readTree(message)
         val email = readTree.get("email")
-        println("email $email")
         //send to mail sender
     }
 }
