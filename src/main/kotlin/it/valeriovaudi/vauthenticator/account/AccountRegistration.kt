@@ -63,11 +63,10 @@ class AccountRegistrationEventsListener(private val objectMapper: ObjectMapper) 
 
     @RabbitListener(queues = ["account-on-auth-system-creation-error"])
     fun accountCreationErrorOnAuthSystem(message: String) {
-        println("account-on-auth-system-creation-error")
-        println(message)
+        LOGGER.debug("account-on-auth-system-creation-error")
+        LOGGER.debug(message)
         val readTree = objectMapper.readTree(message)
         val email = readTree.get("email")
-        println("email $email")
         //send to mail sender
     }
 
