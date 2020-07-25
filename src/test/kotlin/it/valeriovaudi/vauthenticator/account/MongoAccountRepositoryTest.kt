@@ -18,7 +18,7 @@ class MongoAccountRepositoryTest {
     @Autowired
     lateinit var mongoTemplate: MongoTemplate
 
-    private val sub = UUID.randomUUID().toString()
+    private val sub = "A_SUB"
     private val account = AccountTestFixture.anAccount(sub)
 
     lateinit var mongoAccountRepository: MongoAccountRepository
@@ -32,12 +32,15 @@ class MongoAccountRepositoryTest {
     fun `find an account by email`() {
         mongoAccountRepository.create(account)
 
+        println("sub $sub")
         val findByUsername: Account = mongoAccountRepository.accountFor(account.username).orElseThrow()
         assertThat(findByUsername, equalTo(account))
     }
 
     @Test
     fun `save an account by email`() {
+
+        println("sub $sub")
         mongoAccountRepository.update(account)
 
         val findByUsername: Account = mongoAccountRepository.accountFor(account.username).orElseThrow()

@@ -90,7 +90,7 @@ class MongoAccountRepository(private val mongoTemplate: MongoTemplate) : Account
     override fun update(account: Account) =
             try {
                 mongoTemplate.upsert(
-                        findByUserName(account.email),
+                        findByUserName(account.username),
                         Update.fromDocument(fromDomainToDocument(account)),
                         collectionName);
                 Unit
