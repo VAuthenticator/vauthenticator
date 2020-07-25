@@ -26,7 +26,7 @@ class AccountSyncListener(
                     account.firstName = firstName;
                     account.lastName = lastName;
 
-                    accountRepository.update(account);
+                    accountRepository.save(account);
                 }
     }
 }

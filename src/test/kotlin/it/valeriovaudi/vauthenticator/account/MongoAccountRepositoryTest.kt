@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.test.context.junit4.SpringRunner
-import java.util.*
 
 @DataMongoTest
 @RunWith(SpringRunner::class)
@@ -30,24 +29,21 @@ class MongoAccountRepositoryTest {
 
     @Test
     fun `find an account by email`() {
-        mongoAccountRepository.create(account)
+        mongoAccountRepository.save(account)
 
-        println("sub $sub")
         val findByUsername: Account = mongoAccountRepository.accountFor(account.username).orElseThrow()
         assertThat(findByUsername, equalTo(account))
     }
 
     @Test
     fun `save an account by email`() {
-
-        println("sub $sub")
-        mongoAccountRepository.update(account)
+        mongoAccountRepository.save(account)
 
         val findByUsername: Account = mongoAccountRepository.accountFor(account.username).orElseThrow()
         assertThat(findByUsername, equalTo(account))
 
         val accountUpdated = account.copy(firstName = "A_NEW_FIRSTNAME", lastName = "A_NEW_LASTNAME")
-        mongoAccountRepository.update(accountUpdated)
+        mongoAccountRepository.save(accountUpdated)
 
         val updatedFindByUsername = mongoAccountRepository.accountFor(account.username).orElseThrow()
         assertThat(updatedFindByUsername, equalTo(accountUpdated))

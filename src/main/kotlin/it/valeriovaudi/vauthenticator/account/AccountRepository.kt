@@ -13,8 +13,7 @@ import java.util.*
 
 interface AccountRepository {
     fun accountFor(username: String): Optional<Account>
-    fun create(account: Account)
-    fun update(account: Account)
+    fun save(account: Account)
 }
 
 class AccountRegistrationException(e: RuntimeException) : RuntimeException(e)
@@ -79,15 +78,7 @@ class MongoAccountRepository(private val mongoTemplate: MongoTemplate) : Account
                     mongoTemplate.findOne(findByUserName(username), Document::class.java, collectionName)
             ).map { document -> fromDocumentToDomain(document) }
 
-    override fun create(account: Account) =
-            try {
-                mongoTemplate.insert(fromDomainToDocument(account), collectionName); Unit
-            } catch (e: RuntimeException) {
-                logger.error(e.message, e)
-                throw AccountRegistrationException(e)
-            }
-
-    override fun update(account: Account) =
+    override fun save(account: Account) =
             try {
                 mongoTemplate.upsert(
                         findByUserName(account.username),
