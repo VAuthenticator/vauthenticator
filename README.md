@@ -9,45 +9,21 @@ all written in Kotlin based on Spring Boot 2.x.
 
 ![](https://github.com/mrFlick72/vauthenticator/blob/master/images/vauhenticator-architecture.png)
 
-## Sample Application
-
-In order to try VAuthenticator, in this repo you can find a no-configserver-configuration folder with all the basic 
-configuration in order to start up the application without a config server and the needed keystore for the RSA key pair.
-The only thing that you should do is provide these external configurations:
-
-```properties
-project.basedir=your project path
-spring.cloud.bootstrap.location=${project.basedir}/no-configserver-configuration/bootstrap.yml;
-```  
-
-Since that the user data source in VAuthenticator is provided by a microservice and not a classical datasource like: ldap, 
-database and so on the repo provides a very simple account service suitable for testing under testable-account-service maven project.
-
-Using these two applications: VAuthenticator started whit the properties like above and the testable-account-service project, 
-you should be able to use VAuthenticator for your sample application. The preconfigured user in testable-account-service is a 
-user with `user` as username and `secret` as password 
-
-It is provided an all-in-one testable solution with a docker-compose under testable-docker-infrastructure folder the only thing to do 
-is configure CONFIGURATION_FOLDER environment variable in a .env file with the path of the no-configserver-configuration folder in your 
-local environment.
-
 ## Features
+Right now the most tested version, is a installation on kubernetes, for local usage you can use minikube. 
+The services that you need are account-service for user datasource, repository-service for keypair RSA certificate and configuration-server for confiuration.
 
 The application is a Spring Cloud application build on the top of Spring Cloud Security in order to leverage the typical 
 OAuth2 Authorization server. On the top of OAuth2 feature the VAuthenticator provide JWK endpoint for RSA key exchange 
-with keystore storage on file system or AWS S3, token enhancement of OpenID Connect id_token for client application 
-that has `openid` as scope and a well known OpenID Connect discovery endpoint.
+with keystore storage provided from a my repository-service microservice, token enhancement of OpenID Connect id_token for client application 
+that has `openid` as scope, well known OpenID Connect discovery endpoint, SSO via authorization_code, and global front channel logout. 
 
-The Authentication server supports SSO via authorization_code, and global front channel logout. 
+Client Application are stored in a Postgress Database, while for authorization code, distributed session store and 
+distributed cache, a Redis store is my choice. 
 
-As Client Application Store Postgress Database is used while for authorization code store, distributed session store and 
-distributed cache Redis is the my choice. 
-
-At the moment the application try to leverage the configuration from a configuration server discovered by Netflix Eureka.
-The User datasource as said above is supposed to provided by an `account-service`, the supported communication between 
-VAuthenticator and the account-service is via a secure RabbitMq AMQP channel, at the moment the object required is a 
-Spring Security UserDetails implementation, but this details is under develop in order to remove this coupling between 
-account-service and VAuthenticator to a Spring UserDetails implementation.
+At the moment, the application try to leverage the configuration from a configuration server.
+The User datasource as said above is supposed to provided by an `account-service` cached in a monogo collection that store a falt reperesentation form 
+openid connect point of view teh account data. VAuthenticator and the account-service are syncronized with a secure RabbitMq AMQP channel.
 
 ## Support
 
