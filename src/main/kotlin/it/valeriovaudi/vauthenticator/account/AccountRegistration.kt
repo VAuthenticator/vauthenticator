@@ -63,8 +63,8 @@ class AccountRegistrationEventsListener(private val objectMapper: ObjectMapper) 
 
     @RabbitListener(queues = ["account-on-auth-system-creation-error"])
     fun accountCreationErrorOnAuthSystem(message: String) {
-        LOGGER.debug("account-on-auth-system-creation-error")
-        LOGGER.debug(message)
+        LOGGER.info("account-on-auth-system-creation-error")
+        LOGGER.info(message)
         val readTree = objectMapper.readTree(message)
         val email = readTree.get("email")
         //send to mail sender
@@ -73,8 +73,8 @@ class AccountRegistrationEventsListener(private val objectMapper: ObjectMapper) 
     @RabbitListener(queues = ["account-stored"])
     fun accountStored(message: String) {
 
-        LOGGER.debug("account-stored listener fired")
-        LOGGER.debug(message)
+        LOGGER.info("account-stored listener fired")
+        LOGGER.info(message)
 
         val readTree = objectMapper.readTree(message)
         val email = readTree.get("email")

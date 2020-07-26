@@ -14,8 +14,8 @@ class AccountSyncListener(
 
     @RabbitListener(queues = ["account-sync"])
     fun accountStored(message: String) {
-        LOGGER.debug("account-sync listener fired")
-        LOGGER.debug(message)
+        LOGGER.info("account-sync listener fired")
+        LOGGER.info(message)
 
         val readTree = objectMapper.readTree(message)
         val email = readTree.get("email").asText()

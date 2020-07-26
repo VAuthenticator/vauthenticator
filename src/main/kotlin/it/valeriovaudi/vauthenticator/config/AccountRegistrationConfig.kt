@@ -21,6 +21,10 @@ class AccountRegistrationConfig {
             AccountRegistrationEventsListener(objectMapper)
 
     @Bean
+    fun accountSyncListener(objectMapper: ObjectMapper, accountRepository: AccountRepository) =
+            AccountSyncListener(objectMapper, accountRepository)
+
+    @Bean
     fun rabbitMqAccountRegistrationEventPublisher(objectMapper: ObjectMapper,
                                                   rabbitTemplate: RabbitTemplate) =
             RabbitMqAccountRegistrationEventPublisher(objectMapper, rabbitTemplate)

@@ -53,11 +53,11 @@ class MessagingConfig {
                             .noargs())
 
     @Bean
-    fun accountSyncQueueBinder(accountRegistrationQueue: Queue,
+    fun accountSyncQueueBinder(accountSyncQueue: Queue,
                                accountSyncExchange: Exchange) =
-            Declarables(accountRegistrationQueue, accountSyncExchange,
+            Declarables(accountSyncQueue, accountSyncExchange,
                     BindingBuilder
-                            .bind(accountRegistrationQueue)
+                            .bind(accountSyncQueue)
                             .to(accountSyncExchange)
                             .with("account-sync")
                             .noargs())
