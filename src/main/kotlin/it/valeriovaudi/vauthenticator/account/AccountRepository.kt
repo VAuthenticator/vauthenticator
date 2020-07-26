@@ -8,11 +8,12 @@ import org.slf4j.LoggerFactory
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
+import org.springframework.data.mongodb.core.query.Update
 import java.util.*
 
 interface AccountRepository {
     fun accountFor(username: String): Optional<Account>
-    fun create(account: Account)
+    fun save(account: Account)
 }
 
 class AccountRegistrationException(e: RuntimeException) : RuntimeException(e)
@@ -77,9 +78,13 @@ class MongoAccountRepository(private val mongoTemplate: MongoTemplate) : Account
                     mongoTemplate.findOne(findByUserName(username), Document::class.java, collectionName)
             ).map { document -> fromDocumentToDomain(document) }
 
-    override fun create(account: Account) =
+    override fun save(account: Account) =
             try {
-                mongoTemplate.insert(fromDomainToDocument(account), collectionName); Unit
+                mongoTemplate.upsert(
+                        findByUserName(account.username),
+                        Update.fromDocument(fromDomainToDocument(account)),
+                        collectionName);
+                Unit
             } catch (e: RuntimeException) {
                 logger.error(e.message, e)
                 throw AccountRegistrationException(e)

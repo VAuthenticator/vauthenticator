@@ -2,6 +2,8 @@ package it.valeriovaudi.vauthenticator.account
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import it.valeriovaudi.vauthenticator.extentions.VAuthenticatorPasswordEncoder
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.amqp.rabbit.annotation.RabbitListener
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 
@@ -12,7 +14,7 @@ class AccountRegistration(private val accountRepository: AccountRepository,
     fun execute(account: Account) {
         try {
             val password = passwordEncoder.encode(account.password)
-            accountRepository.create(account.copy(password = password))
+            accountRepository.save(account.copy(password = password))
             eventPublisher.accountCreated(
                     AccountCreated(email = account.email,
                             firstName = account.firstName,
@@ -29,17 +31,10 @@ class AccountRegistration(private val accountRepository: AccountRepository,
     }
 }
 
-sealed class AccountEvents
-data class AccountCreated(val email: String, val firstName: String, val lastName: String) : AccountEvents()
-data class AccountCreationErrorOnAuthSystem(val email: String, val firstName: String, val lastName: String, val error: AccountRegistrationError) : AccountEvents()
-
-data class AccountRegistrationError(val message: String) : AccountEvents()
-
 interface AccountRegistrationEventPublisher {
     fun accountCreated(accountCreated: AccountCreated)
     fun accountCreationErrorOnAuthSystem(accountCreationErrorOnAuthSystem: AccountCreationErrorOnAuthSystem)
 }
-
 
 class RabbitMqAccountRegistrationEventPublisher(
         private val objectMapper: ObjectMapper,
@@ -64,23 +59,25 @@ class RabbitMqAccountRegistrationEventPublisher(
 
 class AccountRegistrationEventsListener(private val objectMapper: ObjectMapper) {
 
+    private val LOGGER : Logger = LoggerFactory.getLogger(AccountRegistrationEventsListener::class.java)
+
     @RabbitListener(queues = ["account-on-auth-system-creation-error"])
     fun accountCreationErrorOnAuthSystem(message: String) {
-        println("account-on-auth-system-creation-error")
-        println(message)
+        LOGGER.info("account-on-auth-system-creation-error")
+        LOGGER.info(message)
         val readTree = objectMapper.readTree(message)
         val email = readTree.get("email")
-        println("email $email")
         //send to mail sender
     }
 
     @RabbitListener(queues = ["account-stored"])
     fun accountStored(message: String) {
-        println("account-stored")
-        println(message)
+
+        LOGGER.info("account-stored listener fired")
+        LOGGER.info(message)
+
         val readTree = objectMapper.readTree(message)
         val email = readTree.get("email")
-        println("email $email")
         //send to mail sender
     }
 }

@@ -29,11 +29,18 @@ class MessagingConfig {
     fun accountStoredQueue(): Queue = Queue("account-stored", false, false, false)
 
     @Bean
+    fun accountSyncQueue(): Queue = Queue("account-sync", false, false, false)
+
+    @Bean
     fun accountOnAuthSystemCreationError(): Queue = Queue("account-on-auth-system-creation-error", false, false, false)
 
     @Bean
     fun vauthenticatorRegistrationExchange(): Exchange =
             DirectExchange("vauthenticator-registration", false, false)
+
+    @Bean
+    fun accountSyncExchange(): Exchange =
+            DirectExchange("account-sync", false, false)
 
     @Bean
     fun accountStoredQueueBinder(accountRegistrationQueue: Queue,
@@ -43,6 +50,16 @@ class MessagingConfig {
                             .bind(accountRegistrationQueue)
                             .to(vauthenticatorRegistrationExchange)
                             .with("account-registration")
+                            .noargs())
+
+    @Bean
+    fun accountSyncQueueBinder(accountSyncQueue: Queue,
+                               accountSyncExchange: Exchange) =
+            Declarables(accountSyncQueue, accountSyncExchange,
+                    BindingBuilder
+                            .bind(accountSyncQueue)
+                            .to(accountSyncExchange)
+                            .with("account-sync")
                             .noargs())
 
     @Bean

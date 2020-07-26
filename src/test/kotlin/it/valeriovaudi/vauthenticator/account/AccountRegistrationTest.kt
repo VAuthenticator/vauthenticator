@@ -32,7 +32,7 @@ class AccountRegistrationTest {
 
         accountRegistration.execute(account)
 
-        verify(accountRepository).create(account)
+        verify(accountRepository).save(account)
         verify(eventPublisher).accountCreated(
                 AccountCreated(email = account.email,
                         firstName = account.firstName,
