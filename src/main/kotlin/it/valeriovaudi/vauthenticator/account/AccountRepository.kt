@@ -54,8 +54,7 @@ class JdbcAccountRepository(private val jdbcTemplate: JdbcTemplate) : AccountRep
     }
     val insertQuery: String =
             """
-                INSERT INTO ACCOUNT (id,
-                                     account_non_expired,
+                INSERT INTO ACCOUNT (account_non_expired,
                                      account_non_locked,
                                      credentials_non_expired,
                                      enabled,
@@ -68,11 +67,10 @@ class JdbcAccountRepository(private val jdbcTemplate: JdbcTemplate) : AccountRep
                                      first_name,
                                      last_name
                                     ) 
-                                    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
+                                    VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
             """.trimIndent()
     override fun save(account: Account) {
         jdbcTemplate.update(insertQuery,
-                        account.sub,
                         account.accountNonExpired, account.accountNonLocked, account.credentialsNonExpired, account.enabled,
                         account.email, account.password, account.authorities.joinToString(","), account.sub,
                         account.email, account.emailVerified, account.firstName, account.lastName

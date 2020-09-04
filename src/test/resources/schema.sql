@@ -22,7 +22,7 @@ create table oauth_client_details
 
 create table account
 (
-    id   varchar(256) not null constraint account_pkey primary key,
+    id  SERIAL primary key,
 
     account_non_expired boolean NOT NULL,
     account_non_locked boolean NOT NULL,

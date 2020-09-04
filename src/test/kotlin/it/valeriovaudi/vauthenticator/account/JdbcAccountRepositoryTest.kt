@@ -1,6 +1,5 @@
 package it.valeriovaudi.vauthenticator.account
 
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.JdbcClientApplicationRepositoryTest
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
