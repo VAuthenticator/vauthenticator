@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.data.mongodb.core.query.Update
+import org.springframework.jdbc.core.JdbcTemplate
 import java.util.*
 
 interface AccountRepository {
@@ -17,6 +18,42 @@ interface AccountRepository {
 }
 
 class AccountRegistrationException(e: RuntimeException) : RuntimeException(e)
+
+class JdbcAccountRepository(private val jdbcTemplate: JdbcTemplate) : AccountRepository {
+    val insertQuery: String =
+            """
+                INSERT INTO ACCOUNT (id,
+                                     accountNonExpired,
+                                     accountNonLocked,
+                                     credentialsNonExpired,
+                                     enabled,
+                                     username,
+                                     password,
+                                     authorities,
+                                     sub,
+                                     email,
+                                     emailVerified,
+                                     firstName,
+                                     lastName
+                                    ) 
+                                    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
+            """.trimIndent()
+    val readByEmail: String = "SELECT * FROM account WHERE email=?"
+
+    override fun accountFor(username: String): Optional<Account> {
+        TODO("Not yet implemented")
+    }
+
+    override fun save(account: Account) {
+        jdbcTemplate.update(insertQuery, arrayOf(
+                account.sub,
+                account.accountNonExpired, account.accountNonLocked, account.credentialsNonExpired, account.enabled,
+                account.email, account.password, account.authorities, account.sub,
+                account.email, account.emailVerified, account.firstName, account.lastName
+        ))
+    }
+
+}
 
 
 object AccountMapper {
