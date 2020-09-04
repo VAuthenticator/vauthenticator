@@ -29,13 +29,11 @@ create table account
     credentials_non_expired boolean NOT NULL,
     enabled boolean NOT NULL,
 
-    username varchar(256) not null,
+    username varchar(256) UNIQUE not null,
     password varchar(256) not null,
     authorities varchar(256) not null,
 
-    sub varchar(256) not null,
-
-    email varchar(256) not null,
+    email varchar(256) UNIQUE not null,
     email_verified boolean not null,
 
     first_name varchar(256) not null,

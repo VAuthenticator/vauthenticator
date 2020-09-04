@@ -12,8 +12,7 @@ import java.io.File
 
 class JdbcAccountRepositoryTest {
 
-    private val sub = "A_SUB"
-    private val account = AccountTestFixture.anAccount(sub)
+    private val account = AccountTestFixture.anAccount()
 
     companion object {
         @ClassRule
@@ -41,8 +40,6 @@ class JdbcAccountRepositoryTest {
 
         val findByUsername: Account = accountRepository.accountFor(account.username).orElseThrow()
 
-        println(findByUsername)
-        println(account)
         assertThat(findByUsername, equalTo(account))
     }
 

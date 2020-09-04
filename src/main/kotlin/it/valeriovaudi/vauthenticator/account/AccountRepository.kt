@@ -38,9 +38,6 @@ class JdbcAccountRepository(private val jdbcTemplate: JdbcTemplate) : AccountRep
                             password = rs.getString("password"),
                             authorities = rs.getString("authorities").split(",").filter { it.isNotEmpty() } ,
 
-                            // needed for openid oidc profile
-                            sub = rs.getString("sub"),
-
                             // needed for email oidc profile
                             email = rs.getString("email"),
                             emailVerified = rs.getBoolean("email_verified"),
@@ -61,18 +58,17 @@ class JdbcAccountRepository(private val jdbcTemplate: JdbcTemplate) : AccountRep
                                      username,
                                      password,
                                      authorities,
-                                     sub,
                                      email,
                                      email_verified,
                                      first_name,
                                      last_name
                                     ) 
-                                    VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
+                                    VALUES (?,?,?,?,?,?,?,?,?,?,?)
             """.trimIndent()
     override fun save(account: Account) {
         jdbcTemplate.update(insertQuery,
                         account.accountNonExpired, account.accountNonLocked, account.credentialsNonExpired, account.enabled,
-                        account.email, account.password, account.authorities.joinToString(","), account.sub,
+                        account.email, account.password, account.authorities.joinToString(","),
                         account.email, account.emailVerified, account.firstName, account.lastName
                 )
     }
@@ -113,8 +109,6 @@ object AccountMapper {
                     username = document.getString("username"),
                     password = document.getString("password"),
                     authorities = document.getList("authorities", String::class.java),
-
-                    sub = document.getString("sub"),
 
                     email = document.getString("email"),
                     emailVerified = document.getBoolean("emailVerified"),

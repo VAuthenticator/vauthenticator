@@ -1,5 +1,6 @@
 package it.valeriovaudi.vauthenticator.account
 
+import it.valeriovaudi.vauthenticator.extentions.toSha256
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
@@ -33,7 +34,6 @@ object AccountConverter {
             username = representation.email,
             firstName = representation.firstName,
             lastName = representation.lastName,
-            sub = representation.email,
             authorities = listOf("ROLE_USER"),
             accountNonExpired = false,
             accountNonLocked = false,

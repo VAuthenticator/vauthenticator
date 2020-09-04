@@ -13,7 +13,7 @@ import java.util.*
 class AccountRegistrationTest {
 
     private val sub = UUID.randomUUID().toString()
-    private val account = AccountTestFixture.anAccount(sub)
+    private val account = AccountTestFixture.anAccount()
 
     @Mock
     lateinit var accountRepository: AccountRepository

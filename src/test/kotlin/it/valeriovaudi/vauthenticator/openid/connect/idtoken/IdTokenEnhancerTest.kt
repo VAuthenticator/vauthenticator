@@ -39,7 +39,7 @@ class IdTokenEnhancerTest {
                 .willReturn(keyPair(content = content))
 
         given(accountRepository.accountFor("USER_NAME"))
-                .willReturn(Optional.of(Account(false, false, false, true, "", "", emptyList(), "", "", true, "", "")))
+                .willReturn(Optional.of(Account(false, false, false, true, "", "", emptyList(), "", true, "", "")))
         val actual: OAuth2AccessToken = idTokenEnhancer.enhance(TestableDefaultOAuth2AccessToken(clientAppScope = setOf("openid")), TestableOAuth2Authentication())
 
         assertNotNull(actual.additionalInformation["id_token"])

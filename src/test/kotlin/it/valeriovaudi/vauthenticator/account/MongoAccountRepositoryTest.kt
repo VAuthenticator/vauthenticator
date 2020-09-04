@@ -18,7 +18,7 @@ class MongoAccountRepositoryTest {
     lateinit var mongoTemplate: MongoTemplate
 
     private val sub = "A_SUB"
-    private val account = AccountTestFixture.anAccount(sub)
+    private val account = AccountTestFixture.anAccount()
 
     lateinit var mongoAccountRepository: MongoAccountRepository
 

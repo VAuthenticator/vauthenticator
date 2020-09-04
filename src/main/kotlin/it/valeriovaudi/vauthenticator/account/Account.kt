@@ -1,5 +1,7 @@
 package it.valeriovaudi.vauthenticator.account
 
+import it.valeriovaudi.vauthenticator.extentions.toSha256
+
 data class Account(var accountNonExpired: Boolean = false,
                    var accountNonLocked: Boolean = false,
                    var credentialsNonExpired: Boolean = false,
@@ -8,8 +10,6 @@ data class Account(var accountNonExpired: Boolean = false,
                    var username: String,
                    var password: String,
                    var authorities: List<String>,
-
-                   var sub: String,
 
         // needed for email oidc profile
                    var email: String,
@@ -20,4 +20,7 @@ data class Account(var accountNonExpired: Boolean = false,
 
                    var firstName: String,
                    var lastName: String
-)
+) {
+    val sub: String
+        get() = email.toSha256()
+}
