@@ -6,10 +6,8 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.ClassRule
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.test.context.junit4.SpringRunner
 import org.testcontainers.containers.DockerComposeContainer
 import java.io.File
 
@@ -28,10 +26,10 @@ class JdbcAccountRepositoryTest {
 
     lateinit var accountRepository: JdbcAccountRepository
 
-    @Before
+   @Before
     fun setUp() {
-        val serviceHost = JdbcClientApplicationRepositoryTest.container.getServiceHost("postgres_1", 5432)
-        val servicePort = JdbcClientApplicationRepositoryTest.container.getServicePort("postgres_1", 5432)
+        val serviceHost = container.getServiceHost("postgres_1", 5432)
+        val servicePort = container.getServicePort("postgres_1", 5432)
         val dataSource = DataSourceBuilder.create()
                 .url("jdbc:postgresql://$serviceHost:$servicePort/vauthenticator?user=root&password=root")
                 .build()
@@ -43,6 +41,9 @@ class JdbcAccountRepositoryTest {
         accountRepository.save(account)
 
         val findByUsername: Account = accountRepository.accountFor(account.username).orElseThrow()
+
+        println(findByUsername)
+        println(account)
         assertThat(findByUsername, equalTo(account))
     }
 

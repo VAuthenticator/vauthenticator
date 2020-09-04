@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.data.mongodb.core.query.Update
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 interface AccountRepository {
@@ -19,38 +20,63 @@ interface AccountRepository {
 
 class AccountRegistrationException(e: RuntimeException) : RuntimeException(e)
 
+@Transactional
 class JdbcAccountRepository(private val jdbcTemplate: JdbcTemplate) : AccountRepository {
+
+    val readByEmail: String = "SELECT * FROM account WHERE email=?"
+
+    override fun accountFor(username: String): Optional<Account> {
+        return Optional.ofNullable(
+                jdbcTemplate.queryForObject(readByEmail, { rs, _ ->
+                    Account(
+                            accountNonExpired = rs.getBoolean("account_non_expired"),
+                            accountNonLocked = rs.getBoolean("account_non_locked"),
+                            credentialsNonExpired = rs.getBoolean("credentials_non_expired"),
+                            enabled = rs.getBoolean("enabled"),
+
+                            username = rs.getString("username"),
+                            password = rs.getString("password"),
+                            authorities = rs.getString("authorities").split(",").filter { it.isNotEmpty() } ,
+
+                            // needed for openid oidc profile
+                            sub = rs.getString("sub"),
+
+                            // needed for email oidc profile
+                            email = rs.getString("email"),
+                            emailVerified = rs.getBoolean("email_verified"),
+
+                            // needed for profile oidc profile
+                            firstName = rs.getString("first_name"),
+                            lastName = rs.getString("last_name")
+                    )
+                }, arrayOf(username))
+        )
+    }
     val insertQuery: String =
             """
                 INSERT INTO ACCOUNT (id,
-                                     accountNonExpired,
-                                     accountNonLocked,
-                                     credentialsNonExpired,
+                                     account_non_expired,
+                                     account_non_locked,
+                                     credentials_non_expired,
                                      enabled,
                                      username,
                                      password,
                                      authorities,
                                      sub,
                                      email,
-                                     emailVerified,
-                                     firstName,
-                                     lastName
+                                     email_verified,
+                                     first_name,
+                                     last_name
                                     ) 
                                     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
             """.trimIndent()
-    val readByEmail: String = "SELECT * FROM account WHERE email=?"
-
-    override fun accountFor(username: String): Optional<Account> {
-        TODO("Not yet implemented")
-    }
-
     override fun save(account: Account) {
-        jdbcTemplate.update(insertQuery, arrayOf(
-                account.sub,
-                account.accountNonExpired, account.accountNonLocked, account.credentialsNonExpired, account.enabled,
-                account.email, account.password, account.authorities, account.sub,
-                account.email, account.emailVerified, account.firstName, account.lastName
-        ))
+        jdbcTemplate.update(insertQuery,
+                        account.sub,
+                        account.accountNonExpired, account.accountNonLocked, account.credentialsNonExpired, account.enabled,
+                        account.email, account.password, account.authorities.joinToString(","), account.sub,
+                        account.email, account.emailVerified, account.firstName, account.lastName
+                )
     }
 
 }
