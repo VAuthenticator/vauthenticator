@@ -10,3 +10,7 @@ spring:
       enabled: false
   cache:
     type: none
+
+account:
+  repository:
+    engine: mongo

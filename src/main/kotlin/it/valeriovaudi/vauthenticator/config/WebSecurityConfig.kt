@@ -1,6 +1,6 @@
 package it.valeriovaudi.vauthenticator.config
 
-import it.valeriovaudi.vauthenticator.account.MongoAccountRepository
+import it.valeriovaudi.vauthenticator.account.AccountRepository
 import it.valeriovaudi.vauthenticator.oauth2.codeservice.RedisAuthorizationCodeServices
 import it.valeriovaudi.vauthenticator.openid.connect.nonce.NonceStore
 import it.valeriovaudi.vauthenticator.openid.connect.nonce.RedisNonceStore
@@ -61,8 +61,8 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
 
     @Bean
     fun accountUserDetailsService(passwordEncoder: PasswordEncoder,
-                                  mongoUserRepository: MongoAccountRepository) =
-            AccountUserDetailsService(mongoUserRepository)
+                                  userRepository: AccountRepository) =
+            AccountUserDetailsService(userRepository)
 
 
     @Bean

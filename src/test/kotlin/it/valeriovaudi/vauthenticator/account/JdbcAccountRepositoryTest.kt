@@ -24,7 +24,7 @@ class JdbcAccountRepositoryTest {
 
     lateinit var accountRepository: JdbcAccountRepository
 
-   @Before
+    @Before
     fun setUp() {
         val serviceHost = container.getServiceHost("postgres_1", 5432)
         val servicePort = container.getServicePort("postgres_1", 5432)
