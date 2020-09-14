@@ -7,6 +7,7 @@ import {HashRouter} from "react-router-dom";
 import {Route, Switch} from "react-router";
 import ClientAppListPage from "./clientapp/ClientAppListPage";
 import ClientAppManagementPage from "./clientapp/ClientAppManagementPage";
+import RolesManagementPage from "./roles/RolesManagementPage";
 
 const VAuthenticatorAdminApp = withStyles(vauthenticatorStyles)((props) => {
     console.log(props)
@@ -24,6 +25,9 @@ const VAuthenticatorAdminApp = withStyles(vauthenticatorStyles)((props) => {
 
                 <Route exact={true} path="/client-applications/edit/:clientAppId"
                        render={(props) => <ClientAppManagementPage {...props} />}/>
+
+                <Route exact={true} path="/roles"
+                       render={(props) => <RolesManagementPage {...props} />}/>
             </Switch>
         </HashRouter>)
 

@@ -3,7 +3,7 @@ export const authorizedGrantTypesParam = (authorizedGrantTypes) => {
         .map((key, index) => {
             return {[key]: authorizedGrantTypes[key]};
         }).filter(obj => {
-            return Object.values(obj)[0] == true
+            return Object.values(obj)[0] === true
         })
         .map((obj) => {
             return Object.keys(obj)[0]

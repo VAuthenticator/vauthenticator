@@ -19,7 +19,7 @@ import LeftRightComponentRow from "../../component/LeftRightComponentRow";
 import CheckboxesGroup from "../../component/CheckboxesGroup";
 import {authorizedGrantTypesParam, authorizedGrantTypesRegistry} from "./AuthorizedGrantTypes";
 
-function a11yProps(index) {
+function allProps(index) {
     return {
         id: `vertical-tab-${index}`,
         'aria-controls': `vertical-tabpanel-${index}`,
@@ -108,15 +108,15 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                         value="0"
                         label="1) Client Application Credentials Section"
                         wrapped
-                        {...a11yProps('0')}
+                        {...allProps('0')}
                     />
                     <Tab value="1"
                          label="2) Client Application Permission Definition Section"
-                         {...a11yProps('1')} />
+                         {...allProps('1')} />
 
                     <Tab value="2"
                          label="3) Client Application Uri Section"
-                         {...a11yProps('2')} />
+                         {...allProps('2')} />
                 </Tabs>
                 <TabPanel value={value} index={'0'}>
                     <Card className={classes.card}>
