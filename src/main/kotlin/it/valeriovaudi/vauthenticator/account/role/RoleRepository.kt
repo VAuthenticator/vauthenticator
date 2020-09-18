@@ -17,7 +17,8 @@ class JdbcRoleRepository(val jdbcTemplate: JdbcTemplate) : RoleRepository {
 
 
     override fun save(role: Role) =
-            jdbcTemplate.update("INSERT INTO ROLE (NAME, DESCRIPTION) VALUES (?, ?)", role.name, role.desctiption)
+            jdbcTemplate.update("INSERT INTO ROLE (NAME, DESCRIPTION) VALUES (?, ?) ON CONFLICT (NAME) DO UPDATE SET DESCRIPTION=? ",
+                    role.name, role.desctiption, role.desctiption)
                     .let { Unit }
 
     override fun delete(role: Role) {

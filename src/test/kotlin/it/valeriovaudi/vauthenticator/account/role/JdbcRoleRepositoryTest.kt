@@ -46,4 +46,14 @@ internal class JdbcRoleRepositoryTest {
 
         Assertions.assertEquals(expected, actual)
     }
+
+    @Test
+    internal fun `save a new role again`() {
+        roleRepository.save(Role("another_role", "ANOTHER_ROLE"))
+        roleRepository.save(Role("another_role", "ANOTHER_ROLE AGAIN"))
+        val expected = roleRepository.findAll()
+        val actual = listOf(Role("a_role", "A_ROLE"), Role("another_role", "ANOTHER_ROLE AGAIN"))
+
+        Assertions.assertEquals(expected, actual)
+    }
 }
