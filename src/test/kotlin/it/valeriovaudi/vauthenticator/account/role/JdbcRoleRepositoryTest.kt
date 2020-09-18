@@ -35,6 +35,15 @@ internal class JdbcRoleRepositoryTest {
         val actual = roleRepository.findAll()
         val expected: List<Role> = listOf(Role("a_role", "A_ROLE"))
 
-        Assertions.assertEquals(actual, expected)
+        Assertions.assertEquals(expected, actual)
+    }
+
+    @Test
+    internal fun `save a new role`() {
+        roleRepository.save(Role("another_role", "ANOTHER_ROLE"))
+        val expected = roleRepository.findAll()
+        val actual = listOf(Role("a_role", "A_ROLE"), Role("another_role", "ANOTHER_ROLE"))
+
+        Assertions.assertEquals(expected, actual)
     }
 }
