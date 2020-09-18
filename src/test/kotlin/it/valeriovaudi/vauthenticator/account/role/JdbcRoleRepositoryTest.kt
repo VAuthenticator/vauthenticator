@@ -56,4 +56,12 @@ internal class JdbcRoleRepositoryTest {
 
         Assertions.assertEquals(expected, actual)
     }
+
+    @Test
+    internal fun `delete a role`() {
+        roleRepository.delete("a_role")
+        val roles = roleRepository.findAll()
+
+        Assertions.assertTrue { roles.isEmpty() }
+    }
 }

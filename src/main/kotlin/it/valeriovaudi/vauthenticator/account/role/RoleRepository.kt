@@ -6,7 +6,7 @@ interface RoleRepository {
 
     fun findAll(): List<Role>
     fun save(role: Role)
-    fun delete(role: Role)
+    fun delete(role: String)
 
 }
 
@@ -21,8 +21,7 @@ class JdbcRoleRepository(val jdbcTemplate: JdbcTemplate) : RoleRepository {
                     role.name, role.desctiption, role.desctiption)
                     .let { Unit }
 
-    override fun delete(role: Role) {
-        TODO("Not yet implemented")
-    }
-
+    override fun delete(roleName: String) =
+            jdbcTemplate.update("DELETE FROM ROLE WHERE NAME=?", roleName)
+                    .let { Unit }
 }
