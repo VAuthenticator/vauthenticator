@@ -7,12 +7,10 @@ import org.mockito.BDDMockito.given
 import org.mockito.Mock
 import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
-import java.util.*
 
 @RunWith(MockitoJUnitRunner::class)
 class AccountRegistrationTest {
 
-    private val sub = UUID.randomUUID().toString()
     private val account = AccountTestFixture.anAccount()
 
     @Mock
