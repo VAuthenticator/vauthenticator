@@ -9,11 +9,12 @@ import org.mockito.Mockito.verify
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup
 
-@ExtendWith(MockitoExtension::class )
+@ExtendWith(MockitoExtension::class)
 internal class RoleEndPointTest {
 
     lateinit var mokMvc: MockMvc
@@ -37,5 +38,14 @@ internal class RoleEndPointTest {
                 .andExpect(status().isNoContent)
 
         verify(roleRepository).save(role)
+    }
+
+    @Test
+    internal fun `delete a new role`() {
+        val role = "a_role"
+        mokMvc.perform(delete("/api/roles/a_role"))
+                .andExpect(status().isNoContent)
+
+        verify(roleRepository).delete(role)
     }
 }
