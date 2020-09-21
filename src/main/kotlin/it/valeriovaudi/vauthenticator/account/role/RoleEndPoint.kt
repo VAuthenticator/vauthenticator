@@ -1,10 +1,15 @@
 package it.valeriovaudi.vauthenticator.account.role
 
 import org.springframework.http.ResponseEntity.noContent
+import org.springframework.http.ResponseEntity.ok
 import org.springframework.web.bind.annotation.*
 
 @RestController
 class RoleEndPoint(private val roleRepository: RoleRepository) {
+
+    @GetMapping("/api/roles")
+    fun findAllRole() =
+            ok().body(roleRepository.findAll())
 
     @PutMapping("/api/roles")
     fun saveRole(@RequestBody role: Role) = run {
