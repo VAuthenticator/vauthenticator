@@ -2,6 +2,7 @@ package it.valeriovaudi.vauthenticator.config
 
 import it.valeriovaudi.vauthenticator.account.AccountRepository
 import it.valeriovaudi.vauthenticator.account.JdbcAccountRepository
+import it.valeriovaudi.vauthenticator.account.role.JdbcRoleRepository
 import it.valeriovaudi.vauthenticator.extentions.VAuthenticatorPasswordEncoder
 import it.valeriovaudi.vauthenticator.keypair.KeyPairConfig
 import it.valeriovaudi.vauthenticator.keypair.RestKeyRepository
@@ -22,6 +23,10 @@ class RepositoryConfig {
     @Bean
     fun accountRepository(dataSource: DataSource) =
             JdbcAccountRepository(JdbcTemplate(dataSource))
+
+    @Bean
+    fun roleRepository(dataSource: DataSource) =
+            JdbcRoleRepository(JdbcTemplate(dataSource))
 
     @Bean
     fun userInfoFactory(accountRepository: AccountRepository) =
