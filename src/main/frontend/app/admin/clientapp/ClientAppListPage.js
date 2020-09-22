@@ -8,7 +8,7 @@ import {Link} from "react-router-dom";
 import EditIcon from "@material-ui/icons/Edit";
 import AdminTemplate from "../../component/AdminTemplate";
 import FormButton from "../../component/FormButton";
-import ResetClientAppSecretDialog from "../../component/ResetClientAppSecretDialog";
+import ResetClientAppSecretDialog from "./ResetClientAppSecretDialog";
 
 const columns = [
     {id: 'clientAppName', label: 'Client Application Name', minWidth: 170},

@@ -16,9 +16,7 @@ export function deleteRoleFor(roleId) {
         {
             method: "DELETE",
             credentials: 'same-origin'
-        }).then(response => {
-        return response.json()
-    })
+        })
 }
 
 export function saveRoleFor(role) {
