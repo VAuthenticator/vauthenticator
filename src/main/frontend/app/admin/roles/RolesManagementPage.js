@@ -1,12 +1,11 @@
 import React, {useEffect} from 'react';
 import {withStyles} from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
 import {AssignmentInd} from "@material-ui/icons";
 import vauthenticatorStyles from "../../component/styles";
 import AdminTemplate from "../../component/AdminTemplate";
 import StickyHeadTable from "../../component/StickyHeadTable";
 import {findAllRoles} from "./RoleRepository";
-
+import FormButton from "../../component/FormButton";
 
 function allProps(index) {
     return {
@@ -22,7 +21,7 @@ const columns = [
 
 const RolesManagementPage = withStyles(vauthenticatorStyles)((props) => {
     const {classes} = props;
-    const pageTitle = "User Roles Management"
+    const pageTitle = "Roles Management"
     const [roles, setRoles] = React.useState([])
 
     useEffect(() => {
@@ -35,9 +34,9 @@ const RolesManagementPage = withStyles(vauthenticatorStyles)((props) => {
     return (
         <AdminTemplate maxWidth="xl" classes={classes} page={pageTitle}>
 
-            <Typography variant="h3" component="h3">
-                <AssignmentInd fontSize="large"/> User Roles Management
-            </Typography>
+            <FormButton type="button"
+                        labelPrefix={<AssignmentInd fontSize="large"/>}
+                        label={"New Role"}/>
 
             <StickyHeadTable columns={columns} rows={roles}/>
 
