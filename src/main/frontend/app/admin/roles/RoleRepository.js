@@ -20,7 +20,7 @@ export function deleteRoleFor(roleId) {
 }
 
 export function saveRoleFor(role) {
-    return fetch(`/vauthenticator/api/roles`,
+    return fetch("/vauthenticator/api/roles",
         {
             method: "PUT",
             headers: {

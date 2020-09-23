@@ -34,10 +34,6 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
     const [open, setOpen] = React.useState(false)
     const [currentClientAppId, setCurrentClientAppId] = React.useState("")
 
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
-
     const handleClose = () => {
         setOpen(false);
     };

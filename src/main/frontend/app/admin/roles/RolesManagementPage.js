@@ -8,6 +8,7 @@ import {deleteRoleFor, findAllRoles} from "./RoleRepository";
 import FormButton from "../../component/FormButton";
 import EditIcon from "@material-ui/icons/Edit";
 import ConfirmationDialog from "../../component/ConfirmationDialog";
+import RolesDialog from "./RolesDialog";
 
 const columns = [
     {id: 'name', label: 'Role', minWidth: 170},
@@ -20,21 +21,36 @@ const RolesManagementPage = withStyles(vauthenticatorStyles)((props) => {
     const {classes} = props;
     const pageTitle = "Roles Management"
     const [roles, setRoles] = React.useState([])
-    const [open, setOpen] = React.useState(false)
+    const [openConfirmationDeleteRoleDialog, setOpenConfirmationDeleteRoleDialog] = React.useState(false)
+    const [openRolesManagementDialog, setOpenRolesManagementDialog] = React.useState(false)
     const [selectedRole, setSelectedRole] = React.useState("")
+    const [role, setRole] = React.useState({name: "", description: ""})
 
-    const getEditLinkFor = () => {
-        return <EditIcon/>
+    const getEditLinkFor = (role) => {
+        return <EditIcon onClick={() => {
+            setRole(role)
+            setOpenRolesManagementDialog(true);
+        }}/>;
     }
 
-    const handleClose = () => {
-        setOpen(false);
+    const handleCloseConfirmationDialog = (refresh) => {
+        setOpenConfirmationDeleteRoleDialog(false);
+        if (refresh) {
+            fetchAllRoles();
+        }
     };
 
-    const getDeleteLinkFor = (role) => {
+    const handleCloseRolesDialog = (refresh) => {
+        setOpenRolesManagementDialog(false);
+        if (refresh) {
+            fetchAllRoles()
+        }
+    };
+
+    const getDeleteLinkFor = (roleName) => {
         return <Delete onClick={() => {
-            setSelectedRole(role)
-            setOpen(true);
+            setSelectedRole(roleName)
+            setOpenConfirmationDeleteRoleDialog(true);
         }}/>;
     }
 
@@ -42,8 +58,7 @@ const RolesManagementPage = withStyles(vauthenticatorStyles)((props) => {
         deleteRoleFor(selectedRole)
             .then(response => {
                 if (response.status === 204) {
-                    setOpen(false);
-                    fetchAllRoles()
+                    handleCloseConfirmationDialog(true)
                 }
             })
     }
@@ -55,7 +70,7 @@ const RolesManagementPage = withStyles(vauthenticatorStyles)((props) => {
                     return {
                         name: value.name,
                         description: value.description,
-                        edit: getEditLinkFor(value["name"]),
+                        edit: getEditLinkFor({name: value["name"], description: value["description"]}),
                         delete: getDeleteLinkFor(value["name"])
                     }
                 })
@@ -71,13 +86,22 @@ const RolesManagementPage = withStyles(vauthenticatorStyles)((props) => {
     return (
         <AdminTemplate maxWidth="xl" classes={classes} page={pageTitle}>
             <ConfirmationDialog maxWidth="md"
-                                open={open}
+                                open={openConfirmationDeleteRoleDialog}
                                 onExecute={deleteRole}
-                                onClose={handleClose}
+                                onClose={handleCloseConfirmationDialog}
                                 message="Are you sure delete the selected role"
                                 title="Role delete"/>
 
+            <RolesDialog open={openRolesManagementDialog}
+                         selectedRole={role}
+                         onClose={handleCloseRolesDialog}
+                         title="Role management"/>
+
             <FormButton type="button"
+                        onClickHandler={() => {
+                            setRole({name: "", description: ""})
+                            setOpenRolesManagementDialog(true);
+                        }}
                         labelPrefix={<AssignmentInd fontSize="large"/>}
                         label={"New Role"}/>
 
