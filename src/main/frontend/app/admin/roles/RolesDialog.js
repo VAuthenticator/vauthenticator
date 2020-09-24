@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {saveRoleFor} from "./RoleRepository";
 import FormButton from "../../component/FormButton";
 import Dialog from "@material-ui/core/Dialog";
@@ -8,12 +8,7 @@ import Separator from "../../component/Separator";
 import DialogActions from "@material-ui/core/DialogActions";
 import FormInputTextField from "../../component/FormInputTextField";
 
-export default function RoleDialog({onClose, open, title, selectedRole, selectedDescription}) {
-    const [role, setRole] = useState(selectedRole)
-    const [description, setDescription] = useState(selectedDescription)
-
-    console.log(role)
-    console.log(description)
+export default function RoleDialog({onClose, open, title, role, setRole}) {
 
     return (
         <Dialog onClose={onClose} aria-labelledby="simple-dialog-title" open={open} maxWidth="md">
@@ -22,24 +17,24 @@ export default function RoleDialog({onClose, open, title, selectedRole, selected
                 <FormInputTextField id="name"
                                     label="Role Name"
                                     type="text"
-                                    value={role}
+                                    value={role.name}
                                     handler={(value) => {
-                                        setRole(value.target.value)
+                                        setRole({name: value.target.value, description: role.description})
                                     }}/>
 
                 <FormInputTextField id="description"
                                     label="Role Description" t
                                     type="text"
-                                    value={description}
+                                    value={role.description}
                                     handler={(value) => {
-                                        setDescription(value.target.value)
+                                        setRole({name: role.name, description: value.target.value})
                                     }}/>
 
                 <Separator/>
 
                 <DialogActions>
                     <FormButton label="Save" onClickHandler={() => {
-                        saveRoleFor({name: role, description: description})
+                        saveRoleFor(role)
                             .then(response => {
                                 if (response.status === 204) {
                                     onClose(true)

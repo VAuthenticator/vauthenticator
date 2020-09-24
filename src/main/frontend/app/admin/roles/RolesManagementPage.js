@@ -93,7 +93,7 @@ const RolesManagementPage = withStyles(vauthenticatorStyles)((props) => {
                                 title="Role delete"/>
 
             <RolesDialog open={openRolesManagementDialog}
-                         selectedRole={role.name}
+                         role={role} setRole={setRole}
                          selectedDescription={role.description}
                          onClose={handleCloseRolesDialog}
                          title="Role management"/>
@@ -109,7 +109,8 @@ const RolesManagementPage = withStyles(vauthenticatorStyles)((props) => {
             <StickyHeadTable columns={columns} rows={roles}/>
 
         </AdminTemplate>
-    );
+    )
+        ;
 })
 
 export default RolesManagementPage
