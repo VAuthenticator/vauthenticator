@@ -8,11 +8,9 @@ import Separator from "../../component/Separator";
 import DialogActions from "@material-ui/core/DialogActions";
 import FormInputTextField from "../../component/FormInputTextField";
 
-export default function RoleDialog({onClose, open, title, selectedRole}) {
-    let [role, setRole] = useState(() => selectedRole.name)
-    let [description, setDescription] = useState(() => selectedRole.description)
-    console.log(selectedRole.name)
-    console.log(selectedRole.description)
+export default function RoleDialog({onClose, open, title, selectedRole, selectedDescription}) {
+    const [role, setRole] = useState(selectedRole)
+    const [description, setDescription] = useState(selectedDescription)
 
     console.log(role)
     console.log(description)
@@ -31,7 +29,7 @@ export default function RoleDialog({onClose, open, title, selectedRole}) {
 
                 <FormInputTextField id="description"
                                     label="Role Description" t
-                                    ype="text"
+                                    type="text"
                                     value={description}
                                     handler={(value) => {
                                         setDescription(value.target.value)

@@ -93,7 +93,8 @@ const RolesManagementPage = withStyles(vauthenticatorStyles)((props) => {
                                 title="Role delete"/>
 
             <RolesDialog open={openRolesManagementDialog}
-                         selectedRole={role}
+                         selectedRole={role.name}
+                         selectedDescription={role.description}
                          onClose={handleCloseRolesDialog}
                          title="Role management"/>
 
