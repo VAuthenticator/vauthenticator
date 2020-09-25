@@ -2,7 +2,7 @@ import React from 'react';
 import {withStyles} from "@material-ui/core";
 import vauthenticatorStyles from "../../component/styles";
 import MenuCard from "../../component/MenuCard";
-import {AssignmentInd, GroupAdd, PeopleAlt} from "@material-ui/icons";
+import {Apps, AssignmentInd, PeopleAlt} from "@material-ui/icons";
 
 export default withStyles(vauthenticatorStyles)((props) => {
     const {classes, content} = props;
@@ -27,7 +27,7 @@ export const homeMenuContent = {
     clientApplications: {
         title: {
             text: "Client Application Management Section",
-            icon: (classes) => <GroupAdd className={classes.homeMenuItemIcon}/>
+            icon: (classes) => <Apps className={classes.homeMenuItemIcon}/>
         },
         body: "In this section you can manage all client application on VAuthenticator. Your will able to " +
             "   create, delete, set parameters like redirect uri, application roles and so on",

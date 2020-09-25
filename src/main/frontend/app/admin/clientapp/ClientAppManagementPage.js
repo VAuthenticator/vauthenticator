@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {withStyles} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
-import {GroupAdd} from "@material-ui/icons";
 import vauthenticatorStyles from "../../component/styles";
 import {useHistory, useParams} from "react-router";
 import {findClientApplicationFor, saveClientApplicationFor} from "./ClientAppRepository";
@@ -18,6 +17,7 @@ import TabPanel from "../../component/TabPanel";
 import LeftRightComponentRow from "../../component/LeftRightComponentRow";
 import CheckboxesGroup from "../../component/CheckboxesGroup";
 import {authorizedGrantTypesParam, authorizedGrantTypesRegistry} from "./AuthorizedGrantTypes";
+import {Apps} from "@material-ui/icons";
 
 function allProps(index) {
     return {
@@ -96,7 +96,7 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                        page={pageTitle}>
 
             <Typography variant="h3" component="h3">
-                <GroupAdd fontSize="large"/> Client Application: {clientApplicationId}
+                <Apps fontSize="large"/> Client Application: {clientApplicationId}
             </Typography>
 
             <div className={classes.tabs}>

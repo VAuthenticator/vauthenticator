@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {withStyles} from "@material-ui/core";
-import {Delete, GroupAdd, VpnKey} from "@material-ui/icons";
+import {Apps, Delete, VpnKey} from "@material-ui/icons";
 import vauthenticatorStyles from "../../component/styles";
 import StickyHeadTable from "../../component/StickyHeadTable";
 import {deleteClientApplicationFor, findAllClientApplications} from "./ClientAppRepository";
@@ -80,7 +80,7 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
 
             <Link to={"/client-applications/save"}>
                 <FormButton type="button"
-                            labelPrefix={<GroupAdd fontSize="large"/>}
+                            labelPrefix={<Apps fontSize="large"/>}
                             label={"New Client Application"}/>
             </Link>
 
