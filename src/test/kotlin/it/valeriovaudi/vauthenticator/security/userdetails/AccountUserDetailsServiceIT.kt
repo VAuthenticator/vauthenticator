@@ -1,9 +1,9 @@
 package it.valeriovaudi.vauthenticator.security.userdetails
 
 import it.valeriovaudi.TestAdditionalConfiguration
-import org.junit.ClassRule
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.util.TestPropertyValues
@@ -12,20 +12,22 @@ import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.context.annotation.Import
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.testcontainers.containers.DockerComposeContainer
+import org.testcontainers.junit.jupiter.Container
+import org.testcontainers.junit.jupiter.Testcontainers
 import java.io.File
 
 //fixme
+@Testcontainers
 @SpringBootTest
-@RunWith(SpringRunner::class)
+@ExtendWith(SpringExtension::class)
 @Import(TestAdditionalConfiguration::class)
 @ContextConfiguration(initializers = [Initializer::class])
 class AccountUserDetailsServiceIT {
 
     companion object {
-        @ClassRule
-        @JvmField
+        @Container
         val container: DockerComposeContainer<*> = DockerComposeContainer<Nothing>(File("src/test/resources/docker-compose.yml"))
                 .withExposedService("rabbitmq_1", 5672)
 
@@ -34,9 +36,11 @@ class AccountUserDetailsServiceIT {
     @Autowired
     lateinit var accountUserDetailsService: AccountUserDetailsService
 
-    @Test(expected = UsernameNotFoundException::class)
+    @Test
     fun `error path`() {
-        accountUserDetailsService.loadUserByUsername("A_USER");
+        Assertions.assertThrows(UsernameNotFoundException::class.java) {
+            accountUserDetailsService.loadUserByUsername("A_USER");
+        }
     }
 }
 

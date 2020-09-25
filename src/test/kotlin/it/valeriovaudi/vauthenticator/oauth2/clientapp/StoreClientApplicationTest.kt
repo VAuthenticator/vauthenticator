@@ -1,23 +1,18 @@
 package it.valeriovaudi.vauthenticator.oauth2.clientapp
 
 import it.valeriovaudi.vauthenticator.extentions.VAuthenticatorPasswordEncoder
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.ExpectedException
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.verify
 import org.mockito.Mock
 import org.mockito.Mockito.times
-import org.mockito.junit.MockitoJUnitRunner
+import org.mockito.junit.jupiter.MockitoExtension
 import java.util.*
 
-@RunWith(MockitoJUnitRunner::class)
+@ExtendWith(MockitoExtension::class)
 class StoreClientApplicationTest {
-
-    @Rule
-    @JvmField
-    val expectedException = ExpectedException.none()
 
     @Mock
     lateinit var clientApplicationRepository: ClientApplicationRepository
@@ -82,8 +77,9 @@ class StoreClientApplicationTest {
         given(clientApplicationRepository.findOne(clientAppId))
                 .willReturn(Optional.empty())
 
-        expectedException.expect(ClientApplicationNotFound::class.java)
-
-        storeClientApplication.resetPassword(clientAppId, Secret("A_NEW_PASSWORD"))
+        Assertions.assertThrows(ClientApplicationNotFound::class.java)
+        {
+            storeClientApplication.resetPassword(clientAppId, Secret("A_NEW_PASSWORD"))
+        }
     }
 }
