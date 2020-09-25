@@ -9,7 +9,7 @@ import Grid from "@material-ui/core/Grid";
 
 const useStyles = makeStyles({
     root: {
-        maxWidth: 345,
+        maxWidth: 345
     },
     media: {
         height: 140,
@@ -18,10 +18,9 @@ const useStyles = makeStyles({
 
 export default function MenuCard({title, content, linkTo}) {
     const classes = useStyles();
-    console.log(linkTo)
     return (
         <Grid item xs={4}>
-            <Link to={linkTo}>
+            <Link to={linkTo} style={{textDecoration: 'none'}}>
                 <Card className={classes.root}>
                     <CardActionArea>
                         <CardHeader
