@@ -1,8 +1,7 @@
 package it.valeriovaudi.vauthenticator.account
 
-import org.springframework.http.ResponseEntity.ok
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.http.ResponseEntity.*
+import org.springframework.web.bind.annotation.*
 
 @RestController
 class AccountEndPoint(private val accountRepository: AccountRepository) {
@@ -12,13 +11,23 @@ class AccountEndPoint(private val accountRepository: AccountRepository) {
             ok(
                     accountRepository.findAll()
                             .map { AccountConverter.fromDomainToAccountApiRepresentation(it) }
-
-
             )
 
-    fun saveAccount() {
-        TODO("")
-    }
+    @PutMapping("/api/accounts/{email}/email")
+    fun saveAccount(@PathVariable email: String,
+                    @RequestBody representation: AccountApiRepresentation) =
+            accountRepository.accountFor(email)
+                    .map {account ->
+                        accountRepository.save(
+                                account.copy(
+                                        accountNonLocked = !representation.accountLocked,
+                                        enabled = representation.enabled,
+                                        authorities = representation.authorities
+                                )
+                        )
+                        noContent().build<Unit>()
+                    }
+                    .orElse(notFound().build<Unit>())
 }
 
 data class AccountApiRepresentation(

@@ -6,11 +6,16 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.BDDMockito.given
 import org.mockito.Mock
+import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
+import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
+import java.util.*
 
 @ExtendWith(MockitoExtension::class)
 internal class AccountEndPointTest {
@@ -44,5 +49,21 @@ internal class AccountEndPointTest {
                 )
         mokMvc.perform(get("/api/accounts"))
                 .andExpect(content().string(objectMapper.writeValueAsString(expectedRepresentation)))
+    }
+
+    @Test
+    internal fun `set an account as disabled`() {
+        val representation = AccountApiRepresentation(email = "anemail@domain.com", enabled = false)
+        val masterAccount = AccountTestFixture.anAccount().copy(enabled = false)
+
+        given(accountRepository.accountFor("anemail@domain.com"))
+                .willReturn(Optional.of(AccountTestFixture.anAccount()))
+
+        mokMvc.perform(put("/api/accounts/anemail@domain.com/email")
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(representation)))
+                .andExpect(status().isNoContent)
+
+        Mockito.verify(accountRepository).save(masterAccount)
     }
 }

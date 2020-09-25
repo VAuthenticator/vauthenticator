@@ -25,4 +25,4 @@ class AccountRegistrationController(@Value("\${feature.signup.enabled:false}") p
             }
 }
 
-class AccountRepresentation(var email: String, var password: String, var firstName: String, var lastName: String)
+data class AccountRepresentation(var email: String, var password: String, var firstName: String, var lastName: String)
