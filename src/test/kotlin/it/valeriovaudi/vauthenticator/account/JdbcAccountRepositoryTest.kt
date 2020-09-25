@@ -12,8 +12,6 @@ import java.io.File
 
 class JdbcAccountRepositoryTest {
 
-    private val account = AccountTestFixture.anAccount()
-
     companion object {
         @ClassRule
         @JvmField
@@ -22,6 +20,7 @@ class JdbcAccountRepositoryTest {
 
     }
 
+    private val account = AccountTestFixture.anAccount()
     lateinit var accountRepository: JdbcAccountRepository
 
     @Before
@@ -55,6 +54,16 @@ class JdbcAccountRepositoryTest {
 
         val updatedFindByUsername = accountRepository.accountFor(account.username).orElseThrow()
         assertThat(updatedFindByUsername, equalTo(accountUpdated))
+    }
+
+    @Test
+    fun `find all accounts`() {
+        val anAccount = account.copy()
+        val anotherAccount = account.copy(email = "anotheremail@domail.com", username = "anotheremail@domail.com", firstName = "A_NEW_FIRSTNAME", lastName = "A_NEW_LASTNAME")
+        accountRepository.save(anAccount)
+        accountRepository.save(anotherAccount)
+
+        assertThat(accountRepository.findAll(), equalTo(listOf(anAccount, anotherAccount)))
     }
 
 }
