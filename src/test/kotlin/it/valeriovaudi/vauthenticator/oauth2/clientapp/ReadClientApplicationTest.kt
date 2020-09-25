@@ -1,16 +1,15 @@
 package it.valeriovaudi.vauthenticator.oauth2.clientapp
 
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppFixture.aClientApp
-import org.hamcrest.Matchers.equalTo
-import org.junit.Assert.assertThat
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.BDDMockito.given
 import org.mockito.Mock
-import org.mockito.junit.MockitoJUnitRunner
+import org.mockito.junit.jupiter.MockitoExtension
 import java.util.*
 
-@RunWith(MockitoJUnitRunner::class)
+@ExtendWith(MockitoExtension::class)
 class ReadClientApplicationTest {
 
     @Mock
@@ -25,7 +24,7 @@ class ReadClientApplicationTest {
                 .willReturn(Optional.of(aClientApp(clientAppId)))
 
         val actual: Optional<ClientApplication> = readClientApplication.findOne(clientAppId)
-        assertThat(actual, equalTo(Optional.of(aClientApp(clientAppId, Secret("*******")))))
+        Assertions.assertEquals(actual,Optional.of(aClientApp(clientAppId, Secret("*******"))))
     }
 
     @Test
@@ -37,6 +36,6 @@ class ReadClientApplicationTest {
                 .willReturn(listOf(aClientApp(clientAppId)))
 
         val actual: List<ClientApplication> = readClientApplication.findAll()
-        assertThat(actual, equalTo(listOf(aClientApp(clientAppId, Secret("*******")))))
+        Assertions.assertEquals(actual, listOf(aClientApp(clientAppId, Secret("*******"))))
     }
 }

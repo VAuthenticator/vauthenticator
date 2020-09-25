@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppFixture.aClientApp
 import it.valeriovaudi.vauthenticator.openid.connect.nonce.NonceStore
 import it.valeriovaudi.vauthenticator.security.userdetails.AccountUserDetailsService
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.verify
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,14 +15,14 @@ import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.http.MediaType
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.test.context.support.WithMockUser
-import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.*
 
-@RunWith(SpringRunner::class)
+@ExtendWith(SpringExtension::class)
 @WebMvcTest(ClientApplicationEndPoint::class)
 class ClientApplicationEndPointTest {
 
