@@ -1,15 +1,14 @@
 package it.valeriovaudi.vauthenticator.openid.connect.idtoken
 
 import it.valeriovaudi.vauthenticator.time.Clock
-import org.hamcrest.core.Is
-import org.junit.Assert.assertThat
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.Assert.assertEquals
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.BDDMockito.given
 import org.mockito.Mock
-import org.mockito.junit.MockitoJUnitRunner
+import org.mockito.junit.jupiter.MockitoExtension
 
-@RunWith(MockitoJUnitRunner::class)
+@ExtendWith(MockitoExtension::class)
 class IdTokenTest {
 
     @Mock
@@ -32,6 +31,6 @@ class IdTokenTest {
                 clockTime,
                 clockTime)
 
-        assertThat(actual, Is.`is`(expected))
+        assertEquals(actual, expected)
     }
 }
