@@ -8,14 +8,14 @@ import {Route, Switch} from "react-router";
 import ClientAppListPage from "./clientapp/ClientAppListPage";
 import ClientAppManagementPage from "./clientapp/ClientAppManagementPage";
 import RolesManagementPage from "./roles/RolesManagementPage";
+import HomePage from "./home/HomePage";
 
 const VAuthenticatorAdminApp = withStyles(vauthenticatorStyles)((props) => {
-    console.log(props)
     return (
         <HashRouter>
             <Switch>
                 <Route exact={true} path="/"
-                       render={(props) => <ClientAppListPage {...props} />}/>
+                       render={(props) => <HomePage {...props} />}/>
 
                 <Route exact={true} path="/client-applications/list"
                        render={(props) => <ClientAppListPage {...props} />}/>
