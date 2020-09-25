@@ -10,7 +10,6 @@ import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import java.io.File
 
-
 @Testcontainers
 internal class JdbcRoleRepositoryTest {
 
