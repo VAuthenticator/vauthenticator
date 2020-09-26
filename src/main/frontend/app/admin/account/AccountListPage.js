@@ -1,13 +1,56 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {withStyles} from "@material-ui/core";
 import vauthenticatorStyles from "../../component/styles";
 import AdminTemplate from "../../component/AdminTemplate";
+import StickyHeadTable from "../../component/StickyHeadTable";
+import EditIcon from "@material-ui/icons/Edit";
+import {findAllAccounts} from "./AccountRepository";
+import Checkbox from "@material-ui/core/Checkbox";
 
-const AccountListPage= withStyles(vauthenticatorStyles)((props) => {
+const columns = [
+    {id: 'email', label: 'E-Mail', minWidth: 170},
+    {id: 'enabled', label: 'Enabled', minWidth: 170},
+    {id: 'accountLocked', label: 'Account Locked', minWidth: 170},
+    {id: 'edit', label: 'Edit', minWidth: 170},
+];
+
+const AccountListPage = withStyles(vauthenticatorStyles)((props) => {
     const {classes} = props;
     const pageTitle = "Accounts Management"
+    const [accountMail, setAccountMail] = useState("")
+    const [accounts, setAccounts] = useState([])
+
+    const getEditLinkFor = (accountMail) => {
+        return <EditIcon onClick={() => {
+            setAccountMail(accountMail)
+        }}/>;
+    }
+
+    const fetchAllAccounts = () => {
+        findAllAccounts()
+            .then(values => {
+                let rows = values.map(value => {
+                    console.log(value)
+                    return {
+                        email: value.email,
+                        enabled: <Checkbox checked={value.enabled}/>,
+                        accountLocked: <Checkbox checked={value.accountLocked}/>,
+                        edit: getEditLinkFor(value["email"]),
+                    }
+                })
+
+                setAccounts(rows)
+            });
+    }
+
+    useEffect(() => {
+        fetchAllAccounts()
+    }, []);
+
     return (
         <AdminTemplate maxWidth="xl" classes={classes} page={pageTitle}>
+
+            <StickyHeadTable columns={columns} rows={accounts}/>
 
         </AdminTemplate>
     )
