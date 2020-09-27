@@ -15,7 +15,7 @@ const columns = [
     {id: 'edit', label: 'Edit', minWidth: 170},
 ];
 
-const AccountListPage = withStyles(vauthenticatorStyles)((props) => {
+export default withStyles(vauthenticatorStyles)((props) => {
         const {classes} = props;
         const pageTitle = "Account Management"
         const [accounts, setAccounts] = useState([])
@@ -32,7 +32,6 @@ const AccountListPage = withStyles(vauthenticatorStyles)((props) => {
             findAllAccounts()
                 .then(values => {
                     let rows = values.map(value => {
-                        console.log(value)
                         return {
                             email: value.email,
                             enabled: <Checkbox color="primary" checked={value.enabled}/>,
@@ -58,5 +57,3 @@ const AccountListPage = withStyles(vauthenticatorStyles)((props) => {
         )
     }
 )
-
-export default AccountListPage

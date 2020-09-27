@@ -11,7 +11,8 @@ import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
 import Card from "@material-ui/core/Card";
 import CheckboxesGroup from "../../component/CheckboxesGroup";
-import {findAccountFor} from "./AccountRepository";
+import {findAccountFor, saveAccountFor} from "./AccountRepository";
+import FormButton from "../../component/FormButton";
 
 export default withStyles(vauthenticatorStyles)((props) => {
     const {classes} = props;
@@ -20,6 +21,7 @@ export default withStyles(vauthenticatorStyles)((props) => {
     const [email, setEmail] = useState(accountMail)
     const [enabled, setEnabled] = useState({enabled: false})
     const [accountLocked, setAccountLocked] = useState({accountLocked: false})
+    const [authorities, setAuthorities] = useState("")
 
     let pageTitle = "Account Management";
 
@@ -28,16 +30,24 @@ export default withStyles(vauthenticatorStyles)((props) => {
             .then(value => {
                 setEnabled({enabled: value.enabled})
                 setAccountLocked({accountLocked: value.accountLocked})
+                setAuthorities(value.authorities.join(","))
             })
     }, {})
 
-/*    saveClientApplicationFor(clientApplicationId, clientApplication)
-        .then(response => {
-            if (response.status === 204) {
-                history.goBack();
-            }
-        })
-    */
+    const save = () => {
+        const account = {
+            enabled: enabled,
+            accountLocked: accountLocked
+        }
+
+        saveAccountFor(account)
+            .then(response => {
+                if (response.status === 204) {
+                    history.goBack();
+                }
+            })
+    }
+
     return (
         <AdminTemplate maxWidth="xl" classes={classes}
                        page={pageTitle}>
@@ -54,6 +64,7 @@ export default withStyles(vauthenticatorStyles)((props) => {
                     <FormInputTextField id="email"
                                         label="Account Mail"
                                         required={true}
+                                        disabled={true}
                                         handler={(value) => {
                                             setEmail(value.target.value)
                                         }}
@@ -72,7 +83,15 @@ export default withStyles(vauthenticatorStyles)((props) => {
                                      }}
                                      choicesRegistry={accountLocked}
                                      legend="Account Locked"/>
+
+                    <FormInputTextField id="email"
+                                        label="Authorities"
+                                        handler={(value) => {
+                                            setAuthorities(value.target.value)
+                                        }}
+                                        value={authorities}/>
                     <Separator/>
+                    <FormButton label="Save" onClickHandler={save}/>
                 </CardContent>
             </Card>
 
