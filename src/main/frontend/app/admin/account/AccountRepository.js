@@ -1,3 +1,16 @@
+export function findAccountFor(email) {
+    return fetch(`/vauthenticator/api/accounts/${email}/email`,
+        {
+            method: "GET",
+            headers: {
+                'Accept': 'application/json'
+            },
+            credentials: 'same-origin'
+        }).then(response => {
+        return response.json()
+    })
+}
+
 export function findAllAccounts() {
     return fetch("/vauthenticator/api/accounts",
         {

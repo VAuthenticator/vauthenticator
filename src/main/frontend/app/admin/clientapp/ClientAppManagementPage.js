@@ -186,9 +186,6 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
 
                             <CheckboxesGroup id="authorizedGrantTypes"
                                              handler={(value) => {
-                                                 console.log(value)
-                                                 console.log(value.target.name)
-                                                 console.log(value.target.checked)
                                                  setAuthorizedGrantTypes({
                                                      ...authorizedGrantTypes,
                                                      [value.target.name]: value.target.checked

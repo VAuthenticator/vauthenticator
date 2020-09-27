@@ -13,6 +13,13 @@ class AccountEndPoint(private val accountRepository: AccountRepository) {
                             .map { AccountConverter.fromDomainToAccountApiRepresentation(it) }
             )
 
+    @GetMapping("/api/accounts/{email}/email")
+    fun findAccountFor(@PathVariable email: String) =
+            ok(
+                    accountRepository.accountFor(email)
+                            .map { AccountConverter.fromDomainToAccountApiRepresentation(it) }
+            )
+
     @PutMapping("/api/accounts/{email}/email")
     fun saveAccount(@PathVariable email: String,
                     @RequestBody representation: AccountApiRepresentation) =

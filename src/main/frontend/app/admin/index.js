@@ -10,6 +10,7 @@ import ClientAppManagementPage from "./clientapp/ClientAppManagementPage";
 import RolesManagementPage from "./roles/RolesManagementPage";
 import HomePage from "./home/HomePage";
 import AccountListPage from "./account/AccountListPage";
+import AccountManagementPage from "./account/AccountManagementPage";
 
 const VAuthenticatorAdminApp = withStyles(vauthenticatorStyles)((props) => {
     return (
@@ -29,8 +30,12 @@ const VAuthenticatorAdminApp = withStyles(vauthenticatorStyles)((props) => {
 
                 <Route exact={true} path="/roles"
                        render={(props) => <RolesManagementPage {...props} />}/>
+
                 <Route exact={true} path="/accounts"
                        render={(props) => <AccountListPage {...props} />}/>
+
+                <Route exact={true} path="/accounts/edit/:accountMail"
+                       render={(props) => <AccountManagementPage {...props} />}/>
             </Switch>
         </HashRouter>)
 

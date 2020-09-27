@@ -6,6 +6,7 @@ import StickyHeadTable from "../../component/StickyHeadTable";
 import EditIcon from "@material-ui/icons/Edit";
 import {findAllAccounts} from "./AccountRepository";
 import Checkbox from "@material-ui/core/Checkbox";
+import {Link} from "react-router-dom";
 
 const columns = [
     {id: 'email', label: 'E-Mail', minWidth: 170},
@@ -16,14 +17,14 @@ const columns = [
 
 const AccountListPage = withStyles(vauthenticatorStyles)((props) => {
     const {classes} = props;
-    const pageTitle = "Accounts Management"
-    const [accountMail, setAccountMail] = useState("")
+    const pageTitle = "Account Management"
     const [accounts, setAccounts] = useState([])
 
     const getEditLinkFor = (accountMail) => {
-        return <EditIcon onClick={() => {
-            setAccountMail(accountMail)
-        }}/>;
+        return <Link to={`accounts/edit/${accountMail}`}
+              style={{"textDecoration": "none"}}>
+            <EditIcon/>
+        </Link>;
     }
 
     const fetchAllAccounts = () => {
@@ -33,8 +34,8 @@ const AccountListPage = withStyles(vauthenticatorStyles)((props) => {
                     console.log(value)
                     return {
                         email: value.email,
-                        enabled: <Checkbox checked={value.enabled}/>,
-                        accountLocked: <Checkbox checked={value.accountLocked}/>,
+                        enabled: <Checkbox color="primary" checked={value.enabled}/>,
+                        accountLocked: <Checkbox color="primary" checked={value.accountLocked}/>,
                         edit: getEditLinkFor(value["email"]),
                     }
                 })
