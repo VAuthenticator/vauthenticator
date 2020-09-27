@@ -31,6 +31,13 @@ export default withStyles(vauthenticatorStyles)((props) => {
             })
     }, {})
 
+/*    saveClientApplicationFor(clientApplicationId, clientApplication)
+        .then(response => {
+            if (response.status === 204) {
+                history.goBack();
+            }
+        })
+    */
     return (
         <AdminTemplate maxWidth="xl" classes={classes}
                        page={pageTitle}>
@@ -61,7 +68,7 @@ export default withStyles(vauthenticatorStyles)((props) => {
 
                     <CheckboxesGroup id="accountLocked"
                                      handler={(value) => {
-                                         setEnabled({accountLocked: value.target.checked})
+                                         setAccountLocked({accountLocked: value.target.checked})
                                      }}
                                      choicesRegistry={accountLocked}
                                      legend="Account Locked"/>

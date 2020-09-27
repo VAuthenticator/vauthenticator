@@ -9,6 +9,7 @@ import EditIcon from "@material-ui/icons/Edit";
 import AdminTemplate from "../../component/AdminTemplate";
 import FormButton from "../../component/FormButton";
 import ResetClientAppSecretDialog from "./ResetClientAppSecretDialog";
+import {useHistory} from "react-router";
 
 const columns = [
     {id: 'clientAppName', label: 'Client Application Name', minWidth: 170},
@@ -21,18 +22,19 @@ const columns = [
     {id: 'secretKey', label: 'Reset Password', minWidth: 170}
 ];
 
-const getEditLinkFor = (clientAppId) => {
-    return <Link to={`client-applications/edit/${clientAppId}`}
-                 style={{"textDecoration": "none"}}>
-        <EditIcon/>
-    </Link>;
-}
-
 const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
     const {classes} = props;
     const [applications, setApplications] = React.useState([])
     const [open, setOpen] = React.useState(false)
     const [currentClientAppId, setCurrentClientAppId] = React.useState("")
+
+    const history = useHistory()
+
+    const getEditLinkFor = (clientAppId) => {
+        return <EditIcon onClick={() => {
+            history.push( `/client-applications/edit/${clientAppId}`)
+        }}/>
+    }
 
     const handleClose = () => {
         setOpen(false);
