@@ -36,8 +36,10 @@ export default withStyles(vauthenticatorStyles)((props) => {
 
     const save = () => {
         const account = {
-            enabled: enabled,
-            accountLocked: accountLocked
+            email: email,
+            enabled: enabled.enabled,
+            accountLocked: accountLocked.accountLocked,
+            authorities: authorities.split(",")
         }
 
         saveAccountFor(account)
