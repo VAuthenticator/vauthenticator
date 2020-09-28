@@ -13,6 +13,16 @@ import Card from "@material-ui/core/Card";
 import CheckboxesGroup from "../../component/CheckboxesGroup";
 import {findAccountFor, saveAccountFor} from "./AccountRepository";
 import FormButton from "../../component/FormButton";
+import StickyHeadTable from "../../component/StickyHeadTable";
+import {findAllRoles} from "../roles/RoleRepository";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox";
+
+const columns = [
+    {id: 'name', label: 'Role', minWidth: 170},
+    {id: 'description', label: 'Description Role', minWidth: 170},
+    {id: 'delete', label: 'Delete Role', minWidth: 170}
+];
 
 export default withStyles(vauthenticatorStyles)((props) => {
     const {classes} = props;
@@ -21,17 +31,35 @@ export default withStyles(vauthenticatorStyles)((props) => {
     const [email, setEmail] = useState(accountMail)
     const [enabled, setEnabled] = useState({enabled: false})
     const [accountLocked, setAccountLocked] = useState({accountLocked: false})
-    const [authorities, setAuthorities] = useState("")
+    const [authorities, setAuthorities] = useState([])
+    const [roles, setRoles] = useState([])
 
     let pageTitle = "Account Management";
 
+
     useEffect(() => {
-        findAccountFor(email)
-            .then(value => {
-                setEnabled({enabled: value.enabled})
-                setAccountLocked({accountLocked: value.accountLocked})
-                setAuthorities(value.authorities.join(","))
+        findAllRoles()
+            .then(roles => {
+                findAccountFor(email)
+                    .then(value => {
+                        setEnabled({enabled: value.enabled})
+                        setAccountLocked({accountLocked: value.accountLocked})
+                        setRoles(roles)
+                        setAuthorities(
+                            roles.map(role => {
+                                    return {
+                                        name: role.name,
+                                        description: role.description,
+                                        delete: <FormControlLabel control={
+                                            <Checkbox checked={value.authorities.indexOf(role.name) !== -1}/>
+                                        }/>
+                                    }
+                                }
+                            )
+                        )
+                    })
             })
+
     }, {})
 
     const save = () => {
@@ -39,7 +67,7 @@ export default withStyles(vauthenticatorStyles)((props) => {
             email: email,
             enabled: enabled.enabled,
             accountLocked: accountLocked.accountLocked,
-            authorities: authorities.split(",")
+            authorities: authorities.map(auth => auth.name)
         }
 
         saveAccountFor(account)
@@ -86,12 +114,8 @@ export default withStyles(vauthenticatorStyles)((props) => {
                                      choicesRegistry={accountLocked}
                                      legend="Account Locked"/>
 
-                    <FormInputTextField id="email"
-                                        label="Authorities"
-                                        handler={(value) => {
-                                            setAuthorities(value.target.value)
-                                        }}
-                                        value={authorities}/>
+                    <StickyHeadTable columns={columns} rows={authorities}/>
+
                     <Separator/>
                     <FormButton label="Save" onClickHandler={save}/>
                 </CardContent>
