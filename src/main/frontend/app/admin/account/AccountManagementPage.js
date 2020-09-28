@@ -32,7 +32,7 @@ export default withStyles(vauthenticatorStyles)((props) => {
     const [enabled, setEnabled] = useState({enabled: false})
     const [accountLocked, setAccountLocked] = useState({accountLocked: false})
     const [authorities, setAuthorities] = useState([])
-    let [roles, setRoles] = useState([])
+    const [authoritiesRow, setAuthoritiesRow] = useState([])
 
     let pageTitle = "Account Management";
 
@@ -50,7 +50,8 @@ export default withStyles(vauthenticatorStyles)((props) => {
                         authoritiesValues.push(role.name)
                     }
 
-                    setAuthorities(rolesRow(authoritiesValues, roleValues))
+                    setAuthorities(authoritiesValues)
+                    setAuthoritiesRow(rolesRow(authoritiesValues, roleValues))
                 }}
                           checked={authoritiesValues.indexOf(role.name) !== -1}/>
             }/>
@@ -60,13 +61,12 @@ export default withStyles(vauthenticatorStyles)((props) => {
     useEffect(() => {
             findAllRoles()
                 .then(roleValues => {
-                    console.log(roles)
                     findAccountFor(email)
                         .then(value => {
                             setEnabled({enabled: value.enabled})
                             setAccountLocked({accountLocked: value.accountLocked})
-                            setRoles(roles)
-                            setAuthorities(
+                            setAuthorities(value.authorities)
+                            setAuthoritiesRow(
                                 rolesRow(value.authorities, roleValues)
                             )
                         })
@@ -80,7 +80,7 @@ export default withStyles(vauthenticatorStyles)((props) => {
             email: email,
             enabled: enabled.enabled,
             accountLocked: accountLocked.accountLocked,
-            authorities: authorities.map(auth => auth.name)
+            authorities: authorities
         }
 
         saveAccountFor(account)
@@ -94,9 +94,6 @@ export default withStyles(vauthenticatorStyles)((props) => {
     return (
         <AdminTemplate maxWidth="xl" classes={classes}
                        page={pageTitle}>
-
-            <p>{roles.length}</p>
-            <p>{authorities.length}</p>
 
             <Typography variant="h3" component="h3">
                 <PeopleAlt fontSize="large"/> Account mail: {accountMail}
@@ -130,7 +127,7 @@ export default withStyles(vauthenticatorStyles)((props) => {
                                      choicesRegistry={accountLocked}
                                      legend="Account Locked"/>
 
-                    <StickyHeadTable columns={columns} rows={authorities}/>
+                    <StickyHeadTable columns={columns} rows={authoritiesRow}/>
 
                     <Separator/>
                     <FormButton label="Save" onClickHandler={save}/>
