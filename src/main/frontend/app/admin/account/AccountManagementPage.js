@@ -32,14 +32,18 @@ export default withStyles(vauthenticatorStyles)((props) => {
     const [enabled, setEnabled] = useState({enabled: false})
     const [accountLocked, setAccountLocked] = useState({accountLocked: false})
     const [authorities, setAuthorities] = useState([])
-    const [roles, setRoles] = useState([])
+    let [roles, setRoles] = useState([])
 
     let pageTitle = "Account Management";
 
+    const changeAuthorities = () => {
+        console.log(roles)
+    }
 
     useEffect(() => {
         findAllRoles()
             .then(roles => {
+                console.log(roles)
                 findAccountFor(email)
                     .then(value => {
                         setEnabled({enabled: value.enabled})
@@ -51,7 +55,20 @@ export default withStyles(vauthenticatorStyles)((props) => {
                                         name: role.name,
                                         description: role.description,
                                         delete: <FormControlLabel control={
-                                            <Checkbox checked={value.authorities.indexOf(role.name) !== -1}/>
+                                            <Checkbox onChange={() => {
+                                                const roleIndex = value.authorities.indexOf(role.name)
+                                                console.log(roleIndex)
+                                                console.log(value.authorities)
+
+                                                if(roleIndex !== -1){
+                                                    value.authorities.splice(roleIndex, 1)
+                                                }else {
+                                                    value.authorities.push(role.name)
+                                                }
+
+                                                console.log(value.authorities)
+                                            }}
+                                                      checked={value.authorities.indexOf(role.name) !== -1}/>
                                         }/>
                                     }
                                 }
@@ -81,6 +98,9 @@ export default withStyles(vauthenticatorStyles)((props) => {
     return (
         <AdminTemplate maxWidth="xl" classes={classes}
                        page={pageTitle}>
+
+            <p>{roles.length}</p>
+            <p>{authorities.length}</p>
 
             <Typography variant="h3" component="h3">
                 <PeopleAlt fontSize="large"/> Account mail: {accountMail}
