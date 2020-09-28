@@ -36,10 +36,6 @@ export default withStyles(vauthenticatorStyles)((props) => {
 
     let pageTitle = "Account Management";
 
-    const changeAuthorities = () => {
-        console.log(roles)
-    }
-
     const rolesRow = (authoritiesValues, roleValues) => roleValues.map(role => {
         return {
             name: role.name,
