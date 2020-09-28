@@ -32,11 +32,11 @@ export default withStyles(vauthenticatorStyles)((props) => {
     const [enabled, setEnabled] = useState({enabled: false})
     const [accountLocked, setAccountLocked] = useState({accountLocked: false})
     const [authorities, setAuthorities] = useState([])
-    const [authoritiesRow, setAuthoritiesRow] = useState([])
+    const [authorityRows, setAuthorityRows] = useState([])
 
     let pageTitle = "Account Management";
 
-    const rolesRow = (authoritiesValues, roleValues) => roleValues.map(role => {
+    const drawAuthorityRows = (authoritiesValues, roleValues) => roleValues.map(role => {
         return {
             name: role.name,
             description: role.description,
@@ -51,7 +51,7 @@ export default withStyles(vauthenticatorStyles)((props) => {
                     }
 
                     setAuthorities(authoritiesValues)
-                    setAuthoritiesRow(rolesRow(authoritiesValues, roleValues))
+                    setAuthorityRows(drawAuthorityRows(authoritiesValues, roleValues))
                 }}
                           checked={authoritiesValues.indexOf(role.name) !== -1}/>
             }/>
@@ -66,8 +66,8 @@ export default withStyles(vauthenticatorStyles)((props) => {
                             setEnabled({enabled: value.enabled})
                             setAccountLocked({accountLocked: value.accountLocked})
                             setAuthorities(value.authorities)
-                            setAuthoritiesRow(
-                                rolesRow(value.authorities, roleValues)
+                            setAuthorityRows(
+                                drawAuthorityRows(value.authorities, roleValues)
                             )
                         })
                 })
@@ -127,7 +127,7 @@ export default withStyles(vauthenticatorStyles)((props) => {
                                      choicesRegistry={accountLocked}
                                      legend="Account Locked"/>
 
-                    <StickyHeadTable columns={columns} rows={authoritiesRow}/>
+                    <StickyHeadTable columns={columns} rows={authorityRows}/>
 
                     <Separator/>
                     <FormButton label="Save" onClickHandler={save}/>
