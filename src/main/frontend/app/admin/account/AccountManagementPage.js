@@ -40,44 +40,44 @@ export default withStyles(vauthenticatorStyles)((props) => {
         console.log(roles)
     }
 
+    const rolesRow = (authoritiesValues, roleValues) => roleValues.map(role => {
+        return {
+            name: role.name,
+            description: role.description,
+            delete: <FormControlLabel control={
+                <Checkbox onChange={() => {
+                    const roleIndex = authoritiesValues.indexOf(role.name)
+
+                    if (roleIndex !== -1) {
+                        authoritiesValues.splice(roleIndex, 1)
+                    } else {
+                        authoritiesValues.push(role.name)
+                    }
+
+                    setAuthorities(rolesRow(authoritiesValues, roleValues))
+                }}
+                          checked={authoritiesValues.indexOf(role.name) !== -1}/>
+            }/>
+        }
+    })
+
     useEffect(() => {
-        findAllRoles()
-            .then(roles => {
-                console.log(roles)
-                findAccountFor(email)
-                    .then(value => {
-                        setEnabled({enabled: value.enabled})
-                        setAccountLocked({accountLocked: value.accountLocked})
-                        setRoles(roles)
-                        setAuthorities(
-                            roles.map(role => {
-                                    return {
-                                        name: role.name,
-                                        description: role.description,
-                                        delete: <FormControlLabel control={
-                                            <Checkbox onChange={() => {
-                                                const roleIndex = value.authorities.indexOf(role.name)
-                                                console.log(roleIndex)
-                                                console.log(value.authorities)
-
-                                                if(roleIndex !== -1){
-                                                    value.authorities.splice(roleIndex, 1)
-                                                }else {
-                                                    value.authorities.push(role.name)
-                                                }
-
-                                                console.log(value.authorities)
-                                            }}
-                                                      checked={value.authorities.indexOf(role.name) !== -1}/>
-                                        }/>
-                                    }
-                                }
+            findAllRoles()
+                .then(roleValues => {
+                    console.log(roles)
+                    findAccountFor(email)
+                        .then(value => {
+                            setEnabled({enabled: value.enabled})
+                            setAccountLocked({accountLocked: value.accountLocked})
+                            setRoles(roles)
+                            setAuthorities(
+                                rolesRow(value.authorities, roleValues)
                             )
-                        )
-                    })
-            })
-
-    }, {})
+                        })
+                })
+        },
+        {}
+    )
 
     const save = () => {
         const account = {
