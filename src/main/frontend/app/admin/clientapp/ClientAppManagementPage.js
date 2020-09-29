@@ -18,6 +18,8 @@ import LeftRightComponentRow from "../../component/LeftRightComponentRow";
 import CheckboxesGroup from "../../component/CheckboxesGroup";
 import {authorizedGrantTypesParam, authorizedGrantTypesRegistry} from "./AuthorizedGrantTypes";
 import {Apps} from "@material-ui/icons";
+import {findAllRoles} from "../roles/RoleRepository";
+import AuthorityTable, {drawAuthorityRows} from "../../component/AuthorityTable";
 
 function allProps(index) {
     return {
@@ -25,6 +27,12 @@ function allProps(index) {
         'aria-controls': `vertical-tabpanel-${index}`,
     };
 }
+
+const columns = [
+    {id: 'name', label: 'Role', minWidth: 170},
+    {id: 'description', label: 'Description Role', minWidth: 170},
+    {id: 'delete', label: 'Delete Role', minWidth: 170}
+];
 
 const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
     const {classes} = props;
@@ -38,7 +46,10 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
     const [scopes, setScopes] = useState([])
     const [authorizedGrantTypes, setAuthorizedGrantTypes] = useState(authorizedGrantTypesRegistry)
     const [webServerRedirectUri, setWebServerRedirectUri] = useState("")
+
     const [authorities, setAuthorities] = useState([])
+    const [authorityRows, setAuthorityRows] = useState([])
+
     const [accessTokenValidity, setAccessTokenValidity] = useState("")
     const [refreshTokenValidity, setRefreshTokenValidity] = useState("")
     const [postLogoutRedirectUri, setPostLogoutRedirectUri] = useState("")
@@ -69,19 +80,26 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
     }
 
     useEffect(() => {
-        findClientApplicationFor(clientApplicationId)
-            .then(value => {
-                setClientAppName(value.clientAppName)
-                setSecret(value.secret)
-                setScopes(value.scopes)
-                setAuthorizedGrantTypes(authorizedGrantTypesRegistry(value.authorizedGrantTypes))
-                setWebServerRedirectUri(value.webServerRedirectUri)
-                setAuthorities(value.authorities)
-                setAccessTokenValidity(value.accessTokenValidity)
-                setRefreshTokenValidity(value.refreshTokenValidity)
-                setPostLogoutRedirectUri(value.postLogoutRedirectUri)
-                setLogoutUri(value.logoutUri)
-                setFederation(value.federation)
+        findAllRoles()
+            .then(roleValues => {
+                findClientApplicationFor(clientApplicationId)
+                    .then(value => {
+                        setClientAppName(value.clientAppName)
+                        setSecret(value.secret)
+                        setScopes(value.scopes)
+                        setAuthorizedGrantTypes(authorizedGrantTypesRegistry(value.authorizedGrantTypes))
+                        setWebServerRedirectUri(value.webServerRedirectUri)
+                        setAccessTokenValidity(value.accessTokenValidity)
+                        setRefreshTokenValidity(value.refreshTokenValidity)
+                        setPostLogoutRedirectUri(value.postLogoutRedirectUri)
+                        setLogoutUri(value.logoutUri)
+                        setFederation(value.federation)
+
+                        setAuthorities(value.authorities)
+                        setAuthorityRows(
+                            drawAuthorityRows(setAuthorityRows, setAuthorities, value.authorities, roleValues)
+                        )
+                    })
             })
     }, {})
     const [value, setValue] = React.useState('0');
@@ -195,14 +213,6 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                                              legend="Authorized Grant Types"/>
 
 
-                            <FormInputTextField id="authorities"
-                                                label="Authorities"
-                                                required={true}
-                                                handler={(value) => {
-                                                    setAuthorities(value.target.value.split(","))
-                                                }}
-                                                value={authorities}/>
-
                             <FormInputTextField id="accessTokenValidity"
                                                 label="Access Token Validity"
                                                 required={true}
@@ -218,6 +228,8 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                                                     setRefreshTokenValidity(value.target.value)
                                                 }}
                                                 value={refreshTokenValidity}/>
+
+                            <AuthorityTable columns={columns} authorityRows={authorityRows}/>
                         </CardContent>
                     </Card>
                     <Separator/>
