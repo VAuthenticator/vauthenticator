@@ -1,13 +1,12 @@
 package it.valeriovaudi.vauthenticator.jwk
 
 import it.valeriovaudi.vauthenticator.keypair.KeyPairFixture
-import org.hamcrest.core.Is
-import org.junit.Assert.assertThat
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.junit.MockitoJUnitRunner
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.junit.jupiter.MockitoExtension
 
-@RunWith(MockitoJUnitRunner::class)
+@ExtendWith(MockitoExtension::class)
 class JwkFactoryTest {
 
     val expected: String = """
@@ -23,6 +22,6 @@ class JwkFactoryTest {
 
         val createJwks = jwkFactory.createJwks(keyPair, "ALIAS")
 
-        assertThat(createJwks.toJSONString(), Is.`is`(expected))
+        Assertions.assertEquals(createJwks.toJSONString(), expected)
     }
 }

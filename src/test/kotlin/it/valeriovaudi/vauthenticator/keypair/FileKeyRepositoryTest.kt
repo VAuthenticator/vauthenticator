@@ -5,15 +5,10 @@ import it.valeriovaudi.vauthenticator.keypair.KeyPairFixture.expectedFor
 import it.valeriovaudi.vauthenticator.keypair.KeyPairFixture.getFileContent
 import it.valeriovaudi.vauthenticator.keypair.KeyPairFixture.happyPathKeyPairConfig
 import it.valeriovaudi.vauthenticator.keypair.KeyPairMatcher.assertKeyOn
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.ExpectedException
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
 class FileKeyRepositoryTest {
-
-    @Rule
-    @JvmField
-    var exception: ExpectedException = ExpectedException.none()
 
     @Test
     fun `happy path`() {
@@ -31,9 +26,9 @@ class FileKeyRepositoryTest {
     fun `when keystore was not found`() {
         val fileKeyRepository = FileKeyRepository(errorPathKeyPairConfig())
 
-        exception.expect(KeyPairNotFoundException::class.java)
-
-        fileKeyRepository.getKeyPair()
+        Assertions.assertThrows(KeyPairNotFoundException::class.java) {
+            fileKeyRepository.getKeyPair()
+        }
     }
 
 }

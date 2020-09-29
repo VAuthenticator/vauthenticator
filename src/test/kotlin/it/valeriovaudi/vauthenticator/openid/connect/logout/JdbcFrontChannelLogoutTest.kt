@@ -4,22 +4,22 @@ import it.valeriovaudi.vauthenticator.keypair.KeyPairFixture
 import it.valeriovaudi.vauthenticator.openid.connect.idtoken.IdToken
 import it.valeriovaudi.vauthenticator.openid.connect.idtoken.TestableOAuth2Authentication
 import it.valeriovaudi.vauthenticator.time.Clock
-import org.hamcrest.CoreMatchers.equalTo
-import org.hamcrest.MatcherAssert.assertThat
-import org.junit.Before
-import org.junit.ClassRule
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito
 import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.jdbc.core.JdbcTemplate
 import org.testcontainers.containers.DockerComposeContainer
+import org.testcontainers.junit.jupiter.Container
+import org.testcontainers.junit.jupiter.Testcontainers
 import java.io.File
 
+@Testcontainers
 class JdbcFrontChannelLogoutTest {
     companion object {
-        @ClassRule
-        @JvmField
+        @Container
         val container: DockerComposeContainer<*> = DockerComposeContainer<Nothing>(File("src/test/resources/docker-compose.yml"))
                 .withExposedService("postgres_1", 5432)
 
@@ -29,7 +29,7 @@ class JdbcFrontChannelLogoutTest {
 
     lateinit var fontEndChannelLogout: JdbcFrontChannelLogout
 
-    @Before
+    @BeforeEach
     fun setUp() {
         val serviceHost = container.getServiceHost("postgres_1", 5432)
         val servicePort = container.getServicePort("postgres_1", 5432)
@@ -58,6 +58,6 @@ class JdbcFrontChannelLogoutTest {
                 "http://an_uri",
                 "http://an_uri"
         )
-        assertThat(federatedLogoutUrls, equalTo(expected))
+        Assertions.assertEquals(federatedLogoutUrls, expected)
     }
 }

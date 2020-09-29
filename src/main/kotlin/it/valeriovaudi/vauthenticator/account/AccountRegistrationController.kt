@@ -1,11 +1,9 @@
 package it.valeriovaudi.vauthenticator.account
 
-import it.valeriovaudi.vauthenticator.extentions.toSha256
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
-
 
 @Controller
 class AccountRegistrationController(@Value("\${feature.signup.enabled:false}") private val signupEnabled: Boolean,
@@ -27,25 +25,4 @@ class AccountRegistrationController(@Value("\${feature.signup.enabled:false}") p
             }
 }
 
-object AccountConverter {
-    fun fromRepresentationToDomain(representation: AccountRepresentation): Account = Account(
-            email = representation.email,
-            password = representation.password,
-            username = representation.email,
-            firstName = representation.firstName,
-            lastName = representation.lastName,
-            authorities = listOf("ROLE_USER"),
-            accountNonExpired = false,
-            accountNonLocked = false,
-            credentialsNonExpired = false
-    )
-
-    fun fromDomainToRepresentation(account: Account): AccountRepresentation =
-            AccountRepresentation(email = account.username,
-                    password = "",
-                    firstName = account.firstName,
-                    lastName = account.lastName
-            )
-}
-
-class AccountRepresentation(var email: String, var password: String, var firstName: String, var lastName: String)
+data class AccountRepresentation(var email: String, var password: String, var firstName: String, var lastName: String)

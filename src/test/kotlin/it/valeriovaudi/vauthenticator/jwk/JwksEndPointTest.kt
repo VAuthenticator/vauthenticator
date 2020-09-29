@@ -6,8 +6,8 @@ import it.valeriovaudi.vauthenticator.keypair.KeyPairFixture.keyPair
 import it.valeriovaudi.vauthenticator.keypair.KeyRepository
 import it.valeriovaudi.vauthenticator.openid.connect.nonce.NonceStore
 import it.valeriovaudi.vauthenticator.security.userdetails.AccountUserDetailsService
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.verify
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,12 +16,12 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.context.annotation.Import
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.test.context.TestPropertySource
-import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@RunWith(SpringRunner::class)
+@ExtendWith(SpringExtension::class)
 @TestPropertySource(properties = ["key-store.keyStorePairAlias=ALIAS"])
 @Import(TestAdditionalConfiguration::class)
 @WebMvcTest(JwksEndPoint::class)

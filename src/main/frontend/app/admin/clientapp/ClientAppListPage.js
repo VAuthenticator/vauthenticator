@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {withStyles} from "@material-ui/core";
-import {Delete, GroupAdd, VpnKey} from "@material-ui/icons";
+import {Apps, Delete, VpnKey} from "@material-ui/icons";
 import vauthenticatorStyles from "../../component/styles";
 import StickyHeadTable from "../../component/StickyHeadTable";
 import {deleteClientApplicationFor, findAllClientApplications} from "./ClientAppRepository";
@@ -8,7 +8,8 @@ import {Link} from "react-router-dom";
 import EditIcon from "@material-ui/icons/Edit";
 import AdminTemplate from "../../component/AdminTemplate";
 import FormButton from "../../component/FormButton";
-import ResetClientAppSecretDialog from "../../component/ResetClientAppSecretDialog";
+import ResetClientAppSecretDialog from "./ResetClientAppSecretDialog";
+import {useHistory} from "react-router";
 
 const columns = [
     {id: 'clientAppName', label: 'Client Application Name', minWidth: 170},
@@ -21,22 +22,19 @@ const columns = [
     {id: 'secretKey', label: 'Reset Password', minWidth: 170}
 ];
 
-const getEditLinkFor = (clientAppId) => {
-    return <Link to={`client-applications/edit/${clientAppId}`}
-                 style={{"textDecoration": "none"}}>
-        <EditIcon/>
-    </Link>;
-}
-
 const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
     const {classes} = props;
     const [applications, setApplications] = React.useState([])
     const [open, setOpen] = React.useState(false)
     const [currentClientAppId, setCurrentClientAppId] = React.useState("")
 
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
+    const history = useHistory()
+
+    const getEditLinkFor = (clientAppId) => {
+        return <EditIcon onClick={() => {
+            history.push( `/client-applications/edit/${clientAppId}`)
+        }}/>
+    }
 
     const handleClose = () => {
         setOpen(false);
@@ -84,7 +82,7 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
 
             <Link to={"/client-applications/save"}>
                 <FormButton type="button"
-                            labelPrefix={<GroupAdd fontSize="large"/>}
+                            labelPrefix={<Apps fontSize="large"/>}
                             label={"New Client Application"}/>
             </Link>
 
