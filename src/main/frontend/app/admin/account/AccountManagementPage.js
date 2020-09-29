@@ -13,10 +13,8 @@ import Card from "@material-ui/core/Card";
 import CheckboxesGroup from "../../component/CheckboxesGroup";
 import {findAccountFor, saveAccountFor} from "./AccountRepository";
 import FormButton from "../../component/FormButton";
-import StickyHeadTable from "../../component/StickyHeadTable";
 import {findAllRoles} from "../roles/RoleRepository";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
+import AuthorityTable, {drawAuthorityRows} from "../../component/AuthorityTable";
 
 const columns = [
     {id: 'name', label: 'Role', minWidth: 170},
@@ -36,28 +34,6 @@ export default withStyles(vauthenticatorStyles)((props) => {
 
     let pageTitle = "Account Management";
 
-    const drawAuthorityRows = (authoritiesValues, roleValues) => roleValues.map(role => {
-        return {
-            name: role.name,
-            description: role.description,
-            delete: <FormControlLabel control={
-                <Checkbox onChange={() => {
-                    const roleIndex = authoritiesValues.indexOf(role.name)
-
-                    if (roleIndex !== -1) {
-                        authoritiesValues.splice(roleIndex, 1)
-                    } else {
-                        authoritiesValues.push(role.name)
-                    }
-
-                    setAuthorities(authoritiesValues)
-                    setAuthorityRows(drawAuthorityRows(authoritiesValues, roleValues))
-                }}
-                          checked={authoritiesValues.indexOf(role.name) !== -1}/>
-            }/>
-        }
-    })
-
     useEffect(() => {
             findAllRoles()
                 .then(roleValues => {
@@ -67,7 +43,7 @@ export default withStyles(vauthenticatorStyles)((props) => {
                             setAccountLocked({accountLocked: value.accountLocked})
                             setAuthorities(value.authorities)
                             setAuthorityRows(
-                                drawAuthorityRows(value.authorities, roleValues)
+                                drawAuthorityRows(setAuthorityRows, setAuthorities, value.authorities, roleValues)
                             )
                         })
                 })
@@ -127,7 +103,7 @@ export default withStyles(vauthenticatorStyles)((props) => {
                                      choicesRegistry={accountLocked}
                                      legend="Account Locked"/>
 
-                    <StickyHeadTable columns={columns} rows={authorityRows}/>
+                    <AuthorityTable authorityRows={authorityRows} columns={columns}/>
 
                     <Separator/>
                     <FormButton label="Save" onClickHandler={save}/>
