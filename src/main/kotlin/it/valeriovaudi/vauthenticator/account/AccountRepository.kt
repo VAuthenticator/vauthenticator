@@ -87,14 +87,20 @@ class JdbcAccountRepository(private val jdbcTemplate: JdbcTemplate) : AccountRep
                 }
     }
 
-    override fun save(account: Account) {
-        val accountAuthoritiesSet: Set<String> = account.authorities.toSet();
-        val storedAccountRolesSet: Set<String> = storedRolesFor(account)
+    override fun save(account: Account) =
+        storeAccountWithRoles(
+                account = account,
+                accountAuthoritiesSet = accountRolesFor(account),
+                storedAccountRolesSet = storedRolesFor(account)
+        )
 
+    private fun storeAccountWithRoles(account: Account, accountAuthoritiesSet: Set<String>, storedAccountRolesSet: Set<String>) {
         saveAccountFor(account)
         addAuthorities(accountAuthoritiesSet, storedAccountRolesSet, account)
         removeAuthorities(storedAccountRolesSet, accountAuthoritiesSet, account)
     }
+
+    private fun accountRolesFor(account: Account) = account.authorities.toSet()
 
     private fun storedRolesFor(account: Account) =
             jdbcTemplate.query("SELECT * FROM  ACCOUNT_ROLE WHERE USERNAME=?", arrayOf(account.email), roleLoader)
@@ -111,20 +117,19 @@ class JdbcAccountRepository(private val jdbcTemplate: JdbcTemplate) : AccountRep
         )
     }
 
-    private fun removeAuthorities(storedAccountRolesSet: Set<String>, accountAuthoritiesSet: Set<String>, account: Account) {
+    private fun removeAuthorities(storedAccountRolesSet: Set<String>, accountAuthoritiesSet: Set<String>, account: Account) =
         storedAccountRolesSet.filter {
             !accountAuthoritiesSet.contains(it)
         }.forEach {
             jdbcTemplate.update("DELETE FROM ACCOUNT_ROLE WHERE USERNAME=? AND ROLE=?", account.username, it)
         }
-    }
 
-    private fun addAuthorities(accountAuthoritiesSet: Set<String>, storedAccountRolesSet: Set<String>, account: Account) {
+
+    private fun addAuthorities(accountAuthoritiesSet: Set<String>, storedAccountRolesSet: Set<String>, account: Account) =
         accountAuthoritiesSet.filter {
             !storedAccountRolesSet.contains(it)
         }.forEach { authority ->
             jdbcTemplate.update("INSERT INTO ACCOUNT_ROLE(USERNAME, ROLE) VALUES (?,?)", account.username, authority)
         }
-    }
 
 }
