@@ -13,6 +13,7 @@ interface AccountRepository {
 
 class AccountRegistrationException(e: RuntimeException) : RuntimeException(e)
 
+val roleLoader: (ResultSet, Int) -> String = { rs, _ -> rs.getString("role") }
 val accountLoader: (ResultSet, Int) -> Account = { rs, _ ->
     Account(
             accountNonExpired = rs.getBoolean("account_non_expired"),
@@ -22,7 +23,7 @@ val accountLoader: (ResultSet, Int) -> Account = { rs, _ ->
 
             username = rs.getString("username"),
             password = rs.getString("password"),
-            authorities = rs.getString("authorities").split(",").filter { it.isNotEmpty() },
+            authorities = emptyList(),
 
             // needed for email oidc profile
             email = rs.getString("email"),
@@ -33,8 +34,9 @@ val accountLoader: (ResultSet, Int) -> Account = { rs, _ ->
             lastName = rs.getString("last_name")
     )
 }
-val findAll: String = "SELECT * FROM account"
-val readByEmail: String = "SELECT * FROM account WHERE email=?"
+const val findAllAccountRoleFor: String = "SELECT * FROM account_role where username=?"
+const val findAll: String = "SELECT * FROM account"
+const val readByEmail: String = "SELECT * FROM account WHERE email=?"
 val insertQuery: String =
         """
                 INSERT INTO ACCOUNT (account_non_expired,
@@ -43,47 +45,54 @@ val insertQuery: String =
                                      enabled,
                                      username,
                                      password,
-                                     authorities,
                                      email,
                                      email_verified,
                                      first_name,
                                      last_name
                                     ) 
-                                    VALUES (?,?,?,?,?,?,?,?,?,?,?)
+                                    VALUES (?,?,?,?,?,?,?,?,?,?)
                                     ON CONFLICT (email) DO UPDATE SET
                                      account_non_expired=?,
                                      account_non_locked=?,
                                      credentials_non_expired=?,
                                      enabled=?,
                                      password=?,
-                                     authorities=?,
                                      email_verified=?,
                                      first_name=?,
                                      last_name=?
             """.trimIndent()
 
+
 @Transactional
 class JdbcAccountRepository(private val jdbcTemplate: JdbcTemplate) : AccountRepository {
 
+    @Transactional(readOnly = true)
     override fun findAll(): List<Account> =
             jdbcTemplate.query(findAll, accountLoader)
+                    .map { it.copy(authorities = jdbcTemplate.query(findAllAccountRoleFor, roleLoader, arrayOf(it.email))) }
 
+    @Transactional(readOnly = true)
     override fun accountFor(username: String): Optional<Account> {
-        return Optional.ofNullable(
-                jdbcTemplate.queryForObject(readByEmail, accountLoader, arrayOf(username))
-        )
+        return jdbcTemplate.query(findAllAccountRoleFor, roleLoader, arrayOf(username))
+                .let { roles ->
+                    Optional.ofNullable(
+                            jdbcTemplate.queryForObject(readByEmail, accountLoader, arrayOf(username))
+                    ).map { it.copy(authorities = roles) }
+                }
     }
 
     override fun save(account: Account) {
         jdbcTemplate.update(insertQuery,
                 account.accountNonExpired, account.accountNonLocked, account.credentialsNonExpired, account.enabled,
-                account.email, account.password, account.authorities.joinToString(","),
+                account.email, account.password,
                 account.email, account.emailVerified, account.firstName, account.lastName,
 
                 account.accountNonExpired, account.accountNonLocked, account.credentialsNonExpired, account.enabled,
-                account.password, account.authorities.joinToString(","),
-                account.emailVerified, account.firstName, account.lastName
+                account.password, account.emailVerified, account.firstName, account.lastName
         )
+
+        account.authorities
+                .forEach { jdbcTemplate.update("INSERT INTO ACCOUNT_ROLE(USERNAME, ROLE) VALUES (?,?)", account.username, it) }
     }
 
 }
