@@ -49,9 +49,10 @@ create table role
 
 create table ACCOUNT_ROLE
 (
-    id  SERIAL primary key,
     ROLE  varchar(256) NOT NULL ,
     USERNAME varchar(256) NOT NULL ,
+
+    PRIMARY KEY (ROLE, USERNAME),
 
     CONSTRAINT FK_ACCOUNT FOREIGN KEY (USERNAME)
         REFERENCES ACCOUNT(USERNAME),

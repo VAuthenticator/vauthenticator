@@ -6,7 +6,7 @@ import java.sql.ResultSet
 import java.util.*
 
 interface AccountRepository {
-    fun findAll(): List<Account>
+    fun findAll(eagerRolesLoad: Boolean = false): List<Account>
     fun accountFor(username: String): Optional<Account>
     fun save(account: Account)
 }
@@ -67,9 +67,15 @@ val insertQuery: String =
 class JdbcAccountRepository(private val jdbcTemplate: JdbcTemplate) : AccountRepository {
 
     @Transactional(readOnly = true)
-    override fun findAll(): List<Account> =
+    override fun findAll(eagerRolesLoad: Boolean): List<Account> =
             jdbcTemplate.query(findAll, accountLoader)
-                    .map { it.copy(authorities = jdbcTemplate.query(findAllAccountRoleFor, roleLoader, arrayOf(it.email))) }
+                    .map {
+                        if (eagerRolesLoad) {
+                            it.copy(authorities = jdbcTemplate.query(findAllAccountRoleFor, roleLoader, arrayOf(it.email)))
+                        } else {
+                            it
+                        }
+                    }
 
     @Transactional(readOnly = true)
     override fun accountFor(username: String): Optional<Account> {
@@ -91,8 +97,17 @@ class JdbcAccountRepository(private val jdbcTemplate: JdbcTemplate) : AccountRep
                 account.password, account.emailVerified, account.firstName, account.lastName
         )
 
-        account.authorities
-                .forEach { jdbcTemplate.update("INSERT INTO ACCOUNT_ROLE(USERNAME, ROLE) VALUES (?,?)", account.username, it) }
+        val storedAccountRoles: List<String> = jdbcTemplate.query("SELECT * FROM  ACCOUNT_ROLE WHERE USERNAME=?", arrayOf(account.email), roleLoader)
+
+        account.authorities.filter { !storedAccountRoles.contains(it) }
+                .forEach { authority ->
+                    jdbcTemplate.update("INSERT INTO ACCOUNT_ROLE(USERNAME, ROLE) VALUES (?,?)", account.username, authority)
+                }
+
+        storedAccountRoles.filter { !account.authorities.contains(it) }
+                .forEach {
+                    jdbcTemplate.update("DELETE FROM ACCOUNT_ROLE WHERE USERNAME=? AND ROLE=?", account.username, it)
+                }
     }
 
 }
