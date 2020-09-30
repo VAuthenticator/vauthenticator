@@ -25,10 +25,12 @@ const RolesManagementPage = withStyles(vauthenticatorStyles)((props) => {
     const [openRolesManagementDialog, setOpenRolesManagementDialog] = React.useState(false)
     const [selectedRole, setSelectedRole] = React.useState("")
     const [role, setRole] = React.useState({name: "", description: ""})
+    const [isRoleReadOnly, setIsRoleReadOnly] = React.useState(false)
 
     const getEditLinkFor = (role) => {
         return <EditIcon onClick={() => {
             setRole(role)
+            setIsRoleReadOnly(true)
             setOpenRolesManagementDialog(true);
         }}/>;
     }
@@ -94,6 +96,7 @@ const RolesManagementPage = withStyles(vauthenticatorStyles)((props) => {
 
             <RolesDialog open={openRolesManagementDialog}
                          role={role} setRole={setRole}
+                         isRoleReadOnly={isRoleReadOnly}
                          selectedDescription={role.description}
                          onClose={handleCloseRolesDialog}
                          title="Role management"/>
@@ -102,6 +105,7 @@ const RolesManagementPage = withStyles(vauthenticatorStyles)((props) => {
                         onClickHandler={() => {
                             setRole({name: "", description: ""})
                             setOpenRolesManagementDialog(true);
+                            setIsRoleReadOnly(false);
                         }}
                         labelPrefix={<AssignmentInd fontSize="large"/>}
                         label={"New Role"}/>

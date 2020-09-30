@@ -8,7 +8,7 @@ import Separator from "../../component/Separator";
 import DialogActions from "@material-ui/core/DialogActions";
 import FormInputTextField from "../../component/FormInputTextField";
 
-export default function RoleDialog({onClose, open, title, role, setRole}) {
+export default function RoleDialog({onClose, open, title, role, setRole, isRoleReadOnly}) {
 
     return (
         <Dialog onClose={onClose} aria-labelledby="simple-dialog-title" open={open} maxWidth="md">
@@ -17,6 +17,7 @@ export default function RoleDialog({onClose, open, title, role, setRole}) {
                 <FormInputTextField id="name"
                                     label="Role Name"
                                     type="text"
+                                    disabled={isRoleReadOnly}
                                     value={role.name}
                                     handler={(value) => {
                                         setRole({name: value.target.value, description: role.description})
