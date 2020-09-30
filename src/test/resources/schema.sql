@@ -31,7 +31,6 @@ create table account
 
     username varchar(256) UNIQUE not null,
     password varchar(256) not null,
-    authorities varchar(256) not null,
 
     email varchar(256) UNIQUE not null,
     email_verified boolean not null,
@@ -46,6 +45,20 @@ create table role
 
     name varchar(256) UNIQUE not null,
     description varchar(256)
+);
+
+create table ACCOUNT_ROLE
+(
+    ROLE  varchar(256) NOT NULL ,
+    USERNAME varchar(256) NOT NULL ,
+
+    PRIMARY KEY (ROLE, USERNAME),
+
+    CONSTRAINT FK_ACCOUNT FOREIGN KEY (USERNAME)
+        REFERENCES ACCOUNT(USERNAME),
+
+    CONSTRAINT FK_ROLE FOREIGN KEY (ROLE)
+        REFERENCES ROLE(NAME)
 );
 
 INSERT INTO role (name, description) VALUES ('a_role','A_ROLE');

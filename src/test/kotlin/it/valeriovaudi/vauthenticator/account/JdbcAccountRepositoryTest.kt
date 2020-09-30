@@ -62,6 +62,16 @@ class JdbcAccountRepositoryTest {
         accountRepository.save(anAccount)
         accountRepository.save(anotherAccount)
 
+        Assertions.assertEquals(accountRepository.findAll(true),listOf(anAccount, anotherAccount))
+    }
+
+    @Test
+    fun `find all accounts without autorities`() {
+        val anAccount = account.copy()
+        val anotherAccount = account.copy(email = "anotheremail@domail.com", username = "anotheremail@domail.com", firstName = "A_NEW_FIRSTNAME", lastName = "A_NEW_LASTNAME")
+        accountRepository.save(anAccount)
+        accountRepository.save(anotherAccount)
+
         Assertions.assertEquals(accountRepository.findAll(),listOf(anAccount, anotherAccount))
     }
 
