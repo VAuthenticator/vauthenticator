@@ -53,7 +53,7 @@ class IdTokenEnhancerTest {
 
         val actual: OAuth2AccessToken = idTokenEnhancer.enhance(TestableDefaultOAuth2AccessToken(), TestableOAuth2Authentication())
 
-        Assertions.assertNotNull(actual.additionalInformation["id_token"])
+        Assertions.assertNull(actual.additionalInformation["id_token"])
 
         verify(clock, times(0)).nowInSeconds()
         verify(keyRepository, times(0)).getKeyPair()

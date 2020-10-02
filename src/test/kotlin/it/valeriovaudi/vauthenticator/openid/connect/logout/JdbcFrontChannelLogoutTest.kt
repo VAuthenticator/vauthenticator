@@ -3,14 +3,15 @@ package it.valeriovaudi.vauthenticator.openid.connect.logout
 import it.valeriovaudi.vauthenticator.keypair.KeyPairFixture
 import it.valeriovaudi.vauthenticator.openid.connect.idtoken.IdToken
 import it.valeriovaudi.vauthenticator.openid.connect.idtoken.TestableOAuth2Authentication
-import it.valeriovaudi.vauthenticator.support.TestingFixture
+import it.valeriovaudi.vauthenticator.support.TestingFixture.dataSource
+import it.valeriovaudi.vauthenticator.support.TestingFixture.initClientApplicationTests
+import it.valeriovaudi.vauthenticator.support.TestingFixture.resetDatabase
 import it.valeriovaudi.vauthenticator.time.Clock
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito
-import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.jdbc.core.JdbcTemplate
 
 class JdbcFrontChannelLogoutTest {
@@ -21,12 +22,10 @@ class JdbcFrontChannelLogoutTest {
 
     @BeforeEach
     fun setUp() {
-        val serviceHost = TestingFixture.postGresHost
-        val servicePort = TestingFixture.postGresPort
-        val dataSource = DataSourceBuilder.create()
-                .url("jdbc:postgresql://$serviceHost:$servicePort/vauthenticator?user=root&password=root")
-                .build()
-        fontEndChannelLogout = JdbcFrontChannelLogout("http://localhost/vauthenticator",JdbcTemplate(dataSource))
+        val jdbcTemplate = JdbcTemplate(dataSource)
+        resetDatabase(jdbcTemplate)
+        initClientApplicationTests(jdbcTemplate)
+        fontEndChannelLogout = JdbcFrontChannelLogout("http://localhost/vauthenticator", jdbcTemplate)
     }
 
     @Test
