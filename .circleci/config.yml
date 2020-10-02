@@ -1,9 +1,10 @@
 version: 2.1
 
 jobs:
+  machine: true
   build:
     docker:
       - image: circleci/openjdk:11
     steps:
       - checkout
-      - run: mvn clean install -DskipTests
+      - run: mvn clean install
