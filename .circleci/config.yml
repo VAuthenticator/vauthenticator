@@ -22,6 +22,6 @@ jobs:
           command: |
             cd src/test/resources
             docker-compose up &
-            sleep 10s
+            sleep 30s
 
       - run: mvn clean install -T2C
