@@ -8,6 +8,12 @@ jobs:
 
     steps:
       - run:
+          name: start docker compose for test
+          command: |
+            cd src/test/resources
+            docker-compose up &
+            sleep 10s
+      - run:
           name: Install OpenJDK 11
           command: |
             sudo apt-get update && sudo apt-get install openjdk-11-jdk

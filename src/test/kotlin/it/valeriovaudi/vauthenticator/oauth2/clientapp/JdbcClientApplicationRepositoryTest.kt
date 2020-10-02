@@ -1,39 +1,26 @@
 package it.valeriovaudi.vauthenticator.oauth2.clientapp
 
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppFixture.aClientApp
+import it.valeriovaudi.vauthenticator.support.TestingFixture.dataSource
+import it.valeriovaudi.vauthenticator.support.TestingFixture.initClientApplicationTests
+import it.valeriovaudi.vauthenticator.support.TestingFixture.resetDatabase
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.jdbc.core.JdbcTemplate
-import org.testcontainers.containers.DockerComposeContainer
-import org.testcontainers.junit.jupiter.Container
-import org.testcontainers.junit.jupiter.Testcontainers
-import java.io.File
 import java.util.*
 
-@Testcontainers
 class JdbcClientApplicationRepositoryTest {
-
-    companion object {
-        @Container
-        val container: DockerComposeContainer<*> = DockerComposeContainer<Nothing>(File("src/test/resources/docker-compose.yml"))
-                .withExposedService("postgres_1", 5432)
-
-    }
 
     lateinit var clientApplicationRepository: JdbcClientApplicationRepository
 
     @BeforeEach
     fun setUp() {
-        val serviceHost = container.getServiceHost("postgres_1", 5432)
-        val servicePort = container.getServicePort("postgres_1", 5432)
-        val dataSource = DataSourceBuilder.create()
-                .url("jdbc:postgresql://$serviceHost:$servicePort/vauthenticator?user=root&password=root")
-                .build()
-        clientApplicationRepository = JdbcClientApplicationRepository(JdbcTemplate(dataSource))
+        val jdbcTemplate = JdbcTemplate(dataSource)
+        clientApplicationRepository = JdbcClientApplicationRepository(jdbcTemplate)
+        resetDatabase(jdbcTemplate)
+        initClientApplicationTests(jdbcTemplate)
     }
-
 
     @Test
     fun `find a client application`() {

@@ -2,6 +2,8 @@ version: "2"
 
 services:
   postgres:
+    ports:
+    - 35432:5432
     image: postgres
     environment:
       POSTGRES_DB: vauthenticator

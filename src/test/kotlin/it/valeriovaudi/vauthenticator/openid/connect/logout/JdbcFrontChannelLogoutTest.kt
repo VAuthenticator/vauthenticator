@@ -3,27 +3,18 @@ package it.valeriovaudi.vauthenticator.openid.connect.logout
 import it.valeriovaudi.vauthenticator.keypair.KeyPairFixture
 import it.valeriovaudi.vauthenticator.openid.connect.idtoken.IdToken
 import it.valeriovaudi.vauthenticator.openid.connect.idtoken.TestableOAuth2Authentication
+import it.valeriovaudi.vauthenticator.support.TestingFixture.dataSource
+import it.valeriovaudi.vauthenticator.support.TestingFixture.initClientApplicationTests
+import it.valeriovaudi.vauthenticator.support.TestingFixture.resetDatabase
 import it.valeriovaudi.vauthenticator.time.Clock
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito
-import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.jdbc.core.JdbcTemplate
-import org.testcontainers.containers.DockerComposeContainer
-import org.testcontainers.junit.jupiter.Container
-import org.testcontainers.junit.jupiter.Testcontainers
-import java.io.File
 
-@Testcontainers
 class JdbcFrontChannelLogoutTest {
-    companion object {
-        @Container
-        val container: DockerComposeContainer<*> = DockerComposeContainer<Nothing>(File("src/test/resources/docker-compose.yml"))
-                .withExposedService("postgres_1", 5432)
-
-    }
 
     val clock: Clock = Mockito.mock(Clock::class.java)
 
@@ -31,12 +22,10 @@ class JdbcFrontChannelLogoutTest {
 
     @BeforeEach
     fun setUp() {
-        val serviceHost = container.getServiceHost("postgres_1", 5432)
-        val servicePort = container.getServicePort("postgres_1", 5432)
-        val dataSource = DataSourceBuilder.create()
-                .url("jdbc:postgresql://$serviceHost:$servicePort/vauthenticator?user=root&password=root")
-                .build()
-        fontEndChannelLogout = JdbcFrontChannelLogout("http://localhost/vauthenticator",JdbcTemplate(dataSource))
+        val jdbcTemplate = JdbcTemplate(dataSource)
+        resetDatabase(jdbcTemplate)
+        initClientApplicationTests(jdbcTemplate)
+        fontEndChannelLogout = JdbcFrontChannelLogout("http://localhost/vauthenticator", jdbcTemplate)
     }
 
     @Test
