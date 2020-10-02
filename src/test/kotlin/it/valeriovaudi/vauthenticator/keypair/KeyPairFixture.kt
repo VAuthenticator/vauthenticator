@@ -1,7 +1,6 @@
 package it.valeriovaudi.vauthenticator.keypair
 
-import org.hamcrest.core.Is
-import org.junit.Assert
+import org.junit.jupiter.api.Assertions
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory
 import java.nio.file.Paths
@@ -42,7 +41,7 @@ object KeyPairFixture {
 object KeyPairMatcher {
 
     fun assertKeyOn(actual: KeyPair, expectedAsPrivate: PrivateKey, expectedAsPublic: PublicKey) {
-        Assert.assertThat(actual.private, Is.`is`(expectedAsPrivate))
-        Assert.assertThat(actual.public, Is.`is`(expectedAsPublic))
+        Assertions.assertEquals(actual.private,expectedAsPrivate)
+        Assertions.assertEquals(actual.public, expectedAsPublic)
     }
 }

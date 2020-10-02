@@ -1,9 +1,9 @@
 version: "2"
 
 services:
-  rabbitmq:
-    image: rabbitmq:3-management
   postgres:
+    ports:
+    - 35432:5432
     image: postgres
     environment:
       POSTGRES_DB: vauthenticator

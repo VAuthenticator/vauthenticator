@@ -1,7 +1,7 @@
 package it.valeriovaudi.vauthenticator.openid.connect.idtoken
 
 import it.valeriovaudi.vauthenticator.time.Clock
-import org.junit.Assert.assertEquals
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.BDDMockito.given
@@ -31,6 +31,6 @@ class IdTokenTest {
                 clockTime,
                 clockTime)
 
-        assertEquals(actual, expected)
+        Assertions.assertEquals(actual, expected)
     }
 }

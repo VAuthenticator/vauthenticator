@@ -6,8 +6,7 @@ import it.valeriovaudi.vauthenticator.keypair.KeyPairFixture.getFileContent
 import it.valeriovaudi.vauthenticator.keypair.KeyPairFixture.keyPair
 import it.valeriovaudi.vauthenticator.keypair.KeyRepository
 import it.valeriovaudi.vauthenticator.time.Clock
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.BDDMockito.given
@@ -42,7 +41,7 @@ class IdTokenEnhancerTest {
                 .willReturn(Optional.of(Account(false, false, false, true, "", "", emptyList(), "", true, "", "")))
         val actual: OAuth2AccessToken = idTokenEnhancer.enhance(TestableDefaultOAuth2AccessToken(clientAppScope = setOf("openid")), TestableOAuth2Authentication())
 
-        assertNotNull(actual.additionalInformation["id_token"])
+        Assertions.assertNotNull(actual.additionalInformation["id_token"])
 
         verify(clock).nowInSeconds()
         verify(keyRepository).getKeyPair()
@@ -54,7 +53,7 @@ class IdTokenEnhancerTest {
 
         val actual: OAuth2AccessToken = idTokenEnhancer.enhance(TestableDefaultOAuth2AccessToken(), TestableOAuth2Authentication())
 
-        assertNull(actual.additionalInformation["id_token"])
+        Assertions.assertNotNull(actual.additionalInformation["id_token"])
 
         verify(clock, times(0)).nowInSeconds()
         verify(keyRepository, times(0)).getKeyPair()
