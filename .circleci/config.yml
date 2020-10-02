@@ -25,3 +25,9 @@ jobs:
             sleep 30s
 
       - run: mvn clean install -T2C
+
+      - run:
+          name: docker push
+          command: |
+            docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
+            mvn docker:build docker:push
