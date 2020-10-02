@@ -31,3 +31,9 @@ I have tested VAuthenticator in order to give SSO capability with my personal on
  
 ## Next Features
 * Password recovery system
+
+## builds
+in order to build the project you should start the doker-compose under src/test/resources folder.
+The docker-compose file will start for you a postgress database listening on port 35432 with the needed database and tables. 
+If you want change the port, you can do that as usual in docker, changing ports section in the docker-compose file and set `test.database.port` system properties 
+in order to let know to the test suite the changed port 
