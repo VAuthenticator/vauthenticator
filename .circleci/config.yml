@@ -8,7 +8,7 @@ jobs:
 
     steps:
       - checkout
-      -
+
       - run:
         name: start docker compose for test
         command: |
