@@ -15,4 +15,4 @@ jobs:
             sudo update-alternatives --set javac /usr/lib/jvm/java-11-openjdk-amd64/bin/javac
             java -version
       - checkout
-      - run: mvn clean install
+      - run: mvn clean install -T2C
