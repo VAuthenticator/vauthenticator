@@ -11,4 +11,3 @@ services:
       POSTGRES_PASSWORD: root
     volumes:
       - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
-      - /var/run/docker.sock:/var/run/docker.sock
