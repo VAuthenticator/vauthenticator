@@ -34,7 +34,7 @@ const val SELECT_QUERY = "SELECT client_id, logout_uris FROM oauth_client_detail
 
 class JdbcFrontChannelLogout(private val authServerBaseUrl: String, private val jdbcTemplate: JdbcTemplate) : FrontChannelLogout {
 
-    val logger: Logger = LoggerFactory.getLogger(JdbcFrontChannelLogout::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(JdbcFrontChannelLogout::class.java)
 
     override fun getFederatedLogoutUrls(idTokenHint: String): List<String> {
         val audience = audFor(idTokenHint)
