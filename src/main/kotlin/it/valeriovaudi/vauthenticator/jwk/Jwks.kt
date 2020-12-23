@@ -1,7 +1,6 @@
 package it.valeriovaudi.vauthenticator.jwk
 
-import net.minidev.json.JSONObject
 
-typealias Jwk = JSONObject
+typealias Jwk = Map<String, Any>
 
 data class Jwks(val keys: List<Jwk>)

@@ -62,5 +62,5 @@ class JdbcFrontChannelLogout(private val authServerBaseUrl: String, private val 
             { resultSet: ResultSet, _: Int -> resultSet.getString("client_id") to resultSet.getString("logout_uris") }
 
     private fun audFor(idTokenHint: String) =
-            JWSObject.parse(idTokenHint).payload.toJSONObject().getAsString("aud") as String
+            JWSObject.parse(idTokenHint).payload.toJSONObject().get("aud") as String
 }

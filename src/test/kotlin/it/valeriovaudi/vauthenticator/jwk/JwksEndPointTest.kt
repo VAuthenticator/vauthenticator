@@ -54,7 +54,7 @@ class JwksEndPointTest {
                 .willReturn(keyPair)
 
         given(jwkFactory.createJwks(keyPair, "ALIAS"))
-                .willReturn(Jwk())
+                .willReturn(emptyMap())
 
         mockMvc.perform(MockMvcRequestBuilders.get("/.well-known/jwks.json"))
                 .andExpect(status().isOk)
