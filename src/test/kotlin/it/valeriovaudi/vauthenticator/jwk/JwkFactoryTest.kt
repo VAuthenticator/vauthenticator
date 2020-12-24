@@ -1,10 +1,12 @@
 package it.valeriovaudi.vauthenticator.jwk
 
 import it.valeriovaudi.vauthenticator.keypair.KeyPairFixture
+import org.codehaus.jackson.map.ObjectMapper
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension
+import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
 @ExtendWith(MockitoExtension::class)
 class JwkFactoryTest {
@@ -20,8 +22,9 @@ class JwkFactoryTest {
         val content = KeyPairFixture.getFileContent("/keystore/keystore.jks")
         val keyPair = KeyPairFixture.keyPair(content)
 
+        val objectMapper = ObjectMapper()
         val createJwks = jwkFactory.createJwks(keyPair, "ALIAS")
 
-        Assertions.assertEquals(createJwks.toJSONString(), expected)
+        Assertions.assertEquals(objectMapper.writeValueAsString(createJwks), expected)
     }
 }
