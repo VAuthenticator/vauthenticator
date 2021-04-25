@@ -2,7 +2,6 @@ package it.valeriovaudi.vauthenticator.oauth2.clientapp
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppFixture.aClientApp
-import it.valeriovaudi.vauthenticator.openid.connect.nonce.NonceStore
 import it.valeriovaudi.vauthenticator.security.userdetails.AccountUserDetailsService
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -28,9 +27,6 @@ class ClientApplicationEndPointTest {
 
     @Autowired
     lateinit var mockMvc: MockMvc
-
-    @MockBean
-    lateinit var nonceStore: NonceStore
 
     @MockBean
     lateinit var redisTemplate: RedisTemplate<*, *>

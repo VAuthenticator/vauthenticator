@@ -2,8 +2,6 @@ package it.valeriovaudi.vauthenticator.config
 
 import it.valeriovaudi.vauthenticator.account.AccountRepository
 import it.valeriovaudi.vauthenticator.oauth2.codeservice.RedisAuthorizationCodeServices
-import it.valeriovaudi.vauthenticator.openid.connect.nonce.NonceStore
-import it.valeriovaudi.vauthenticator.openid.connect.nonce.RedisNonceStore
 import it.valeriovaudi.vauthenticator.security.userdetails.AccountUserDetailsService
 import org.springframework.boot.autoconfigure.security.SecurityProperties
 import org.springframework.context.annotation.Bean
@@ -56,16 +54,12 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     }
 
     @Bean
-    fun redisAuthorizationCodeServices(redisTemplate: RedisTemplate<*, *>, nonceStore: NonceStore) =
-            RedisAuthorizationCodeServices(redisTemplate as RedisTemplate<String, OAuth2Authentication>, nonceStore)
+    fun redisAuthorizationCodeServices(redisTemplate: RedisTemplate<*, *>) =
+            RedisAuthorizationCodeServices(redisTemplate as RedisTemplate<String, OAuth2Authentication>)
 
     @Bean
     fun accountUserDetailsService(passwordEncoder: PasswordEncoder,
                                   userRepository: AccountRepository) =
             AccountUserDetailsService(userRepository)
-
-
-    @Bean
-    fun nonceStore(redisTemplate: RedisTemplate<String, String>) = RedisNonceStore(redisTemplate)
 
 }
