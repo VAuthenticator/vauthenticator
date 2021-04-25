@@ -78,7 +78,6 @@ class AuthorizationServerConfig {
             .build()
     }
 
-
     @Bean
     fun jwkSource(): JWKSource<SecurityContext?> {
         val rsaKey = generateRsa()
