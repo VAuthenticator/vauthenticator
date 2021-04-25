@@ -41,10 +41,7 @@ import java.util.stream.Collectors
 import javax.sql.DataSource
 
 @Configuration(proxyBeanMethods = false)
-class AuthorizationServerConfig(
-    private val accountUserDetailsService: AccountUserDetailsService,
-    private val passwordEncoder: PasswordEncoder
-) {
+class AuthorizationServerConfig {
 
     @Value("\${auth.oidcIss:}")
     lateinit var oidcIss: String
@@ -71,18 +68,8 @@ class AuthorizationServerConfig(
         return http.build()
     }
 
-    fun generateRsaKey(): KeyPair {
-        return try {
-            val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
-            keyPairGenerator.initialize(2048)
-            keyPairGenerator.generateKeyPair()
-        } catch (ex: Exception) {
-            throw IllegalStateException(ex)
-        }
-    }
-
     fun generateRsa(): RSAKey {
-        val keyPair = generateRsaKey()
+        val keyPair = keyRepository.getKeyPair()
         val publicKey = keyPair.public as RSAPublicKey
         val privateKey = keyPair.private as RSAPrivateKey
         return RSAKey.Builder(publicKey)
