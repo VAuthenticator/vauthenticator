@@ -80,10 +80,10 @@ class AuthorizationServerConfig {
 
 
     @Bean
-    fun jwkSource(): JWKSource<SecurityContext> {
+    fun jwkSource(): JWKSource<SecurityContext?> {
         val rsaKey = generateRsa()
         val jwkSet = JWKSet(rsaKey)
-        return JWKSource { jwkSelector: JWKSelector, _: SecurityContext ->
+        return JWKSource { jwkSelector: JWKSelector, _: SecurityContext? ->
             jwkSelector.select(
                 jwkSet
             )
@@ -91,7 +91,7 @@ class AuthorizationServerConfig {
     }
 
     @Bean
-    fun nimbusJwsEncoder(jwkSource: JWKSource<SecurityContext>): NimbusJwsEncoder {
+    fun nimbusJwsEncoder(jwkSource: JWKSource<SecurityContext?>): NimbusJwsEncoder {
         return NimbusJwsEncoder(jwkSource)
     }
 
