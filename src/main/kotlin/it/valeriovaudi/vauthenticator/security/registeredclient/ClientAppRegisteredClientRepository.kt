@@ -2,6 +2,8 @@ package it.valeriovaudi.vauthenticator.security.registeredclient
 
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
+import org.slf4j.LoggerFactory
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.core.AuthorizationGrantType
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient
@@ -9,8 +11,14 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.security.oauth2.server.authorization.config.TokenSettings
 import java.time.Duration
 
-class ClientAppRegisteredClientRepository(private val clientApplicationRepository: ClientApplicationRepository) :
+class ClientAppRegisteredClientRepository(
+    private val clientApplicationRepository: ClientApplicationRepository,
+    private val passwordEncoder: PasswordEncoder
+) :
     RegisteredClientRepository {
+
+    val logger = LoggerFactory.getLogger(ClientAppRegisteredClientRepository::class.java)
+
     override fun findById(id: String): RegisteredClient =
         registeredClient(id)
 
@@ -22,7 +30,7 @@ class ClientAppRegisteredClientRepository(private val clientApplicationRepositor
         .map { clientApp ->
             RegisteredClient.withId(id)
                 .clientId(id)
-                .clientSecret(clientApp.secret.content)
+                .clientSecret(passwordEncoder.encode(clientApp.secret.content))
                 .clientAuthenticationMethod(ClientAuthenticationMethod.BASIC)
                 .clientAuthenticationMethod(ClientAuthenticationMethod.POST)
                 .authorizationGrantTypes { authorizationGrantTypes ->
@@ -40,7 +48,10 @@ class ClientAppRegisteredClientRepository(private val clientApplicationRepositor
                     tokenSettings.reuseRefreshTokens(false)
                 }
                 .build()
-        }.orElseThrow { RegisteredClientAppNotFound("Application with id or client_id: $id not found") }
+        }.orElseThrow {
+            logger.error("Application with id or client_id: $id not found")
+            RegisteredClientAppNotFound("Application with id or client_id: $id not found")
+        }
 
 
 }

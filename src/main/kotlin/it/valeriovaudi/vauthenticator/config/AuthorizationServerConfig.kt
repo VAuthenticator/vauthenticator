@@ -7,7 +7,9 @@ import com.nimbusds.jose.jwk.source.JWKSource
 import com.nimbusds.jose.proc.SecurityContext
 import it.valeriovaudi.vauthenticator.account.AccountRepository
 import it.valeriovaudi.vauthenticator.keypair.KeyRepository
+import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
 import it.valeriovaudi.vauthenticator.openid.connect.logout.JdbcFrontChannelLogout
+import it.valeriovaudi.vauthenticator.security.registeredclient.ClientAppRegisteredClientRepository
 import it.valeriovaudi.vauthenticator.security.userdetails.AccountUserDetailsService
 import it.valeriovaudi.vauthenticator.time.Clock
 import org.springframework.beans.factory.annotation.Autowired
@@ -111,7 +113,7 @@ class AuthorizationServerConfig(
         return NimbusJwsEncoder(jwkSource)
     }
 
-    @Bean
+    //    @Bean
     fun jwtCustomizer(): OAuth2TokenCustomizer<JwtEncodingContext>? {
         return OAuth2TokenCustomizer { context: JwtEncodingContext ->
             val tokenType = context.tokenType.value
@@ -120,8 +122,8 @@ class AuthorizationServerConfig(
                 val attributes =
                     context.authorization!!.attributes
                 val principle =
-                    attributes["java.security.Principal"] as Authentication?
-                context.claims.claim("role", principle!!.authorities
+                    attributes["java.security.Principal"] as Authentication
+                context.claims.claim("role", principle.authorities
                     .stream()
                     .map { obj: GrantedAuthority -> obj.authority }
                     .collect(Collectors.toList()))
@@ -131,31 +133,11 @@ class AuthorizationServerConfig(
 
 
     @Bean
-    fun registeredClientRepository(): RegisteredClientRepository {
-        val registeredClient = RegisteredClient.withId("123")
-            .clientId("messaging-client")
-            .clientSecret("secret")
-            .clientAuthenticationMethod(ClientAuthenticationMethod.BASIC)
-            .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-            .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-            .authorizationGrantType(AuthorizationGrantType.PASSWORD)
-            .scope(OidcScopes.OPENID)
-            .scope("message.read")
-            .scope("message.write")
-            .redirectUri("http://localhost:8080/login/oauth2/code/messaging-client-oidc")
-            .redirectUri("http://localhost:8080/authorized")
-            .tokenSettings { tokenSettings: TokenSettings ->
-                tokenSettings.accessTokenTimeToLive(
-                    Duration.ofMinutes(60)
-                )
-            }
-            .clientSettings { clientSettings: ClientSettings ->
-                clientSettings.requireUserConsent(
-                    false
-                ).requireProofKey(false)
-            }
-            .build()
-        return InMemoryRegisteredClientRepository(registeredClient)
+    fun registeredClientRepository(
+        clientRepository: ClientApplicationRepository,
+        passwordEncoder: PasswordEncoder
+    ): RegisteredClientRepository {
+        return ClientAppRegisteredClientRepository(clientRepository, passwordEncoder)
     }
 
     @Bean
