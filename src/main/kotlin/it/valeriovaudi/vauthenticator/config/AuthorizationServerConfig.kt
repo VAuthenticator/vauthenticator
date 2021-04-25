@@ -69,7 +69,7 @@ class AuthorizationServerConfig {
     }
 
     fun generateRsa(): RSAKey {
-        val keyPair = keyRepository.getKeyPair()
+        val keyPair = this.keyRepository.getKeyPair()
         val publicKey = keyPair.public as RSAPublicKey
         val privateKey = keyPair.private as RSAPrivateKey
         return RSAKey.Builder(publicKey)
@@ -83,7 +83,7 @@ class AuthorizationServerConfig {
     fun jwkSource(): JWKSource<SecurityContext> {
         val rsaKey = generateRsa()
         val jwkSet = JWKSet(rsaKey)
-        return JWKSource { jwkSelector: JWKSelector, securityContext: SecurityContext ->
+        return JWKSource { jwkSelector: JWKSelector, _: SecurityContext ->
             jwkSelector.select(
                 jwkSet
             )
