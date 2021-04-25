@@ -21,6 +21,7 @@
         <java.version>11</java.version>
         <kotlin.version>1.4.32</kotlin.version>
         <spring-cloud.version>2020.0.2</spring-cloud.version>
+        <io.mockk.version>1.11.0</io.mockk.version>
         <oauth2-authorization-server.version>0.1.0</oauth2-authorization-server.version>
     </properties>
 
@@ -123,7 +124,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>io.mockk</groupId>
+            <artifactId>mockk</artifactId>
+            <version>${io.mockk.version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
