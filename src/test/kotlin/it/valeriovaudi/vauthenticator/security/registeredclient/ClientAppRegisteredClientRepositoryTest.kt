@@ -20,8 +20,6 @@ internal class ClientAppRegisteredClientRepositoryTest {
     @MockK
     lateinit var clientApplicationRepository: ClientApplicationRepository
 
-
-
     lateinit var clientAppRegisteredClientRepository: ClientAppRegisteredClientRepository
 
     @BeforeEach
