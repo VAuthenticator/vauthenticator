@@ -4,7 +4,6 @@ import it.valeriovaudi.vauthenticator.account.AccountRepository
 import it.valeriovaudi.vauthenticator.jwt.SpringJwtEncoder
 import it.valeriovaudi.vauthenticator.keypair.KeyRepository
 import it.valeriovaudi.vauthenticator.oauth2.codeservice.RedisAuthorizationCodeServices
-import it.valeriovaudi.vauthenticator.oauth2.token.VAuthenticatorJwtAccessTokenConverter
 import it.valeriovaudi.vauthenticator.openid.connect.logout.JdbcFrontChannelLogout
 import it.valeriovaudi.vauthenticator.security.userdetails.AccountUserDetailsService
 import it.valeriovaudi.vauthenticator.time.Clock
@@ -93,18 +92,7 @@ class SecurityOAuth2AutorizationServerConfig(private val accountUserDetailsServi
 
     @Bean
     fun accessTokenConverter(): JwtAccessTokenConverter {
-        val keyPair = keyRepository.getKeyPair()
-
-        val jwtClaimsSetVerifier = JwtClaimsSetVerifier {}
-        val privateKey = keyPair.private
-        val rsaSigner = RsaSigner(privateKey as RSAPrivateKey)
-        val publicKey = keyPair.public as RSAPublicKey
-        val verifier = RsaVerifier(publicKey)
-        val tokenConverter = DefaultAccessTokenConverter()
-        val jsonParser = JsonParserFactory.create()
-        val jwtEncoder = SpringJwtEncoder(alias, tokenConverter, rsaSigner, jwtClaimsSetVerifier, jsonParser, verifier)
-
-        return VAuthenticatorJwtAccessTokenConverter(jwtEncoder)
+        return JwtAccessTokenConverter()
     }
 
     @Bean
