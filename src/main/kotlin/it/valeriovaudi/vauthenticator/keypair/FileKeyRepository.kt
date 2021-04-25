@@ -3,7 +3,7 @@ package it.valeriovaudi.vauthenticator.keypair
 import it.valeriovaudi.vauthenticator.extentions.toByteArray
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.core.io.FileSystemResource
-import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory
+import org.springframework.security.rsa.crypto.KeyStoreKeyFactory
 
 class FileKeyRepository(val config: KeyPairConfig) : KeyRepository {
 

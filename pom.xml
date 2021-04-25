@@ -22,7 +22,6 @@
         <kotlin.version>1.4.32</kotlin.version>
         <spring-cloud.version>2020.0.2</spring-cloud.version>
         <oauth2-authorization-server.version>0.1.0</oauth2-authorization-server.version>
-        <spring-cloud-starter-security.version>2.2.4.RELEASE</spring-cloud-starter-security.version>
     </properties>
 
     <dependencies>
@@ -83,18 +82,6 @@
             <groupId>org.springframework.security.experimental</groupId>
             <artifactId>spring-security-oauth2-authorization-server</artifactId>
             <version>${oauth2-authorization-server.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-security</artifactId>
-            <version>${spring-cloud-starter-security.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-oauth2</artifactId>
-            <version>${spring-cloud-starter-security.version}</version>
         </dependency>
 
         <dependency>
