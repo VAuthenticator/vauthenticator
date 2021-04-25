@@ -1,19 +1,16 @@
 package it.valeriovaudi.vauthenticator.config
 
 import it.valeriovaudi.vauthenticator.account.AccountRepository
-import it.valeriovaudi.vauthenticator.oauth2.codeservice.RedisAuthorizationCodeServices
 import it.valeriovaudi.vauthenticator.security.userdetails.AccountUserDetailsService
 import org.springframework.boot.autoconfigure.security.SecurityProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
-import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.security.oauth2.provider.OAuth2Authentication
 
 @Configuration
 @Order(SecurityProperties.DEFAULT_FILTER_ORDER)
@@ -52,10 +49,6 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     override fun authenticationManagerBean(): AuthenticationManager {
         return super.authenticationManagerBean()
     }
-
-    @Bean
-    fun redisAuthorizationCodeServices(redisTemplate: RedisTemplate<*, *>) =
-            RedisAuthorizationCodeServices(redisTemplate as RedisTemplate<String, OAuth2Authentication>)
 
     @Bean
     fun accountUserDetailsService(passwordEncoder: PasswordEncoder,

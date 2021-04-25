@@ -3,7 +3,6 @@ package it.valeriovaudi.vauthenticator.config
 import it.valeriovaudi.vauthenticator.account.AccountRepository
 import it.valeriovaudi.vauthenticator.jwt.SpringJwtEncoder
 import it.valeriovaudi.vauthenticator.keypair.KeyRepository
-import it.valeriovaudi.vauthenticator.oauth2.codeservice.RedisAuthorizationCodeServices
 import it.valeriovaudi.vauthenticator.openid.connect.logout.JdbcFrontChannelLogout
 import it.valeriovaudi.vauthenticator.security.userdetails.AccountUserDetailsService
 import it.valeriovaudi.vauthenticator.time.Clock
@@ -47,9 +46,6 @@ class SecurityOAuth2AutorizationServerConfig(private val accountUserDetailsServi
     lateinit var keyRepository: KeyRepository
 
     @Autowired
-    lateinit var redisAuthorizationCodeServices: RedisAuthorizationCodeServices
-
-    @Autowired
     lateinit var dataSource: DataSource
 
     @Autowired
@@ -63,7 +59,6 @@ class SecurityOAuth2AutorizationServerConfig(private val accountUserDetailsServi
         tokenEnhancerChain.setTokenEnhancers(listOf(accessTokenConverter()))
 
         endpoints.approvalStoreDisabled()
-                .authorizationCodeServices(redisAuthorizationCodeServices)
                 .authenticationManager(authenticationManager)
                 .tokenEnhancer(tokenEnhancerChain)
                 .tokenStore(tokenStore())
