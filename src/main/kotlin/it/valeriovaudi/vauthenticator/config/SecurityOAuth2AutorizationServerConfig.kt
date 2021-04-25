@@ -5,7 +5,6 @@ import it.valeriovaudi.vauthenticator.jwt.SpringJwtEncoder
 import it.valeriovaudi.vauthenticator.keypair.KeyRepository
 import it.valeriovaudi.vauthenticator.oauth2.codeservice.RedisAuthorizationCodeServices
 import it.valeriovaudi.vauthenticator.oauth2.token.VAuthenticatorJwtAccessTokenConverter
-import it.valeriovaudi.vauthenticator.openid.connect.idtoken.IdTokenEnhancer
 import it.valeriovaudi.vauthenticator.openid.connect.logout.JdbcFrontChannelLogout
 import it.valeriovaudi.vauthenticator.security.userdetails.AccountUserDetailsService
 import it.valeriovaudi.vauthenticator.time.Clock
@@ -62,11 +61,7 @@ class SecurityOAuth2AutorizationServerConfig(private val accountUserDetailsServi
 
     override fun configure(endpoints: AuthorizationServerEndpointsConfigurer) {
         val tokenEnhancerChain = TokenEnhancerChain()
-        val enanchers = mutableListOf(
-                accessTokenConverter(),
-                IdTokenEnhancer(oidcIss, accountRepository, keyRepository, clock)
-        )
-        tokenEnhancerChain.setTokenEnhancers(enanchers)
+        tokenEnhancerChain.setTokenEnhancers(listOf(accessTokenConverter()))
 
         endpoints.approvalStoreDisabled()
                 .authorizationCodeServices(redisAuthorizationCodeServices)
