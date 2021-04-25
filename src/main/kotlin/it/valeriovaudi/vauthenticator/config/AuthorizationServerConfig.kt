@@ -68,8 +68,18 @@ class AuthorizationServerConfig {
         return http.build()
     }
 
+    fun generateRsaKey(): KeyPair {
+        return try {
+            val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
+            keyPairGenerator.initialize(2048)
+            keyPairGenerator.generateKeyPair()
+        } catch (ex: Exception) {
+            throw IllegalStateException(ex)
+        }
+    }
+
     fun generateRsa(): RSAKey {
-        val keyPair = this.keyRepository.getKeyPair()
+        val keyPair = generateRsaKey()
         val publicKey = keyPair.public as RSAPublicKey
         val privateKey = keyPair.private as RSAPrivateKey
         return RSAKey.Builder(publicKey)
@@ -82,8 +92,8 @@ class AuthorizationServerConfig {
     fun jwkSource(): JWKSource<SecurityContext?> {
         val rsaKey = generateRsa()
         val jwkSet = JWKSet(rsaKey)
-        return JWKSource { jwkSelector: JWKSelector, _: SecurityContext? ->
-            jwkSelector.select(
+        return JWKSource { jwkSelector: JWKSelector?, _: SecurityContext? ->
+            jwkSelector?.select(
                 jwkSet
             )
         }
@@ -94,7 +104,7 @@ class AuthorizationServerConfig {
         return NimbusJwsEncoder(jwkSource)
     }
 
-    //    @Bean
+    @Bean
     fun jwtCustomizer(): OAuth2TokenCustomizer<JwtEncodingContext> {
         return OAuth2TokenCustomizer { context: JwtEncodingContext ->
             val tokenType = context.tokenType.value
@@ -128,7 +138,8 @@ class AuthorizationServerConfig {
 
     @Bean
     fun providerSettings(): ProviderSettings {
-        return ProviderSettings().issuer(oidcIss)
+//        return ProviderSettings().issuer(oidcIss)
+        return ProviderSettings().issuer("http://localhost:8080/vauthenticator")
     }
 
     @Bean
