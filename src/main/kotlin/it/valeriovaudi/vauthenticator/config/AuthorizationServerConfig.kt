@@ -139,8 +139,8 @@ class AuthorizationServerConfig {
 
     @Bean
     fun providerSettings(): ProviderSettings {
-//        return ProviderSettings().issuer(oidcIss)
-        return ProviderSettings().issuer("http://localhost:8080/vauthenticator")
+        return ProviderSettings().issuer(oidcIss)
+//        return ProviderSettings().issuer("http://localhost:8080/vauthenticator")
     }
 
     @Bean
