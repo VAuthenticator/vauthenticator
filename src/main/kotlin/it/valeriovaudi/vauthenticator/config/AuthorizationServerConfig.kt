@@ -24,6 +24,7 @@ import org.springframework.security.config.annotation.web.configuration.OAuth2Au
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.oauth2.core.AuthorizationGrantType.CLIENT_CREDENTIALS
 import org.springframework.security.oauth2.jwt.NimbusJwsEncoder
 import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationService
 import org.springframework.security.oauth2.server.authorization.JwtEncodingContext
@@ -68,7 +69,7 @@ class AuthorizationServerConfig {
         return http.build()
     }
 
-    fun generateRsaKey(): KeyPair {
+   /* fun generateRsaKey(): KeyPair {
         return try {
             val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
             keyPairGenerator.initialize(2048)
@@ -77,9 +78,9 @@ class AuthorizationServerConfig {
             throw IllegalStateException(ex)
         }
     }
-
+*/
     fun generateRsa(): RSAKey {
-        val keyPair = generateRsaKey()
+        val keyPair = this.keyRepository.getKeyPair()
         val publicKey = keyPair.public as RSAPublicKey
         val privateKey = keyPair.private as RSAPrivateKey
         return RSAKey.Builder(publicKey)
@@ -100,7 +101,7 @@ class AuthorizationServerConfig {
     }
 
     @Bean
-    fun nimbusJwsEncoder(jwkSource: JWKSource<SecurityContext?>): NimbusJwsEncoder {
+    fun nimbusJwsEncoder(jwkSource: JWKSource<SecurityContext?>?): NimbusJwsEncoder {
         return NimbusJwsEncoder(jwkSource)
     }
 
@@ -109,7 +110,7 @@ class AuthorizationServerConfig {
         return OAuth2TokenCustomizer { context: JwtEncodingContext ->
             val tokenType = context.tokenType.value
             println(tokenType)
-            if ("access_token" == tokenType) {
+            if ("access_token" == tokenType && !context.authorizationGrantType.equals(CLIENT_CREDENTIALS)) {
                 val attributes =
                     context.authorization!!.attributes
                 val principle =
