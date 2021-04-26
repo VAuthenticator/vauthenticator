@@ -18,7 +18,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 
 @ExtendWith(SpringExtension::class)
 @WebMvcTest(UserInfoEndPoint::class)
-class UserInfoEndPointTest {
+internal class UserInfoEndPointTest {
 
     @Autowired
     lateinit var mockMvc: MockMvc
