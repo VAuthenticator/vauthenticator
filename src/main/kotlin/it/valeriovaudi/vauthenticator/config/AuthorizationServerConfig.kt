@@ -69,16 +69,16 @@ class AuthorizationServerConfig {
         return http.build()
     }
 
-   /* fun generateRsaKey(): KeyPair {
-        return try {
-            val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
-            keyPairGenerator.initialize(2048)
-            keyPairGenerator.generateKeyPair()
-        } catch (ex: Exception) {
-            throw IllegalStateException(ex)
-        }
-    }
-*/
+    /* fun generateRsaKey(): KeyPair {
+         return try {
+             val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
+             keyPairGenerator.initialize(2048)
+             keyPairGenerator.generateKeyPair()
+         } catch (ex: Exception) {
+             throw IllegalStateException(ex)
+         }
+     }
+ */
     fun generateRsa(): RSAKey {
         val keyPair = this.keyRepository.getKeyPair()
         val publicKey = keyPair.public as RSAPublicKey
@@ -119,6 +119,14 @@ class AuthorizationServerConfig {
                     .stream()
                     .map { obj: GrantedAuthority -> obj.authority }
                     .collect(Collectors.toList()))
+            }
+
+            if ("id_token" == tokenType && !context.authorizationGrantType.equals(CLIENT_CREDENTIALS)) {
+                val attributes =
+                    context.authorization!!.attributes
+                val principle =
+                    attributes["java.security.Principal"] as Authentication
+                context.claims.claim("email", principle.name)
             }
         }
     }
