@@ -11,14 +11,8 @@ import org.springframework.web.bind.annotation.RestController
 class UserInfoEndPoint(private val userInfoFactory: UserInfoFactory) {
 
     @GetMapping("/user-info")
-    fun key(
-        principal: JwtAuthenticationToken,
-        @RequestHeader("Authorization", required = false) authorization: String?
-    ): ResponseEntity<UserInfo> {
-        println("authorization: $authorization")
-        println("principal: $principal")
-        return ok(userInfoFactory.newUserInfo(principal))
-    }
+    fun key(principal: JwtAuthenticationToken): ResponseEntity<UserInfo> =
+        ok(userInfoFactory.newUserInfo(principal))
 
 
 }

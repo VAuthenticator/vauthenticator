@@ -5,15 +5,17 @@ import it.valeriovaudi.vauthenticator.security.userdetails.AccountUserDetailsSer
 import org.springframework.boot.autoconfigure.security.SecurityProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Import
 import org.springframework.core.annotation.Order
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
+import org.springframework.security.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration
 import org.springframework.security.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration.applyDefaultSecurity
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 
 @Configuration
-@Order(SecurityProperties.DEFAULT_FILTER_ORDER)
+@Import(OAuth2AuthorizationServerConfiguration::class)
 class WebSecurityConfig {
 
     private val LOG_IN_URL_PAGE = "/login"
@@ -22,7 +24,9 @@ class WebSecurityConfig {
         "/oidc/logout",
         "/login",
         "/user-info",
-        "/webjars/**"
+        "/webjars/**",
+        "/api/**",
+        "/secure/**"
     )
 
     @Bean
@@ -32,19 +36,16 @@ class WebSecurityConfig {
             .loginProcessingUrl("/login")
             .loginPage(LOG_IN_URL_PAGE)
             .permitAll()
-            .and()
-            .logout().logoutSuccessUrl("/secure/admin/index")
-            .and()
-            .requestMatchers().antMatchers(*WHITE_LIST)
-            .and()
-            .requestMatchers().antMatchers("/api/**", "/secure/**")
+
+        http.logout().logoutSuccessUrl("/secure/admin/index")
+
+        http.requestMatchers().antMatchers(*WHITE_LIST)
             .and()
             .authorizeRequests()
             .mvcMatchers("/api/**", "/secure/**")
             .hasAuthority("VAUTHENTICATOR_ADMIN")
-            .and()
-            .authorizeRequests().anyRequest().permitAll()
-            .and().oauth2ResourceServer().jwt()
+
+        http.oauth2ResourceServer().jwt()
         return http.build()
 
     }

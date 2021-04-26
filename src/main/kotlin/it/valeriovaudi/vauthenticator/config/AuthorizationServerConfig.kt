@@ -6,21 +6,17 @@ import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jose.jwk.source.JWKSource
 import com.nimbusds.jose.proc.SecurityContext
 import it.valeriovaudi.vauthenticator.account.AccountRepository
+import it.valeriovaudi.vauthenticator.extentions.toSha256
 import it.valeriovaudi.vauthenticator.keypair.KeyRepository
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
 import it.valeriovaudi.vauthenticator.openid.connect.logout.JdbcFrontChannelLogout
 import it.valeriovaudi.vauthenticator.security.registeredclient.ClientAppRegisteredClientRepository
-import it.valeriovaudi.vauthenticator.security.userdetails.AccountUserDetailsService
 import it.valeriovaudi.vauthenticator.time.Clock
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.core.Ordered
-import org.springframework.core.annotation.Order
 import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -32,7 +28,6 @@ import org.springframework.security.oauth2.server.authorization.OAuth2Authorizat
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenCustomizer
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository
 import org.springframework.security.oauth2.server.authorization.config.ProviderSettings
-import org.springframework.security.web.SecurityFilterChain
 import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.interfaces.RSAPrivateKey
@@ -62,25 +57,19 @@ class AuthorizationServerConfig {
     @Autowired
     lateinit var clock: Clock
 
-    @Bean
-    @Order(Ordered.HIGHEST_PRECEDENCE)
-    fun authorizationServerSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
-        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http)
-        return http.build()
+    fun generateRsaKey(): KeyPair {
+        return try {
+            val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
+            keyPairGenerator.initialize(2048)
+            keyPairGenerator.generateKeyPair()
+        } catch (ex: Exception) {
+            throw IllegalStateException(ex)
+        }
     }
 
-    /* fun generateRsaKey(): KeyPair {
-         return try {
-             val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
-             keyPairGenerator.initialize(2048)
-             keyPairGenerator.generateKeyPair()
-         } catch (ex: Exception) {
-             throw IllegalStateException(ex)
-         }
-     }
- */
     fun generateRsa(): RSAKey {
         val keyPair = this.keyRepository.getKeyPair()
+//        val keyPair = generateRsaKey()
         val publicKey = keyPair.public as RSAPublicKey
         val privateKey = keyPair.private as RSAPrivateKey
         return RSAKey.Builder(publicKey)
@@ -93,8 +82,8 @@ class AuthorizationServerConfig {
     fun jwkSource(): JWKSource<SecurityContext?> {
         val rsaKey = generateRsa()
         val jwkSet = JWKSet(rsaKey)
-        return JWKSource { jwkSelector: JWKSelector?, _: SecurityContext? ->
-            jwkSelector?.select(
+        return JWKSource { jwkSelector: JWKSelector, _: SecurityContext? ->
+            jwkSelector.select(
                 jwkSet
             )
         }
@@ -113,9 +102,11 @@ class AuthorizationServerConfig {
             if ("access_token" == tokenType && !context.authorizationGrantType.equals(CLIENT_CREDENTIALS)) {
                 val attributes =
                     context.authorization!!.attributes
-                val principle =
+                val principal =
                     attributes["java.security.Principal"] as Authentication
-                context.claims.claim("role", principle.authorities
+
+                context.claims.claim("user_name", principal.name)
+                context.claims.claim("authorities", principal.authorities
                     .stream()
                     .map { obj: GrantedAuthority -> obj.authority }
                     .collect(Collectors.toList()))
