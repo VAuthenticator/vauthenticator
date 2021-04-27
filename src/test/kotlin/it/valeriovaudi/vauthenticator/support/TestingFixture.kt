@@ -9,7 +9,7 @@ import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
 import software.amazon.awssdk.services.dynamodb.model.ScanRequest
 
 object TestingFixture {
-    private val dynamoRoleTableName = System.getenv("STAGING_DYNAMO_DB_ROLE_TABLE_NAME")
+    val dynamoRoleTableName = System.getenv("STAGING_DYNAMO_DB_ROLE_TABLE_NAME")
 
     val postGresHost = System.getProperty("test.database.host", "localhost")
     val postGresPort = System.getProperty("test.database.port", "35432")
@@ -30,8 +30,8 @@ object TestingFixture {
     }
 
     fun initRoleTests(roleRepository: DynamoDbClient) {
-        val roleName = AttributeValue.builder().s("role_name").build()
-        val description = AttributeValue.builder().s("description").build()
+        val roleName = AttributeValue.builder().s("a_role").build()
+        val description = AttributeValue.builder().s("A_ROLE").build()
         val item = PutItemRequest.builder()
             .tableName(dynamoRoleTableName)
             .item(
@@ -62,7 +62,7 @@ object TestingFixture {
             .items()
             .forEach {
                 val deleteItemRequest = DeleteItemRequest.builder().tableName(dynamoRoleTableName)
-                    .key(mutableMapOf("role_name" to AttributeValue.builder().s(it["role_name"].toString()).build()))
+                    .key(mutableMapOf("role_name" to AttributeValue.builder().s(it["role_name"]?.s()).build()))
                     .build()
 
                 roleRepository.deleteItem(deleteItemRequest)

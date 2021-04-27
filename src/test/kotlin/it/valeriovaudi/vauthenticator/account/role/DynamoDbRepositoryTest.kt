@@ -1,10 +1,10 @@
 package it.valeriovaudi.vauthenticator.account.role
 
 import it.valeriovaudi.vauthenticator.support.TestingFixture
+import it.valeriovaudi.vauthenticator.support.TestingFixture.dynamoRoleTableName
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider
 import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 
@@ -13,8 +13,9 @@ internal class DynamoDbRepositoryTest {
 
     @BeforeEach
     fun setUp() {
-        val dynamoDbClient = DynamoDbClient.builder().credentialsProvider(EnvironmentVariableCredentialsProvider.create()).build()
-        roleRepository = DynamoDbRepository(dynamoDbClient)
+        val dynamoDbClient =
+            DynamoDbClient.builder().credentialsProvider(EnvironmentVariableCredentialsProvider.create()).build()
+        roleRepository = DynamoDbRepository(dynamoDbClient, dynamoRoleTableName)
 
         TestingFixture.resetDatabase(dynamoDbClient)
         TestingFixture.initRoleTests(dynamoDbClient)
@@ -28,7 +29,7 @@ internal class DynamoDbRepositoryTest {
         Assertions.assertEquals(expected, actual)
     }
 
-//    @Test
+    //    @Test
     internal fun `save a new role`() {
         roleRepository.save(Role("another_role", "ANOTHER_ROLE"))
         val expected = roleRepository.findAll()
@@ -37,7 +38,7 @@ internal class DynamoDbRepositoryTest {
         Assertions.assertEquals(expected, actual)
     }
 
-//    @Test
+    //    @Test
     internal fun `save a new role again`() {
         roleRepository.save(Role("another_role", "ANOTHER_ROLE"))
         roleRepository.save(Role("another_role", "ANOTHER_ROLE AGAIN"))
@@ -47,7 +48,7 @@ internal class DynamoDbRepositoryTest {
         Assertions.assertEquals(expected, actual)
     }
 
-//    @Test
+    //    @Test
     internal fun `delete a role`() {
         roleRepository.delete("a_role")
         val roles = roleRepository.findAll()

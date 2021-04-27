@@ -2,6 +2,9 @@ package it.valeriovaudi.vauthenticator.account.role
 
 import org.springframework.jdbc.core.JdbcTemplate
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
+import software.amazon.awssdk.services.dynamodb.model.QueryRequest
+import software.amazon.awssdk.services.dynamodb.model.ScanRequest
 
 interface RoleRepository {
 
@@ -29,9 +32,22 @@ class JdbcRoleRepository(val jdbcTemplate: JdbcTemplate) : RoleRepository {
             .let { Unit }
 }
 
-class DynamoDbRepository(dynamoDbClient: DynamoDbClient) : RoleRepository {
+class DynamoDbRepository(
+    private val dynamoDbClient: DynamoDbClient,
+    private val tableName: String
+) : RoleRepository {
     override fun findAll() =
-        TODO()
+        dynamoDbClient.scan(
+            ScanRequest.builder()
+                .tableName(tableName)
+                .build()
+        ).items()
+            .map {
+                Role(
+                    it["role_name"]?.s()!!,
+                    it["description"]?.s().orEmpty()
+                )
+            }
 
     override fun save(role: Role) =
         TODO()
