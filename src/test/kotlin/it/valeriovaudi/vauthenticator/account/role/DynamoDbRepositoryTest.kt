@@ -29,7 +29,7 @@ internal class DynamoDbRepositoryTest {
         Assertions.assertEquals(expected, actual)
     }
 
-    //    @Test
+    @Test
     internal fun `save a new role`() {
         roleRepository.save(Role("another_role", "ANOTHER_ROLE"))
         val expected = roleRepository.findAll()

@@ -2,9 +2,7 @@ package it.valeriovaudi.vauthenticator.account.role
 
 import org.springframework.jdbc.core.JdbcTemplate
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
-import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
-import software.amazon.awssdk.services.dynamodb.model.QueryRequest
-import software.amazon.awssdk.services.dynamodb.model.ScanRequest
+import software.amazon.awssdk.services.dynamodb.model.*
 
 interface RoleRepository {
 
@@ -25,11 +23,11 @@ class JdbcRoleRepository(val jdbcTemplate: JdbcTemplate) : RoleRepository {
             "INSERT INTO ROLE (NAME, DESCRIPTION) VALUES (?, ?) ON CONFLICT (NAME) DO UPDATE SET DESCRIPTION=? ",
             role.name, role.description, role.description
         )
-            .let { Unit }
+            .let { }
 
     override fun delete(roleName: String) =
         jdbcTemplate.update("DELETE FROM ROLE WHERE NAME=?", roleName)
-            .let { Unit }
+            .let { }
 }
 
 class DynamoDbRepository(
@@ -50,7 +48,17 @@ class DynamoDbRepository(
             }
 
     override fun save(role: Role) =
-        TODO()
+        dynamoDbClient.putItem(
+            PutItemRequest.builder()
+                .tableName(tableName)
+                .item(
+                    mutableMapOf(
+                        "role_name" to AttributeValue.builder().s(role.name).build(),
+                        "description" to AttributeValue.builder().s(role.description).build()
+                    )
+                )
+                .build()
+        ).let {  }
 
     override fun delete(roleName: String) =
         TODO()
