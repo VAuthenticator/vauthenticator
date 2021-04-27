@@ -1,6 +1,7 @@
 package it.valeriovaudi.vauthenticator.account.role
 
 import it.valeriovaudi.vauthenticator.support.TestingFixture
+import it.valeriovaudi.vauthenticator.support.TestingFixture.dynamoDbClient
 import it.valeriovaudi.vauthenticator.support.TestingFixture.dynamoRoleTableName
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -13,8 +14,6 @@ internal class DynamoDbRepositoryTest {
 
     @BeforeEach
     fun setUp() {
-        val dynamoDbClient =
-            DynamoDbClient.builder().credentialsProvider(EnvironmentVariableCredentialsProvider.create()).build()
         roleRepository = DynamoDbRepository(dynamoDbClient, dynamoRoleTableName)
 
         TestingFixture.resetDatabase(dynamoDbClient)

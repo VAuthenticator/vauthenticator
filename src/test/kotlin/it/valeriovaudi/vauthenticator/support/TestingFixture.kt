@@ -2,19 +2,28 @@ package it.valeriovaudi.vauthenticator.support
 
 import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.jdbc.core.JdbcTemplate
+import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
 import software.amazon.awssdk.services.dynamodb.model.ScanRequest
+import javax.sql.DataSource
 
 object TestingFixture {
-    val dynamoRoleTableName = System.getenv("STAGING_DYNAMO_DB_ROLE_TABLE_NAME")
 
-    val postGresHost = System.getProperty("test.database.host", "localhost")
-    val postGresPort = System.getProperty("test.database.port", "35432")
+    val dynamoRoleTableName: String = System.getenv("STAGING_DYNAMO_DB_ROLE_TABLE_NAME")
+    val dynamoAccountTableName: String = System.getenv("STAGING_DYNAMO_DB_ACCOUNT_TABLE_NAME")
+    val dynamoAccountRoleTableName: String = System.getenv("STAGING_DYNAMO_DB_ACCOUNT_ROLE_TABLE_NAME")
 
-    val dataSource = DataSourceBuilder.create()
+    val postGresHost: String = System.getProperty("test.database.host", "localhost")
+    val postGresPort: String = System.getProperty("test.database.port", "35432")
+
+    val dynamoDbClient: DynamoDbClient = DynamoDbClient.builder()
+        .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
+        .build()
+
+    val dataSource: DataSource = DataSourceBuilder.create()
         .url("jdbc:postgresql://$postGresHost:$postGresPort/vauthenticator?user=root&password=root")
         .build()
 
