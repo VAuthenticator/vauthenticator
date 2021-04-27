@@ -38,7 +38,7 @@ internal class DynamoDbRepositoryTest {
         Assertions.assertEquals(expected, actual)
     }
 
-    //    @Test
+    @Test
     internal fun `save a new role again`() {
         roleRepository.save(Role("another_role", "ANOTHER_ROLE"))
         roleRepository.save(Role("another_role", "ANOTHER_ROLE AGAIN"))
@@ -48,7 +48,7 @@ internal class DynamoDbRepositoryTest {
         Assertions.assertEquals(expected, actual)
     }
 
-    //    @Test
+    @Test
     internal fun `delete a role`() {
         roleRepository.delete("a_role")
         val roles = roleRepository.findAll()
