@@ -229,7 +229,7 @@ class DynamoDbAccountRepository(
             QueryRequest.builder()
                 .tableName(dynamoAccountRoleTableName)
                 .keyConditionExpression("user_name = :username")
-                .expressionAttributeValues(mutableMapOf(":username" to AttributeValue.builder().s(username).build()))
+                .expressionAttributeValues(mutableMapOf(":username" to dynamoUserNameAttributeFor(username)))
                 .build()
         )
             .items()
@@ -241,20 +241,18 @@ class DynamoDbAccountRepository(
             .tableName(dynamoAccountTableName)
             .key(
                 mutableMapOf(
-                    "user_name" to AttributeValue.builder().s(username).build()
+                    "user_name" to dynamoUserNameAttributeFor(username)
                 )
             )
             .build()
     ).item()
 
+    private fun dynamoUserNameAttributeFor(username: String) = AttributeValue.builder().s(username).build()
 
     override fun save(account: Account) {
         storeAccountFrom(account)
         account.authorities
-            .forEach {
-                storeAccountRoleFrom(account, it)
-            }
-
+            .forEach { storeAccountRoleFrom(account, it) }
     }
 
     private fun storeAccountFrom(account: Account) {
