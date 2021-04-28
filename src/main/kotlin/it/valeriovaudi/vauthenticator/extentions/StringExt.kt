@@ -1,6 +1,7 @@
 package it.valeriovaudi.vauthenticator.extentions
 
 import org.slf4j.LoggerFactory
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
@@ -18,3 +19,5 @@ fun String.toSha256(): String {
 
     return String(messageDigest!!.digest(this.toByteArray()))
 }
+
+fun String.asDynamoAttribute(): AttributeValue = AttributeValue.builder().s(this).build()

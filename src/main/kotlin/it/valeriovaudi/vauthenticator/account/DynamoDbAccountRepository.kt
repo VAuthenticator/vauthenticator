@@ -1,5 +1,6 @@
 package it.valeriovaudi.vauthenticator.account
 
+import it.valeriovaudi.vauthenticator.extentions.asDynamoAttribute
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.*
 import java.util.*
@@ -26,7 +27,7 @@ class DynamoDbAccountRepository(
     override fun accountFor(username: String): Optional<Account> {
         val authorities = findAuthoritiesNameFor(username)
         return Optional.ofNullable(
-            findAccountFrom(username)
+            findAccountFor(username)
                 .let { AccountDynamoConverter.accountFor(it, authorities) }
         )
     }
@@ -36,25 +37,24 @@ class DynamoDbAccountRepository(
             QueryRequest.builder()
                 .tableName(dynamoAccountRoleTableName)
                 .keyConditionExpression("user_name = :username")
-                .expressionAttributeValues(mutableMapOf(":username" to dynamoUserNameAttributeFor(username)))
+                .expressionAttributeValues(mutableMapOf(":username" to username.asDynamoAttribute()))
                 .build()
         )
             .items()
             .map { it["role_name"]?.s()!! }
     }
 
-    private fun findAccountFrom(username: String) = dynamoDbClient.getItem(
+    private fun findAccountFor(username: String) = dynamoDbClient.getItem(
         GetItemRequest.builder()
             .tableName(dynamoAccountTableName)
             .key(
                 mutableMapOf(
-                    "user_name" to dynamoUserNameAttributeFor(username)
+                    "user_name" to username.asDynamoAttribute()
                 )
             )
             .build()
     ).item()
 
-    private fun dynamoUserNameAttributeFor(username: String) = AttributeValue.builder().s(username).build()
 
 
     override fun save(account: Account) {
@@ -96,7 +96,7 @@ class DynamoDbAccountRepository(
             QueryRequest.builder()
                 .tableName(dynamoAccountRoleTableName)
                 .keyConditionExpression("user_name = :username")
-                .expressionAttributeValues(mutableMapOf(":username" to dynamoUserNameAttributeFor(account.username)))
+                .expressionAttributeValues(mutableMapOf(":username" to account.username.asDynamoAttribute()))
                 .build()
         )
             .items()
@@ -117,8 +117,8 @@ class DynamoDbAccountRepository(
         val deleteItemRequest = DeleteItemRequest.builder().tableName(dynamoAccountRoleTableName)
             .key(
                 mutableMapOf(
-                    "user_name" to AttributeValue.builder().s(account.username).build(),
-                    "role_name" to AttributeValue.builder().s(roleName).build()
+                    "user_name" to account.username.asDynamoAttribute(),
+                    "role_name" to roleName.asDynamoAttribute()
                 )
             )
             .build()
@@ -173,8 +173,8 @@ object AccountDynamoConverter {
         account: Account,
         roleName: String
     ) = mutableMapOf(
-        "user_name" to AttributeValue.builder().s(account.username).build(),
-        "role_name" to AttributeValue.builder().s(roleName).build()
+        "user_name" to account.username.asDynamoAttribute(),
+        "role_name" to roleName.asDynamoAttribute()
     )
 
     fun accountToItemFor(account: Account) = mutableMapOf(
