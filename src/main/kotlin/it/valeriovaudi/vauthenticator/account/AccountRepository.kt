@@ -1,10 +1,9 @@
 package it.valeriovaudi.vauthenticator.account
 
-import it.valeriovaudi.vauthenticator.account.AccountAuthorities.addAuthorities
-import it.valeriovaudi.vauthenticator.account.AccountAuthorities.removeAuthorities
+import it.valeriovaudi.vauthenticator.account.dynamo.AccountAuthorities.addAuthorities
+import it.valeriovaudi.vauthenticator.account.dynamo.AccountAuthorities.removeAuthorities
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.transaction.annotation.Transactional
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 import java.sql.ResultSet
 import java.util.*
 
