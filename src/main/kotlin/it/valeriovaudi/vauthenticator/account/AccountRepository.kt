@@ -1,5 +1,7 @@
 package it.valeriovaudi.vauthenticator.account
 
+import it.valeriovaudi.vauthenticator.account.AccountAutorities.addAuthorities
+import it.valeriovaudi.vauthenticator.account.AccountAutorities.removeAuthorities
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.transaction.annotation.Transactional
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
@@ -102,8 +104,12 @@ class JdbcAccountRepository(private val jdbcTemplate: JdbcTemplate) : AccountRep
         storedAccountRolesSet: Set<String>
     ) {
         saveAccountFor(account)
-        addAuthorities(accountAuthoritiesSet, storedAccountRolesSet, account)
-        removeAuthorities(storedAccountRolesSet, accountAuthoritiesSet, account)
+        addAuthorities(accountAuthoritiesSet, storedAccountRolesSet) { authority ->
+            jdbcTemplate.update("INSERT INTO ACCOUNT_ROLE(USERNAME, ROLE) VALUES (?,?)", account.username, authority)
+        }
+        removeAuthorities(storedAccountRolesSet, accountAuthoritiesSet) {
+            jdbcTemplate.update("DELETE FROM ACCOUNT_ROLE WHERE USERNAME=? AND ROLE=?", account.username, it)
+        }
     }
 
     private fun accountRolesFor(account: Account) = account.authorities.toSet()
@@ -124,31 +130,30 @@ class JdbcAccountRepository(private val jdbcTemplate: JdbcTemplate) : AccountRep
         )
     }
 
-    private fun removeAuthorities(
-        storedAccountRolesSet: Set<String>,
-        accountAuthoritiesSet: Set<String>,
-        account: Account
-    ) =
-        storedAccountRolesSet.filter {
-            !accountAuthoritiesSet.contains(it)
-        }.forEach {
-            jdbcTemplate.update("DELETE FROM ACCOUNT_ROLE WHERE USERNAME=? AND ROLE=?", account.username, it)
-        }
-
-
-    private fun addAuthorities(
-        accountAuthoritiesSet: Set<String>,
-        storedAccountRolesSet: Set<String>,
-        account: Account
-    ) =
-        accountAuthoritiesSet.filter {
-            !storedAccountRolesSet.contains(it)
-        }.forEach { authority ->
-            jdbcTemplate.update("INSERT INTO ACCOUNT_ROLE(USERNAME, ROLE) VALUES (?,?)", account.username, authority)
-        }
 
 }
 
+object AccountAutorities {
+    fun removeAuthorities(
+        storedAccountRolesSet: Set<String>,
+        accountAuthoritiesSet: Set<String>,
+        removeAuthorities: (String) -> Unit
+    ) =
+        storedAccountRolesSet.filter {
+            !accountAuthoritiesSet.contains(it)
+        }.forEach(removeAuthorities)
+
+
+    fun addAuthorities(
+        accountAuthoritiesSet: Set<String>,
+        storedAccountRolesSet: Set<String>,
+        addAuthorities: (String) -> Unit
+    ) =
+        accountAuthoritiesSet.filter {
+            !storedAccountRolesSet.contains(it)
+        }.forEach(addAuthorities)
+
+}
 
 class DynamoDbAccountRepository(
     private val dynamoDbClient: DynamoDbClient,
@@ -219,20 +224,7 @@ class DynamoDbAccountRepository(
         dynamoDbClient.putItem(
             PutItemRequest.builder()
                 .tableName(dynamoAccountTableName)
-                .item(
-                    mutableMapOf(
-                        "accountNonExpired" to AttributeValue.builder().bool(account.accountNonExpired).build(),
-                        "accountNonLocked" to AttributeValue.builder().bool(account.accountNonLocked).build(),
-                        "credentialsNonExpired" to AttributeValue.builder().bool(account.credentialsNonExpired).build(),
-                        "enabled" to AttributeValue.builder().bool(account.enabled).build(),
-                        "user_name" to AttributeValue.builder().s(account.username).build(),
-                        "password" to AttributeValue.builder().s(account.password).build(),
-                        "email" to AttributeValue.builder().s(account.email).build(),
-                        "emailVerified" to AttributeValue.builder().bool(account.emailVerified).build(),
-                        "firstName" to AttributeValue.builder().s(account.firstName).build(),
-                        "lastName" to AttributeValue.builder().s(account.lastName).build()
-                    )
-                )
+                .item(accountToItem(account))
                 .build()
         )
 
@@ -241,16 +233,32 @@ class DynamoDbAccountRepository(
                 dynamoDbClient.putItem(
                     PutItemRequest.builder()
                         .tableName(dynamoAccountRoleTableName)
-                        .item(
-                            mutableMapOf(
-                                "user_name" to AttributeValue.builder().s(account.username).build(),
-                                "role_name" to AttributeValue.builder().s(it).build()
-                            )
-                        )
+                        .item(accountRoleFor(account, it))
                         .build()
                 )
             }
 
     }
+
+    private fun accountRoleFor(
+        account: Account,
+        roleName: String
+    ) = mutableMapOf(
+        "user_name" to AttributeValue.builder().s(account.username).build(),
+        "role_name" to AttributeValue.builder().s(roleName).build()
+    )
+
+    private fun accountToItem(account: Account) = mutableMapOf(
+        "accountNonExpired" to AttributeValue.builder().bool(account.accountNonExpired).build(),
+        "accountNonLocked" to AttributeValue.builder().bool(account.accountNonLocked).build(),
+        "credentialsNonExpired" to AttributeValue.builder().bool(account.credentialsNonExpired).build(),
+        "enabled" to AttributeValue.builder().bool(account.enabled).build(),
+        "user_name" to AttributeValue.builder().s(account.username).build(),
+        "password" to AttributeValue.builder().s(account.password).build(),
+        "email" to AttributeValue.builder().s(account.email).build(),
+        "emailVerified" to AttributeValue.builder().bool(account.emailVerified).build(),
+        "firstName" to AttributeValue.builder().s(account.firstName).build(),
+        "lastName" to AttributeValue.builder().s(account.lastName).build()
+    )
 
 }
