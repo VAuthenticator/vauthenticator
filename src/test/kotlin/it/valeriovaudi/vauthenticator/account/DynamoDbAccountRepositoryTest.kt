@@ -5,6 +5,7 @@ import it.valeriovaudi.vauthenticator.support.TestingFixture
 import it.valeriovaudi.vauthenticator.support.TestingFixture.dynamoAccountRoleTableName
 import it.valeriovaudi.vauthenticator.support.TestingFixture.dynamoAccountTableName
 import it.valeriovaudi.vauthenticator.support.TestingFixture.dynamoDbClient
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -16,13 +17,18 @@ internal class DynamoDbAccountRepositoryTest {
 
     @BeforeEach
     fun setUp() {
-//        TestingFixture.resetDatabase(dynamoDbClient)
         accountRepository = DynamoDbAccountRepository(
             dynamoDbClient,
             dynamoAccountTableName,
             dynamoAccountRoleTableName
         )
     }
+
+    @AfterEach
+    fun tearDown() {
+        TestingFixture.resetDatabase(dynamoDbClient)
+    }
+
 
     @Test
     fun `find an account by email`() {
@@ -32,7 +38,7 @@ internal class DynamoDbAccountRepositoryTest {
         Assertions.assertEquals(findByUsername, account)
     }
 
-    //    @Test
+    @Test
     fun `save an account by email`() {
         accountRepository.save(account)
 
@@ -46,7 +52,7 @@ internal class DynamoDbAccountRepositoryTest {
         Assertions.assertEquals(updatedFindByUsername, accountUpdated)
     }
 
-    //    @Test
+    @Test
     fun `find all accounts`() {
         val anAccount = account.copy()
         val anotherAccount = account.copy(
@@ -61,7 +67,7 @@ internal class DynamoDbAccountRepositoryTest {
         Assertions.assertEquals(accountRepository.findAll(true), listOf(anAccount, anotherAccount))
     }
 
-    //    @Test
+    @Test
     fun `find all accounts without autorities`() {
         val anAccount = account.copy()
         val anotherAccount = account.copy(

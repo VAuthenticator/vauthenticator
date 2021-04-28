@@ -3,21 +3,23 @@ package it.valeriovaudi.vauthenticator.account.role
 import it.valeriovaudi.vauthenticator.support.TestingFixture
 import it.valeriovaudi.vauthenticator.support.TestingFixture.dynamoDbClient
 import it.valeriovaudi.vauthenticator.support.TestingFixture.dynamoRoleTableName
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 
-internal class DynamoDbRepositoryTest {
+internal class DynamoDbRoleRepositoryTest {
     lateinit var roleRepository: RoleRepository
 
     @BeforeEach
     fun setUp() {
-        roleRepository = DynamoDbRepository(dynamoDbClient, dynamoRoleTableName)
-
-        TestingFixture.resetDatabase(dynamoDbClient)
+        roleRepository = DynamoDbRoleRepository(dynamoDbClient, dynamoRoleTableName)
         TestingFixture.initRoleTests(dynamoDbClient)
+    }
+
+    @AfterEach
+    fun tearDown() {
+        TestingFixture.resetDatabase(dynamoDbClient)
     }
 
     @Test

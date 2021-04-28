@@ -4,10 +4,8 @@ import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.jdbc.core.JdbcTemplate
 import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue
-import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
-import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
-import software.amazon.awssdk.services.dynamodb.model.ScanRequest
+import software.amazon.awssdk.services.dynamodb.model.*
+import java.util.*
 import javax.sql.DataSource
 
 object TestingFixture {
@@ -60,21 +58,63 @@ object TestingFixture {
         jdbcTemplate.execute("TRUNCATE ACCOUNT_ROLE CASCADE")
     }
 
-    fun resetDatabase(roleRepository: DynamoDbClient) {
-        println("dynamoRoleTableName $dynamoRoleTableName")
-        val scanRequest = ScanRequest.builder()
-            .tableName(dynamoRoleTableName)
-            .attributesToGet("role_name")
-            .build()
-
-        roleRepository.scan(scanRequest)
-            .items()
+    fun resetDatabase(client: DynamoDbClient) {
+        scanFor(client, dynamoRoleTableName, "role_name")
             .forEach {
                 val deleteItemRequest = DeleteItemRequest.builder().tableName(dynamoRoleTableName)
-                    .key(mutableMapOf("role_name" to AttributeValue.builder().s(it["role_name"]?.s()).build()))
+                    .key(
+                        mutableMapOf(
+                            "role_name" to AttributeValue.builder().s(extractFieldFor(it, "role_name")).build()
+                        )
+                    )
                     .build()
+                client.deleteItem(deleteItemRequest)
+            }
 
-                roleRepository.deleteItem(deleteItemRequest)
+        scanFor(client, dynamoAccountTableName, "user_name")
+            .forEach {
+                val deleteItemRequest = DeleteItemRequest.builder().tableName(dynamoAccountTableName)
+                    .key(
+                        mutableMapOf(
+                            "user_name" to AttributeValue.builder().s(extractFieldFor(it, "user_name")).build()
+                        )
+                    )
+                    .build()
+                client.deleteItem(deleteItemRequest)
+            }
+
+        scanFor(client, dynamoAccountRoleTableName, "user_name", "role_name")
+            .forEach {
+                val deleteItemRequest = DeleteItemRequest.builder().tableName(dynamoAccountRoleTableName)
+                    .key(
+                        mutableMapOf(
+                            "user_name" to AttributeValue.builder().s(extractFieldFor(it, "user_name")).build(),
+                            "role_name" to AttributeValue.builder().s(extractFieldFor(it, "role_name")).build()
+                        )
+                    )
+                    .build()
+                client.deleteItem(deleteItemRequest)
             }
     }
+
+    private fun extractFieldFor(it: MutableMap<String, AttributeValue>, fieldName: String) =
+        it[fieldName]?.s()
+
+    private fun scanFor(
+        client: DynamoDbClient,
+        tableName: String,
+        vararg attributeToGet: String
+    ): MutableList<MutableMap<String, AttributeValue>> =
+        try {
+            client.scan(
+                ScanRequest.builder()
+                    .tableName(tableName)
+                    .attributesToGet(*attributeToGet)
+                    .build()
+            ).items()
+        } catch (e: Exception) {
+            println("e.message ${e.message}")
+            mutableListOf()
+        }
+
 }

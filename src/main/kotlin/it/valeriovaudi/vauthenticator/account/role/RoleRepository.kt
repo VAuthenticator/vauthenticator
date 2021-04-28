@@ -34,7 +34,7 @@ class JdbcRoleRepository(val jdbcTemplate: JdbcTemplate) : RoleRepository {
             .let { }
 }
 
-class DynamoDbRepository(
+class DynamoDbRoleRepository(
     private val dynamoDbClient: DynamoDbClient,
     private val tableName: String
 ) : RoleRepository {
