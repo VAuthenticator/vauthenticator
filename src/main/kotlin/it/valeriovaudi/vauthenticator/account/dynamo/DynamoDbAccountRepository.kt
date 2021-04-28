@@ -5,12 +5,13 @@ import it.valeriovaudi.vauthenticator.account.AccountRepository
 import it.valeriovaudi.vauthenticator.account.dynamo.AccountAuthorities.addAuthorities
 import it.valeriovaudi.vauthenticator.account.dynamo.AccountAuthorities.removeAuthorities
 import it.valeriovaudi.vauthenticator.account.dynamo.DynamoAccountConverter.fromDynamoToDomain
-import it.valeriovaudi.vauthenticator.account.dynamo.DynamoAccountQueryFactory.findAccountRoleByUserNameQueryFor
 import it.valeriovaudi.vauthenticator.account.dynamo.DynamoAccountQueryFactory.deleteAccountRoleQueryFor
 import it.valeriovaudi.vauthenticator.account.dynamo.DynamoAccountQueryFactory.findAccountQueryForUserName
+import it.valeriovaudi.vauthenticator.account.dynamo.DynamoAccountQueryFactory.findAccountRoleByUserNameQueryFor
 import it.valeriovaudi.vauthenticator.account.dynamo.DynamoAccountQueryFactory.findAllAccountQueryFor
 import it.valeriovaudi.vauthenticator.account.dynamo.DynamoAccountQueryFactory.storeAccountQueryFor
 import it.valeriovaudi.vauthenticator.account.dynamo.DynamoAccountQueryFactory.storeAccountRoleQueryFor
+import it.valeriovaudi.vauthenticator.extentions.valueAsStringFor
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 import java.util.*
@@ -31,7 +32,7 @@ class DynamoDbAccountRepository(
         ).items()
 
     private fun convertAccountFrom(accountDynamoItem: MutableMap<String, AttributeValue>): Account {
-        val authorities: List<String> = findAuthoritiesNameFor(accountDynamoItem["user_name"]?.s()!!)
+        val authorities: List<String> = findAuthoritiesNameFor(accountDynamoItem.valueAsStringFor("user_name"))
         return fromDynamoToDomain(accountDynamoItem, authorities)
     }
 
@@ -49,7 +50,7 @@ class DynamoDbAccountRepository(
         return dynamoDbClient.query(
             findAccountRoleByUserNameQueryFor(username, dynamoAccountRoleTableName)
         ).items()
-            .map { it["role_name"]?.s()!! }
+            .map { item -> item.valueAsStringFor("role_name") }
     }
 
     private fun findAccountFor(username: String) =
@@ -91,7 +92,7 @@ class DynamoDbAccountRepository(
             findAccountRoleByUserNameQueryFor(account.username, dynamoAccountRoleTableName)
         )
             .items()
-            .map { it["role_name"]?.s()!! }
+            .map { item -> item.valueAsStringFor("role_name") }
             .toSet()
 
     private fun storeAccountRoleFrom(account: Account, authority: String) {
@@ -101,6 +102,6 @@ class DynamoDbAccountRepository(
     }
 
     private fun deleteAccountRoleFrom(account: Account, roleName: String) =
-        dynamoDbClient.deleteItem(deleteAccountRoleQueryFor(account, roleName, dynamoAccountRoleTableName))
+        dynamoDbClient.deleteItem(deleteAccountRoleQueryFor(account.username, roleName, dynamoAccountRoleTableName))
 
 }

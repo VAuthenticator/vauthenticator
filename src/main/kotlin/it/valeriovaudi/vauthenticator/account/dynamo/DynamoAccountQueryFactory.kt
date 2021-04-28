@@ -44,13 +44,13 @@ object DynamoAccountQueryFactory {
         .build()
 
     fun deleteAccountRoleQueryFor(
-        account: Account,
+        username: String,
         roleName: String,
         table: String
     ): DeleteItemRequest = DeleteItemRequest.builder().tableName(table)
         .key(
             mutableMapOf(
-                "user_name" to account.username.asDynamoAttribute(),
+                "user_name" to username.asDynamoAttribute(),
                 "role_name" to roleName.asDynamoAttribute()
             )
         )
