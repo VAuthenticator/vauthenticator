@@ -1,7 +1,9 @@
 package it.valeriovaudi.vauthenticator.account
 
-import it.valeriovaudi.vauthenticator.account.AccountAutorities.addAuthorities
-import it.valeriovaudi.vauthenticator.account.AccountAutorities.removeAuthorities
+import it.valeriovaudi.vauthenticator.account.AccountAuthorities.addAuthorities
+import it.valeriovaudi.vauthenticator.account.AccountAuthorities.removeAuthorities
+import it.valeriovaudi.vauthenticator.account.AccountDynamoConverter.accountRoleFor
+import it.valeriovaudi.vauthenticator.account.AccountDynamoConverter.accountToItemFor
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.transaction.annotation.Transactional
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
@@ -133,7 +135,7 @@ class JdbcAccountRepository(private val jdbcTemplate: JdbcTemplate) : AccountRep
 
 }
 
-object AccountAutorities {
+object AccountAuthorities {
     fun removeAuthorities(
         storedAccountRolesSet: Set<String>,
         accountAuthoritiesSet: Set<String>,
@@ -155,22 +157,8 @@ object AccountAutorities {
 
 }
 
-class DynamoDbAccountRepository(
-    private val dynamoDbClient: DynamoDbClient,
-    private val dynamoAccountTableName: String,
-    private val dynamoAccountRoleTableName: String
-) : AccountRepository {
-    override fun findAll(eagerRolesLoad: Boolean): List<Account> =
-
-        dynamoDbClient.scan(
-            ScanRequest.builder().tableName(dynamoAccountTableName).build()
-        ).items()
-            .map {
-                val authorities: List<String> = authoritiesFor(it["user_name"]?.s()!!)
-                accountFor(it, authorities)
-            }
-
-    private fun accountFor(
+object AccountDynamoConverter {
+    fun accountFor(
         it: MutableMap<String, AttributeValue>,
         authorities: List<String>
     ) = Account(
@@ -187,60 +175,7 @@ class DynamoDbAccountRepository(
         authorities = authorities
     )
 
-
-    override fun accountFor(username: String): Optional<Account> {
-        val authorities = authoritiesFor(username)
-
-        return Optional.ofNullable(
-            dynamoDbClient.getItem(
-                GetItemRequest.builder()
-                    .tableName(dynamoAccountTableName)
-                    .key(
-                        mutableMapOf(
-                            "user_name" to AttributeValue.builder().s(username).build()
-                        )
-                    )
-                    .build()
-            ).item()
-                .let {
-                    accountFor(it, authorities)
-                }
-        )
-    }
-
-    private fun authoritiesFor(username: String): List<String> {
-        return dynamoDbClient.query(
-            QueryRequest.builder()
-                .tableName(dynamoAccountRoleTableName)
-                .keyConditionExpression("user_name = :username")
-                .expressionAttributeValues(mutableMapOf(":username" to AttributeValue.builder().s(username).build()))
-                .build()
-        )
-            .items()
-            .map { it["role_name"]?.s()!! }
-    }
-
-    override fun save(account: Account) {
-        dynamoDbClient.putItem(
-            PutItemRequest.builder()
-                .tableName(dynamoAccountTableName)
-                .item(accountToItem(account))
-                .build()
-        )
-
-        account.authorities
-            .forEach {
-                dynamoDbClient.putItem(
-                    PutItemRequest.builder()
-                        .tableName(dynamoAccountRoleTableName)
-                        .item(accountRoleFor(account, it))
-                        .build()
-                )
-            }
-
-    }
-
-    private fun accountRoleFor(
+    fun accountRoleFor(
         account: Account,
         roleName: String
     ) = mutableMapOf(
@@ -248,7 +183,7 @@ class DynamoDbAccountRepository(
         "role_name" to AttributeValue.builder().s(roleName).build()
     )
 
-    private fun accountToItem(account: Account) = mutableMapOf(
+    fun accountToItemFor(account: Account) = mutableMapOf(
         "accountNonExpired" to AttributeValue.builder().bool(account.accountNonExpired).build(),
         "accountNonLocked" to AttributeValue.builder().bool(account.accountNonLocked).build(),
         "credentialsNonExpired" to AttributeValue.builder().bool(account.credentialsNonExpired).build(),
@@ -260,5 +195,84 @@ class DynamoDbAccountRepository(
         "firstName" to AttributeValue.builder().s(account.firstName).build(),
         "lastName" to AttributeValue.builder().s(account.lastName).build()
     )
+}
+
+class DynamoDbAccountRepository(
+    private val dynamoDbClient: DynamoDbClient,
+    private val dynamoAccountTableName: String,
+    private val dynamoAccountRoleTableName: String
+) : AccountRepository {
+    override fun findAll(eagerRolesLoad: Boolean): List<Account> =
+        findAllFromDynamo()
+            .map(this::convertAccountFrom)
+
+    private fun findAllFromDynamo() = dynamoDbClient.scan(
+        ScanRequest.builder().tableName(dynamoAccountTableName).build()
+    ).items()
+
+    private fun convertAccountFrom(accountDynamoItem: MutableMap<String, AttributeValue>): Account {
+        val authorities: List<String> = findAuthoritiesFor(accountDynamoItem["user_name"]?.s()!!)
+        return AccountDynamoConverter.accountFor(accountDynamoItem, authorities)
+    }
+
+
+    override fun accountFor(username: String): Optional<Account> {
+        val authorities = findAuthoritiesFor(username)
+        return Optional.ofNullable(
+            findAccountFrom(username)
+                .let { AccountDynamoConverter.accountFor(it, authorities) }
+        )
+    }
+
+    private fun findAuthoritiesFor(username: String): List<String> {
+        return dynamoDbClient.query(
+            QueryRequest.builder()
+                .tableName(dynamoAccountRoleTableName)
+                .keyConditionExpression("user_name = :username")
+                .expressionAttributeValues(mutableMapOf(":username" to AttributeValue.builder().s(username).build()))
+                .build()
+        )
+            .items()
+            .map { it["role_name"]?.s()!! }
+    }
+
+    private fun findAccountFrom(username: String) = dynamoDbClient.getItem(
+        GetItemRequest.builder()
+            .tableName(dynamoAccountTableName)
+            .key(
+                mutableMapOf(
+                    "user_name" to AttributeValue.builder().s(username).build()
+                )
+            )
+            .build()
+    ).item()
+
+
+    override fun save(account: Account) {
+        storeAccountFrom(account)
+        account.authorities
+            .forEach {
+                storeAccountRoleFrom(account, it)
+            }
+
+    }
+
+    private fun storeAccountFrom(account: Account) {
+        dynamoDbClient.putItem(
+            PutItemRequest.builder()
+                .tableName(dynamoAccountTableName)
+                .item(accountToItemFor(account))
+                .build()
+        )
+    }
+
+    private fun storeAccountRoleFrom(account: Account, it: String) {
+        dynamoDbClient.putItem(
+            PutItemRequest.builder()
+                .tableName(dynamoAccountRoleTableName)
+                .item(accountRoleFor(account, it))
+                .build()
+        )
+    }
 
 }

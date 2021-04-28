@@ -81,4 +81,16 @@ internal class DynamoDbAccountRepositoryTest {
 
         Assertions.assertEquals(accountRepository.findAll(), listOf(anAccount, anotherAccount))
     }
+
+    @Test
+    fun `when overrides authorities to an accounts`() {
+        val anAccount = account.copy()
+        val anotherAccount = account.copy(
+            authorities = listOf("A_ROLE")
+        )
+        accountRepository.save(anAccount)
+        accountRepository.save(anotherAccount)
+
+        Assertions.assertEquals(accountRepository.findAll(), listOf(anotherAccount))
+    }
 }
