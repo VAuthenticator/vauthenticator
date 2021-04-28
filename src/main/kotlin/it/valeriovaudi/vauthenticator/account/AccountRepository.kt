@@ -211,20 +211,20 @@ class DynamoDbAccountRepository(
     ).items()
 
     private fun convertAccountFrom(accountDynamoItem: MutableMap<String, AttributeValue>): Account {
-        val authorities: List<String> = findAuthoritiesFor(accountDynamoItem["user_name"]?.s()!!)
+        val authorities: List<String> = findAuthoritiesNameFor(accountDynamoItem["user_name"]?.s()!!)
         return AccountDynamoConverter.accountFor(accountDynamoItem, authorities)
     }
 
 
     override fun accountFor(username: String): Optional<Account> {
-        val authorities = findAuthoritiesFor(username)
+        val authorities = findAuthoritiesNameFor(username)
         return Optional.ofNullable(
             findAccountFrom(username)
                 .let { AccountDynamoConverter.accountFor(it, authorities) }
         )
     }
 
-    private fun findAuthoritiesFor(username: String): List<String> {
+    private fun findAuthoritiesNameFor(username: String): List<String> {
         return dynamoDbClient.query(
             QueryRequest.builder()
                 .tableName(dynamoAccountRoleTableName)
