@@ -155,20 +155,36 @@ class DynamoDbAccountRepository(
     private val dynamoAccountTableName: String,
     private val dynamoAccountRoleTableName: String
 ) : AccountRepository {
-    override fun findAll(eagerRolesLoad: Boolean): List<Account> {
-        TODO("Not yet implemented")
-    }
+    override fun findAll(eagerRolesLoad: Boolean): List<Account> =
+
+        dynamoDbClient.scan(
+            ScanRequest.builder().tableName(dynamoAccountTableName).build()
+        ).items()
+            .map {
+                val authorities: List<String> = authoritiesFor(it["user_name"]?.s()!!)
+                accountFor(it, authorities)
+            }
+
+    private fun accountFor(
+        it: MutableMap<String, AttributeValue>,
+        authorities: List<String>
+    ) = Account(
+        accountNonExpired = it["accountNonExpired"]?.bool()!!,
+        accountNonLocked = it["accountNonLocked"]?.bool()!!,
+        credentialsNonExpired = it["credentialsNonExpired"]?.bool()!!,
+        enabled = it["enabled"]?.bool()!!,
+        username = it["user_name"]?.s()!!,
+        password = it["password"]?.s()!!,
+        email = it["email"]?.s()!!,
+        emailVerified = it["emailVerified"]?.bool()!!,
+        firstName = it["firstName"]?.s()!!,
+        lastName = it["lastName"]?.s()!!,
+        authorities = authorities
+    )
+
 
     override fun accountFor(username: String): Optional<Account> {
-        val authorities = dynamoDbClient.query(
-            QueryRequest.builder()
-                .tableName(dynamoAccountRoleTableName)
-                .keyConditionExpression("user_name = :username")
-                .expressionAttributeValues(mutableMapOf(":username" to AttributeValue.builder().s(username).build()))
-                .build()
-        )
-            .items()
-            .map { it["role_name"]?.s()!! }
+        val authorities = authoritiesFor(username)
 
         return Optional.ofNullable(
             dynamoDbClient.getItem(
@@ -182,21 +198,21 @@ class DynamoDbAccountRepository(
                     .build()
             ).item()
                 .let {
-                    Account(
-                        accountNonExpired = it["accountNonExpired"]?.bool()!!,
-                        accountNonLocked = it["accountNonLocked"]?.bool()!!,
-                        credentialsNonExpired = it["credentialsNonExpired"]?.bool()!!,
-                        enabled = it["enabled"]?.bool()!!,
-                        username = it["user_name"]?.s()!!,
-                        password = it["password"]?.s()!!,
-                        email = it["email"]?.s()!!,
-                        emailVerified = it["emailVerified"]?.bool()!!,
-                        firstName = it["firstName"]?.s()!!,
-                        lastName = it["lastName"]?.s()!!,
-                        authorities = authorities
-                    )
+                    accountFor(it, authorities)
                 }
         )
+    }
+
+    private fun authoritiesFor(username: String): List<String> {
+        return dynamoDbClient.query(
+            QueryRequest.builder()
+                .tableName(dynamoAccountRoleTableName)
+                .keyConditionExpression("user_name = :username")
+                .expressionAttributeValues(mutableMapOf(":username" to AttributeValue.builder().s(username).build()))
+                .build()
+        )
+            .items()
+            .map { it["role_name"]?.s()!! }
     }
 
     override fun save(account: Account) {
