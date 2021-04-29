@@ -38,13 +38,22 @@ class DynamoDbAccountRepository(
 
 
     override fun accountFor(username: String): Optional<Account> {
-        return Optional.ofNullable(
-            fromDynamoToDomain(
-                findAccountFor(username),
-                findAuthoritiesNameFor(username)
-            )
-        )
+        return Optional.ofNullable(findAccountFor(username))
+            .flatMap(this::filterEmptyAccountMetadata)
+            .map { account ->
+                fromDynamoToDomain(
+                    account,
+                    findAuthoritiesNameFor(username)
+                )
+            }
     }
+
+    private fun filterEmptyAccountMetadata(account: MutableMap<String, AttributeValue>) =
+        if (account.isEmpty()) {
+            Optional.empty()
+        } else {
+            Optional.of(account)
+        }
 
     private fun findAuthoritiesNameFor(username: String): List<String> {
         return dynamoDbClient.query(

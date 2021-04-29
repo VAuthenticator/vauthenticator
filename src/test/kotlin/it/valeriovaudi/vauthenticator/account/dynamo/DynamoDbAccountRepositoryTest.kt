@@ -11,6 +11,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.util.*
 
 internal class DynamoDbAccountRepositoryTest {
 
@@ -38,6 +39,15 @@ internal class DynamoDbAccountRepositoryTest {
         val findByUsername: Account = accountRepository.accountFor(account.username).orElseThrow()
 
         Assertions.assertEquals(findByUsername, account)
+    }
+
+    @Test
+    fun `find an account by email when an account does not exist`() {
+        accountRepository.save(account)
+        val findByUsername: Optional<Account> = accountRepository.accountFor("not-existing-user-name")
+
+        val empty: Optional<Account> = Optional.empty()
+        Assertions.assertEquals(findByUsername, empty)
     }
 
     @Test
