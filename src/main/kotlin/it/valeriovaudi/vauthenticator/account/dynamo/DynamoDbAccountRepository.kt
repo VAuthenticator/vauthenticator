@@ -11,6 +11,7 @@ import it.valeriovaudi.vauthenticator.account.dynamo.DynamoAccountQueryFactory.f
 import it.valeriovaudi.vauthenticator.account.dynamo.DynamoAccountQueryFactory.findAllAccountQueryFor
 import it.valeriovaudi.vauthenticator.account.dynamo.DynamoAccountQueryFactory.storeAccountQueryFor
 import it.valeriovaudi.vauthenticator.account.dynamo.DynamoAccountQueryFactory.storeAccountRoleQueryFor
+import it.valeriovaudi.vauthenticator.extentions.filterEmptyAccountMetadata
 import it.valeriovaudi.vauthenticator.extentions.valueAsStringFor
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
@@ -39,7 +40,7 @@ class DynamoDbAccountRepository(
 
     override fun accountFor(username: String): Optional<Account> {
         return Optional.ofNullable(findAccountFor(username))
-            .flatMap(this::filterEmptyAccountMetadata)
+            .flatMap {it.filterEmptyAccountMetadata()}
             .map { account ->
                 fromDynamoToDomain(
                     account,
@@ -47,13 +48,6 @@ class DynamoDbAccountRepository(
                 )
             }
     }
-
-    private fun filterEmptyAccountMetadata(account: MutableMap<String, AttributeValue>) =
-        if (account.isEmpty()) {
-            Optional.empty()
-        } else {
-            Optional.of(account)
-        }
 
     private fun findAuthoritiesNameFor(username: String): List<String> {
         return dynamoDbClient.query(

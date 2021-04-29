@@ -1,9 +1,8 @@
 package it.valeriovaudi.vauthenticator.oauth2.clientapp
 
-import it.valeriovaudi.vauthenticator.extentions.asDynamoAttribute
-import it.valeriovaudi.vauthenticator.extentions.valueAsBoolFor
-import it.valeriovaudi.vauthenticator.extentions.valueAsStringFor
+import it.valeriovaudi.vauthenticator.extentions.*
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.DynamoClientApplicationConverter.fromDomainToDynamo
+import it.valeriovaudi.vauthenticator.oauth2.clientapp.DynamoClientApplicationConverter.fromDynamoToDomain
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
@@ -14,36 +13,23 @@ class DynamoDbClientApplicationRepository(
     private val dynamoClientApplicationTableName: String
 ) : ClientApplicationRepository {
     override fun findOne(clientAppId: ClientAppId): Optional<ClientApplication> {
-        return Optional.ofNullable(
-            dynamoDbClient.getItem(
-                GetItemRequest.builder()
-                    .tableName(dynamoClientApplicationTableName)
-                    .key(
-                        mutableMapOf(
-                            "client_id" to clientAppId.content.asDynamoAttribute()
+        return Optional.of(clientAppId.content)
+            .flatMap { if(it.isEmpty()) Optional.empty() else Optional.of(clientAppId) }
+            .map {
+                dynamoDbClient.getItem(
+                    GetItemRequest.builder()
+                        .tableName(dynamoClientApplicationTableName)
+                        .key(
+                            mutableMapOf(
+                                "client_id" to it.content.asDynamoAttribute()
+                            )
                         )
-                    )
-                    .build()
-            ).item()
-                .let {
-                    ClientApplication(
-                        clientAppId = ClientAppId(it.valueAsStringFor("client_id")),
-                        secret = Secret(it.valueAsStringFor("client_secret")),
-                        resourceIds = ResourceIds(listOf(ResourceId(it.valueAsStringFor("resource_ids")))),
-                        scopes = Scopes(it["scopes"]?.ss()!!.map { Scope(it) }),
-                        authorizedGrantTypes = AuthorizedGrantTypes(
-                            it["authorized_grant_types"]?.ss()!!.map { AuthorizedGrantType.valueOf(it) }),
-                        webServerRedirectUri = CallbackUri(it.valueAsStringFor("web_server_redirect_uri")),
-                        authorities = Authorities(it["authorities"]?.ss()!!.map { Authority(it) }),
-                        accessTokenValidity = TokenTimeToLive(it["access_token_validity"]?.n()!!.toInt()),
-                        refreshTokenValidity = TokenTimeToLive(it["refresh_token_validity"]?.n()!!.toInt()),
-                        autoApprove = AutoApprove(it.valueAsBoolFor("auto_approve")),
-                        postLogoutRedirectUri = PostLogoutRedirectUri(it.valueAsStringFor("post_logout_redirect_uris")),
-                        logoutUri = LogoutUri(it.valueAsStringFor("logout_uris")),
-                        federation = Federation(it.valueAsStringFor("federation"))
-                    )
-                }
-        )
+                        .build()
+                )
+                    .item()
+            }
+            .flatMap { it.filterEmptyAccountMetadata() }
+            .map { fromDynamoToDomain(it) }
     }
 
     override fun findByFederation(federation: Federation): Iterable<ClientApplication> {

@@ -1,6 +1,6 @@
 package it.valeriovaudi.vauthenticator.oauth2.clientapp
 
-import it.valeriovaudi.vauthenticator.extentions.asDynamoAttribute
+import it.valeriovaudi.vauthenticator.extentions.*
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 
 const val resourceId: String = "oauth2-resource"
@@ -24,6 +24,27 @@ object DynamoClientApplicationConverter {
             "post_logout_redirect_uris" to clientApp.postLogoutRedirectUri.content.asDynamoAttribute(),
             "logout_uris" to clientApp.logoutUri.content.asDynamoAttribute(),
             "federation" to clientApp.federation.name.asDynamoAttribute()
+        )
+    }
+
+    fun fromDynamoToDomain(
+        dynamoPayload: MutableMap<String, AttributeValue>
+    ): ClientApplication {
+        return ClientApplication(
+            clientAppId = ClientAppId(dynamoPayload.valueAsStringFor("client_id")),
+            secret = Secret(dynamoPayload.valueAsStringFor("client_secret")),
+            resourceIds = ResourceIds(listOf(ResourceId(dynamoPayload.valueAsStringFor("resource_ids")))),
+            scopes = Scopes(dynamoPayload.valuesAsStringFor("scopes").map { Scope(it) }),
+            authorizedGrantTypes = AuthorizedGrantTypes(
+                dynamoPayload.valuesAsStringFor("authorized_grant_types").map { AuthorizedGrantType.valueOf(it) }),
+            webServerRedirectUri = CallbackUri(dynamoPayload.valueAsStringFor("web_server_redirect_uri")),
+            authorities = Authorities(dynamoPayload["authorities"]?.ss()!!.map { Authority(it) }),
+            accessTokenValidity = TokenTimeToLive(dynamoPayload.valueAsIntFor("access_token_validity")),
+            refreshTokenValidity = TokenTimeToLive(dynamoPayload.valueAsIntFor("refresh_token_validity")),
+            autoApprove = AutoApprove(dynamoPayload.valueAsBoolFor("auto_approve")),
+            postLogoutRedirectUri = PostLogoutRedirectUri(dynamoPayload.valueAsStringFor("post_logout_redirect_uris")),
+            logoutUri = LogoutUri(dynamoPayload.valueAsStringFor("logout_uris")),
+            federation = Federation(dynamoPayload.valueAsStringFor("federation"))
         )
     }
 

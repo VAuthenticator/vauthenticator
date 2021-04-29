@@ -25,8 +25,14 @@ internal class DynamoDbClientApplicationRepositoryTest {
     }
 
     @Test
-    fun `when find one client application by client id that does not exist`() {
+    fun `when find one client application by empty client id`() {
         val clientApp: Optional<ClientApplication> = dynamoDbClientApplicationRepository.findOne(ClientAppId(""))
+        Assertions.assertEquals(clientApp, Optional.empty<ClientApplication>())
+    }
+
+    @Test
+    fun `when find one client application by client id that does not exist`() {
+        val clientApp: Optional<ClientApplication> = dynamoDbClientApplicationRepository.findOne(ClientAppId("not-existing-one"))
         Assertions.assertEquals(clientApp, Optional.empty<ClientApplication>())
     }
 
