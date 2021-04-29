@@ -8,7 +8,7 @@ object ClientAppFixture {
     ) = ClientApplication(
             clientAppId,
             password,
-            Scopes.from(Scope.OPEN_ID, Scope.PROFILE, Scope.EMAIL),
+            Scopes.from(Scope.EMAIL, Scope.OPEN_ID, Scope.PROFILE),
             AuthorizedGrantTypes.from(AuthorizedGrantType.PASSWORD),
             CallbackUri("http://an_uri"),
             Authorities(listOf(Authority("AN_AUTHORITY"))),
@@ -19,6 +19,6 @@ object ClientAppFixture {
             PostLogoutRedirectUri("http://an_uri"),
             logoutUri,
             federation,
-            ResourceIds.from(ResourceId("oauth2-resource"))
+                ResourceIds.from(ResourceId("oauth2-resource"))
     )
 }

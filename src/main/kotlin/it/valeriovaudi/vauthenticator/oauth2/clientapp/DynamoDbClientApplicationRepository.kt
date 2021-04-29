@@ -1,7 +1,11 @@
 package it.valeriovaudi.vauthenticator.oauth2.clientapp
 
 import it.valeriovaudi.vauthenticator.extentions.asDynamoAttribute
+import it.valeriovaudi.vauthenticator.extentions.valueAsBoolFor
+import it.valeriovaudi.vauthenticator.extentions.valueAsStringFor
+import it.valeriovaudi.vauthenticator.oauth2.clientapp.DynamoClientApplicationConverter.fromDomainToDynamo
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
 import java.util.*
 
@@ -10,7 +14,36 @@ class DynamoDbClientApplicationRepository(
     private val dynamoClientApplicationTableName: String
 ) : ClientApplicationRepository {
     override fun findOne(clientAppId: ClientAppId): Optional<ClientApplication> {
-        return Optional.empty<ClientApplication>()
+        return Optional.ofNullable(
+            dynamoDbClient.getItem(
+                GetItemRequest.builder()
+                    .tableName(dynamoClientApplicationTableName)
+                    .key(
+                        mutableMapOf(
+                            "client_id" to clientAppId.content.asDynamoAttribute()
+                        )
+                    )
+                    .build()
+            ).item()
+                .let {
+                    ClientApplication(
+                        clientAppId = ClientAppId(it.valueAsStringFor("client_id")),
+                        secret = Secret(it.valueAsStringFor("client_secret")),
+                        resourceIds = ResourceIds(listOf(ResourceId(it.valueAsStringFor("resource_ids")))),
+                        scopes = Scopes(it["scopes"]?.ss()!!.map { Scope(it) }),
+                        authorizedGrantTypes = AuthorizedGrantTypes(
+                            it["authorized_grant_types"]?.ss()!!.map { AuthorizedGrantType.valueOf(it) }),
+                        webServerRedirectUri = CallbackUri(it.valueAsStringFor("web_server_redirect_uri")),
+                        authorities = Authorities(it["authorities"]?.ss()!!.map { Authority(it) }),
+                        accessTokenValidity = TokenTimeToLive(it["access_token_validity"]?.n()!!.toInt()),
+                        refreshTokenValidity = TokenTimeToLive(it["refresh_token_validity"]?.n()!!.toInt()),
+                        autoApprove = AutoApprove(it.valueAsBoolFor("auto_approve")),
+                        postLogoutRedirectUri = PostLogoutRedirectUri(it.valueAsStringFor("post_logout_redirect_uris")),
+                        logoutUri = LogoutUri(it.valueAsStringFor("logout_uris")),
+                        federation = Federation(it.valueAsStringFor("federation"))
+                    )
+                }
+        )
     }
 
     override fun findByFederation(federation: Federation): Iterable<ClientApplication> {
@@ -25,23 +58,7 @@ class DynamoDbClientApplicationRepository(
         dynamoDbClient.putItem(
             PutItemRequest.builder()
                 .tableName(dynamoClientApplicationTableName)
-                .item(
-                    mutableMapOf(
-                        "client_id" to clientApp.clientAppId.content.asDynamoAttribute(),
-                        "client_secret" to clientApp.secret.content.asDynamoAttribute(),
-                        "resource_ids" to "oauth2".asDynamoAttribute(),
-                        "scope" to clientApp.scopes.asDynamoAttribute(),
-                        "authorized_grant_types" to clientApp.authorizedGrantTypes.asDynamoAttribute(),
-                        "web_server_redirect_uri" to clientApp.webServerRedirectUri.content.asDynamoAttribute(),
-                        "authorities" to clientApp.authorities.asDynamoAttribute(),
-                        "access_token_validity" to clientApp.accessTokenValidity.asDynamoAttribute(),
-                        "refresh_token_validity" to clientApp.refreshTokenValidity.asDynamoAttribute(),
-                        "auto_approve" to clientApp.autoApprove.content.asDynamoAttribute(),
-                        "post_logout_redirect_uris" to clientApp.postLogoutRedirectUri.content.asDynamoAttribute(),
-                        "logout_uris" to clientApp.logoutUri.content.asDynamoAttribute(),
-                        "federation" to clientApp.federation.name.asDynamoAttribute()
-                    )
-                )
+                .item(fromDomainToDynamo(clientApp))
                 .build()
         )
     }
