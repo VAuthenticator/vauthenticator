@@ -16,7 +16,7 @@ import java.util.*
 internal class DynamoDbAccountRepositoryTest {
 
     private val account = AccountTestFixture.anAccount(listOf(Role("role", "description")))
-    lateinit var accountRepository: DynamoDbAccountRepository
+    private lateinit var accountRepository: DynamoDbAccountRepository
 
     @BeforeEach
     fun setUp() {

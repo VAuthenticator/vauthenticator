@@ -2,20 +2,21 @@ package it.valeriovaudi.vauthenticator.oauth2.clientapp
 
 import java.util.*
 
-data class ClientApplication(val clientAppId: ClientAppId,
-                             val secret: Secret,
-                             val scopes: Scopes,
-                             val authorizedGrantTypes: AuthorizedGrantTypes,
-                             val webServerRedirectUri: CallbackUri,
-                             val authorities: Authorities,
-                             val accessTokenValidity: TokenTimeToLive,
-                             val refreshTokenValidity: TokenTimeToLive,
-                             val additionalInformation: Map<String, Objects> = emptyMap(),
-                             val autoApprove: AutoApprove = AutoApprove.approve,
-                             val postLogoutRedirectUri: PostLogoutRedirectUri,
-                             val logoutUri: LogoutUri,
-                             val federation: Federation,
-                             val resourceIds: ResourceIds
+data class ClientApplication(
+    val clientAppId: ClientAppId,
+    val secret: Secret,
+    val scopes: Scopes,
+    val authorizedGrantTypes: AuthorizedGrantTypes,
+    val webServerRedirectUri: CallbackUri,
+    val authorities: Authorities,
+    val accessTokenValidity: TokenTimeToLive,
+    val refreshTokenValidity: TokenTimeToLive,
+    val additionalInformation: Map<String, Objects> = emptyMap(),
+    val autoApprove: AutoApprove = AutoApprove.approve,
+    val postLogoutRedirectUri: PostLogoutRedirectUri,
+    val logoutUri: LogoutUri,
+    val federation: Federation,
+    val resourceIds: ResourceIds
 )
 
 data class AutoApprove(val content: Boolean) {

@@ -1,11 +1,12 @@
 package it.valeriovaudi.vauthenticator.support
 
+import it.valeriovaudi.vauthenticator.extentions.asDynamoAttribute
+import it.valeriovaudi.vauthenticator.extentions.valueAsStringFor
 import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.jdbc.core.JdbcTemplate
 import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.*
-import java.util.*
 import javax.sql.DataSource
 
 object TestingFixture {
@@ -13,6 +14,7 @@ object TestingFixture {
     val dynamoRoleTableName: String = System.getenv("STAGING_DYNAMO_DB_ROLE_TABLE_NAME")
     val dynamoAccountTableName: String = System.getenv("STAGING_DYNAMO_DB_ACCOUNT_TABLE_NAME")
     val dynamoAccountRoleTableName: String = System.getenv("STAGING_DYNAMO_DB_ACCOUNT_ROLE_TABLE_NAME")
+    val dynamoClientApplicationTableName: String = System.getenv("STAGING_DYNAMO_DB_CLIENT_APPLICATION_TABLE_NAME")
 
     val postGresHost: String = System.getProperty("test.database.host", "localhost")
     val postGresPort: String = System.getProperty("test.database.port", "35432")
@@ -64,7 +66,7 @@ object TestingFixture {
                 val deleteItemRequest = DeleteItemRequest.builder().tableName(dynamoRoleTableName)
                     .key(
                         mutableMapOf(
-                            "role_name" to AttributeValue.builder().s(extractFieldFor(it, "role_name")).build()
+                            "role_name" to it.valueAsStringFor( "role_name").asDynamoAttribute()
                         )
                     )
                     .build()
@@ -76,7 +78,7 @@ object TestingFixture {
                 val deleteItemRequest = DeleteItemRequest.builder().tableName(dynamoAccountTableName)
                     .key(
                         mutableMapOf(
-                            "user_name" to AttributeValue.builder().s(extractFieldFor(it, "user_name")).build()
+                            "user_name" to it.valueAsStringFor("user_name").asDynamoAttribute(),
                         )
                     )
                     .build()
@@ -88,17 +90,26 @@ object TestingFixture {
                 val deleteItemRequest = DeleteItemRequest.builder().tableName(dynamoAccountRoleTableName)
                     .key(
                         mutableMapOf(
-                            "user_name" to AttributeValue.builder().s(extractFieldFor(it, "user_name")).build(),
-                            "role_name" to AttributeValue.builder().s(extractFieldFor(it, "role_name")).build()
+                            "user_name" to it.valueAsStringFor("user_name").asDynamoAttribute(),
+                            "role_name" to it.valueAsStringFor( "role_name").asDynamoAttribute()
+                        )
+                    )
+                    .build()
+                client.deleteItem(deleteItemRequest)
+            }
+
+        scanFor(client, dynamoClientApplicationTableName, "client_id")
+            .forEach {
+                val deleteItemRequest = DeleteItemRequest.builder().tableName(dynamoClientApplicationTableName)
+                    .key(
+                        mutableMapOf(
+                            "client_id" to it.valueAsStringFor("client_id").asDynamoAttribute(),
                         )
                     )
                     .build()
                 client.deleteItem(deleteItemRequest)
             }
     }
-
-    private fun extractFieldFor(it: MutableMap<String, AttributeValue>, fieldName: String) =
-        it[fieldName]?.s()
 
     private fun scanFor(
         client: DynamoDbClient,
