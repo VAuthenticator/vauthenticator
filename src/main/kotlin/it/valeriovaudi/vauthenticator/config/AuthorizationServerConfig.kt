@@ -6,7 +6,6 @@ import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jose.jwk.source.JWKSource
 import com.nimbusds.jose.proc.SecurityContext
 import it.valeriovaudi.vauthenticator.account.AccountRepository
-import it.valeriovaudi.vauthenticator.extentions.toSha256
 import it.valeriovaudi.vauthenticator.keypair.KeyRepository
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
 import it.valeriovaudi.vauthenticator.openid.connect.logout.JdbcFrontChannelLogout
@@ -16,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -143,5 +141,8 @@ class AuthorizationServerConfig {
     }
 
     @Bean
-    fun frontChannelLogout(dataSource: DataSource) = JdbcFrontChannelLogout(oidcIss, JdbcTemplate(dataSource))
+    fun frontChannelLogout(dataSource: DataSource, applicationRepository: ClientApplicationRepository) = JdbcFrontChannelLogout(
+        oidcIss,
+        applicationRepository
+    )
 }

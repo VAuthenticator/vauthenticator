@@ -1,5 +1,15 @@
 package it.valeriovaudi.vauthenticator.support
 
+import com.nimbusds.jose.JOSEObjectType
+import com.nimbusds.jose.JWSAlgorithm
+import com.nimbusds.jose.JWSHeader
+import com.nimbusds.jose.PlainHeader
+import com.nimbusds.jose.crypto.MACSigner
+import com.nimbusds.jose.crypto.MACVerifier
+import com.nimbusds.jwt.JWT
+import com.nimbusds.jwt.JWTClaimsSet
+import com.nimbusds.jwt.PlainJWT
+import com.nimbusds.jwt.SignedJWT
 import it.valeriovaudi.vauthenticator.extentions.asDynamoAttribute
 import it.valeriovaudi.vauthenticator.extentions.valueAsStringFor
 import org.springframework.boot.jdbc.DataSourceBuilder
@@ -66,7 +76,7 @@ object TestingFixture {
                 val deleteItemRequest = DeleteItemRequest.builder().tableName(dynamoRoleTableName)
                     .key(
                         mutableMapOf(
-                            "role_name" to it.valueAsStringFor( "role_name").asDynamoAttribute()
+                            "role_name" to it.valueAsStringFor("role_name").asDynamoAttribute()
                         )
                     )
                     .build()
@@ -91,7 +101,7 @@ object TestingFixture {
                     .key(
                         mutableMapOf(
                             "user_name" to it.valueAsStringFor("user_name").asDynamoAttribute(),
-                            "role_name" to it.valueAsStringFor( "role_name").asDynamoAttribute()
+                            "role_name" to it.valueAsStringFor("role_name").asDynamoAttribute()
                         )
                     )
                     .build()
@@ -128,4 +138,15 @@ object TestingFixture {
             mutableListOf()
         }
 
+    fun idTokenFor(federation: String): String {
+        val macSigner = MACSigner("123123123123123123123123123123123123123123123123123123123123")
+        val plainHeader = JWSHeader.Builder(JWSAlgorithm.HS256).type(JOSEObjectType.JWT).build()
+        val jwtClaimsSet = JWTClaimsSet.Builder()
+            .claim("federation", federation)
+            .build()
+
+        val plainJWT = SignedJWT(plainHeader, jwtClaimsSet)
+        plainJWT.sign(macSigner)
+        return plainJWT.serialize()
+    }
 }
