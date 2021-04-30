@@ -111,7 +111,7 @@ class JdbcClientApplicationRepository(private val jdbcTemplate: JdbcTemplate) : 
                         secret = Secret(rs.getString("client_secret")),
                         authorizedGrantTypes = AuthorizedGrantTypes(listFor(rs, "authorized_grant_types")
                                 .map { AuthorizedGrantType.valueOf(it.toUpperCase()) }),
-                        scopes = Scopes(listFor(rs, "scope").map { Scope(it) }),
+                        scopes = Scopes(listFor(rs, "scope").map { Scope(it) }.toSet()),
                         autoApprove = AutoApprove(rs.getBoolean("autoapprove")),
                         accessTokenValidity = TokenTimeToLive(rs.getInt("access_token_validity")),
                         refreshTokenValidity = TokenTimeToLive(rs.getInt("refresh_token_validity")),

@@ -34,7 +34,7 @@ object DynamoClientApplicationConverter {
             clientAppId = ClientAppId(dynamoPayload.valueAsStringFor("client_id")),
             secret = Secret(dynamoPayload.valueAsStringFor("client_secret")),
             resourceIds = ResourceIds(listOf(ResourceId(dynamoPayload.valueAsStringFor("resource_ids")))),
-            scopes = Scopes(dynamoPayload.valuesAsStringFor("scopes").map { Scope(it) }),
+            scopes = Scopes(dynamoPayload.valuesAsStringFor("scopes").map { Scope(it) }.toSet()),
             authorizedGrantTypes = AuthorizedGrantTypes(
                 dynamoPayload.valuesAsStringFor("authorized_grant_types").map { AuthorizedGrantType.valueOf(it) }),
             webServerRedirectUri = CallbackUri(dynamoPayload.valueAsStringFor("web_server_redirect_uri")),

@@ -48,9 +48,9 @@ data class CallbackUri(val content: String)
 data class PostLogoutRedirectUri(val content: String)
 data class LogoutUri(val content: String)
 
-data class Scopes(val content: List<Scope>) {
+data class Scopes(val content: Set<Scope>) {
     companion object {
-        fun from(vararg scope: Scope) = Scopes(listOf(*scope))
+        fun from(vararg scope: Scope) = Scopes(setOf(*scope))
     }
 }
 

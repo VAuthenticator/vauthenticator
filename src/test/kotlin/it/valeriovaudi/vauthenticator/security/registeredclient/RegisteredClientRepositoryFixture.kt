@@ -31,7 +31,7 @@ object RegisteredClientRepositoryFixture {
         ClientApplication(
             clientAppId = ClientAppId("A_CLIENT_APP_ID"),
             secret = Secret("A_SECRET"),
-            scopes = Scopes(listOf(Scope("A_SCOPE"), Scope("ANOTHER_SCOPE"))),
+            scopes = Scopes(setOf(Scope("A_SCOPE"), Scope("ANOTHER_SCOPE"))),
             authorizedGrantTypes = AuthorizedGrantTypes(
                 listOf(
                     AuthorizedGrantType.AUTHORIZATION_CODE,
