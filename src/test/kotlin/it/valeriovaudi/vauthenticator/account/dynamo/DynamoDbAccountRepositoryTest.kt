@@ -2,7 +2,7 @@ package it.valeriovaudi.vauthenticator.account.dynamo
 
 import it.valeriovaudi.vauthenticator.account.Account
 import it.valeriovaudi.vauthenticator.account.AccountTestFixture
-import it.valeriovaudi.vauthenticator.account.role.Role
+import it.valeriovaudi.vauthenticator.role.Role
 import it.valeriovaudi.vauthenticator.support.TestingFixture
 import it.valeriovaudi.vauthenticator.support.TestingFixture.dynamoAccountRoleTableName
 import it.valeriovaudi.vauthenticator.support.TestingFixture.dynamoAccountTableName
@@ -27,7 +27,7 @@ internal class DynamoDbAccountRepositoryTest {
         )
     }
 
-//    @AfterEach
+    @AfterEach
     fun tearDown() {
         TestingFixture.resetDatabase(dynamoDbClient)
     }

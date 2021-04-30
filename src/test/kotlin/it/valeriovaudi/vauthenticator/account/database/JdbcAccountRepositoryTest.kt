@@ -1,5 +1,7 @@
-package it.valeriovaudi.vauthenticator.account
+package it.valeriovaudi.vauthenticator.account.database
 
+import it.valeriovaudi.vauthenticator.account.Account
+import it.valeriovaudi.vauthenticator.account.AccountTestFixture
 import it.valeriovaudi.vauthenticator.support.TestingFixture.dataSource
 import it.valeriovaudi.vauthenticator.support.TestingFixture.resetDatabase
 import org.junit.jupiter.api.Assertions

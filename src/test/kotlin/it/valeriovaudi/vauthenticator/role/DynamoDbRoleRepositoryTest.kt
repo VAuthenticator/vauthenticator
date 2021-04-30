@@ -1,24 +1,25 @@
-package it.valeriovaudi.vauthenticator.account.role
+package it.valeriovaudi.vauthenticator.role
 
-import it.valeriovaudi.vauthenticator.support.TestingFixture.dataSource
-import it.valeriovaudi.vauthenticator.support.TestingFixture.initRoleTests
-import it.valeriovaudi.vauthenticator.support.TestingFixture.resetDatabase
+import it.valeriovaudi.vauthenticator.support.TestingFixture
+import it.valeriovaudi.vauthenticator.support.TestingFixture.dynamoDbClient
+import it.valeriovaudi.vauthenticator.support.TestingFixture.dynamoRoleTableName
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.jdbc.core.JdbcTemplate
 
-internal class JdbcRoleRepositoryTest {
-
+internal class DynamoDbRoleRepositoryTest {
     lateinit var roleRepository: RoleRepository
 
     @BeforeEach
     fun setUp() {
-        val jdbcTemplate = JdbcTemplate(dataSource)
-        roleRepository = JdbcRoleRepository(jdbcTemplate)
+        roleRepository = DynamoDbRoleRepository(dynamoDbClient, dynamoRoleTableName)
+        TestingFixture.initRoleTests(dynamoDbClient)
+    }
 
-        resetDatabase(jdbcTemplate)
-        initRoleTests(jdbcTemplate)
+    @AfterEach
+    fun tearDown() {
+        TestingFixture.resetDatabase(dynamoDbClient)
     }
 
     @Test

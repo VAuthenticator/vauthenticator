@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator.account.dynamo
+package it.valeriovaudi.vauthenticator.account
 
 object AccountAuthorities {
     fun removeAuthorities(

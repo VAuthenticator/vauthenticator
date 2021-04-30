@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator.account.role
+package it.valeriovaudi.vauthenticator.role
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.BeforeEach

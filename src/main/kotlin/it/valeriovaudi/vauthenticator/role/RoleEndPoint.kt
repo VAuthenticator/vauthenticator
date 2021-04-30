@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator.account.role
+package it.valeriovaudi.vauthenticator.role
 
 import org.springframework.http.ResponseEntity.noContent
 import org.springframework.http.ResponseEntity.ok

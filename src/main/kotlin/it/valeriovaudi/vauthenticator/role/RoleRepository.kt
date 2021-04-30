@@ -1,9 +1,9 @@
-package it.valeriovaudi.vauthenticator.account.role
+package it.valeriovaudi.vauthenticator.role
 
-import it.valeriovaudi.vauthenticator.account.role.DynamoDbRoleMapper.deleteRoleRequestFor
-import it.valeriovaudi.vauthenticator.account.role.DynamoDbRoleMapper.findAllRequestFor
-import it.valeriovaudi.vauthenticator.account.role.DynamoDbRoleMapper.saveRoleRequestFor
-import it.valeriovaudi.vauthenticator.account.role.DynamoDbRoleMapper.roleFor
+import it.valeriovaudi.vauthenticator.role.DynamoDbRoleMapper.deleteRoleRequestFor
+import it.valeriovaudi.vauthenticator.role.DynamoDbRoleMapper.findAllRequestFor
+import it.valeriovaudi.vauthenticator.role.DynamoDbRoleMapper.saveRoleRequestFor
+import it.valeriovaudi.vauthenticator.role.DynamoDbRoleMapper.roleFor
 import org.springframework.jdbc.core.JdbcTemplate
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.*

@@ -1,6 +1,6 @@
 package it.valeriovaudi.vauthenticator.account
 
-import it.valeriovaudi.vauthenticator.account.role.Role
+import it.valeriovaudi.vauthenticator.role.Role
 
 object AccountTestFixture {
 
