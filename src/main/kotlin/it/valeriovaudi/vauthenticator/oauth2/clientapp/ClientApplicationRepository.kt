@@ -9,7 +9,7 @@ interface ClientApplicationRepository {
 
     fun findOne(clientAppId: ClientAppId): Optional<ClientApplication>
 
-    fun findByFederation(federation: Federation): Iterable<ClientApplication>
+    fun findLogoutUriByFederation(federation: Federation): Iterable<LogoutUri>
 
     fun findAll(): Iterable<ClientApplication>
 
@@ -64,10 +64,11 @@ class JdbcClientApplicationRepository(private val jdbcTemplate: JdbcTemplate) : 
                         mapper).firstOrNull())
     }
 
-    override fun findByFederation(federation: Federation) =
+    override fun findLogoutUriByFederation(federation: Federation) =
             jdbcTemplate.query("SELECT * FROM oauth_client_details WHERE federation = ?",
                     arrayOf(federation.name),
                     mapper)
+                .map { it.logoutUri }
 
     override fun findAll(): Iterable<ClientApplication> =
             jdbcTemplate.query("SELECT * FROM oauth_client_details", mapper)

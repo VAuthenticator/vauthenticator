@@ -27,7 +27,7 @@ internal class DynamoDbAccountRepositoryTest {
         )
     }
 
-    @AfterEach
+//    @AfterEach
     fun tearDown() {
         TestingFixture.resetDatabase(dynamoDbClient)
     }

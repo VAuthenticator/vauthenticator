@@ -32,7 +32,8 @@ internal class DynamoDbClientApplicationRepositoryTest {
 
     @Test
     fun `when find one client application by client id that does not exist`() {
-        val clientApp: Optional<ClientApplication> = dynamoDbClientApplicationRepository.findOne(ClientAppId("not-existing-one"))
+        val clientApp: Optional<ClientApplication> =
+            dynamoDbClientApplicationRepository.findOne(ClientAppId("not-existing-one"))
         Assertions.assertEquals(clientApp, Optional.empty<ClientApplication>())
     }
 
@@ -53,7 +54,33 @@ internal class DynamoDbClientApplicationRepositoryTest {
 
     @Test
     fun `when find federated client applications by federation`() {
-        TODO("Not yet implemented")
+        dynamoDbClientApplicationRepository.save(
+            ClientAppFixture.aClientApp(
+                ClientAppId("client_id1"),
+                logoutUri = LogoutUri("http://logout_uri_1")
+            )
+        )
+        dynamoDbClientApplicationRepository.save(
+            ClientAppFixture.aClientApp(
+                ClientAppId("client_id2"),
+                logoutUri = LogoutUri("http://logout_uri_2")
+            )
+        )
+        dynamoDbClientApplicationRepository.save(
+            ClientAppFixture.aClientApp(
+                ClientAppId("client_id3"),
+                logoutUri = LogoutUri("http://logout_uri_3")
+            )
+        )
+        val actual = dynamoDbClientApplicationRepository.findLogoutUriByFederation(Federation("A_FEDERATION"))
+
+        val expected = listOf(
+            LogoutUri("http://logout_uri_3"),
+            LogoutUri("http://logout_uri_2"),
+            LogoutUri("http://logout_uri_1")
+        )
+
+        Assertions.assertEquals(actual, expected)
     }
 
     @Test

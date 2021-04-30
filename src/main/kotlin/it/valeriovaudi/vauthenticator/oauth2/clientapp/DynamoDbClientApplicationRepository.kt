@@ -4,10 +4,7 @@ import it.valeriovaudi.vauthenticator.extentions.*
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.DynamoClientApplicationConverter.fromDomainToDynamo
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.DynamoClientApplicationConverter.fromDynamoToDomain
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
-import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
-import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
-import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
-import software.amazon.awssdk.services.dynamodb.model.ScanRequest
+import software.amazon.awssdk.services.dynamodb.model.*
 import java.util.*
 
 class DynamoDbClientApplicationRepository(
@@ -34,8 +31,23 @@ class DynamoDbClientApplicationRepository(
             .map { fromDynamoToDomain(it) }
     }
 
-    override fun findByFederation(federation: Federation): Iterable<ClientApplication> {
-        TODO("Not yet implemented")
+    override fun findLogoutUriByFederation(federation: Federation): Iterable<LogoutUri> {
+        return dynamoDbClient.query(
+            QueryRequest.builder()
+                .tableName(dynamoClientApplicationTableName)
+                .scanIndexForward(false)
+                .indexName("FederationIndex")
+                .scanIndexForward(false)
+                .projectionExpression("logout_uris")
+                .keyConditionExpression("federation = :federation")
+                .expressionAttributeValues(
+                    mapOf(
+                        ":federation" to federation.name.asDynamoAttribute()
+                    )
+                )
+                .build()
+        ).items()
+            .map { LogoutUri(it.valueAsStringFor("logout_uris")) }
     }
 
     override fun findAll(): Iterable<ClientApplication> {

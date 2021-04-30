@@ -29,15 +29,14 @@ class JdbcFrontChannelLogoutTest {
 
     @Test
     fun `get all logout uri for a onlyone-portal federation`() {
-        val clientAppId = ClientAppId("a_client_app_id")
         val federation = Federation("a_federation")
 
-        every { clientApplicationRepository.findByFederation(federation) }
+        every { clientApplicationRepository.findLogoutUriByFederation(federation) }
             .returns(
                 listOf(
-                    ClientAppFixture.aClientApp(clientAppId, logoutUri = LogoutUri("http://an_uri123")),
-                    ClientAppFixture.aClientApp(clientAppId, logoutUri = LogoutUri("http://an_uri")),
-                    ClientAppFixture.aClientApp(clientAppId, logoutUri = LogoutUri("http://an_uri")),
+                    LogoutUri("http://an_uri123"),
+                    LogoutUri("http://an_uri"),
+                    LogoutUri("http://an_uri"),
                 )
             )
         val idToken = TestingFixture.idTokenFor("a_federation")

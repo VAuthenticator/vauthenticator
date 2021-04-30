@@ -5,12 +5,10 @@ import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationReposito
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.Federation
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
-import java.sql.ResultSet
 import java.util.*
 
 interface FrontChannelLogout {
@@ -41,8 +39,7 @@ class JdbcFrontChannelLogout(
 
     override fun getFederatedLogoutUrls(idTokenHint: String): List<String> {
         val federation = federationFor(idTokenHint)
-        val federatedClientApp = applicationRepository.findByFederation(Federation(federation))
-        val federatedLogoutUri = federatedClientApp.map { it.logoutUri.content }
+        val federatedLogoutUri = applicationRepository.findLogoutUriByFederation(Federation(federation)).map { it.content }
 
         val logoutUrisWithAuthServer = listOf("$authServerBaseUrl/logout", *federatedLogoutUri.toTypedArray())
         logger.debug("logoutUrisWithAuthServer: $logoutUrisWithAuthServer")

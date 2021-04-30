@@ -39,12 +39,13 @@ class JdbcClientApplicationRepositoryTest {
 
     @Test
     fun `when try to find a client application in a federation`() {
-        val actual: Iterable<ClientApplication> = clientApplicationRepository.findByFederation(Federation("ANOTHER_FEDERATION"))
-        val expected: Iterable<ClientApplication> = listOf(
-                aClientApp(clientAppId = ClientAppId("federated_client_id1"), federation = Federation("ANOTHER_FEDERATION")),
-                aClientApp(clientAppId = ClientAppId("federated_client_id2"), federation = Federation("ANOTHER_FEDERATION")),
-                aClientApp(clientAppId = ClientAppId("A_CLIENT_APPLICATION_ID"), federation = Federation("ANOTHER_FEDERATION"), logoutUri = LogoutUri("http://an_uri123"))
+        val actual: Iterable<LogoutUri> = clientApplicationRepository.findLogoutUriByFederation(Federation("ANOTHER_FEDERATION"))
+        val expected: Iterable<LogoutUri> = listOf(
+            LogoutUri("http://an_uri"),
+            LogoutUri("http://an_uri"),
+            LogoutUri("http://an_uri123")
         )
+
         Assertions.assertEquals(expected, actual)
     }
 
