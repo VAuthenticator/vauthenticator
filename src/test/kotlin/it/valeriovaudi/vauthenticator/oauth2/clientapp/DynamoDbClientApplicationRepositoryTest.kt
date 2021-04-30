@@ -37,12 +37,18 @@ internal class DynamoDbClientApplicationRepositoryTest {
     }
 
     @Test
-    fun `when find one client application by client id after save it`() {
-        val expected = ClientAppFixture.aClientApp(ClientAppId("client_id"))
+    fun `when store, check if it exist and then delete a client application by client`() {
+        val clientAppId = ClientAppId("client_id")
+        val expected = ClientAppFixture.aClientApp(clientAppId)
         dynamoDbClientApplicationRepository.save(expected)
-        val actual = dynamoDbClientApplicationRepository.findOne(ClientAppId("client_id"))
+        var actual = dynamoDbClientApplicationRepository.findOne(clientAppId)
 
         Assertions.assertEquals(actual, Optional.of(expected))
+
+        dynamoDbClientApplicationRepository.delete(clientAppId)
+        actual = dynamoDbClientApplicationRepository.findOne(clientAppId)
+
+        Assertions.assertEquals(actual, Optional.empty<ClientApplication>())
     }
 
     @Test
@@ -55,9 +61,4 @@ internal class DynamoDbClientApplicationRepositoryTest {
         TODO("Not yet implemented")
     }
 
-
-    @Test
-    fun `when delete a client application`() {
-        TODO("Not yet implemented")
-    }
 }

@@ -4,6 +4,7 @@ import it.valeriovaudi.vauthenticator.extentions.*
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.DynamoClientApplicationConverter.fromDomainToDynamo
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.DynamoClientApplicationConverter.fromDynamoToDomain
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
 import java.util.*
@@ -50,7 +51,16 @@ class DynamoDbClientApplicationRepository(
     }
 
     override fun delete(clientAppId: ClientAppId) {
-        TODO("Not yet implemented")
+        dynamoDbClient.deleteItem(
+            DeleteItemRequest.builder()
+                .tableName(dynamoClientApplicationTableName)
+                .key(
+                    mutableMapOf(
+                        "client_id" to clientAppId.content.asDynamoAttribute()
+                    )
+                )
+                .build()
+        )
     }
 
 }
