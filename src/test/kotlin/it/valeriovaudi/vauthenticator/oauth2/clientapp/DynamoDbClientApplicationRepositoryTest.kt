@@ -58,7 +58,12 @@ internal class DynamoDbClientApplicationRepositoryTest {
 
     @Test
     fun `when find all client applications`() {
-        TODO("Not yet implemented")
+        val clientAppId = ClientAppId("client_id")
+        val expected = ClientAppFixture.aClientApp(clientAppId)
+        dynamoDbClientApplicationRepository.save(expected)
+        val actual = dynamoDbClientApplicationRepository.findAll()
+
+        Assertions.assertEquals(actual, listOf(expected))
     }
 
 }

@@ -7,6 +7,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
+import software.amazon.awssdk.services.dynamodb.model.ScanRequest
 import java.util.*
 
 class DynamoDbClientApplicationRepository(
@@ -15,7 +16,7 @@ class DynamoDbClientApplicationRepository(
 ) : ClientApplicationRepository {
     override fun findOne(clientAppId: ClientAppId): Optional<ClientApplication> {
         return Optional.of(clientAppId.content)
-            .flatMap { if(it.isEmpty()) Optional.empty() else Optional.of(clientAppId) }
+            .flatMap { if (it.isEmpty()) Optional.empty() else Optional.of(clientAppId) }
             .map {
                 dynamoDbClient.getItem(
                     GetItemRequest.builder()
@@ -38,7 +39,14 @@ class DynamoDbClientApplicationRepository(
     }
 
     override fun findAll(): Iterable<ClientApplication> {
-        TODO("Not yet implemented")
+        return dynamoDbClient.scan(
+            ScanRequest.builder()
+                .tableName(dynamoClientApplicationTableName)
+                .build()
+        ).items()
+            .map {
+                fromDynamoToDomain(it)
+            }
     }
 
     override fun save(clientApp: ClientApplication) {
