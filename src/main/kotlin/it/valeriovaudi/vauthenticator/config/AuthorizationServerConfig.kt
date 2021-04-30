@@ -68,8 +68,8 @@ class AuthorizationServerConfig {
     }
 
     fun generateRsa(): RSAKey {
-//        val keyPair = this.keyRepository.getKeyPair()
-        val keyPair = generateRsaKey()
+        val keyPair = this.keyRepository.getKeyPair()
+//        val keyPair = generateRsaKey()
         val publicKey = keyPair.public as RSAPublicKey
         val privateKey = keyPair.private as RSAPrivateKey
         return RSAKey.Builder(publicKey)
@@ -137,8 +137,8 @@ class AuthorizationServerConfig {
 
     @Bean
     fun providerSettings(): ProviderSettings {
-//        return ProviderSettings().issuer(oidcIss)
-        return ProviderSettings().issuer("http://localhost:8080/vauthenticator")
+        return ProviderSettings().issuer(oidcIss)
+//        return ProviderSettings().issuer("http://localhost:8080/vauthenticator")
     }
 
     @Bean
