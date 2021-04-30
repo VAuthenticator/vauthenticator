@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Bean
 
 @EnableCaching
 @SpringBootApplication
-class VauthenticatorApplication {
+class VAuthenticatorApplication {
     @Bean
     fun configurer(@Value("\${spring.application.name:}") applicationName: String): MeterRegistryCustomizer<MeterRegistry>? {
         return MeterRegistryCustomizer { registry: MeterRegistry -> registry.config().commonTags("application", applicationName) }
@@ -20,5 +20,5 @@ class VauthenticatorApplication {
 }
 
 fun main(args: Array<String>) {
-    runApplication<VauthenticatorApplication>(*args)
+    runApplication<VAuthenticatorApplication>(*args)
 }

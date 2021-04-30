@@ -7,6 +7,7 @@ import com.nimbusds.jose.jwk.source.JWKSource
 import com.nimbusds.jose.proc.SecurityContext
 import it.valeriovaudi.vauthenticator.account.AccountRepository
 import it.valeriovaudi.vauthenticator.keypair.KeyRepository
+import it.valeriovaudi.vauthenticator.oauth2.authorizationservice.RedisOAuth2AuthorizationService
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
 import it.valeriovaudi.vauthenticator.openid.connect.logout.JdbcFrontChannelLogout
 import it.valeriovaudi.vauthenticator.security.registeredclient.ClientAppRegisteredClientRepository
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -66,8 +68,8 @@ class AuthorizationServerConfig {
     }
 
     fun generateRsa(): RSAKey {
-        val keyPair = this.keyRepository.getKeyPair()
-//        val keyPair = generateRsaKey()
+//        val keyPair = this.keyRepository.getKeyPair()
+        val keyPair = generateRsaKey()
         val publicKey = keyPair.public as RSAPublicKey
         val privateKey = keyPair.private as RSAPrivateKey
         return RSAKey.Builder(publicKey)
@@ -93,10 +95,9 @@ class AuthorizationServerConfig {
     }
 
     @Bean
-    fun jwtCustomizer(): OAuth2TokenCustomizer<JwtEncodingContext> {
+    fun jwtCustomizer(clientApplicationRepository: ClientApplicationRepository): OAuth2TokenCustomizer<JwtEncodingContext> {
         return OAuth2TokenCustomizer { context: JwtEncodingContext ->
             val tokenType = context.tokenType.value
-            println(tokenType)
             if ("access_token" == tokenType && !context.authorizationGrantType.equals(CLIENT_CREDENTIALS)) {
                 val attributes =
                     context.authorization!!.attributes
@@ -130,19 +131,19 @@ class AuthorizationServerConfig {
     }
 
     @Bean
-    fun oAuth2AuthorizationService(): OAuth2AuthorizationService {
-        return InMemoryOAuth2AuthorizationService()
+    fun oAuth2AuthorizationService(redisTemplate: RedisTemplate<Any,Any>): OAuth2AuthorizationService {
+        return RedisOAuth2AuthorizationService(redisTemplate)
     }
 
     @Bean
     fun providerSettings(): ProviderSettings {
-        return ProviderSettings().issuer(oidcIss)
-//        return ProviderSettings().issuer("http://localhost:8080/vauthenticator")
+//        return ProviderSettings().issuer(oidcIss)
+        return ProviderSettings().issuer("http://localhost:8080/vauthenticator")
     }
 
     @Bean
-    fun frontChannelLogout(dataSource: DataSource, applicationRepository: ClientApplicationRepository) = JdbcFrontChannelLogout(
-        oidcIss,
-        applicationRepository
-    )
+    fun frontChannelLogout(dataSource: DataSource, applicationRepository: ClientApplicationRepository) =
+        JdbcFrontChannelLogout(
+            oidcIss, applicationRepository
+        )
 }
