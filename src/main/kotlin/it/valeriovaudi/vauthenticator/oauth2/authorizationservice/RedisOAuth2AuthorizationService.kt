@@ -4,6 +4,7 @@ import it.valeriovaudi.vauthenticator.extentions.toSha256
 import org.slf4j.LoggerFactory
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.lang.Nullable
+import org.springframework.security.oauth2.core.AbstractOAuth2Token
 import org.springframework.security.oauth2.core.OAuth2AccessToken
 import org.springframework.security.oauth2.core.OAuth2RefreshToken
 import org.springframework.security.oauth2.core.OAuth2TokenType
@@ -15,7 +16,6 @@ import org.springframework.security.oauth2.server.authorization.OAuth2Authorizat
 import org.springframework.util.Assert
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.math.log
 
 class RedisOAuth2AuthorizationService(private val redisTemplate: RedisTemplate<Any, Any>) :
     OAuth2AuthorizationService {
@@ -28,11 +28,18 @@ class RedisOAuth2AuthorizationService(private val redisTemplate: RedisTemplate<A
 
         redisTemplate.opsForHash<String, OAuth2Authorization>()
             .put(authorization.id, authorization.id.toSha256(), authorization)
+
+        val findByTokenFor = findByTokenFor(authorization)
+        if(findByTokenFor!= null){
+            redisTemplate.opsForHash<String, String>()
+                .put(findByTokenFor, findByTokenFor.toSha256(), authorization.id)
+        }
+
         logger.info("save")
 
         Optional.ofNullable(
             authorization.attributes["org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest"] as OAuth2AuthorizationRequest
-        ).ifPresent{
+        ).ifPresent {
             logger.info("additionalParameters: ${it.additionalParameters}")
             logger.info(it.state)
             logger.info("attributes: ${it.attributes}")
@@ -41,8 +48,8 @@ class RedisOAuth2AuthorizationService(private val redisTemplate: RedisTemplate<A
 
 //        org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest
         logger.info("attributes: ${authorization.attributes}")
-        logger.info("accessToken ${authorization.accessToken}")
-        logger.info("refreshToken ${authorization.refreshToken}")
+        logger.info("accessToken ${authorization.accessToken.token.tokenValue}")
+        logger.info("refreshToken ${authorization.refreshToken?.token}")
         logger.info("registeredClientId ${authorization.registeredClientId}")
         logger.info("authorizationGrantType ${authorization.authorizationGrantType.value}")
         logger.info("principalName ${authorization.principalName}")
@@ -52,14 +59,14 @@ class RedisOAuth2AuthorizationService(private val redisTemplate: RedisTemplate<A
 
     override fun remove(authorization: OAuth2Authorization) {
         Assert.notNull(authorization, "authorization cannot be null")
-        println("save")
-        println("attributes: ${authorization.attributes}")
-        println("accessToken ${authorization.accessToken.token.tokenValue}")
-        println("refreshToken ${authorization.refreshToken?.token}")
-        println("registeredClientId ${authorization.registeredClientId}")
-        println("authorizationGrantType ${authorization.authorizationGrantType.value}")
-        println("principalName ${authorization.principalName}")
-        println("id ${authorization.id}")
+        logger.info("save")
+        logger.info("attributes: ${authorization.attributes}")
+        logger.info("accessToken ${authorization.accessToken.token.tokenValue}")
+        logger.info("refreshToken ${authorization.refreshToken?.token}")
+        logger.info("registeredClientId ${authorization.registeredClientId}")
+        logger.info("authorizationGrantType ${authorization.authorizationGrantType.value}")
+        logger.info("principalName ${authorization.principalName}")
+        logger.info("id ${authorization.id}")
         redisTemplate.opsForHash<String, OAuth2Authorization>()
             .delete(authorization.id, authorization.id.toSha256(), authorization)
         authorizations.remove(authorization.id, authorization)
@@ -70,7 +77,7 @@ class RedisOAuth2AuthorizationService(private val redisTemplate: RedisTemplate<A
     override fun findById(id: String): OAuth2Authorization? {
         Assert.hasText(id, "id cannot be empty")
         logger.info("findById: $id")
-         redisTemplate.opsForHash<String, OAuth2Authorization>()
+        redisTemplate.opsForHash<String, OAuth2Authorization>()
             .get(id, id.toSha256())
         return authorizations[id]
 
@@ -82,7 +89,9 @@ class RedisOAuth2AuthorizationService(private val redisTemplate: RedisTemplate<A
         logger.info("findByToken: $token")
         logger.info("findByToken: ${tokenType?.value}")
 
-        return authorizations.values.stream()
+        val id = redisTemplate.opsForHash<String, String>().get(token, token.toSha256())!!
+        return redisTemplate.opsForHash<String, OAuth2Authorization>().get(id, id.toSha256())
+        /*return authorizations.values.stream()
             .filter { authorization: OAuth2Authorization? ->
                 hasToken(
                     authorization,
@@ -91,8 +100,25 @@ class RedisOAuth2AuthorizationService(private val redisTemplate: RedisTemplate<A
                 )
             }
             .findFirst()
-            .orElse(null)
+            .orElse(null)*/
     }
+
+    fun findByTokenFor(
+        authorization: OAuth2Authorization,
+    ): String? {
+        val state = authorization.getAttribute(OAuth2ParameterNames.STATE) as String?
+        return if (state != null) {
+            state
+        } else {
+            listOf(
+                OAuth2AuthorizationCode::class.java,
+                OAuth2AccessToken::class.java,
+                OAuth2RefreshToken::class.java
+            ).map { authorization.getToken(it)?.token?.tokenValue }
+                .first()
+        }
+    }
+
 
     private fun hasToken(
         authorization: OAuth2Authorization?,
