@@ -36,7 +36,7 @@ class RedisOAuth2AuthorizationService(private val redisTemplate: RedisTemplate<A
             logger.info("additionalParameters: ${it.additionalParameters}")
             logger.info(it.state)
             logger.info("attributes: ${it.attributes}")
-            logger.info("attributes: ${it.responseType.value}")
+            logger.info("responseType: ${it.responseType.value}")
         }
 
 //        org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest
@@ -54,8 +54,8 @@ class RedisOAuth2AuthorizationService(private val redisTemplate: RedisTemplate<A
         Assert.notNull(authorization, "authorization cannot be null")
         println("save")
         println("attributes: ${authorization.attributes}")
-        println("accessToken ${authorization.accessToken}")
-        println("refreshToken ${authorization.refreshToken}")
+        println("accessToken ${authorization.accessToken.token.tokenValue}")
+        println("refreshToken ${authorization.refreshToken?.token}")
         println("registeredClientId ${authorization.registeredClientId}")
         println("authorizationGrantType ${authorization.authorizationGrantType.value}")
         println("principalName ${authorization.principalName}")
