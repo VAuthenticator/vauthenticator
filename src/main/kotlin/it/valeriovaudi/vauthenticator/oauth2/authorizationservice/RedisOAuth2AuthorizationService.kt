@@ -69,7 +69,7 @@ class RedisOAuth2AuthorizationService(private val redisTemplate: RedisTemplate<A
         logger.info("id ${authorization.id}")
         redisTemplate.opsForHash<String, OAuth2Authorization>()
             .delete(authorization.id, authorization.id.toSha256(), authorization)
-        authorizations.remove(authorization.id, authorization)
+//        authorizations.remove(authorization.id, authorization)
 
     }
 
@@ -77,9 +77,9 @@ class RedisOAuth2AuthorizationService(private val redisTemplate: RedisTemplate<A
     override fun findById(id: String): OAuth2Authorization? {
         Assert.hasText(id, "id cannot be empty")
         logger.info("findById: $id")
-        redisTemplate.opsForHash<String, OAuth2Authorization>()
+        return redisTemplate.opsForHash<String, OAuth2Authorization>()
             .get(id, id.toSha256())
-        return authorizations[id]
+//        return authorizations[id]
 
     }
 
