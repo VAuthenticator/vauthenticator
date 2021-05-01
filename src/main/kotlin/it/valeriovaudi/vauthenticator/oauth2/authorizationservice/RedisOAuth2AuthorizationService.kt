@@ -7,12 +7,15 @@ import org.springframework.lang.Nullable
 import org.springframework.security.oauth2.core.OAuth2AccessToken
 import org.springframework.security.oauth2.core.OAuth2RefreshToken
 import org.springframework.security.oauth2.core.OAuth2TokenType
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationCode
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService
 import org.springframework.util.Assert
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.math.log
 
 class RedisOAuth2AuthorizationService(private val redisTemplate: RedisTemplate<Any, Any>) :
     OAuth2AuthorizationService {
@@ -25,6 +28,15 @@ class RedisOAuth2AuthorizationService(private val redisTemplate: RedisTemplate<A
 
         redisTemplate.opsForHash<String, OAuth2Authorization>()
             .put(authorization.id, authorization.id.toSha256(), authorization)
+
+        Optional.ofNullable(
+            authorization.attributes["org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest"] as OAuth2AuthorizationRequest
+        ).ifPresent{
+            logger.info("additionalParameters: ${it.additionalParameters}")
+            logger.info(it.state)
+            logger.info("attributes: ${it.attributes}")
+            logger.info("attributes: ${it.responseType}")
+        }
 
 //        org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest
         logger.info("save")
