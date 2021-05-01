@@ -74,7 +74,7 @@ class AuthorizationServerConfig {
         val privateKey = keyPair.private as RSAPrivateKey
         return RSAKey.Builder(publicKey)
             .privateKey(privateKey)
-            .keyID(UUID.randomUUID().toString())
+            .keyID("onlyone-portal-key")
             .build()
     }
 
