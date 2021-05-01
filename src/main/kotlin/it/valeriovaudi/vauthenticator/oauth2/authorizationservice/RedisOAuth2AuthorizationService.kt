@@ -22,16 +22,16 @@ class RedisOAuth2AuthorizationService(private val redisTemplate: RedisTemplate<A
 
     override fun save(authorization: OAuth2Authorization) {
         Assert.notNull(authorization, "authorization cannot be null")
+        logger.info("save")
 
         redisTemplate.opsForHash<String, OAuth2Authorization>()
             .put(authorization.id, authorization.id.toSha256(), authorization)
 
         val findByTokenFor = findByTokenFor(authorization)
-        if (findByTokenFor != null) {
+        findByTokenFor.forEach {
             redisTemplate.opsForHash<String, String>()
-                .put(findByTokenFor, findByTokenFor.toSha256(), authorization.id)
+                .put(it, it.toSha256(), authorization.id)
         }
-        logger.info("save")
     }
 
     override fun remove(authorization: OAuth2Authorization) {
@@ -60,10 +60,10 @@ class RedisOAuth2AuthorizationService(private val redisTemplate: RedisTemplate<A
 
     fun findByTokenFor(
         authorization: OAuth2Authorization,
-    ): String? {
+    ): List<String> {
         val state = authorization.getAttribute(OAuth2ParameterNames.STATE) as String?
         return if (state != null) {
-            state
+            listOf(state)
         } else {
             listOf(
                 OAuth2AuthorizationCode::class.java,
@@ -72,7 +72,6 @@ class RedisOAuth2AuthorizationService(private val redisTemplate: RedisTemplate<A
                 OAuth2RefreshToken2::class.java
             ).mapNotNull { authorization.getToken(it) }
                 .map { it.token.tokenValue }
-                .first()
         }
     }
 }
