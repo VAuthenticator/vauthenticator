@@ -8,6 +8,7 @@ import com.nimbusds.jose.proc.SecurityContext
 import it.valeriovaudi.vauthenticator.account.AccountRepository
 import it.valeriovaudi.vauthenticator.keypair.KeyRepository
 import it.valeriovaudi.vauthenticator.oauth2.authorizationservice.RedisOAuth2AuthorizationService
+import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
 import it.valeriovaudi.vauthenticator.openid.connect.logout.JdbcFrontChannelLogout
 import it.valeriovaudi.vauthenticator.security.registeredclient.ClientAppRegisteredClientRepository
@@ -101,6 +102,12 @@ class AuthorizationServerConfig {
                     context.authorization!!.attributes
                 val principle =
                     attributes["java.security.Principal"] as Authentication
+                clientApplicationRepository.findOne(
+                    ClientAppId(context.registeredClient.clientId)
+                ).ifPresent {
+                    context.claims.claim("federation", it.federation.name)
+                }
+
                 context.claims.claim("email", principle.name)
             }
         }
@@ -116,7 +123,7 @@ class AuthorizationServerConfig {
     }
 
     @Bean
-    fun oAuth2AuthorizationService(redisTemplate: RedisTemplate<Any,Any>): OAuth2AuthorizationService {
+    fun oAuth2AuthorizationService(redisTemplate: RedisTemplate<Any, Any>): OAuth2AuthorizationService {
         return RedisOAuth2AuthorizationService(redisTemplate)
     }
 
