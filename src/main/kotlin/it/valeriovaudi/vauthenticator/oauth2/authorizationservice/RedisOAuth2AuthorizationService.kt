@@ -26,6 +26,7 @@ class RedisOAuth2AuthorizationService(private val redisTemplate: RedisTemplate<A
         redisTemplate.opsForHash<String, OAuth2Authorization>()
             .put(authorization.id, authorization.id.toSha256(), authorization)
 
+//        org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest
         logger.info("save")
         logger.info("attributes: ${authorization.attributes}")
         logger.info("accessToken ${authorization.accessToken}")
@@ -34,6 +35,7 @@ class RedisOAuth2AuthorizationService(private val redisTemplate: RedisTemplate<A
         logger.info("authorizationGrantType ${authorization.authorizationGrantType.value}")
         logger.info("principalName ${authorization.principalName}")
         logger.info("id ${authorization.id}")
+        authorizations[authorization.id] = authorization
     }
 
     override fun remove(authorization: OAuth2Authorization) {
@@ -48,21 +50,25 @@ class RedisOAuth2AuthorizationService(private val redisTemplate: RedisTemplate<A
         println("id ${authorization.id}")
         redisTemplate.opsForHash<String, OAuth2Authorization>()
             .delete(authorization.id, authorization.id.toSha256(), authorization)
+        authorizations.remove(authorization.id, authorization)
+
     }
 
     @Nullable
     override fun findById(id: String): OAuth2Authorization? {
         Assert.hasText(id, "id cannot be empty")
         logger.info("findById: $id")
-        return redisTemplate.opsForHash<String, OAuth2Authorization>()
+         redisTemplate.opsForHash<String, OAuth2Authorization>()
             .get(id, id.toSha256())
+        return authorizations[id]
+
     }
 
     @Nullable
     override fun findByToken(token: String, @Nullable tokenType: OAuth2TokenType?): OAuth2Authorization? {
         Assert.hasText(token, "token cannot be empty")
         logger.info("findByToken: $token")
-        logger.info("findByToken: $tokenType")
+        logger.info("findByToken: ${tokenType?.value}")
 
         return authorizations.values.stream()
             .filter { authorization: OAuth2Authorization? ->
