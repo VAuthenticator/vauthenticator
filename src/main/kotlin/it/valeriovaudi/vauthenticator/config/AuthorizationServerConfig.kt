@@ -22,17 +22,13 @@ import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.core.AuthorizationGrantType.CLIENT_CREDENTIALS
 import org.springframework.security.oauth2.jwt.NimbusJwsEncoder
-import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationService
 import org.springframework.security.oauth2.server.authorization.JwtEncodingContext
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenCustomizer
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository
 import org.springframework.security.oauth2.server.authorization.config.ProviderSettings
-import java.security.KeyPair
-import java.security.KeyPairGenerator
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
-import java.util.*
 import java.util.stream.Collectors
 import javax.sql.DataSource
 
@@ -57,19 +53,8 @@ class AuthorizationServerConfig {
     @Autowired
     lateinit var clock: Clock
 
-    fun generateRsaKey(): KeyPair {
-        return try {
-            val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
-            keyPairGenerator.initialize(2048)
-            keyPairGenerator.generateKeyPair()
-        } catch (ex: Exception) {
-            throw IllegalStateException(ex)
-        }
-    }
-
     fun generateRsa(): RSAKey {
         val keyPair = this.keyRepository.getKeyPair()
-//        val keyPair = generateRsaKey()
         val publicKey = keyPair.public as RSAPublicKey
         val privateKey = keyPair.private as RSAPrivateKey
         return RSAKey.Builder(publicKey)
@@ -138,7 +123,6 @@ class AuthorizationServerConfig {
     @Bean
     fun providerSettings(): ProviderSettings {
         return ProviderSettings().issuer(oidcIss)
-//        return ProviderSettings().issuer("http://localhost:8080/vauthenticator")
     }
 
     @Bean

@@ -5,10 +5,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.lang.Nullable
-import org.springframework.security.oauth2.core.AbstractOAuth2Token
-import org.springframework.security.oauth2.core.OAuth2AccessToken
-import org.springframework.security.oauth2.core.OAuth2RefreshToken
-import org.springframework.security.oauth2.core.OAuth2TokenType
+import org.springframework.security.oauth2.core.*
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization
@@ -71,8 +68,10 @@ class RedisOAuth2AuthorizationService(private val redisTemplate: RedisTemplate<A
             listOf(
                 OAuth2AuthorizationCode::class.java,
                 OAuth2AccessToken::class.java,
-                OAuth2RefreshToken::class.java
-            ).map { authorization.getToken(it)?.token?.tokenValue }
+                OAuth2RefreshToken::class.java,
+                OAuth2RefreshToken2::class.java
+            ).mapNotNull { authorization.getToken(it) }
+                .map { it.token.tokenValue }
                 .first()
         }
     }
