@@ -28,6 +28,7 @@ class RedisOAuth2AuthorizationService(private val redisTemplate: RedisTemplate<A
 
         redisTemplate.opsForHash<String, OAuth2Authorization>()
             .put(authorization.id, authorization.id.toSha256(), authorization)
+        logger.info("save")
 
         Optional.ofNullable(
             authorization.attributes["org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest"] as OAuth2AuthorizationRequest
@@ -35,11 +36,10 @@ class RedisOAuth2AuthorizationService(private val redisTemplate: RedisTemplate<A
             logger.info("additionalParameters: ${it.additionalParameters}")
             logger.info(it.state)
             logger.info("attributes: ${it.attributes}")
-            logger.info("attributes: ${it.responseType}")
+            logger.info("attributes: ${it.responseType.value}")
         }
 
 //        org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest
-        logger.info("save")
         logger.info("attributes: ${authorization.attributes}")
         logger.info("accessToken ${authorization.accessToken}")
         logger.info("refreshToken ${authorization.refreshToken}")
