@@ -45,7 +45,7 @@ class RepositoryConfig {
 }
 
 @Configuration
-@ConditionalOnProperty(prefix = "repository.type.database", havingValue = "database")
+@ConditionalOnProperty(name = ["repository.type.database"], havingValue = "database")
 class DatabaseRepositoryConfig {
 
     @Bean
