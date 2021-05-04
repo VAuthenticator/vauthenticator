@@ -63,7 +63,7 @@ class DatabaseRepositoryConfig {
 }
 
 @Configuration
-@ConditionalOnProperty(prefix = "repository.type.database", havingValue = "dyanamo")
+@ConditionalOnProperty(name = ["repository.type.database"], havingValue = "dyanamo")
 class DynamoDbRepositoryConfig {
 
     @Bean
