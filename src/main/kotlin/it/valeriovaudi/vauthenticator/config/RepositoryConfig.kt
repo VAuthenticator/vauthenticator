@@ -59,7 +59,6 @@ class DatabaseRepositoryConfig {
     @Bean
     fun clientApplicationRepository(dataSource: DataSource, vAuthenticatorPasswordEncoder: VAuthenticatorPasswordEncoder) =
             JdbcClientApplicationRepository(JdbcTemplate(dataSource))
-
 }
 
 @Configuration
@@ -86,5 +85,4 @@ class DynamoDbRepositoryConfig {
     fun clientApplicationRepository(dynamoDbClient: DynamoDbClient,
                                     @Value("\${dynamo-db.client-application.table-name}") clientAppTableName: String) =
             DynamoDbClientApplicationRepository(dynamoDbClient, clientAppTableName)
-
 }
