@@ -36,7 +36,7 @@ object DynamoClientApplicationConverter {
             resourceIds = ResourceIds(listOf(ResourceId(dynamoPayload.valueAsStringFor("resource_ids")))),
             scopes = Scopes(dynamoPayload.valuesAsStringFor("scopes").map { Scope(it) }.toSet()),
             authorizedGrantTypes = AuthorizedGrantTypes(
-                dynamoPayload.valuesAsStringFor("authorized_grant_types").map { AuthorizedGrantType.valueOf(it) }),
+                dynamoPayload.valuesAsStringFor("authorized_grant_types").map { println("authorized_grant_types $authorized_grant_types"); AuthorizedGrantType.valueOf(it) }),
             webServerRedirectUri = CallbackUri(dynamoPayload.valueAsStringFor("web_server_redirect_uri")),
             authorities = Authorities(dynamoPayload["authorities"]?.ss()!!.map { Authority(it) }),
             accessTokenValidity = TokenTimeToLive(dynamoPayload.valueAsIntFor("access_token_validity")),
