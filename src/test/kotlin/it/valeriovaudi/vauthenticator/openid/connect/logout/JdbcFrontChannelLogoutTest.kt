@@ -3,14 +3,14 @@ package it.valeriovaudi.vauthenticator.openid.connect.logout
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.*
+import it.valeriovaudi.vauthenticator.oauth2.clientapp.DynamoDbClientApplicationRepository
+import it.valeriovaudi.vauthenticator.oauth2.clientapp.Federation
+import it.valeriovaudi.vauthenticator.oauth2.clientapp.LogoutUri
 import it.valeriovaudi.vauthenticator.support.TestingFixture
-import it.valeriovaudi.vauthenticator.support.TestingFixture.dataSource
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.springframework.jdbc.core.JdbcTemplate
 
 @ExtendWith(MockKExtension::class)
 class JdbcFrontChannelLogoutTest {
@@ -22,7 +22,6 @@ class JdbcFrontChannelLogoutTest {
 
     @BeforeEach
     fun setUp() {
-        val jdbcTemplate = JdbcTemplate(dataSource)
         fontEndChannelLogout =
             JdbcFrontChannelLogout("http://localhost/vauthenticator", clientApplicationRepository)
     }
