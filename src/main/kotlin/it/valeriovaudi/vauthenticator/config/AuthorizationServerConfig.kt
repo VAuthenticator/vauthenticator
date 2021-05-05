@@ -28,6 +28,8 @@ import org.springframework.security.oauth2.server.authorization.OAuth2Authorizat
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenCustomizer
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository
 import org.springframework.security.oauth2.server.authorization.config.ProviderSettings
+import java.security.KeyPair
+import java.security.KeyPairGenerator
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.util.stream.Collectors
@@ -54,14 +56,26 @@ class AuthorizationServerConfig {
     @Autowired
     lateinit var clock: Clock
 
+
+    fun generateRsaKey(): KeyPair {
+        return try {
+            val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
+            keyPairGenerator.initialize(2048)
+            keyPairGenerator.generateKeyPair()
+        } catch (ex: Exception) {
+            throw IllegalStateException(ex)
+        }
+    }
+
     fun generateRsa(): RSAKey {
+//        val keyPair = this.generateRsaKey()
         val keyPair = this.keyRepository.getKeyPair()
         val publicKey = keyPair.public as RSAPublicKey
         val privateKey = keyPair.private as RSAPrivateKey
         return RSAKey.Builder(publicKey)
-            .privateKey(privateKey)
-            .keyID("onlyone-portal-key")
-            .build()
+                .privateKey(privateKey)
+                .keyID("onlyone-portal-key")
+                .build()
     }
 
     @Bean
@@ -70,7 +84,7 @@ class AuthorizationServerConfig {
         val jwkSet = JWKSet(rsaKey)
         return JWKSource { jwkSelector: JWKSelector, _: SecurityContext? ->
             jwkSelector.select(
-                jwkSet
+                    jwkSet
             )
         }
     }
@@ -86,24 +100,24 @@ class AuthorizationServerConfig {
             val tokenType = context.tokenType.value
             if ("access_token" == tokenType && !context.authorizationGrantType.equals(CLIENT_CREDENTIALS)) {
                 val attributes =
-                    context.authorization!!.attributes
+                        context.authorization!!.attributes
                 val principal =
-                    attributes["java.security.Principal"] as Authentication
+                        attributes["java.security.Principal"] as Authentication
 
                 context.claims.claim("user_name", principal.name)
                 context.claims.claim("authorities", principal.authorities
-                    .stream()
-                    .map { obj: GrantedAuthority -> obj.authority }
-                    .collect(Collectors.toList()))
+                        .stream()
+                        .map { obj: GrantedAuthority -> obj.authority }
+                        .collect(Collectors.toList()))
             }
 
             if ("id_token" == tokenType && !context.authorizationGrantType.equals(CLIENT_CREDENTIALS)) {
                 val attributes =
-                    context.authorization!!.attributes
+                        context.authorization!!.attributes
                 val principle =
-                    attributes["java.security.Principal"] as Authentication
+                        attributes["java.security.Principal"] as Authentication
                 clientApplicationRepository.findOne(
-                    ClientAppId(context.registeredClient.clientId)
+                        ClientAppId(context.registeredClient.clientId)
                 ).ifPresent {
                     context.claims.claim("federation", it.federation.name)
                 }
@@ -116,8 +130,8 @@ class AuthorizationServerConfig {
 
     @Bean
     fun registeredClientRepository(
-        clientRepository: ClientApplicationRepository,
-        passwordEncoder: PasswordEncoder
+            clientRepository: ClientApplicationRepository,
+            passwordEncoder: PasswordEncoder
     ): RegisteredClientRepository {
         return ClientAppRegisteredClientRepository(clientRepository)
     }
@@ -134,7 +148,7 @@ class AuthorizationServerConfig {
 
     @Bean
     fun frontChannelLogout(dataSource: DataSource, applicationRepository: ClientApplicationRepository) =
-        JdbcFrontChannelLogout(
-            oidcIss, applicationRepository
-        )
+            JdbcFrontChannelLogout(
+                    oidcIss, applicationRepository
+            )
 }
