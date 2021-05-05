@@ -12,7 +12,6 @@ import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
 import it.valeriovaudi.vauthenticator.openid.connect.logout.JdbcFrontChannelLogout
 import it.valeriovaudi.vauthenticator.security.registeredclient.ClientAppRegisteredClientRepository
-import it.valeriovaudi.vauthenticator.time.Clock
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -41,21 +40,12 @@ class AuthorizationServerConfig {
     @Value("\${auth.oidcIss:}")
     lateinit var oidcIss: String
 
-    @Value("\${key-store.keyStorePairAlias:}")
-    lateinit var alias: String
-
     @Autowired
     lateinit var keyRepository: KeyRepository
 
-    @Autowired
-    lateinit var dataSource: DataSource
 
     @Autowired
     lateinit var accountRepository: AccountRepository
-
-    @Autowired
-    lateinit var clock: Clock
-
 
     fun generateRsaKey(): KeyPair {
         return try {
