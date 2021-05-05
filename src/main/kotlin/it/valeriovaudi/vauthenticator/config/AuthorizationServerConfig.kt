@@ -27,8 +27,6 @@ import org.springframework.security.oauth2.server.authorization.OAuth2Authorizat
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenCustomizer
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository
 import org.springframework.security.oauth2.server.authorization.config.ProviderSettings
-import java.security.KeyPair
-import java.security.KeyPairGenerator
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.util.stream.Collectors
@@ -47,18 +45,7 @@ class AuthorizationServerConfig {
     @Autowired
     lateinit var accountRepository: AccountRepository
 
-    fun generateRsaKey(): KeyPair {
-        return try {
-            val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
-            keyPairGenerator.initialize(2048)
-            keyPairGenerator.generateKeyPair()
-        } catch (ex: Exception) {
-            throw IllegalStateException(ex)
-        }
-    }
-
     fun generateRsa(): RSAKey {
-//        val keyPair = this.generateRsaKey()
         val keyPair = this.keyRepository.getKeyPair()
         val publicKey = keyPair.public as RSAPublicKey
         val privateKey = keyPair.private as RSAPrivateKey
