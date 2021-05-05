@@ -41,7 +41,7 @@ class ClientAppRegisteredClientRepository(private val clientApplicationRepositor
                 .tokenSettings { tokenSettings: TokenSettings ->
                     tokenSettings.accessTokenTimeToLive(Duration.ofSeconds(clientApp.accessTokenValidity.content.toLong()))
                     tokenSettings.refreshTokenTimeToLive(Duration.ofSeconds(clientApp.refreshTokenValidity.content.toLong()))
-                    tokenSettings.reuseRefreshTokens(false)
+                    tokenSettings.reuseRefreshTokens(true)
                 }
                 .build()
         }.orElseThrow {

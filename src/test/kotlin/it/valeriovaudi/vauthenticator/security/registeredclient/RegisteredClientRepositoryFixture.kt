@@ -23,7 +23,7 @@ object RegisteredClientRepositoryFixture {
         .tokenSettings { tokenSettings: TokenSettings ->
             tokenSettings.accessTokenTimeToLive(Duration.ofSeconds(100))
             tokenSettings.refreshTokenTimeToLive(Duration.ofSeconds(200))
-            tokenSettings.reuseRefreshTokens(false)
+            tokenSettings.reuseRefreshTokens(true)
         }
         .build()
 
