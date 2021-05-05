@@ -2,11 +2,13 @@ package it.valeriovaudi.vauthenticator.role
 
 import it.valeriovaudi.vauthenticator.role.DynamoDbRoleMapper.deleteRoleRequestFor
 import it.valeriovaudi.vauthenticator.role.DynamoDbRoleMapper.findAllRequestFor
-import it.valeriovaudi.vauthenticator.role.DynamoDbRoleMapper.saveRoleRequestFor
 import it.valeriovaudi.vauthenticator.role.DynamoDbRoleMapper.roleFor
-import org.springframework.jdbc.core.JdbcTemplate
+import it.valeriovaudi.vauthenticator.role.DynamoDbRoleMapper.saveRoleRequestFor
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
-import software.amazon.awssdk.services.dynamodb.model.*
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue
+import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
+import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
+import software.amazon.awssdk.services.dynamodb.model.ScanRequest
 
 interface RoleRepository {
 
@@ -14,24 +16,6 @@ interface RoleRepository {
     fun save(role: Role)
     fun delete(role: String)
 
-}
-
-class JdbcRoleRepository(val jdbcTemplate: JdbcTemplate) : RoleRepository {
-    override fun findAll() =
-        jdbcTemplate.query("SELECT * FROM ROLE")
-        { rs, _ -> Role(rs.getString("name"), rs.getString("description")) }
-
-
-    override fun save(role: Role) =
-        jdbcTemplate.update(
-            "INSERT INTO ROLE (NAME, DESCRIPTION) VALUES (?, ?) ON CONFLICT (NAME) DO UPDATE SET DESCRIPTION=? ",
-            role.name, role.description, role.description
-        )
-            .let { }
-
-    override fun delete(roleName: String) =
-        jdbcTemplate.update("DELETE FROM ROLE WHERE NAME=?", roleName)
-            .let { }
 }
 
 class DynamoDbRoleRepository(
