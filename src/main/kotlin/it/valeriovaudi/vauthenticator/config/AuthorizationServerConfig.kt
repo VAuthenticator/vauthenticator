@@ -30,7 +30,6 @@ import org.springframework.security.oauth2.server.authorization.config.ProviderS
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.util.stream.Collectors
-import javax.sql.DataSource
 
 @Configuration(proxyBeanMethods = false)
 class AuthorizationServerConfig {
@@ -124,7 +123,7 @@ class AuthorizationServerConfig {
     }
 
     @Bean
-    fun frontChannelLogout(dataSource: DataSource, applicationRepository: ClientApplicationRepository) =
+    fun frontChannelLogout(applicationRepository: ClientApplicationRepository) =
             JdbcFrontChannelLogout(
                     oidcIss, applicationRepository
             )
