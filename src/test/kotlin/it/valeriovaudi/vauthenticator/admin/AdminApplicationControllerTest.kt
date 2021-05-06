@@ -1,6 +1,5 @@
 package it.valeriovaudi.vauthenticator.admin
 
-import it.valeriovaudi.vauthenticator.openid.connect.nonce.NonceStore
 import it.valeriovaudi.vauthenticator.security.userdetails.AccountUserDetailsService
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -21,9 +20,6 @@ class AdminApplicationControllerTest {
 
     @Autowired
     private lateinit var mockMvc: MockMvc
-
-    @MockBean
-    lateinit var nonceStore: NonceStore
 
     @MockBean
     lateinit var redisTemplate: RedisTemplate<*, *>

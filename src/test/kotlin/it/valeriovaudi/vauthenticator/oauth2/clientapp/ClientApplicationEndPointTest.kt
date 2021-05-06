@@ -2,7 +2,6 @@ package it.valeriovaudi.vauthenticator.oauth2.clientapp
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppFixture.aClientApp
-import it.valeriovaudi.vauthenticator.openid.connect.nonce.NonceStore
 import it.valeriovaudi.vauthenticator.security.userdetails.AccountUserDetailsService
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -15,6 +14,7 @@ import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.http.MediaType
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.test.context.support.WithMockUser
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
@@ -28,9 +28,6 @@ class ClientApplicationEndPointTest {
 
     @Autowired
     lateinit var mockMvc: MockMvc
-
-    @MockBean
-    lateinit var nonceStore: NonceStore
 
     @MockBean
     lateinit var redisTemplate: RedisTemplate<*, *>
@@ -59,10 +56,13 @@ class ClientApplicationEndPointTest {
         val clientApplication = aClientApp(ClientAppId("clientAppId"))
         val representation = ClientAppRepresentation.fromDomainToRepresentation(clientApplication, storePassword = true)
 
-        mockMvc.perform(put("/api/client-applications/clientAppId")
+        mockMvc.perform(
+            put("/api/client-applications/clientAppId")
+                .with(csrf())
                 .content(objectMapper.writeValueAsString(representation))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent)
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isNoContent)
 
         verify(storeClientApplication).store(clientApplication, true)
     }
@@ -70,10 +70,14 @@ class ClientApplicationEndPointTest {
     @Test
     @WithMockUser(authorities = ["VAUTHENTICATOR_ADMIN"])
     fun `reset password for a client app`() {
-        mockMvc.perform(patch("/api/client-applications/clientApp")
+        mockMvc.perform(
+            patch("/api/client-applications/clientApp")
+                .with(csrf())
+
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(mapOf("secret" to "secret"))))
-                .andExpect(status().isNoContent)
+                .content(objectMapper.writeValueAsString(mapOf("secret" to "secret")))
+        )
+            .andExpect(status().isNoContent)
 
         verify(storeClientApplication).resetPassword(ClientAppId("clientApp"), Secret("secret"))
     }
@@ -82,12 +86,16 @@ class ClientApplicationEndPointTest {
     @WithMockUser(authorities = ["VAUTHENTICATOR_ADMIN"])
     fun `reset password for a not existing client app`() {
         given(storeClientApplication.resetPassword(ClientAppId("clientApp"), Secret("secret")))
-                .willThrow(ClientApplicationNotFound("the client application clientApp was not found"))
+            .willThrow(ClientApplicationNotFound("the client application clientApp was not found"))
 
-        mockMvc.perform(patch("/api/client-applications/clientApp")
+        mockMvc.perform(
+            patch("/api/client-applications/clientApp")
+                .with(csrf())
+
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(mapOf("secret" to "secret"))))
-                .andExpect(status().isNotFound)
+                .content(objectMapper.writeValueAsString(mapOf("secret" to "secret")))
+        )
+            .andExpect(status().isNotFound)
 
     }
 
@@ -96,17 +104,17 @@ class ClientApplicationEndPointTest {
     fun `view all client app`() {
         val clientApplication = aClientApp(ClientAppId("clientApp"))
         val body = listOf(
-                ClientAppInListRepresentation.fromDomainToRepresentation(clientApplication),
-                ClientAppInListRepresentation.fromDomainToRepresentation(clientApplication),
-                ClientAppInListRepresentation.fromDomainToRepresentation(clientApplication)
+            ClientAppInListRepresentation.fromDomainToRepresentation(clientApplication),
+            ClientAppInListRepresentation.fromDomainToRepresentation(clientApplication),
+            ClientAppInListRepresentation.fromDomainToRepresentation(clientApplication)
         )
 
         given(readClientApplication.findAll())
-                .willReturn(listOf(clientApplication, clientApplication, clientApplication))
+            .willReturn(listOf(clientApplication, clientApplication, clientApplication))
 
         mockMvc.perform(get("/api/client-applications"))
-                .andExpect(status().isOk)
-                .andExpect(content().json(objectMapper.writeValueAsString(body)))
+            .andExpect(status().isOk)
+            .andExpect(content().json(objectMapper.writeValueAsString(body)))
 
         verify(readClientApplication).findAll()
     }
@@ -118,11 +126,11 @@ class ClientApplicationEndPointTest {
         val body = ClientAppRepresentation.fromDomainToRepresentation(clientApplication)
 
         given(readClientApplication.findOne(ClientAppId("clientApp")))
-                .willReturn(Optional.of(aClientApp(ClientAppId("clientApp"))))
+            .willReturn(Optional.of(aClientApp(ClientAppId("clientApp"))))
 
         mockMvc.perform(get("/api/client-applications/clientApp"))
-                .andExpect(status().isOk)
-                .andExpect(content().json(objectMapper.writeValueAsString(body)))
+            .andExpect(status().isOk)
+            .andExpect(content().json(objectMapper.writeValueAsString(body)))
 
         verify(readClientApplication).findOne(ClientAppId("clientApp"))
     }
@@ -131,8 +139,11 @@ class ClientApplicationEndPointTest {
     @WithMockUser(authorities = ["VAUTHENTICATOR_ADMIN"])
     fun `delete a specific client app`() {
 
-        mockMvc.perform(delete("/api/client-applications/clientApp"))
-                .andExpect(status().isNoContent)
+        mockMvc.perform(
+            delete("/api/client-applications/clientApp")
+                .with(csrf())
+        )
+            .andExpect(status().isNoContent)
 
         verify(clientApplicationRepository).delete(ClientAppId("clientApp"))
     }

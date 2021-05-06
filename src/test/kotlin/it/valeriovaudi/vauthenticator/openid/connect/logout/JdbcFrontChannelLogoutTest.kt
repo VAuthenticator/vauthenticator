@@ -1,51 +1,50 @@
 package it.valeriovaudi.vauthenticator.openid.connect.logout
 
-import it.valeriovaudi.vauthenticator.keypair.KeyPairFixture
-import it.valeriovaudi.vauthenticator.openid.connect.idtoken.IdToken
-import it.valeriovaudi.vauthenticator.openid.connect.idtoken.TestableOAuth2Authentication
-import it.valeriovaudi.vauthenticator.support.TestingFixture.dataSource
-import it.valeriovaudi.vauthenticator.support.TestingFixture.initClientApplicationTests
-import it.valeriovaudi.vauthenticator.support.TestingFixture.resetDatabase
-import it.valeriovaudi.vauthenticator.time.Clock
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
+import it.valeriovaudi.vauthenticator.oauth2.clientapp.DynamoDbClientApplicationRepository
+import it.valeriovaudi.vauthenticator.oauth2.clientapp.Federation
+import it.valeriovaudi.vauthenticator.oauth2.clientapp.LogoutUri
+import it.valeriovaudi.vauthenticator.support.TestingFixture
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.BDDMockito.given
-import org.mockito.Mockito
-import org.springframework.jdbc.core.JdbcTemplate
+import org.junit.jupiter.api.extension.ExtendWith
 
+@ExtendWith(MockKExtension::class)
 class JdbcFrontChannelLogoutTest {
-
-    val clock: Clock = Mockito.mock(Clock::class.java)
 
     lateinit var fontEndChannelLogout: JdbcFrontChannelLogout
 
+    @MockK
+    lateinit var clientApplicationRepository: DynamoDbClientApplicationRepository
+
     @BeforeEach
     fun setUp() {
-        val jdbcTemplate = JdbcTemplate(dataSource)
-        resetDatabase(jdbcTemplate)
-        initClientApplicationTests(jdbcTemplate)
-        fontEndChannelLogout = JdbcFrontChannelLogout("http://localhost/vauthenticator", jdbcTemplate)
+        fontEndChannelLogout =
+            JdbcFrontChannelLogout("http://localhost/vauthenticator", clientApplicationRepository)
     }
 
     @Test
     fun `get all logout uri for a onlyone-portal federation`() {
-        val content = KeyPairFixture.getFileContent("/keystore/keystore.jks")
-        val keyPair = KeyPairFixture.keyPair(content = content)
-        val clockTime: Long = 10000
+        val federation = Federation("a_federation")
 
-        given(clock.nowInSeconds()).willReturn(clockTime)
-
-        val idToken = IdToken.createIdToken(iss = "AN_ISS", sub = "A_SUB",
-                authentication = TestableOAuth2Authentication(),
-                clock = clock)
-
-        val federatedLogoutUrls = fontEndChannelLogout.getFederatedLogoutUrls(idToken.idTokenAsJwtSignedFor(keyPair))
+        every { clientApplicationRepository.findLogoutUriByFederation(federation) }
+            .returns(
+                listOf(
+                    LogoutUri("http://an_uri123"),
+                    LogoutUri("http://an_uri"),
+                    LogoutUri("http://an_uri"),
+                )
+            )
+        val idToken = TestingFixture.idTokenFor("a_federation")
+        val federatedLogoutUrls = fontEndChannelLogout.getFederatedLogoutUrls(idToken)
         val expected = listOf(
-                "http://localhost/vauthenticator/logout",
-                "http://an_uri123",
-                "http://an_uri",
-                "http://an_uri"
+            "http://localhost/vauthenticator/logout",
+            "http://an_uri123",
+            "http://an_uri",
+            "http://an_uri"
         )
         Assertions.assertEquals(federatedLogoutUrls, expected)
     }

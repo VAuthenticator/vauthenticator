@@ -1,7 +1,6 @@
 package it.valeriovaudi.vauthenticator.openid.connect.userinfo
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import it.valeriovaudi.TestAdditionalConfiguration
 import it.valeriovaudi.vauthenticator.support.WithMockOAuth2User
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -9,7 +8,6 @@ import org.mockito.BDDMockito.given
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
@@ -20,8 +18,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 
 @ExtendWith(SpringExtension::class)
 @WebMvcTest(UserInfoEndPoint::class)
-@Import(TestAdditionalConfiguration::class)
-class UserInfoEndPointTest {
+internal class UserInfoEndPointTest {
 
     @Autowired
     lateinit var mockMvc: MockMvc

@@ -84,7 +84,7 @@ data class ClientAppRepresentation(var clientAppName: String,
                 ClientApplication(
                         clientAppId = ClientAppId(clientAppId),
                         secret = Secret(representation.secret),
-                        scopes = Scopes(representation.scopes.map { Scope(it) }),
+                        scopes = Scopes(representation.scopes.map { Scope(it) }.toSet()),
                         authorizedGrantTypes = AuthorizedGrantTypes(representation.authorizedGrantTypes.map { it.toUpperCase() }.map { AuthorizedGrantType.valueOf(it) }),
                         webServerRedirectUri = CallbackUri(representation.webServerRedirectUri),
                         authorities = Authorities(representation.authorities.map { it.toUpperCase() }.map(::Authority)),

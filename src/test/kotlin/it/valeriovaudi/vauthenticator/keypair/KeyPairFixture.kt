@@ -2,7 +2,7 @@ package it.valeriovaudi.vauthenticator.keypair
 
 import org.junit.jupiter.api.Assertions
 import org.springframework.core.io.ByteArrayResource
-import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory
+import org.springframework.security.rsa.crypto.KeyStoreKeyFactory
 import java.nio.file.Paths
 import java.security.KeyPair
 import java.security.PrivateKey

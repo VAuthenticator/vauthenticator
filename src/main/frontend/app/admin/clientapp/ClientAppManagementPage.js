@@ -97,7 +97,7 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
 
                         setAuthorities(value.authorities)
                         setAuthorityRows(
-                            drawAuthorityRows(setAuthorityRows, setAuthorities, value.authorities, roleValues)
+                            drawAuthorityRows(setAuthorityRows, setAuthorities, value.authorities || [], roleValues)
                         )
                     })
             })
