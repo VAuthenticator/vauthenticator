@@ -1,7 +1,6 @@
 package it.valeriovaudi.vauthenticator.security.registeredclient
 
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
+import it.valeriovaudi.vauthenticator.oauth2.clientapp.*
 import org.slf4j.LoggerFactory
 import org.springframework.security.oauth2.core.AuthorizationGrantType
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod
@@ -14,6 +13,20 @@ class ClientAppRegisteredClientRepository(private val clientApplicationRepositor
     RegisteredClientRepository {
 
     val logger = LoggerFactory.getLogger(ClientAppRegisteredClientRepository::class.java)
+
+    override fun save(registeredClient: RegisteredClient) {
+        clientApplicationRepository.save(
+                ClientApplication(
+                        clientAppId = ClientAppId(registeredClient.clientId),
+                        secret = Secret(registeredClient.clientSecret),
+                        accessTokenValidity = TokenTimeToLive(registeredClient.tokenSettings.accessTokenTimeToLive().toSeconds().toInt()),
+                        refreshTokenValidity = TokenTimeToLive(registeredClient.tokenSettings.refreshTokenTimeToLive().toSeconds().toInt()),
+                        additionalInformation = emptyMap(),
+                        authorities = Authorities.empty(),
+
+                )
+        );
+    }
 
     override fun findById(id: String): RegisteredClient =
         registeredClient(id)
