@@ -22,7 +22,7 @@
         <spring-cloud.version>2020.0.2</spring-cloud.version>
         <io.mockk.version>1.11.0</io.mockk.version>
         <aws.sdk.version>2.16.48</aws.sdk.version>
-        <oauth2-authorization-server.version>0.1.1</oauth2-authorization-server.version>
+        <oauth2-authorization-server.version>0.1.0</oauth2-authorization-server.version>
     </properties>
 
     <dependencies>
