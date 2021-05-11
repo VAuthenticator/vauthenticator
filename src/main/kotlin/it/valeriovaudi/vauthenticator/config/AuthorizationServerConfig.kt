@@ -17,12 +17,9 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.redis.core.RedisTemplate
-import org.springframework.security.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
-import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.core.AuthorizationGrantType.CLIENT_CREDENTIALS
-import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.oauth2.jwt.NimbusJwsEncoder
 import org.springframework.security.oauth2.server.authorization.JwtEncodingContext
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService
@@ -108,21 +105,13 @@ class AuthorizationServerConfig {
 
 
     @Bean
-    fun registeredClientRepository(
-            clientRepository: ClientApplicationRepository,
-            passwordEncoder: PasswordEncoder
-    ): RegisteredClientRepository {
+    fun registeredClientRepository(clientRepository: ClientApplicationRepository): RegisteredClientRepository {
         return ClientAppRegisteredClientRepository(clientRepository)
     }
 
     @Bean
     fun oAuth2AuthorizationService(redisTemplate: RedisTemplate<Any, Any>): OAuth2AuthorizationService {
         return RedisOAuth2AuthorizationService(redisTemplate)
-    }
-
-    @Bean
-    fun jwtDecoder(jwkSource: JWKSource<SecurityContext?>): JwtDecoder {
-        return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource)
     }
 
     @Bean
