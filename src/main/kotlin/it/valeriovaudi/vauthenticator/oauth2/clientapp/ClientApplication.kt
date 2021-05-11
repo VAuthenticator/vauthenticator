@@ -62,7 +62,11 @@ data class Scope(val content: String) {
     }
 }
 
-data class Authorities(val content: List<Authority>)
+data class Authorities(val content: List<Authority>) {
+    companion object {
+        fun empty() = Authorities(emptyList())
+    }
+}
 data class Authority(val content: String)
 data class TokenTimeToLive(val content: Int)
 data class Federation(val name: String)
