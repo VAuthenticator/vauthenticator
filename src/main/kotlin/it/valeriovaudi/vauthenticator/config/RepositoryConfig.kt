@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.client.RestTemplate
 import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
@@ -56,6 +57,7 @@ class DynamoDbRepositoryConfig {
 
     @Bean
     fun clientApplicationRepository(dynamoDbClient: DynamoDbClient,
+                                    passwordEncoder: PasswordEncoder,
                                     @Value("\${dynamo-db.client-application.table-name}") clientAppTableName: String) =
-            DynamoDbClientApplicationRepository(dynamoDbClient, clientAppTableName)
+            DynamoDbClientApplicationRepository(passwordEncoder, dynamoDbClient, clientAppTableName)
 }

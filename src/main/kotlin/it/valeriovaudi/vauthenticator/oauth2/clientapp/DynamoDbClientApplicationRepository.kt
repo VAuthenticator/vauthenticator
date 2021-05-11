@@ -1,15 +1,19 @@
 package it.valeriovaudi.vauthenticator.oauth2.clientapp
 
-import it.valeriovaudi.vauthenticator.extentions.*
+import it.valeriovaudi.vauthenticator.extentions.asDynamoAttribute
+import it.valeriovaudi.vauthenticator.extentions.filterEmptyAccountMetadata
+import it.valeriovaudi.vauthenticator.extentions.valueAsStringFor
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.DynamoClientApplicationConverter.fromDomainToDynamo
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.DynamoClientApplicationConverter.fromDynamoToDomain
+import org.springframework.security.crypto.password.PasswordEncoder
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.*
 import java.util.*
 
 class DynamoDbClientApplicationRepository(
-    private val dynamoDbClient: DynamoDbClient,
-    private val dynamoClientApplicationTableName: String
+        private val passwordEncoder: PasswordEncoder,
+        private val dynamoDbClient: DynamoDbClient,
+        private val dynamoClientApplicationTableName: String
 ) : ClientApplicationRepository {
     override fun findOne(clientAppId: ClientAppId): Optional<ClientApplication> {
         return Optional.of(clientAppId.content)
@@ -65,7 +69,7 @@ class DynamoDbClientApplicationRepository(
         dynamoDbClient.putItem(
             PutItemRequest.builder()
                 .tableName(dynamoClientApplicationTableName)
-                .item(fromDomainToDynamo(clientApp))
+                .item(fromDomainToDynamo(clientApp, passwordEncoder))
                 .build()
         )
     }

@@ -7,16 +7,28 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.security.crypto.password.PasswordEncoder
 import java.util.*
 
 internal class DynamoDbClientApplicationRepositoryTest {
 
     lateinit var dynamoDbClientApplicationRepository: DynamoDbClientApplicationRepository
 
+    object passwordEncoder : PasswordEncoder {
+        override fun encode(p0: CharSequence): String =
+                p0.toString()
+
+
+        override fun matches(p0: CharSequence?, p1: String?): Boolean {
+            TODO("Not yet implemented")
+        }
+
+    }
+
     @BeforeEach
     fun setUp() {
         dynamoDbClientApplicationRepository =
-            DynamoDbClientApplicationRepository(dynamoDbClient, dynamoClientApplicationTableName)
+                DynamoDbClientApplicationRepository(passwordEncoder, dynamoDbClient, dynamoClientApplicationTableName)
     }
 
     @AfterEach
@@ -33,7 +45,7 @@ internal class DynamoDbClientApplicationRepositoryTest {
     @Test
     fun `when find one client application by client id that does not exist`() {
         val clientApp: Optional<ClientApplication> =
-            dynamoDbClientApplicationRepository.findOne(ClientAppId("not-existing-one"))
+                dynamoDbClientApplicationRepository.findOne(ClientAppId("not-existing-one"))
         Assertions.assertEquals(clientApp, Optional.empty<ClientApplication>())
     }
 
@@ -55,29 +67,29 @@ internal class DynamoDbClientApplicationRepositoryTest {
     @Test
     fun `when find federated client applications by federation`() {
         dynamoDbClientApplicationRepository.save(
-            ClientAppFixture.aClientApp(
-                ClientAppId("client_id1"),
-                logoutUri = LogoutUri("http://logout_uri_1")
-            )
+                ClientAppFixture.aClientApp(
+                        ClientAppId("client_id1"),
+                        logoutUri = LogoutUri("http://logout_uri_1")
+                )
         )
         dynamoDbClientApplicationRepository.save(
-            ClientAppFixture.aClientApp(
-                ClientAppId("client_id2"),
-                logoutUri = LogoutUri("http://logout_uri_2")
-            )
+                ClientAppFixture.aClientApp(
+                        ClientAppId("client_id2"),
+                        logoutUri = LogoutUri("http://logout_uri_2")
+                )
         )
         dynamoDbClientApplicationRepository.save(
-            ClientAppFixture.aClientApp(
-                ClientAppId("client_id3"),
-                logoutUri = LogoutUri("http://logout_uri_3")
-            )
+                ClientAppFixture.aClientApp(
+                        ClientAppId("client_id3"),
+                        logoutUri = LogoutUri("http://logout_uri_3")
+                )
         )
         val actual = dynamoDbClientApplicationRepository.findLogoutUriByFederation(Federation("A_FEDERATION"))
 
         val expected = listOf(
-            LogoutUri("http://logout_uri_3"),
-            LogoutUri("http://logout_uri_2"),
-            LogoutUri("http://logout_uri_1")
+                LogoutUri("http://logout_uri_3"),
+                LogoutUri("http://logout_uri_2"),
+                LogoutUri("http://logout_uri_1")
         )
 
         Assertions.assertEquals(actual, expected)
