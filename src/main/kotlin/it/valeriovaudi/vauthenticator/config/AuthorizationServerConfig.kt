@@ -19,17 +19,18 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.core.AuthorizationGrantType.CLIENT_CREDENTIALS
 import org.springframework.security.oauth2.jwt.NimbusJwsEncoder
 import org.springframework.security.oauth2.server.authorization.JwtEncodingContext
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenCustomizer
+import org.springframework.security.oauth2.server.authorization.authentication.OAuth2ClientAuthenticationProvider
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository
 import org.springframework.security.oauth2.server.authorization.config.ProviderSettings
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.util.stream.Collectors
-
 
 @Configuration(proxyBeanMethods = false)
 class AuthorizationServerConfig {
@@ -103,6 +104,21 @@ class AuthorizationServerConfig {
         }
     }
 
+    @Bean
+    fun oAuth2ClientAuthenticationProvider(registeredClientRepository: RegisteredClientRepository,
+                                           authorizationService: OAuth2AuthorizationService,
+                                           passwordEncoder: PasswordEncoder): OAuth2ClientAuthenticationProvider {
+        val oAuth2ClientAuthenticationProvider =
+                OAuth2ClientAuthenticationProvider(
+                        registeredClientRepository,
+                        authorizationService
+                )
+
+        oAuth2ClientAuthenticationProvider.setPasswordEncoder(passwordEncoder)
+
+        return oAuth2ClientAuthenticationProvider;
+    }
+
 
     @Bean
     fun registeredClientRepository(clientRepository: ClientApplicationRepository): RegisteredClientRepository {
@@ -125,3 +141,4 @@ class AuthorizationServerConfig {
                     oidcIss, applicationRepository
             )
 }
+
