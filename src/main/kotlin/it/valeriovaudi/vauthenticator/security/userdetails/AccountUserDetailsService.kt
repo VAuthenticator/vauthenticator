@@ -14,13 +14,13 @@ open class AccountUserDetailsService(private val userRepository: AccountReposito
     override fun loadUserByUsername(username: String) =
             userRepository.accountFor(username)
                     .map {
-                        logger.debug("Account found for $username username")
+                        logger.info("Account found for $username username")
                         User(it.username,
                                 it.password,
                                 it.authorities.map { SimpleGrantedAuthority(it) })
                     }
                     .orElseThrow {
-                        logger.warn("Account not found for $username username")
+                        logger.error("Account not found for $username username")
                         UsernameNotFoundException("the user $username not found")
                     }
 }

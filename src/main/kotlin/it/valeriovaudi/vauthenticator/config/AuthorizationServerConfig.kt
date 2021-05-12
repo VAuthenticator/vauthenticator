@@ -41,7 +41,6 @@ class AuthorizationServerConfig {
     @Autowired
     lateinit var keyRepository: KeyRepository
 
-
     @Autowired
     lateinit var accountRepository: AccountRepository
 
