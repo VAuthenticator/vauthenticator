@@ -3,24 +3,24 @@ import Checkbox from "@material-ui/core/Checkbox";
 import React from "react";
 import StickyHeadTable from "./StickyHeadTable";
 
-export const drawAuthorityRows = (setAuthorityRows, setAuthorities, authoritiesValues, roleValues) => roleValues.map(role => {
+export const drawAuthorityRows = (setAuthorityRows, setAuthorities, AclientAppauthorities, allRole) => allRole.map(role => {
     return {
         name: role.name,
         description: role.description,
         delete: <FormControlLabel control={
             <Checkbox onChange={() => {
-                const roleIndex = authoritiesValues.indexOf(role.name)
+                const roleIndex = AclientAppauthorities.indexOf(role.name)
 
                 if (roleIndex !== -1) {
-                    authoritiesValues.splice(roleIndex, 1)
+                    AclientAppauthorities.splice(roleIndex, 1)
                 } else {
-                    authoritiesValues.push(role.name)
+                    AclientAppauthorities.push(role.name)
                 }
 
-                setAuthorities(authoritiesValues)
-                setAuthorityRows(drawAuthorityRows(setAuthorityRows, setAuthorities, authoritiesValues, roleValues))
+                setAuthorities(AclientAppauthorities)
+                setAuthorityRows(drawAuthorityRows(setAuthorityRows, setAuthorities, AclientAppauthorities, allRole))
             }}
-                      checked={authoritiesValues.indexOf(role.name) !== -1}/>
+                      checked={AclientAppauthorities.indexOf(role.name) !== -1}/>
         }/>
     }
 })
