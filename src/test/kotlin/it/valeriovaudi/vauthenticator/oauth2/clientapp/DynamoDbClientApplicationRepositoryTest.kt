@@ -105,4 +105,14 @@ internal class DynamoDbClientApplicationRepositoryTest {
         Assertions.assertEquals(actual, listOf(expected))
     }
 
+    @Test
+    fun `when find an client application with zero authorities`() {
+        val clientAppId = ClientAppId("client_id")
+        val expected = ClientAppFixture.aClientApp(clientAppId, authorities = Authorities.empty())
+        dynamoDbClientApplicationRepository.save(expected)
+        val actual = dynamoDbClientApplicationRepository.findAll()
+
+        Assertions.assertEquals(actual, listOf(expected))
+    }
+
 }
