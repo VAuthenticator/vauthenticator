@@ -12,14 +12,13 @@ object DynamoClientApplicationConverter {
             clientApp: ClientApplication,
             passwordEncoder: PasswordEncoder
     ): MutableMap<String, AttributeValue> {
-        return mutableMapOf(
+        val dynamoDocument = mutableMapOf(
                 "client_id" to clientApp.clientAppId.content.asDynamoAttribute(),
                 "client_secret" to passwordEncoder.encode(clientApp.secret.content).asDynamoAttribute(),
                 "resource_ids" to resourceId.asDynamoAttribute(),
                 "scopes" to clientApp.scopes.asDynamoAttribute(),
                 "authorized_grant_types" to clientApp.authorizedGrantTypes.asDynamoAttribute(),
                 "web_server_redirect_uri" to clientApp.webServerRedirectUri.content.asDynamoAttribute(),
-                "authorities" to clientApp.authorities.asDynamoAttribute(),
                 "access_token_validity" to clientApp.accessTokenValidity.asDynamoAttribute(),
                 "refresh_token_validity" to clientApp.refreshTokenValidity.asDynamoAttribute(),
                 "auto_approve" to clientApp.autoApprove.content.asDynamoAttribute(),
@@ -27,6 +26,10 @@ object DynamoClientApplicationConverter {
                 "logout_uris" to clientApp.logoutUri.content.asDynamoAttribute(),
                 "federation" to clientApp.federation.name.asDynamoAttribute()
         )
+        if (clientApp.authorities.content.isNotEmpty()) {
+            dynamoDocument["authorities"] = clientApp.authorities.asDynamoAttribute()
+        }
+        return dynamoDocument
     }
 
     fun fromDynamoToDomain(
@@ -36,13 +39,13 @@ object DynamoClientApplicationConverter {
                 clientAppId = ClientAppId(dynamoPayload.valueAsStringFor("client_id")),
                 secret = Secret(dynamoPayload.valueAsStringFor("client_secret")),
                 resourceIds = ResourceIds(listOf(ResourceId(dynamoPayload.valueAsStringFor("resource_ids")))),
-                scopes = Scopes(dynamoPayload.valuesAsStringFor("scopes").map { Scope(it) }.toSet()),
+                scopes = Scopes(dynamoPayload.valuesAsListOfStringFor("scopes").map { Scope(it) }.toSet()),
                 authorizedGrantTypes = AuthorizedGrantTypes(
-                        dynamoPayload.valuesAsStringFor("authorized_grant_types")
+                        dynamoPayload.valuesAsListOfStringFor("authorized_grant_types")
                                 .map { it.toUpperCase() }
                                 .map { AuthorizedGrantType.valueOf(it) }),
                 webServerRedirectUri = CallbackUri(dynamoPayload.valueAsStringFor("web_server_redirect_uri")),
-                authorities = Authorities(dynamoPayload["authorities"]?.ss()!!.map { Authority(it) }),
+                authorities = Authorities(dynamoPayload.valuesAsListOfStringFor("authorities").map { Authority(it) }),
                 accessTokenValidity = TokenTimeToLive(dynamoPayload.valueAsIntFor("access_token_validity")),
                 refreshTokenValidity = TokenTimeToLive(dynamoPayload.valueAsIntFor("refresh_token_validity")),
                 autoApprove = AutoApprove(dynamoPayload.valueAsBoolFor("auto_approve")),

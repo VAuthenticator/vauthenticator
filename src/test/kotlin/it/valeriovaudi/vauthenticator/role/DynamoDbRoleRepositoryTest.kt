@@ -33,8 +33,8 @@ internal class DynamoDbRoleRepositoryTest {
     @Test
     internal fun `save a new role`() {
         roleRepository.save(Role("another_role", "ANOTHER_ROLE"))
-        val expected = roleRepository.findAll()
-        val actual = listOf(Role("a_role", "A_ROLE"), Role("another_role", "ANOTHER_ROLE"))
+        val expected = roleRepository.findAll().toSet()
+        val actual = listOf(Role("a_role", "A_ROLE"), Role("another_role", "ANOTHER_ROLE")).toSet()
 
         Assertions.assertEquals(expected, actual)
     }
@@ -43,8 +43,8 @@ internal class DynamoDbRoleRepositoryTest {
     internal fun `save a new role again`() {
         roleRepository.save(Role("another_role", "ANOTHER_ROLE"))
         roleRepository.save(Role("another_role", "ANOTHER_ROLE AGAIN"))
-        val expected = roleRepository.findAll()
-        val actual = listOf(Role("a_role", "A_ROLE"), Role("another_role", "ANOTHER_ROLE AGAIN"))
+        val expected = roleRepository.findAll().toSet()
+        val actual = listOf(Role("a_role", "A_ROLE"), Role("another_role", "ANOTHER_ROLE AGAIN")).toSet()
 
         Assertions.assertEquals(expected, actual)
     }

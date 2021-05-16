@@ -4,14 +4,15 @@ object ClientAppFixture {
     fun aClientApp(clientAppId: ClientAppId,
                    password: Secret = Secret("secret"),
                    federation: Federation = Federation("A_FEDERATION"),
-                   logoutUri: LogoutUri = LogoutUri("http://an_uri")
+                   logoutUri: LogoutUri = LogoutUri("http://an_uri"),
+                   authorities: Authorities = Authorities(listOf(Authority("AN_AUTHORITY")))
     ) = ClientApplication(
             clientAppId,
             password,
             Scopes.from(Scope.EMAIL, Scope.OPEN_ID, Scope.PROFILE),
             AuthorizedGrantTypes.from(AuthorizedGrantType.PASSWORD),
             CallbackUri("http://an_uri"),
-            Authorities(listOf(Authority("AN_AUTHORITY"))),
+            authorities,
             TokenTimeToLive(10),
             TokenTimeToLive(10),
             emptyMap(),
@@ -19,6 +20,6 @@ object ClientAppFixture {
             PostLogoutRedirectUri("http://an_uri"),
             logoutUri,
             federation,
-                ResourceIds.from(ResourceId("oauth2-resource"))
+            ResourceIds.from(ResourceId("oauth2-resource"))
     )
 }

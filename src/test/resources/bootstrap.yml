@@ -1,16 +1,3 @@
 spring:
   application:
     name: vauthenticator
-  cloud:
-    discovery:
-      enabled: false
-    config:
-      discovery:
-        enabled: false
-      enabled: false
-  cache:
-    type: none
-
-account:
-  repository:
-    engine: mongo

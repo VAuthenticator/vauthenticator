@@ -83,21 +83,26 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
         findAllRoles()
             .then(roleValues => {
                 findClientApplicationFor(clientApplicationId)
-                    .then(value => {
-                        setClientAppName(value.clientAppName)
-                        setSecret(value.secret)
-                        setScopes(value.scopes)
-                        setAuthorizedGrantTypes(authorizedGrantTypesRegistry(value.authorizedGrantTypes))
-                        setWebServerRedirectUri(value.webServerRedirectUri)
-                        setAccessTokenValidity(value.accessTokenValidity)
-                        setRefreshTokenValidity(value.refreshTokenValidity)
-                        setPostLogoutRedirectUri(value.postLogoutRedirectUri)
-                        setLogoutUri(value.logoutUri)
-                        setFederation(value.federation)
+                    .then(clientApp => {
+                        try {
+                            setClientAppName(clientApp.clientAppName)
+                            setSecret(clientApp.secret)
+                            setScopes(clientApp.scopes)
+                            setAuthorizedGrantTypes(authorizedGrantTypesRegistry(clientApp.authorizedGrantTypes))
+                            setWebServerRedirectUri(clientApp.webServerRedirectUri)
+                            setAccessTokenValidity(clientApp.accessTokenValidity)
+                            setRefreshTokenValidity(clientApp.refreshTokenValidity)
+                            setPostLogoutRedirectUri(clientApp.postLogoutRedirectUri)
+                            setLogoutUri(clientApp.logoutUri)
+                            setFederation(clientApp.federation)
 
-                        setAuthorities(value.authorities)
+                            setAuthorities(clientApp.authorities)
+                        } catch (e) {
+
+                        }
+
                         setAuthorityRows(
-                            drawAuthorityRows(setAuthorityRows, setAuthorities, value.authorities || [], roleValues)
+                            drawAuthorityRows(setAuthorityRows, setAuthorities, getClientAppAuthorities(clientApp), roleValues)
                         )
                     })
             })
@@ -106,6 +111,14 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
+
+    let getClientAppAuthorities = (clientApp) => {
+        if (clientApp) {
+            return clientApp.authorities || []
+        } else {
+            return []
+        }
+    }
 
     let pageTitle = clientApplicationId ? `: Client Application: ${clientApplicationId}` : "";
 

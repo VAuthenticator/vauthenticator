@@ -16,7 +16,6 @@
     <description>My OpenId Connect/OAuth2 Authorization Server</description>
 
     <properties>
-        <jaxb.version>2.3.0</jaxb.version>
         <java.version>11</java.version>
         <kotlin.version>1.4.32</kotlin.version>
         <spring-cloud.version>2020.0.2</spring-cloud.version>
@@ -47,16 +46,6 @@
             <groupId>org.webjars</groupId>
             <artifactId>jquery</artifactId>
             <version>3.0.0</version>
-        </dependency>
-
-        <!-- configuration dependencies -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-bootstrap</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-config</artifactId>
         </dependency>
 
         <!-- persistence dependencies-->
@@ -125,12 +114,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.junit.vintage</groupId>
-                    <artifactId>junit-vintage-engine</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
     </dependencies>
 
