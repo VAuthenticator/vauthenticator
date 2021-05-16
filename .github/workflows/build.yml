@@ -28,7 +28,7 @@ jobs:
           sleep 30s
           ls -la
           sudo chown -R $USER:$USER *
-          chmod 775 -R docker/dynamodb
+          chmod 777 -R docker/dynamodb
           pwd
           ls -la
 
