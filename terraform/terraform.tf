@@ -11,5 +11,7 @@ provider "aws" {
   endpoints {
     dynamodb = "http://localhost:8000"
   }
+  secret_key = "secret_key"
+  access_key = "access_key"
   region = "us-east-1"
 }
