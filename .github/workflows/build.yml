@@ -33,7 +33,7 @@ jobs:
 
           cd ../../../terraform/
 
-          terraform init
+          sudo terraform init
           sudo terraform apply -auto-approve
 
       - name: Build
