@@ -24,7 +24,7 @@ jobs:
           docker-compose up &
           sleep 50s
           ls -la
-          sudo chown -R $USER:docker *
+          sudo chown -R $USER:$USER *
           chmod 775 -R docker/dynamodb
           pwd
           ls -la
