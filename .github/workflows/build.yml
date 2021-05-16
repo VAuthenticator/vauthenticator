@@ -23,7 +23,7 @@ jobs:
           cd src/test/resources
           docker-compose up &
           sleep 60s
-          sudo chown -R  $USER *
+          sudo chown -R  $USER docker *
           chmod 775 -R docker/dynamodb
           pwd
           ls -la
