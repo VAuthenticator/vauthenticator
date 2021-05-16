@@ -25,7 +25,8 @@ jobs:
           sleep 60s
           sudo chown -R  $USER *
           chmod 775 -R docker/dynamodb
-
+          pwd
+          ls -la
       - name: build testing environment
         uses: hashicorp/setup-terraform@v1
         with:
