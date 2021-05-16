@@ -36,7 +36,8 @@ jobs:
           export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
           export AWS_REGION=${{ secrets.AWS_REGION }}
 
-          cd terraform
+          cd ../../../terraform/
+
           terraform init
           terraform apply -auto-approve
 
