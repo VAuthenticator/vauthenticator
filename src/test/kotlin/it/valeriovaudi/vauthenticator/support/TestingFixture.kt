@@ -8,22 +8,29 @@ import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
 import it.valeriovaudi.vauthenticator.extentions.asDynamoAttribute
 import it.valeriovaudi.vauthenticator.extentions.valueAsStringFor
-import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
+import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
 import software.amazon.awssdk.services.dynamodb.model.ScanRequest
+import java.net.URI
 
 object TestingFixture {
 
-    val dynamoRoleTableName: String = System.getenv("STAGING_DYNAMO_DB_ROLE_TABLE_NAME")
-    val dynamoAccountTableName: String = System.getenv("STAGING_DYNAMO_DB_ACCOUNT_TABLE_NAME")
-    val dynamoAccountRoleTableName: String = System.getenv("STAGING_DYNAMO_DB_ACCOUNT_ROLE_TABLE_NAME")
-    val dynamoClientApplicationTableName: String = System.getenv("STAGING_DYNAMO_DB_CLIENT_APPLICATION_TABLE_NAME")
+    val dynamoRoleTableName: String = "TESTING_VAuthenticator_Role"
+    val dynamoAccountTableName: String = "TESTING_VAuthenticator_Account"
+    val dynamoAccountRoleTableName: String = "TESTING_VAuthenticator_Account_Role"
+    val dynamoClientApplicationTableName: String = "TESTING_VAuthenticator_ClientApplication"
 
     val dynamoDbClient: DynamoDbClient = DynamoDbClient.builder()
-        .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
+        .credentialsProvider(
+                StaticCredentialsProvider.create(
+                        AwsBasicCredentials.create("ACCESS_KEY_ID", "SECRET_ACCESS_KEY"))
+                ).region(Region.US_EAST_1)
+            .endpointOverride(URI.create("http://localhost:8000"))
         .build()
 
     fun initRoleTests(roleRepository: DynamoDbClient) {
