@@ -46,10 +46,8 @@
     var params = getParams(window.location.href);
     var redirectUri = params["post_logout_redirect_uri"];
 
-    setInterval(function (){
-        console.log("redirectUri: " + redirectUri)
-        window.top.location.href = redirectUri
-    }, 10000)
+    console.log("redirectUri: " + redirectUri)
+    window.top.location.href = redirectUri
     /*]]>*/
 </script>
 </html>
