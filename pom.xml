@@ -73,6 +73,17 @@
         </dependency>
 
         <!-- messaging -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>sqs</artifactId>
+            <version>${aws.sdk.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>it.valeriovaudi</groupId>
+            <artifactId>aws-messaging-java-client</artifactId>
+            <version>1.0</version>
+        </dependency>
 
         <!-- kotlin dependencies -->
         <dependency>
