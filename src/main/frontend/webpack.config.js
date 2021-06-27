@@ -7,8 +7,6 @@ module.exports = {
     mode: 'development',
     entry: {
         login: path.resolve(__dirname, './app/login/index.js'),
-        signup: path.resolve(__dirname, './app/registration/index.js'),
-        thankyou: path.resolve(__dirname, './app/thankyou/index.js'),
         admin: path.resolve(__dirname, './app/admin/index.js'),
     },
     resolve: {
@@ -23,16 +21,6 @@ module.exports = {
         new HtmlWebpackPlugin({
             chunks: ['login'],
             filename: "../templates/login.html",
-            template: path.resolve(__dirname, "../resources/templates/template.html")
-        }),
-        new HtmlWebpackPlugin({
-            chunks: ['signup'],
-            filename: "../templates/signup.html",
-            template: path.resolve(__dirname, "../resources/templates/template.html")
-        }),
-        new HtmlWebpackPlugin({
-            chunks: ['thankyou'],
-            filename: "../templates/thank-you.html",
             template: path.resolve(__dirname, "../resources/templates/template.html")
         })
     ],
