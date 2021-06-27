@@ -16,6 +16,7 @@ import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsPro
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.sqs.SqsAsyncClient
 import java.time.Duration
+import java.util.function.Consumer
 
 private val LOGGER: Logger = LoggerFactory.getLogger(AccountSyncListener::class.java)
 
@@ -24,14 +25,14 @@ class AccountSyncListenerConfig {
 
     @Bean
     fun accountSyncHandler(objectMapper: ObjectMapper,
-                           accountRepository: AccountRepository): (String) -> Unit =
+                           accountRepository: AccountRepository): Consumer<String> =
             AccountSyncHandler(objectMapper, accountRepository)
 
     @Bean
     fun accountSyncListener(@Value("\${vauthenticator.account-sync.listener.sleeping:10m}") sleeping: Duration,
                             receiveMessageRequestFactory: ReceiveMessageRequestFactory,
                             sqsAsyncClient: SqsAsyncClient,
-                            accountSyncHandler: (String) -> Void) =
+                            accountSyncHandler: Consumer<String>) =
             AccountSyncListener(
                     SqsReactiveListener(
                             sleeping,
@@ -76,8 +77,8 @@ class AccountSyncListener(private val listener: SqsReactiveListener) : Applicati
 }
 
 class AccountSyncHandler(private val objectMapper: ObjectMapper,
-                         private val accountRepository: AccountRepository) : (String) -> Unit {
-    override fun invoke(message: String) {
+                         private val accountRepository: AccountRepository) : Consumer<String> {
+    override fun accept(message: String) {
         LOGGER.debug("account-sync listener fired")
         LOGGER.debug(message)
 
