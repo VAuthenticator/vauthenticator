@@ -1,100 +1,38 @@
 package it.valeriovaudi.vauthenticator.config
 
-import org.springframework.amqp.core.*
-import org.springframework.amqp.rabbit.connection.ConnectionFactory
-import org.springframework.amqp.rabbit.core.RabbitTemplate
-import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter
-import org.springframework.amqp.support.converter.MessageConverter
-import org.springframework.beans.factory.ObjectProvider
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.amqp.RabbitProperties
+import it.valeriovaudi.aws.messaging.sqs.ReceiveMessageRequestFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Scope
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider
+import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider
+import software.amazon.awssdk.regions.Region
+import software.amazon.awssdk.services.sqs.SqsAsyncClient
 
 
 @Configuration
 class MessagingConfig {
 
-    @Autowired
-    lateinit var properties: RabbitProperties
-
-    @Autowired
-    lateinit var messageConverter: ObjectProvider<MessageConverter>
+    @Bean
+    fun awsCredentialsProvider(): AwsCredentialsProvider {
+        return EnvironmentVariableCredentialsProvider.create()
+    }
 
     @Bean
-    fun accountRegistrationQueue(): Queue = Queue("account-registration", false, false, false)
+    fun sqsAsyncClient(@Value("\${aws.region}") awsRegion: String,
+                       awsCredentialsProvider: AwsCredentialsProvider): SqsAsyncClient {
+        return SqsAsyncClient.builder()
+                .credentialsProvider(awsCredentialsProvider)
+                .region(Region.of(awsRegion))
+                .build()
+    }
 
     @Bean
-    fun accountStoredQueue(): Queue = Queue("account-stored", false, false, false)
-
-    @Bean
-    fun accountSyncQueue(): Queue = Queue("account-sync", false, false, false)
-
-    @Bean
-    fun accountOnAuthSystemCreationError(): Queue = Queue("account-on-auth-system-creation-error", false, false, false)
-
-    @Bean
-    fun vauthenticatorRegistrationExchange(): Exchange =
-            DirectExchange("vauthenticator-registration", false, false)
-
-    @Bean
-    fun accountSyncExchange(): Exchange =
-            DirectExchange("account-sync", false, false)
-
-    @Bean
-    fun accountStoredQueueBinder(accountRegistrationQueue: Queue,
-                                  vauthenticatorRegistrationExchange: Exchange) =
-            Declarables(accountRegistrationQueue, vauthenticatorRegistrationExchange,
-                    BindingBuilder
-                            .bind(accountRegistrationQueue)
-                            .to(vauthenticatorRegistrationExchange)
-                            .with("account-registration")
-                            .noargs())
-
-    @Bean
-    fun accountSyncQueueBinder(accountSyncQueue: Queue,
-                               accountSyncExchange: Exchange) =
-            Declarables(accountSyncQueue, accountSyncExchange,
-                    BindingBuilder
-                            .bind(accountSyncQueue)
-                            .to(accountSyncExchange)
-                            .with("account-sync")
-                            .noargs())
-
-    @Bean
-    fun accountOnAuthSystemCreationErrorBinder(accountOnAuthSystemCreationError: Queue,
-                                  vauthenticatorRegistrationExchange: Exchange) =
-            Declarables(accountOnAuthSystemCreationError, vauthenticatorRegistrationExchange,
-                    BindingBuilder
-                            .bind(accountOnAuthSystemCreationError)
-                            .to(vauthenticatorRegistrationExchange)
-                            .with("account-on-auth-system-creation-error")
-                            .noargs())
-
-    @Bean
-    fun accountStoredBinder(accountStoredQueue: Queue,
-                            vauthenticatorRegistrationExchange: Exchange) =
-            Declarables(accountStoredQueue, vauthenticatorRegistrationExchange,
-                    BindingBuilder
-                            .bind(accountStoredQueue)
-                            .to(vauthenticatorRegistrationExchange)
-                            .with("account-stored")
-                            .noargs()
-            )
-
-
-    @Bean
-    fun jackson2MessageConverter(): Jackson2JsonMessageConverter = Jackson2JsonMessageConverter()
-
-    @Bean
-    @Scope("prototype")
-    fun rabbitTemplate(connectionFactory: ConnectionFactory): RabbitTemplate {
-        val template = RabbitTemplate(connectionFactory)
-        val messageConverter = this.messageConverter.getIfUnique()
-        if (messageConverter != null) {
-            template.messageConverter = messageConverter
-        }
-        return template
+    fun receiveMessageRequestFactory(@Value("\${vauthenticator.account-sync.listener.queueUrl}") queueUrl: String,
+                                     @Value("\${vauthenticator.account-sync.listener.maxNumberOfMessages}") maxNumberOfMessages: Int,
+                                     @Value("\${vauthenticator.account-sync.listener.visibilityTimeout}") visibilityTimeout: Int,
+                                     @Value("\${vauthenticator.account-sync.listener.waitTimeSeconds}") waitTimeSeconds: Int
+    ): ReceiveMessageRequestFactory {
+        return ReceiveMessageRequestFactory(queueUrl, maxNumberOfMessages, visibilityTimeout, waitTimeSeconds)
     }
 }

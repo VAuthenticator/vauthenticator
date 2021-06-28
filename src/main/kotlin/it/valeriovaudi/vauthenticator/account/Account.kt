@@ -25,22 +25,8 @@ data class  Account(var accountNonExpired: Boolean = false,
         get() = email.toSha256()
 }
 
-
 object AccountConverter {
     fun fromDomainToAccountApiRepresentation(domain: Account): AccountApiRepresentation =
             AccountApiRepresentation(!domain.accountNonLocked, domain.enabled, domain.email, domain.authorities)
-
-    fun fromRepresentationToDomain(representation: AccountRepresentation): Account = Account(
-            email = representation.email,
-            password = representation.password,
-            username = representation.email,
-            firstName = representation.firstName,
-            lastName = representation.lastName,
-            authorities = listOf("ROLE_USER"),
-            accountNonExpired = false,
-            accountNonLocked = false,
-            credentialsNonExpired = false
-    )
-
 
 }
