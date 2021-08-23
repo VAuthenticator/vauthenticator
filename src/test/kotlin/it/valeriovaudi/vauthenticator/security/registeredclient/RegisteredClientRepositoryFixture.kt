@@ -22,7 +22,7 @@ object RegisteredClientRepositoryFixture {
         .redirectUri("http://a_call_back")
             .tokenSettings(TokenSettings.builder()
                     .accessTokenTimeToLive(Duration.ofSeconds(100))
-                    .refreshTokenTimeToLive(Duration.ofSeconds(100))
+                    .refreshTokenTimeToLive(Duration.ofSeconds(200))
                     .reuseRefreshTokens(true)
                     .build())
         .build()
