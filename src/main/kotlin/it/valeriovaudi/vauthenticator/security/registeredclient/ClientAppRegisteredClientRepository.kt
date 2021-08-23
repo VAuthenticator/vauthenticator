@@ -43,11 +43,11 @@ class ClientAppRegisteredClientRepository(private val clientApplicationRepositor
                         }
                         .scopes { scopes -> scopes.addAll(clientApp.scopes.content.map { it.content }) }
                         .redirectUri(clientApp.webServerRedirectUri.content)
-                        .tokenSettings { tokenSettings: TokenSettings ->
-                            tokenSettings.accessTokenTimeToLive(Duration.ofSeconds(clientApp.accessTokenValidity.content.toLong()))
-                            tokenSettings.refreshTokenTimeToLive(Duration.ofSeconds(clientApp.refreshTokenValidity.content.toLong()))
-                            tokenSettings.reuseRefreshTokens(true)
-                        }
+                        .tokenSettings(TokenSettings.builder()
+                                .accessTokenTimeToLive(Duration.ofSeconds(clientApp.accessTokenValidity.content.toLong()))
+                                .refreshTokenTimeToLive(Duration.ofSeconds(clientApp.refreshTokenValidity.content.toLong()))
+                                .reuseRefreshTokens(true)
+                                .build())
                         .build()
             }.orElseThrow {
                 logger.error("Application with id or client_id: $id not found")

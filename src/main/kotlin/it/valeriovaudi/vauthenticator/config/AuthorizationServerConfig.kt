@@ -123,7 +123,7 @@ class AuthorizationServerConfig {
 
     @Bean
     fun providerSettings(): ProviderSettings {
-        return ProviderSettings().issuer(oidcIss)
+        return ProviderSettings.builder().issuer(oidcIss).build()
     }
 
     @Bean

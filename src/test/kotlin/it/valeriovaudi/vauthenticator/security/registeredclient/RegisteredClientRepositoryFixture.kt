@@ -20,11 +20,11 @@ object RegisteredClientRepositoryFixture {
         .scope("A_SCOPE")
         .scope("ANOTHER_SCOPE")
         .redirectUri("http://a_call_back")
-        .tokenSettings { tokenSettings: TokenSettings ->
-            tokenSettings.accessTokenTimeToLive(Duration.ofSeconds(100))
-            tokenSettings.refreshTokenTimeToLive(Duration.ofSeconds(200))
-            tokenSettings.reuseRefreshTokens(true)
-        }
+            .tokenSettings(TokenSettings.builder()
+                    .accessTokenTimeToLive(Duration.ofSeconds(100))
+                    .refreshTokenTimeToLive(Duration.ofSeconds(100))
+                    .reuseRefreshTokens(true)
+                    .build())
         .build()
 
     fun aClientApplication() = Optional.ofNullable(
