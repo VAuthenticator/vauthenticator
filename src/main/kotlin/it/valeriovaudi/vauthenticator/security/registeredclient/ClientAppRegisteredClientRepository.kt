@@ -32,8 +32,8 @@ class ClientAppRegisteredClientRepository(private val clientApplicationRepositor
                 RegisteredClient.withId(id)
                         .clientId(id)
                         .clientSecret(clientApp.secret.content)
-                        .clientAuthenticationMethod(ClientAuthenticationMethod.BASIC)
-                        .clientAuthenticationMethod(ClientAuthenticationMethod.POST)
+                        .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                        .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
                         .authorizationGrantTypes { authorizationGrantTypes ->
                             authorizationGrantTypes.addAll(clientApp.authorizedGrantTypes.content.map {
                                 AuthorizationGrantType(
