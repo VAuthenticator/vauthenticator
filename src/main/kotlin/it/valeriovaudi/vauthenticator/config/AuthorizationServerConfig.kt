@@ -117,7 +117,6 @@ class AuthorizationServerConfig {
 
     @Bean
     fun oAuth2AuthorizationService(redisTemplate: RedisTemplate<Any, Any>): OAuth2AuthorizationService {
-//        return InMemoryOAuth2AuthorizationService()
         return RedisOAuth2AuthorizationService(redisTemplate)
     }
 
