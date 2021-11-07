@@ -9,9 +9,10 @@ import it.valeriovaudi.vauthenticator.account.AccountRepository
 import it.valeriovaudi.vauthenticator.extentions.BcryptVAuthenticatorPasswordEncoder
 import it.valeriovaudi.vauthenticator.keypair.KeyRepository
 import it.valeriovaudi.vauthenticator.oauth2.authorizationservice.RedisOAuth2AuthorizationService
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
+import it.valeriovaudi.vauthenticator.oauth2.token.OAuth2TokenEnhancer
 import it.valeriovaudi.vauthenticator.openid.connect.logout.JdbcFrontChannelLogout
+import it.valeriovaudi.vauthenticator.openid.connect.token.IdTokenEnhancer
 import it.valeriovaudi.vauthenticator.security.registeredclient.ClientAppRegisteredClientRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -23,10 +24,7 @@ import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration
-import org.springframework.security.core.Authentication
-import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.security.oauth2.core.AuthorizationGrantType.CLIENT_CREDENTIALS
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.oauth2.jwt.NimbusJwsEncoder
 import org.springframework.security.oauth2.server.authorization.JwtEncodingContext
@@ -37,7 +35,6 @@ import org.springframework.security.oauth2.server.authorization.config.ProviderS
 import org.springframework.security.web.SecurityFilterChain
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
-import java.util.stream.Collectors
 
 @Configuration(proxyBeanMethods = false)
 class AuthorizationServerConfig {
@@ -80,33 +77,8 @@ class AuthorizationServerConfig {
     @Bean
     fun jwtCustomizer(clientApplicationRepository: ClientApplicationRepository): OAuth2TokenCustomizer<JwtEncodingContext> {
         return OAuth2TokenCustomizer { context: JwtEncodingContext ->
-            val tokenType = context.tokenType.value
-            if ("access_token" == tokenType && !context.authorizationGrantType.equals(CLIENT_CREDENTIALS)) {
-                val attributes =
-                        context.authorization!!.attributes
-                val principal =
-                        attributes["java.security.Principal"] as Authentication
-
-                context.claims.claim("user_name", principal.name)
-                context.claims.claim("authorities", principal.authorities
-                        .stream()
-                        .map { obj: GrantedAuthority -> obj.authority }
-                        .collect(Collectors.toList()))
-            }
-
-            if ("id_token" == tokenType && !context.authorizationGrantType.equals(CLIENT_CREDENTIALS)) {
-                val attributes =
-                        context.authorization!!.attributes
-                val principle =
-                        attributes["java.security.Principal"] as Authentication
-                clientApplicationRepository.findOne(
-                        ClientAppId(context.registeredClient.clientId)
-                ).ifPresent {
-                    context.claims.claim("federation", it.federation.name)
-                }
-
-                context.claims.claim("email", principle.name)
-            }
+            OAuth2TokenEnhancer().customize(context)
+            IdTokenEnhancer(clientApplicationRepository).customize(context)
         }
     }
 
