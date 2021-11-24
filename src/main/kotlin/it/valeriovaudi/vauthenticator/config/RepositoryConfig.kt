@@ -3,7 +3,7 @@ package it.valeriovaudi.vauthenticator.config
 import it.valeriovaudi.vauthenticator.account.AccountRepository
 import it.valeriovaudi.vauthenticator.account.dynamo.DynamoDbAccountRepository
 import it.valeriovaudi.vauthenticator.keypair.KeyPairConfig
-import it.valeriovaudi.vauthenticator.keypair.RestKeyRepository
+import it.valeriovaudi.vauthenticator.keypair.KmsKeyRepository
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.DynamoDbClientApplicationRepository
 import it.valeriovaudi.vauthenticator.openid.connect.userinfo.UserInfoFactory
 import it.valeriovaudi.vauthenticator.role.DynamoDbRoleRepository
@@ -12,9 +12,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.web.client.RestTemplate
 import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import software.amazon.awssdk.services.kms.KmsClient
 
 
 @Configuration
@@ -28,11 +28,15 @@ class RepositoryConfig {
     @ConfigurationProperties(prefix = "key-store")
     fun keyPairConfig() = KeyPairConfig()
 
-    @Bean("keyRepository")
-    fun keyRepository(@Value("\${repository-service.baseUrl}") repositoryServiceUrl: String,
-                      @Value("\${repository-service.serviceRegistrationName}") registrationName: String,
-                      keyPairConfig: KeyPairConfig): RestKeyRepository =
-            RestKeyRepository(RestTemplate(), repositoryServiceUrl, registrationName, keyPairConfig)
+    @Bean
+    fun kmsClient() = KmsClient.builder()
+            .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
+            .build()
+
+    @Bean
+    fun keyRepository(kmsClient: KmsClient,
+                      @Value("\${aws.kms.kid}") repositoryServiceUrl: String): KmsKeyRepository =
+            KmsKeyRepository(repositoryServiceUrl, kmsClient())
 
 }
 
