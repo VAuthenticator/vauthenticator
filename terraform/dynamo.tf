@@ -80,3 +80,24 @@ resource "aws_dynamodb_table" "account_role_table_staging" {
     Environment = "testing"
   }
 }
+
+resource "aws_dynamodb_table" "keys_table_staging" {
+  name         = "TESTING_VAuthenticator_Keys"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "master_key_id"
+  range_key    = "key_id"
+
+  attribute {
+    name = "master_key_id"
+    type = "S"
+  }
+
+  attribute {
+    name = "key_id"
+    type = "S"
+  }
+
+  tags = {
+    Environment = "testing"
+  }
+}
