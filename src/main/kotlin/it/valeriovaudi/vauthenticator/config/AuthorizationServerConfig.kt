@@ -48,19 +48,20 @@ class AuthorizationServerConfig {
     @Autowired
     lateinit var accountRepository: AccountRepository
 
-    fun generateRsa(): RSAKey {
-        val keyPair = this.keyRepository.getKeyPair()
-        val publicKey = keyPair.public as RSAPublicKey
-        val privateKey = keyPair.private as RSAPrivateKey
-        return RSAKey.Builder(publicKey)
-                .privateKey(privateKey)
-                .keyID("onlyone-portal-key")
-                .build()
+    fun generateRsas(): List<RSAKey> {
+        return this.keyRepository.keys()
+                .keys
+                .map {
+                    RSAKey.Builder(it.keyPair.public as RSAPublicKey)
+                            .privateKey(it.keyPair.private as RSAPrivateKey)
+                            .keyID(it.kid)
+                            .build()
+                }
     }
 
     @Bean
     fun jwkSource(): JWKSource<SecurityContext?> {
-        val rsaKey = generateRsa()
+        val rsaKey = generateRsas()
         val jwkSet = JWKSet(rsaKey)
         return JWKSource { jwkSelector: JWKSelector, _: SecurityContext? ->
             jwkSelector.select(

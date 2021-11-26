@@ -2,7 +2,9 @@ package it.valeriovaudi.vauthenticator.config
 
 import it.valeriovaudi.vauthenticator.account.AccountRepository
 import it.valeriovaudi.vauthenticator.account.dynamo.DynamoDbAccountRepository
+import it.valeriovaudi.vauthenticator.keypair.DynamoKeyRepository
 import it.valeriovaudi.vauthenticator.keypair.KeyPairConfig
+import it.valeriovaudi.vauthenticator.keypair.KeyRepository
 import it.valeriovaudi.vauthenticator.keypair.KmsKeyRepository
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.DynamoDbClientApplicationRepository
 import it.valeriovaudi.vauthenticator.openid.connect.userinfo.UserInfoFactory
@@ -35,8 +37,13 @@ class RepositoryConfig {
 
     @Bean
     fun keyRepository(kmsClient: KmsClient,
-                      @Value("\${aws.kms.kid}") repositoryServiceUrl: String): KmsKeyRepository =
-            KmsKeyRepository(repositoryServiceUrl, kmsClient())
+                      dynamoDbClient: DynamoDbClient,
+                      @Value("\${dynamo-db.keys.table-name}") tableName: String): KeyRepository =
+            DynamoKeyRepository(
+                    tableName,
+                    KmsKeyRepository(kmsClient),
+                    dynamoDbClient
+            )
 
 }
 

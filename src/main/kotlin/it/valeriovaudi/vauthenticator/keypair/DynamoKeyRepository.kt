@@ -1,5 +1,6 @@
 package it.valeriovaudi.vauthenticator.keypair
 
+import com.nimbusds.jose.util.Base64
 import it.valeriovaudi.vauthenticator.extentions.valueAsBoolFor
 import it.valeriovaudi.vauthenticator.extentions.valueAsStringFor
 import it.valeriovaudi.vauthenticator.keypair.KeyPairFactory.keyPairFor
@@ -57,20 +58,20 @@ open class DynamoKeyRepository(
 object KeyPairFactory {
     fun keyPairFor(privateKey: String, pubKey: String): KeyPair {
         val kf: KeyFactory = keyFactory()
-        val privateKey: PrivateKey = privateKey(kf, privateKey)
         val pubKey: RSAPublicKey = rsaPublicKey(kf, pubKey)
+        val privateKey: PrivateKey = privateKey(kf, privateKey)
         return KeyPair(pubKey, privateKey)
     }
 
     private fun keyFactory() = KeyFactory.getInstance("RSA")
 
     private fun rsaPublicKey(kf: KeyFactory, pubKey: String): RSAPublicKey {
-        val keySpecX509 = X509EncodedKeySpec(pubKey.toByteArray())
+        val keySpecX509 = X509EncodedKeySpec(Base64.encode(java.util.Base64.getDecoder().decode(pubKey)).decode())
         return kf.generatePublic(keySpecX509) as RSAPublicKey
     }
 
     private fun privateKey(kf: KeyFactory, privateKey: String): PrivateKey {
-        val keySpecPKCS8 = PKCS8EncodedKeySpec(privateKey.toByteArray())
+        val keySpecPKCS8 = PKCS8EncodedKeySpec(Base64.encode(java.util.Base64.getDecoder().decode(privateKey)).decode())
         return kf.generatePrivate(keySpecPKCS8)
     }
 }
@@ -82,12 +83,11 @@ class KmsKeyRepository(
     fun getKeyPairFor(privateKey: String, pubKey: String): KeyPair {
         val generateDataKeyPair = kmsClient.decrypt(
                 DecryptRequest.builder()
-                        .ciphertextBlob(fromByteArray(privateKey.toByteArray()))
+                        .ciphertextBlob(fromByteArray(Base64.from(privateKey).decode()))
                         .build()
         )
 
-        return keyPairFor(generateDataKeyPair.plaintext().toString(), pubKey)
+        return keyPairFor(Base64.encode(generateDataKeyPair.plaintext().asByteArray()).toString(), pubKey)
     }
-
 
 }
