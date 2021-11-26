@@ -31,20 +31,9 @@ open class DynamoKeyRepository(
     override fun keys(): Keys {
         val keysOnDynamo = findAllFrom(table)
         val items = keysOnDynamo.items()
-        val keysList = keysListFrom(items)
-        return Keys(keysList)
+        val keys = keysListFrom(items)
+        return Keys(keys)
     }
-
-    private fun keysListFrom(items: MutableList<MutableMap<String, AttributeValue>>) =
-            items
-                    .map {
-                        Key(
-                                kmsKeyRepository.getKeyPairFor(it.valueAsStringFor("private_key_ciphertext_blob"), it.valueAsStringFor("public_key")),
-                                it.valueAsStringFor("master_key_id"),
-                                it.valueAsStringFor("key_id"),
-                                it.valueAsBoolFor("enabled")
-                        )
-                    }
 
     private fun findAllFrom(table: String) = dynamoDbClient.scan(
             ScanRequest.builder()
@@ -52,6 +41,31 @@ open class DynamoKeyRepository(
                     .build()
     )
 
+    private fun keysListFrom(items: MutableList<MutableMap<String, AttributeValue>>) =
+            items.map {
+                Key(
+                        kmsKeyRepository.getKeyPairFor(it.valueAsStringFor("private_key_ciphertext_blob"), it.valueAsStringFor("public_key")),
+                        it.valueAsStringFor("master_key_id"),
+                        it.valueAsStringFor("key_id"),
+                        it.valueAsBoolFor("enabled")
+                )
+            }
+
+}
+
+class KmsKeyRepository(
+        private val kmsClient: KmsClient
+) {
+
+    fun getKeyPairFor(privateKey: String, pubKey: String): KeyPair {
+        val generateDataKeyPair = kmsClient.decrypt(
+                DecryptRequest.builder()
+                        .ciphertextBlob(fromByteArray(Base64.getDecoder().decode(privateKey)))
+                        .build()
+        )
+
+        return keyPairFor(Base64.getEncoder().encode(generateDataKeyPair.plaintext().asByteArray()).decodeToString(), pubKey)
+    }
 
 }
 
@@ -74,20 +88,4 @@ object KeyPairFactory {
         val keySpecPKCS8 = PKCS8EncodedKeySpec(Base64.getDecoder().decode(privateKey))
         return kf.generatePrivate(keySpecPKCS8)
     }
-}
-
-class KmsKeyRepository(
-        private val kmsClient: KmsClient
-) {
-
-    fun getKeyPairFor(privateKey: String, pubKey: String): KeyPair {
-        val generateDataKeyPair = kmsClient.decrypt(
-                DecryptRequest.builder()
-                        .ciphertextBlob(fromByteArray(Base64.getDecoder().decode(privateKey)))
-                        .build()
-        )
-
-        return keyPairFor(Base64.getEncoder().encode(generateDataKeyPair.plaintext().asByteArray()).decodeToString(), pubKey)
-    }
-
 }
