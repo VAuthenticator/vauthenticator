@@ -1,6 +1,5 @@
 package it.valeriovaudi.vauthenticator.keypair
 
-import com.nimbusds.jose.util.Base64
 import it.valeriovaudi.vauthenticator.extentions.valueAsBoolFor
 import it.valeriovaudi.vauthenticator.extentions.valueAsStringFor
 import it.valeriovaudi.vauthenticator.keypair.KeyPairFactory.keyPairFor
@@ -16,6 +15,7 @@ import java.security.PrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.security.spec.PKCS8EncodedKeySpec
 import java.security.spec.X509EncodedKeySpec
+import java.util.*
 
 
 open class DynamoKeyRepository(
@@ -66,12 +66,12 @@ object KeyPairFactory {
     private fun keyFactory() = KeyFactory.getInstance("RSA")
 
     private fun rsaPublicKey(kf: KeyFactory, pubKey: String): RSAPublicKey {
-        val keySpecX509 = X509EncodedKeySpec(Base64.encode(java.util.Base64.getDecoder().decode(pubKey)).decode())
+        val keySpecX509 = X509EncodedKeySpec(Base64.getDecoder().decode(pubKey))
         return kf.generatePublic(keySpecX509) as RSAPublicKey
     }
 
     private fun privateKey(kf: KeyFactory, privateKey: String): PrivateKey {
-        val keySpecPKCS8 = PKCS8EncodedKeySpec(Base64.encode(java.util.Base64.getDecoder().decode(privateKey)).decode())
+        val keySpecPKCS8 = PKCS8EncodedKeySpec(Base64.getDecoder().decode(privateKey))
         return kf.generatePrivate(keySpecPKCS8)
     }
 }
@@ -83,11 +83,11 @@ class KmsKeyRepository(
     fun getKeyPairFor(privateKey: String, pubKey: String): KeyPair {
         val generateDataKeyPair = kmsClient.decrypt(
                 DecryptRequest.builder()
-                        .ciphertextBlob(fromByteArray(Base64.from(privateKey).decode()))
+                        .ciphertextBlob(fromByteArray(Base64.getDecoder().decode(privateKey)))
                         .build()
         )
 
-        return keyPairFor(Base64.encode(generateDataKeyPair.plaintext().asByteArray()).toString(), pubKey)
+        return keyPairFor(Base64.getEncoder().encode(generateDataKeyPair.plaintext().asByteArray()).decodeToString(), pubKey)
     }
 
 }
