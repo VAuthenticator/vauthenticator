@@ -13,6 +13,7 @@ import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationReposito
 import it.valeriovaudi.vauthenticator.oauth2.token.OAuth2TokenEnhancer
 import it.valeriovaudi.vauthenticator.openid.connect.logout.JdbcFrontChannelLogout
 import it.valeriovaudi.vauthenticator.openid.connect.token.IdTokenEnhancer
+import it.valeriovaudi.vauthenticator.openid.connect.userinfo.UserInfoEnhancer
 import it.valeriovaudi.vauthenticator.security.registeredclient.ClientAppRegisteredClientRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -24,7 +25,10 @@ import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration
+import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer
+import org.springframework.security.config.annotation.web.configurers.oauth2.server.authorization.OAuth2AuthorizationServerConfigurer
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.oauth2.core.oidc.OidcUserInfo
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.oauth2.jwt.NimbusJwsEncoder
 import org.springframework.security.oauth2.server.authorization.JwtEncodingContext
@@ -32,6 +36,7 @@ import org.springframework.security.oauth2.server.authorization.OAuth2Authorizat
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenCustomizer
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository
 import org.springframework.security.oauth2.server.authorization.config.ProviderSettings
+import org.springframework.security.oauth2.server.authorization.oidc.authentication.OidcUserInfoAuthenticationContext
 import org.springframework.security.web.SecurityFilterChain
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
@@ -105,9 +110,31 @@ class AuthorizationServerConfig {
             )
 
     @Bean
+    fun userInfoEnhancer(accountRepository: AccountRepository) =
+            UserInfoEnhancer(accountRepository)
+
+    val userInfoMapper: (OidcUserInfoAuthenticationContext) -> OidcUserInfo = {
+        OidcUserInfo(
+                mapOf(
+                        "user_name" to it.authorization.accessToken.claims!!["user_name"],
+                        "authorities" to it.authorization.accessToken.claims!!["authorities"],
+                )
+        )
+    }
+
+    @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     fun authorizationServerSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
-        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http)
+        val authorizationServerConfigurer = OAuth2AuthorizationServerConfigurer<HttpSecurity>()
+        authorizationServerConfigurer.oidc { it.userInfoEndpoint { it.userInfoMapper { userInfoEnhancer(it) } } }
+        val endpointsMatcher = authorizationServerConfigurer.endpointsMatcher
+
+        http
+                .requestMatcher(endpointsMatcher)
+                .authorizeRequests { authorizeRequests -> authorizeRequests.anyRequest().authenticated() }
+                .csrf { csrf: CsrfConfigurer<HttpSecurity?> -> csrf.ignoringRequestMatchers(endpointsMatcher) }
+                .apply(authorizationServerConfigurer)
+
         return http.formLogin(Customizer.withDefaults())
                 .oauth2ResourceServer().jwt()
                 .and().and()
