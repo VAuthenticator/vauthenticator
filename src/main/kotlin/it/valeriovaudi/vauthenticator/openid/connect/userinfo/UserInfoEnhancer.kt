@@ -4,8 +4,6 @@ import it.valeriovaudi.vauthenticator.account.Account
 import it.valeriovaudi.vauthenticator.account.AccountRepository
 import org.springframework.security.oauth2.core.oidc.OidcUserInfo
 import org.springframework.security.oauth2.server.authorization.oidc.authentication.OidcUserInfoAuthenticationContext
-import org.springframework.util.LinkedMultiValueMap
-import org.springframework.util.MultiValueMap
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
@@ -15,7 +13,7 @@ open class UserInfoEnhancer(private val accountRepository: AccountRepository) {
     open fun oidcUserInfoFrom(principal: OidcUserInfoAuthenticationContext): OidcUserInfo =
             accountRepository.accountFor(userName(principal))
                     .map { account ->
-                        val claims = LinkedMultiValueMap<String, Any>()
+                        val claims = mutableMapOf<String, Any>()
 
                         claims["username"] = userName(principal)
                         claims["authorities"] = authorities(principal)
@@ -23,6 +21,7 @@ open class UserInfoEnhancer(private val accountRepository: AccountRepository) {
                         OpenIdClaimsProvider(account, claims)
                         EmailClaimsProvider(account, claims)
                         ProfileClaimsProvider(account, claims)
+                        println(claims)
                         println(OidcUserInfo(claims as Map<String, Any>))
                         OidcUserInfo(claims as Map<String, Any>)
                     }
@@ -31,10 +30,10 @@ open class UserInfoEnhancer(private val accountRepository: AccountRepository) {
 }
 
 
-typealias ClaimsProvider = (Account, MultiValueMap<String, Any>) -> MultiValueMap<String, Any>
+typealias ClaimsProvider = (Account, MutableMap<String, Any>) -> MutableMap<String, Any>
 
 object EmailClaimsProvider : ClaimsProvider {
-    override fun invoke(account: Account, claims: MultiValueMap<String, Any>): MultiValueMap<String, Any> {
+    override fun invoke(account: Account, claims: MutableMap<String, Any>): MutableMap<String, Any> {
         claims["email"] = account.email
         claims["email_verified"] = true
         return claims
@@ -44,7 +43,7 @@ object EmailClaimsProvider : ClaimsProvider {
 
 
 object ProfileClaimsProvider : ClaimsProvider {
-    override fun invoke(account: Account, claims: MultiValueMap<String, Any>): MultiValueMap<String, Any> {
+    override fun invoke(account: Account, claims: MutableMap<String, Any>): MutableMap<String, Any> {
         claims["name"] = "${account.firstName} ${account.lastName}"
         claims["given_name"] = account.firstName
         claims["family_name"] = account.lastName
@@ -56,7 +55,7 @@ object ProfileClaimsProvider : ClaimsProvider {
 }
 
 object OpenIdClaimsProvider : ClaimsProvider {
-    override fun invoke(account: Account, claims: MultiValueMap<String, Any>): MultiValueMap<String, Any> {
+    override fun invoke(account: Account, claims: MutableMap<String, Any>): MutableMap<String, Any> {
         claims["sub"] = account.email
         return claims
     }
