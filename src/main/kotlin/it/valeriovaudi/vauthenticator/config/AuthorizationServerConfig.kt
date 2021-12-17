@@ -104,12 +104,14 @@ class AuthorizationServerConfig {
                     oidcIss, applicationRepository
             )
 
-
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     fun authorizationServerSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http)
-        return http.formLogin(Customizer.withDefaults()).build()
+        return http.formLogin(Customizer.withDefaults())
+                .oauth2ResourceServer().jwt()
+                .and().and()
+                .build()
     }
 
 
