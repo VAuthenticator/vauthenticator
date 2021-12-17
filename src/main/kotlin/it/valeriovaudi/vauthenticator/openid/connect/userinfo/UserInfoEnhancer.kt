@@ -2,6 +2,7 @@ package it.valeriovaudi.vauthenticator.openid.connect.userinfo
 
 import it.valeriovaudi.vauthenticator.account.Account
 import it.valeriovaudi.vauthenticator.account.AccountRepository
+import org.springframework.security.oauth2.core.oidc.OidcUserInfo
 import org.springframework.security.oauth2.server.authorization.oidc.authentication.OidcUserInfoAuthenticationContext
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
@@ -11,7 +12,7 @@ import java.time.ZoneOffset
 
 open class UserInfoEnhancer(private val accountRepository: AccountRepository) {
 
-    open fun oidcUserInfoFrom(principal: OidcUserInfoAuthenticationContext) =
+    open fun oidcUserInfoFrom(principal: OidcUserInfoAuthenticationContext): OidcUserInfo =
             accountRepository.accountFor(userName(principal))
                     .map { account ->
                         val claims = LinkedMultiValueMap<String, Any>()
@@ -22,6 +23,7 @@ open class UserInfoEnhancer(private val accountRepository: AccountRepository) {
                         OpenIdClaimsProvider(account, claims)
                         EmailClaimsProvider(account, claims)
                         ProfileClaimsProvider(account, claims)
+                        OidcUserInfo(claims as Map<String, Any>)
                     }
                     .orElseThrow()
 

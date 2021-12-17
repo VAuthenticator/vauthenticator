@@ -28,7 +28,6 @@ import org.springframework.security.config.annotation.web.configuration.OAuth2Au
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.authorization.OAuth2AuthorizationServerConfigurer
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.security.oauth2.core.oidc.OidcUserInfo
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.oauth2.jwt.NimbusJwsEncoder
 import org.springframework.security.oauth2.server.authorization.JwtEncodingContext
@@ -36,7 +35,6 @@ import org.springframework.security.oauth2.server.authorization.OAuth2Authorizat
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenCustomizer
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository
 import org.springframework.security.oauth2.server.authorization.config.ProviderSettings
-import org.springframework.security.oauth2.server.authorization.oidc.authentication.OidcUserInfoAuthenticationContext
 import org.springframework.security.web.SecurityFilterChain
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
@@ -109,24 +107,20 @@ class AuthorizationServerConfig {
                     oidcIss, applicationRepository
             )
 
-    @Bean
-    fun userInfoEnhancer(accountRepository: AccountRepository) =
-            UserInfoEnhancer(accountRepository)
 
-    val userInfoMapper: (OidcUserInfoAuthenticationContext) -> OidcUserInfo = {
-        OidcUserInfo(
-                mapOf(
-                        "user_name" to it.authorization.accessToken.claims!!["user_name"],
-                        "authorities" to it.authorization.accessToken.claims!!["authorities"],
-                )
-        )
-    }
+
 
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     fun authorizationServerSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
+        val userInfoEnhancer = UserInfoEnhancer(accountRepository)
         val authorizationServerConfigurer = OAuth2AuthorizationServerConfigurer<HttpSecurity>()
-        authorizationServerConfigurer.oidc { it.userInfoEndpoint { it.userInfoMapper { userInfoEnhancer(it) } } }
+        authorizationServerConfigurer.oidc { configurer ->
+            configurer.userInfoEndpoint { customizer ->
+                customizer.userInfoMapper { context -> userInfoEnhancer.oidcUserInfoFrom(context)
+                }
+            }
+        }
         val endpointsMatcher = authorizationServerConfigurer.endpointsMatcher
 
         http

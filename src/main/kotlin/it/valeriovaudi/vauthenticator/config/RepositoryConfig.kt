@@ -1,13 +1,11 @@
 package it.valeriovaudi.vauthenticator.config
 
-import it.valeriovaudi.vauthenticator.account.AccountRepository
 import it.valeriovaudi.vauthenticator.account.dynamo.DynamoDbAccountRepository
 import it.valeriovaudi.vauthenticator.keypair.DynamoKeyRepository
 import it.valeriovaudi.vauthenticator.keypair.KeyPairConfig
 import it.valeriovaudi.vauthenticator.keypair.KeyRepository
 import it.valeriovaudi.vauthenticator.keypair.KmsKeyRepository
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.DynamoDbClientApplicationRepository
-import it.valeriovaudi.vauthenticator.openid.connect.userinfo.UserInfoFactory
 import it.valeriovaudi.vauthenticator.role.DynamoDbRoleRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -21,10 +19,6 @@ import software.amazon.awssdk.services.kms.KmsClient
 
 @Configuration
 class RepositoryConfig {
-
-    @Bean
-    fun userInfoFactory(accountRepository: AccountRepository) =
-            UserInfoFactory(accountRepository)
 
     @Bean
     @ConfigurationProperties(prefix = "key-store")
