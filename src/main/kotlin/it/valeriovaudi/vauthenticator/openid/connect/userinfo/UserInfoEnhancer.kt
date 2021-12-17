@@ -21,9 +21,7 @@ open class UserInfoEnhancer(private val accountRepository: AccountRepository) {
                         OpenIdClaimsProvider(account, claims)
                         EmailClaimsProvider(account, claims)
                         ProfileClaimsProvider(account, claims)
-                        println(claims)
-                        println(OidcUserInfo(claims as Map<String, Any>))
-                        OidcUserInfo(claims as Map<String, Any>)
+                        OidcUserInfo(claims)
                     }
                     .orElseThrow()
 
