@@ -13,6 +13,7 @@ import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationReposito
 import it.valeriovaudi.vauthenticator.oauth2.token.OAuth2TokenEnhancer
 import it.valeriovaudi.vauthenticator.openid.connect.logout.JdbcFrontChannelLogout
 import it.valeriovaudi.vauthenticator.openid.connect.token.IdTokenEnhancer
+import it.valeriovaudi.vauthenticator.openid.connect.userinfo.UserInfoEnhancer
 import it.valeriovaudi.vauthenticator.security.registeredclient.ClientAppRegisteredClientRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -24,6 +25,8 @@ import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration
+import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer
+import org.springframework.security.config.annotation.web.configurers.oauth2.server.authorization.OAuth2AuthorizationServerConfigurer
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.oauth2.jwt.NimbusJwsEncoder
@@ -105,11 +108,31 @@ class AuthorizationServerConfig {
             )
 
 
+
+
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     fun authorizationServerSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
-        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http)
-        return http.formLogin(Customizer.withDefaults()).build()
+        val userInfoEnhancer = UserInfoEnhancer(accountRepository)
+        val authorizationServerConfigurer = OAuth2AuthorizationServerConfigurer<HttpSecurity>()
+        authorizationServerConfigurer.oidc { configurer ->
+            configurer.userInfoEndpoint { customizer ->
+                customizer.userInfoMapper { context -> userInfoEnhancer.oidcUserInfoFrom(context)
+                }
+            }
+        }
+        val endpointsMatcher = authorizationServerConfigurer.endpointsMatcher
+
+        http
+                .requestMatcher(endpointsMatcher)
+                .authorizeRequests { authorizeRequests -> authorizeRequests.anyRequest().authenticated() }
+                .csrf { csrf: CsrfConfigurer<HttpSecurity?> -> csrf.ignoringRequestMatchers(endpointsMatcher) }
+                .apply(authorizationServerConfigurer)
+
+        return http.formLogin(Customizer.withDefaults())
+                .oauth2ResourceServer().jwt()
+                .and().and()
+                .build()
     }
 
 

@@ -17,7 +17,6 @@ class WebSecurityConfig {
             "/logout",
             "/oidc/logout",
             "/login",
-            "/user-info",
             "/webjars/**",
             "/api/**",
             "/secure/**"
