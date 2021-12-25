@@ -69,7 +69,7 @@ class DynamoDbClientApplicationRepository(
         dynamoDbClient.putItem(
             PutItemRequest.builder()
                 .tableName(dynamoClientApplicationTableName)
-                .item(fromDomainToDynamo(clientApp, passwordEncoder))
+                .item(fromDomainToDynamo(clientApp))
                 .build()
         )
     }

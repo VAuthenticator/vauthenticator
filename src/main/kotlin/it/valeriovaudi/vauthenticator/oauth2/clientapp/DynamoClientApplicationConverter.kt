@@ -9,12 +9,11 @@ const val resourceId: String = "oauth2-resource"
 object DynamoClientApplicationConverter {
 
     fun fromDomainToDynamo(
-            clientApp: ClientApplication,
-            passwordEncoder: PasswordEncoder
+            clientApp: ClientApplication
     ): MutableMap<String, AttributeValue> {
         val dynamoDocument = mutableMapOf(
                 "client_id" to clientApp.clientAppId.content.asDynamoAttribute(),
-                "client_secret" to passwordEncoder.encode(clientApp.secret.content).asDynamoAttribute(),
+                "client_secret" to clientApp.secret.content.asDynamoAttribute(),
                 "resource_ids" to resourceId.asDynamoAttribute(),
                 "scopes" to clientApp.scopes.asDynamoAttribute(),
                 "authorized_grant_types" to clientApp.authorizedGrantTypes.asDynamoAttribute(),

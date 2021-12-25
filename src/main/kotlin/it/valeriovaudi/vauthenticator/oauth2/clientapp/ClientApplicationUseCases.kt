@@ -18,7 +18,7 @@ class StoreClientApplication(private val clientApplicationRepository: ClientAppl
             aClientApp.copy(secret = Secret(passwordEncoder.encode(aClientApp.secret.content)))
         } else {
             clientApplicationRepository.findOne(clientAppId = aClientApp.clientAppId)
-                    .map { aClientApp.copy(secret = it.secret) }
+                    .map { app -> aClientApp.copy(secret = app.secret) }
                     .orElseThrow()
         }
     }
