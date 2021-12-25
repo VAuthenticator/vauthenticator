@@ -12,6 +12,7 @@ import it.valeriovaudi.vauthenticator.oauth2.authorizationservice.RedisOAuth2Aut
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
 import it.valeriovaudi.vauthenticator.oauth2.token.OAuth2TokenEnhancer
 import it.valeriovaudi.vauthenticator.openid.connect.logout.JdbcFrontChannelLogout
+import it.valeriovaudi.vauthenticator.openid.connect.sessionmanagement.sendAuthorizationResponse
 import it.valeriovaudi.vauthenticator.openid.connect.token.IdTokenEnhancer
 import it.valeriovaudi.vauthenticator.openid.connect.userinfo.UserInfoEnhancer
 import it.valeriovaudi.vauthenticator.security.registeredclient.ClientAppRegisteredClientRepository
@@ -35,6 +36,7 @@ import org.springframework.security.oauth2.server.authorization.OAuth2Authorizat
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenCustomizer
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository
 import org.springframework.security.oauth2.server.authorization.config.ProviderSettings
+import org.springframework.security.web.DefaultRedirectStrategy
 import org.springframework.security.web.SecurityFilterChain
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
@@ -120,7 +122,7 @@ class AuthorizationServerConfig {
                 customizer.userInfoMapper { context -> userInfoEnhancer.oidcUserInfoFrom(context)
                 }
             }
-        }
+        }.authorizationEndpoint {it.authorizationResponseHandler(sendAuthorizationResponse(providerSettings(), DefaultRedirectStrategy()))}
         val endpointsMatcher = authorizationServerConfigurer.endpointsMatcher
 
         http
