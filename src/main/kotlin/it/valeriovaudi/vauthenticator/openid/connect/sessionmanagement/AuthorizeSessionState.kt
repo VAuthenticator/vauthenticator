@@ -29,18 +29,25 @@ fun sendAuthorizationResponse(
         uriBuilder.queryParam(OAuth2ParameterNames.STATE, authorizationCodeRequestAuthentication.state)
     }
 
-    val opbsCookie = UUID.randomUUID().toString()
+    val opbsCookie = opbsCookie()
     val sessionState = sessionStateFor(authentication, providerSettings, opbsCookie)
-    val cookie = Cookie("opbs", opbsCookie)
-    cookie.maxAge = 2592000
-    cookie.path="/vauthenticator"
-    cookie.isHttpOnly = true
+    val cookie = cookieFor(opbsCookie)
     response.addCookie(cookie)
 
     uriBuilder.queryParam("session_state", sessionState)
 
     redirectStrategy.sendRedirect(request, response, uriBuilder.toUriString())
 }
+
+private fun cookieFor(opbsCookie: String): Cookie {
+    val cookie = Cookie("opbs", opbsCookie)
+    cookie.maxAge = 2592000
+    cookie.path = "/"
+    cookie.isHttpOnly = true
+    return cookie
+}
+
+private fun opbsCookie() = UUID.randomUUID().toString()
 
 fun sessionStateFor(authentication: OAuth2AuthorizationCodeRequestAuthenticationToken,
                     providerSettings: ProviderSettings,
