@@ -8,7 +8,6 @@ import org.springframework.security.oauth2.server.authorization.config.ProviderS
 import org.springframework.security.web.RedirectStrategy
 import org.springframework.util.StringUtils
 import org.springframework.web.util.UriComponentsBuilder
-import java.security.MessageDigest
 import java.util.*
 import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletRequest
@@ -29,7 +28,7 @@ fun sendAuthorizationResponse(
         uriBuilder.queryParam(OAuth2ParameterNames.STATE, authorizationCodeRequestAuthentication.state)
     }
 
-    val opbsCookie = opbsCookie()
+    val opbsCookie = opbsCookieValue()
     val sessionState = sessionStateFor(authentication, providerSettings, opbsCookie)
     val cookie = cookieFor(opbsCookie)
     response.addCookie(cookie)
@@ -47,7 +46,7 @@ private fun cookieFor(opbsCookie: String): Cookie {
     return cookie
 }
 
-private fun opbsCookie() = UUID.randomUUID().toString()
+private fun opbsCookieValue() = UUID.randomUUID().toString()
 
 fun sessionStateFor(authentication: OAuth2AuthorizationCodeRequestAuthenticationToken,
                     providerSettings: ProviderSettings,
