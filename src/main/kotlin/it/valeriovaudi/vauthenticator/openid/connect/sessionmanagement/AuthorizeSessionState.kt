@@ -34,6 +34,7 @@ fun sendAuthorizationResponse(
     val cookie = Cookie("opbs", opbsCookie)
     cookie.maxAge = 2592000
     cookie.path="/vauthenticator"
+    cookie.isHttpOnly = true
     response.addCookie(cookie)
 
     uriBuilder.queryParam("session_state", sessionState)
