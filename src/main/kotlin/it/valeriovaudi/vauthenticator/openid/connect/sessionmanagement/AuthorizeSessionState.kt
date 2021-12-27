@@ -30,7 +30,7 @@ fun sendAuthorizationResponse(
 
     val opbsCookie = opbsCookieValue()
     val sessionState = sessionStateFor(authentication, providerSettings, opbsCookie)
-    val cookie = cookieFor(opbsCookie)
+    val cookie = cookieFor(opbsCookie,request)
     response.addCookie(cookie)
 
     uriBuilder.queryParam("session_state", sessionState)
@@ -38,10 +38,10 @@ fun sendAuthorizationResponse(
     redirectStrategy.sendRedirect(request, response, uriBuilder.toUriString())
 }
 
-private fun cookieFor(opbsCookie: String): Cookie {
+private fun cookieFor(opbsCookie: String, request: HttpServletRequest): Cookie {
     val cookie = Cookie("opbs", opbsCookie)
     cookie.maxAge = 2592000
-    cookie.path = "/"
+    cookie.path = request.contextPath
     cookie.isHttpOnly = true
     return cookie
 }
