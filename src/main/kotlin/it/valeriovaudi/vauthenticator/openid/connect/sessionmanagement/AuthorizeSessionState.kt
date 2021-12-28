@@ -58,9 +58,7 @@ fun sessionStateFor(authentication: OAuth2AuthorizationCodeRequestAuthentication
     val issuer = providerSettings.issuer
     val salt = saltFor(opbsCookie)
 
-    val ss = "$clientId $issuer $opbsCookie $salt".toSha256() + ".$salt"
-    println(ss)
-    return ss
+    return "$clientId $issuer $opbsCookie $salt".toSha256() + ".$salt"
 }
 
 fun saltFor(opbsCookie: String): String {
