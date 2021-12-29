@@ -31,7 +31,10 @@ class WebSecurityConfig {
                 .loginPage(LOG_IN_URL_PAGE)
                 .permitAll()
 
-        http.logout().logoutSuccessUrl("/secure/admin/index")
+        http.logout()
+                .deleteCookies("opbs")
+                .invalidateHttpSession(true)
+                .logoutSuccessUrl("/secure/admin/index")
 
         http.requestMatchers().antMatchers(*WHITE_LIST)
                 .and()
