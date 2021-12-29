@@ -12,12 +12,13 @@ all written in Kotlin based on Spring Boot 2.x and more over to the latest sprin
 
 ## Features
 Right now it is based, as said before to the latest version on spring oauth2/open id connect framework [spring-authorization-server](https://github.com/spring-projects-experimental/spring-authorization-server).
-The services that you need are repository-service for keypair RSA certificate and a configuration-server for configurations.
 
 Client Applications, roles and openid projection of accounts are stored in a DynamoDB, while for authorization code, distributed session store and 
 distributed cache, Redis store is my choice. 
 VAuthenticator and the [account-service](https://github.com/mrFlick72/account-service) are synchronized with a secure AWS SQS channel, 
-while the RSA key pair are created from KMS Customer Master Key stored on Dynamo, private key crypted via KMS of course  
+while the RSA key pair are created from KMS Customer Master Key stored on Dynamo, private key crypted via KMS of course.
+VAuthenticator implements front_channel single logout openid connect specification and part of session management, in particular only 
+the needed to support a better single logout experience is implemented, however I planned to implement full session management as well 
 
 ## Next Features
-* session management
+* back channel logout 
