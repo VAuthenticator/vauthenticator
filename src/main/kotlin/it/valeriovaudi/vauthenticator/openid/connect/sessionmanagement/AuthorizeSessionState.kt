@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 fun sendAuthorizationResponse(
-        providerSettings: ProviderSettings,
+        factory: SessionManagementFactory,
         redirectStrategy: RedirectStrategy
 ) = { request: HttpServletRequest,
       response: HttpServletResponse,
@@ -31,9 +31,8 @@ fun sendAuthorizationResponse(
         uriBuilder.queryParam(OAuth2ParameterNames.STATE, authorizationCodeRequestAuthentication.state)
     }
 
-    val opbsCookie = opbsCookieValue()
-    val sessionState = sessionStateFor(authentication, providerSettings, opbsCookie)
-    val cookie = cookieFor(opbsCookie, request)
+    val sessionState = factory.sessionStateFor(request, authentication)
+    val cookie = factory.opbsCookieFor(request)
     response.addCookie(cookie)
 
     uriBuilder.queryParam("session_state", sessionState)
@@ -41,30 +40,37 @@ fun sendAuthorizationResponse(
     redirectStrategy.sendRedirect(request, response, uriBuilder.toUriString())
 }
 
-private fun cookieFor(opbsCookie: String, request: HttpServletRequest): Cookie {
-    val cookie = Cookie("opbs", opbsCookie)
-    cookie.maxAge = 2592000
-    cookie.path = request.contextPath
-//    cookie.isHttpOnly = true
-    return cookie
+class SessionManagementFactory(private val providerSettings: ProviderSettings) {
+
+    fun opbsCookieFor(request: HttpServletRequest): Cookie {
+        val cookie = Cookie("opbs", opbsCookieValue(request))
+        cookie.path = request.contextPath
+        return cookie
+    }
+
+    fun opbsCookieValue(request: HttpServletRequest): String {
+        val opbs: String = (request.session.getAttribute("opbs_cookie_value") ?: "") as String
+        if (opbs.isEmpty()) {
+            val opbs = UUID.randomUUID().toString();
+            request.session.setAttribute("opbs_cookie_value", opbs)
+        }
+
+        return opbs;
+    }
+
+    fun sessionStateFor(request: HttpServletRequest, authentication: OAuth2AuthorizationCodeRequestAuthenticationToken): String {
+        val clientId = authentication.clientId
+        val issuer = providerSettings.issuer
+        val salt = saltFor(request)
+
+        return "$clientId $issuer ${opbsCookieValue(request)} $salt".toSha256() + ".$salt"
+    }
+
+    fun saltFor(request: HttpServletRequest) =
+            opbsCookieValue(request).toSha256()
+
+
 }
-
-private fun opbsCookieValue() = UUID.randomUUID().toString()
-
-fun sessionStateFor(authentication: OAuth2AuthorizationCodeRequestAuthenticationToken,
-                    providerSettings: ProviderSettings,
-                    opbsCookie: String): String {
-    val clientId = authentication.clientId
-    val issuer = providerSettings.issuer
-    val salt = saltFor(opbsCookie)
-
-    return "$clientId $issuer $opbsCookie $salt".toSha256() + ".$salt"
-}
-
-fun saltFor(opbsCookie: String): String {
-    return opbsCookie.toSha256()
-}
-
 
 @Controller
 class SessionManagementIFrameController(private val providerSettings: ProviderSettings) {

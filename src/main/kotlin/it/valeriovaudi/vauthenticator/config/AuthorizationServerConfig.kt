@@ -12,6 +12,7 @@ import it.valeriovaudi.vauthenticator.oauth2.authorizationservice.RedisOAuth2Aut
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
 import it.valeriovaudi.vauthenticator.oauth2.token.OAuth2TokenEnhancer
 import it.valeriovaudi.vauthenticator.openid.connect.logout.JdbcFrontChannelLogout
+import it.valeriovaudi.vauthenticator.openid.connect.sessionmanagement.SessionManagementFactory
 import it.valeriovaudi.vauthenticator.openid.connect.sessionmanagement.sendAuthorizationResponse
 import it.valeriovaudi.vauthenticator.openid.connect.token.IdTokenEnhancer
 import it.valeriovaudi.vauthenticator.openid.connect.userinfo.UserInfoEnhancer
@@ -122,7 +123,7 @@ class AuthorizationServerConfig {
                 customizer.userInfoMapper { context -> userInfoEnhancer.oidcUserInfoFrom(context)
                 }
             }
-        }.authorizationEndpoint {it.authorizationResponseHandler(sendAuthorizationResponse(providerSettings(), DefaultRedirectStrategy()))}
+        }.authorizationEndpoint {it.authorizationResponseHandler(sendAuthorizationResponse(SessionManagementFactory(providerSettings()), DefaultRedirectStrategy()))}
         val endpointsMatcher = authorizationServerConfigurer.endpointsMatcher
 
         http
