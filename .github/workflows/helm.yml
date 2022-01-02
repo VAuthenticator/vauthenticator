@@ -17,15 +17,6 @@ jobs:
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
-      - name: Set up Helm
-        uses: azure/setup-helm@v1
-        with:
-          version: v3.6.2
-
-      - name: Add dependency chart repos
-        run: |
-          helm repo add vauthenticator https://vauthenticator.github.io
-
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.1.0
         env:
