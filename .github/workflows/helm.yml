@@ -12,15 +12,19 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
       - name: Set up Helm
         uses: azure/setup-helm@v1
         with:
           version: v3.6.2
 
-      - name: Configure Git
+      - name: Add dependency chart repos
         run: |
-          git config user.name "$GITHUB_ACTOR"
-          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          helm repo add vauthenticator https://vauthenticator.github.io
 
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.1.0
