@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "vauthenticator.name" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "vauthenticator.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- toYaml .Values.lables | nindent 8 }}
+        {{- include "vauthenticator.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: filebeat
+          configMap:
+            name: filebeat-config
+
+        - name: application-logs
+          emptyDir: { }
+
+        - name: application-config
+          configMap:
+            name: application-config
+
+      containers:
+        - name: filebeats
+          image: docker.elastic.co/beats/filebeat:7.6.1
+          volumeMounts:
+            - name: application-logs
+              mountPath: /var/log/onlyone-portal/logs/
+
+            - name: filebeat
+              subPath: filebeat.yml
+              mountPath: /usr/share/filebeat/filebeat.yml
+
+        - name: {{ .Chart.Name }}
+          volumeMounts:
+          - name: application-logs
+            mountPath: /var/log/onlyone-portal/logs/
+
+          - name: application-config
+            subPath: application.yml
+            mountPath: /usr/local/onlyone-portal/config/application.yml
+
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.application.server.port }}
+            - containerPort: 8081
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8081
+            initialDelaySeconds: {{ .Values.pod.probes.liveness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.pod.probes.liveness.periodSeconds }}
+
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8081
+            initialDelaySeconds: {{ .Values.pod.probes.rediness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.pod.probes.rediness.periodSeconds }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          env:
+            - name: AWS_ACCESS_KEY_ID
+              value: {{ .Values.application.aws.accessKey }}
+
+            - name: AWS_SECRET_ACCESS_KEY
+              value: {{ .Values.application.aws.secretKey }}
+
+            - name: AWS_REGION
+              value: {{ .Values.application.aws.region }}
+
+            - name: spring.config.additional-location
+              value: /usr/local/onlyone-portal/config/
