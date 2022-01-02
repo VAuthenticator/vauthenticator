@@ -18,7 +18,7 @@ jobs:
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
       - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.1.0
+        uses: helm/chart-releaser-action@v1.2.1
         with:
           config: cr.yaml
           charts_repo_url: https://github.com/mrFlick72/vauthenticator.github.io
