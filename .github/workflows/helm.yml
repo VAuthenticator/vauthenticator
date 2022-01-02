@@ -19,7 +19,7 @@ jobs:
       - name: Add dependency chart repos
 
         run: |
-          helm repo add vauthenticator https://vauthenticator.github.io/helm-charts
+          helm repo add vauthenticator https://vauthenticator.github.io
 
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.1.0
