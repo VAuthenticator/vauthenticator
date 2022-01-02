@@ -32,7 +32,7 @@ class RepositoryConfig {
     @Bean
     fun keyRepository(kmsClient: KmsClient,
                       dynamoDbClient: DynamoDbClient,
-                      @Value("\${dynamo-db.keys.table-name}") tableName: String): KeyRepository =
+                      @Value("\${vauthenticator.dynamo-db.keys.table-name}") tableName: String): KeyRepository =
             DynamoKeyRepository(
                     tableName,
                     KmsKeyRepository(kmsClient),
@@ -51,18 +51,18 @@ class DynamoDbRepositoryConfig {
 
     @Bean
     fun accountRepository(dynamoDbClient: DynamoDbClient,
-                          @Value("\${dynamo-db.account.table-name}") accountTableName: String,
-                          @Value("\${dynamo-db.account.role.table-name}") accountRoleTableName: String
+                          @Value("\${vauthenticator.dynamo-db.account.table-name}") accountTableName: String,
+                          @Value("\${vauthenticator.dynamo-db.account.role.table-name}") accountRoleTableName: String
     ) = DynamoDbAccountRepository(dynamoDbClient, accountTableName, accountRoleTableName)
 
     @Bean
     fun roleRepository(dynamoDbClient: DynamoDbClient,
-                       @Value("\${dynamo-db.role.table-name}") roleTableName: String) =
+                       @Value("\${vauthenticator.dynamo-db.role.table-name}") roleTableName: String) =
             DynamoDbRoleRepository(dynamoDbClient, roleTableName)
 
     @Bean
     fun clientApplicationRepository(dynamoDbClient: DynamoDbClient,
                                     passwordEncoder: PasswordEncoder,
-                                    @Value("\${dynamo-db.client-application.table-name}") clientAppTableName: String) =
-            DynamoDbClientApplicationRepository(passwordEncoder, dynamoDbClient, clientAppTableName)
+                                    @Value("\${vauthenticator.dynamo-db.client-application.table-name}") clientAppTableName: String) =
+            DynamoDbClientApplicationRepository(dynamoDbClient, clientAppTableName)
 }

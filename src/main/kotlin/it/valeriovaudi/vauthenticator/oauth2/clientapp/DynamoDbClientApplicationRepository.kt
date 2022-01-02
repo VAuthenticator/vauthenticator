@@ -11,7 +11,6 @@ import software.amazon.awssdk.services.dynamodb.model.*
 import java.util.*
 
 class DynamoDbClientApplicationRepository(
-        private val passwordEncoder: PasswordEncoder,
         private val dynamoDbClient: DynamoDbClient,
         private val dynamoClientApplicationTableName: String
 ) : ClientApplicationRepository {

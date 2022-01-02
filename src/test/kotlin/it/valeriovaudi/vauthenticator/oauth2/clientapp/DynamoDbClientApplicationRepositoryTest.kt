@@ -28,7 +28,7 @@ internal class DynamoDbClientApplicationRepositoryTest {
     @BeforeEach
     fun setUp() {
         dynamoDbClientApplicationRepository =
-                DynamoDbClientApplicationRepository(passwordEncoder, dynamoDbClient, dynamoClientApplicationTableName)
+                DynamoDbClientApplicationRepository(dynamoDbClient, dynamoClientApplicationTableName)
     }
 
     @AfterEach
