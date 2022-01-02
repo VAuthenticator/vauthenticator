@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  vauthenticator:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2022-01-02T21:56:52.113303831Z"
+    description: A Helm chart for Kubernetes
+    digest: b945421f0397a055ef1b4e7f2045cd8a0c85309aa792e847178af190bb9e07e0
+    name: vauthenticator
+    type: application
+    urls:
+    - https://github.com/mrFlick72/vauthenticator/releases/download/vauthenticator-1.0.0/vauthenticator-1.0.0.tgz
+    version: 1.0.0
+generated: "2022-01-02T21:56:52.113308131Z"
