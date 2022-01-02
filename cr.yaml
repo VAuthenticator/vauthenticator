@@ -4,7 +4,5 @@ target-branch: master
 chart-dirs:
   - charts
 chart-repos:
-  - bitnami=https://charts.bitnami.com/bitnami
-  - grafana=https://grafana.github.io/helm-charts
-  - vauthenticator=https://github.com/mrFlick72/vauthenticator.github.io
+  - vauthenticator=https://github.com/mrFlick72/vauthenticator
 helm-extra-args: --timeout 600s
