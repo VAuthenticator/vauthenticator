@@ -6,5 +6,5 @@ chart-dirs:
 chart-repos:
   - bitnami=https://charts.bitnami.com/bitnami
   - grafana=https://grafana.github.io/helm-charts
-  - vauthenticator=https://vauthenticator.github.io
+  - vauthenticator=https://github.com/mrFlick72/vauthenticator.github.io
 helm-extra-args: --timeout 600s
