@@ -65,37 +65,6 @@ internal class DynamoDbClientApplicationRepositoryTest {
     }
 
     @Test
-    fun `when find federated client applications by federation`() {
-        dynamoDbClientApplicationRepository.save(
-                ClientAppFixture.aClientApp(
-                        ClientAppId("client_id1"),
-                        logoutUri = LogoutUri("http://logout_uri_1")
-                )
-        )
-        dynamoDbClientApplicationRepository.save(
-                ClientAppFixture.aClientApp(
-                        ClientAppId("client_id2"),
-                        logoutUri = LogoutUri("http://logout_uri_2")
-                )
-        )
-        dynamoDbClientApplicationRepository.save(
-                ClientAppFixture.aClientApp(
-                        ClientAppId("client_id3"),
-                        logoutUri = LogoutUri("http://logout_uri_3")
-                )
-        )
-        val actual = dynamoDbClientApplicationRepository.findLogoutUriByFederation(Federation("A_FEDERATION"))
-
-        val expected = listOf(
-                LogoutUri("http://logout_uri_3"),
-                LogoutUri("http://logout_uri_2"),
-                LogoutUri("http://logout_uri_1")
-        )
-
-        Assertions.assertEquals(actual, expected)
-    }
-
-    @Test
     fun `when find all client applications`() {
         val clientAppId = ClientAppId("client_id")
         val expected = ClientAppFixture.aClientApp(clientAppId)
