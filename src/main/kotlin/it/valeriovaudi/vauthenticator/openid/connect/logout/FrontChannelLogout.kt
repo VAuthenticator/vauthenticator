@@ -37,8 +37,8 @@ class JdbcFrontChannelLogout(
     private val logger: Logger = LoggerFactory.getLogger(JdbcFrontChannelLogout::class.java)
 
     override fun getFederatedLogoutUrls(idTokenHint: String): List<String> {
-        val cleintAppId = clientAppIdFrom(idTokenHint)
-        val clientAppLogoutUri = applicationRepository.findOne(ClientAppId(cleintAppId)).map { it.logoutUri.content }.orElse("")
+        val clientAppId = clientAppIdFrom(idTokenHint)
+        val clientAppLogoutUri = applicationRepository.findOne(ClientAppId(clientAppId)).map { it.logoutUri.content }.orElse("")
         val logoutUrisWithAuthServer = listOf("$authServerBaseUrl/logout", clientAppLogoutUri)
         logger.debug("logoutUrisWithAuthServer: $logoutUrisWithAuthServer")
         return logoutUrisWithAuthServer
