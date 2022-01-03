@@ -1,6 +1,3 @@
-variable "tf_state_bucket" {}
-variable "tf_state_key" {}
-
 variable "environment" {}
 
 variable "client_application_table_name" {}
