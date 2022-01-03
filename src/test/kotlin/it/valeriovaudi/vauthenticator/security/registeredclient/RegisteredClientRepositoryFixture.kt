@@ -46,7 +46,6 @@ object RegisteredClientRepositoryFixture {
                     autoApprove = AutoApprove.approve,
                     postLogoutRedirectUri = PostLogoutRedirectUri("http://post_logout_redirect_uri"),
                     logoutUri = LogoutUri("http://logout_uri"),
-                    federation = Federation("federation"),
                     resourceIds = ResourceIds(listOf(ResourceId("resource_id")))
             )
     )

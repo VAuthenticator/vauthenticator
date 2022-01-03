@@ -8,23 +8,6 @@ resource "aws_dynamodb_table" "client_application_table_staging" {
     type = "S"
   }
 
-  global_secondary_index {
-    hash_key = "federation"
-    range_key = "logout_uris"
-    name = "FederationIndex"
-    projection_type = "KEYS_ONLY"
-  }
-
-  attribute {
-    name = "federation"
-    type = "S"
-  }
-
-  attribute {
-    name = "logout_uris"
-    type = "S"
-  }
-
   tags = {
     Environment = "testing"
   }

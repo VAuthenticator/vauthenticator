@@ -16,7 +16,6 @@ const columns = [
     {id: 'clientAppId', label: 'Client Application Id', minWidth: 170},
     {id: 'scopes', label: 'Client Scopes', minWidth: 170},
     {id: 'authorizedGrantTypes', label: 'Client Application Autorized Grant Type', minWidth: 170},
-    {id: 'federation', label: 'Client Application Federation', minWidth: 170},
     {id: 'edit', label: 'Edit Application', minWidth: 170},
     {id: 'delete', label: 'Delete Application', minWidth: 170},
     {id: 'secretKey', label: 'Reset Password', minWidth: 170}

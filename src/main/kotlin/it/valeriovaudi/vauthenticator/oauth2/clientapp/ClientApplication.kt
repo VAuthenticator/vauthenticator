@@ -15,7 +15,6 @@ data class ClientApplication(
     val autoApprove: AutoApprove = AutoApprove.approve,
     val postLogoutRedirectUri: PostLogoutRedirectUri,
     val logoutUri: LogoutUri,
-    val federation: Federation,
     val resourceIds: ResourceIds
 )
 
@@ -69,4 +68,3 @@ data class Authorities(val content: List<Authority>) {
 }
 data class Authority(val content: String)
 data class TokenTimeToLive(val content: Int)
-data class Federation(val name: String)
