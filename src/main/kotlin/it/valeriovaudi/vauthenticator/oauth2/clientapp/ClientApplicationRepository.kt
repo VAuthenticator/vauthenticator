@@ -6,8 +6,6 @@ interface ClientApplicationRepository {
 
     fun findOne(clientAppId: ClientAppId): Optional<ClientApplication>
 
-    fun findLogoutUriByFederation(federation: Federation): Iterable<LogoutUri>
-
     fun findAll(): Iterable<ClientApplication>
 
     fun save(clientApp: ClientApplication)

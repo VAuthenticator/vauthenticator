@@ -68,4 +68,3 @@ data class Authorities(val content: List<Authority>) {
 }
 data class Authority(val content: String)
 data class TokenTimeToLive(val content: Int)
-data class Federation(val name: String)

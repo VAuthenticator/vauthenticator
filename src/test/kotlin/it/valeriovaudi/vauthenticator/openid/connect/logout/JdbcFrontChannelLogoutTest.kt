@@ -4,7 +4,6 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.DynamoDbClientApplicationRepository
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.Federation
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.LogoutUri
 import it.valeriovaudi.vauthenticator.support.TestingFixture
 import org.junit.jupiter.api.Assertions
@@ -25,12 +24,12 @@ class JdbcFrontChannelLogoutTest {
         fontEndChannelLogout =
             JdbcFrontChannelLogout("http://localhost/vauthenticator", clientApplicationRepository)
     }
-
+/*
     @Test
     fun `get all logout uri for a onlyone-portal federation`() {
         val federation = Federation("a_federation")
 
-        every { clientApplicationRepository.findLogoutUriByFederation(federation) }
+        every { clientApplicationRepository.findOne(federation) }
             .returns(
                 listOf(
                     LogoutUri("http://an_uri123"),
@@ -47,5 +46,5 @@ class JdbcFrontChannelLogoutTest {
             "http://an_uri"
         )
         Assertions.assertEquals(federatedLogoutUrls, expected)
-    }
+    }*/
 }

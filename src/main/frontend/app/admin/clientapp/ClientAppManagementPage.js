@@ -55,7 +55,6 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
     const [postLogoutRedirectUri, setPostLogoutRedirectUri] = useState("")
     const [logoutUri, setLogoutUri] = useState("")
 
-    const [federation, setFederation] = useState("")
     const saveClientApp = () => {
         let clientApplication = {
             "clientAppName": clientAppName,
@@ -68,7 +67,6 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
             "refreshTokenValidity": refreshTokenValidity,
             "postLogoutRedirectUri": postLogoutRedirectUri,
             "logoutUri": logoutUri,
-            "federation": federation,
             "storePassword": storePassword
         }
         saveClientApplicationFor(clientApplicationId, clientApplication)
@@ -94,7 +92,6 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                             setRefreshTokenValidity(clientApp.refreshTokenValidity)
                             setPostLogoutRedirectUri(clientApp.postLogoutRedirectUri)
                             setLogoutUri(clientApp.logoutUri)
-                            setFederation(clientApp.federation)
 
                             setAuthorities(clientApp.authorities)
                         } catch (e) {
@@ -180,13 +177,6 @@ const ClientAppManagementPage = withStyles(vauthenticatorStyles)((props) => {
                                                     setClientAppName(value.target.value)
                                                 }}
                                                 value={clientAppName}/>
-
-                            <FormInputTextField id="federation"
-                                                label="Federation"
-                                                handler={(value) => {
-                                                    setFederation(value.target.value)
-                                                }}
-                                                value={federation}/>
                         </CardContent>
                     </Card>
                     <Separator/>

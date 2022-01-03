@@ -34,25 +34,6 @@ class DynamoDbClientApplicationRepository(
             .map { fromDynamoToDomain(it) }
     }
 
-    override fun findLogoutUriByFederation(federation: Federation): Iterable<LogoutUri> {
-        return dynamoDbClient.query(
-            QueryRequest.builder()
-                .tableName(dynamoClientApplicationTableName)
-                .scanIndexForward(false)
-                .indexName("FederationIndex")
-                .scanIndexForward(false)
-                .projectionExpression("logout_uris")
-                .keyConditionExpression("federation = :federation")
-                .expressionAttributeValues(
-                    mapOf(
-                        ":federation" to federation.name.asDynamoAttribute()
-                    )
-                )
-                .build()
-        ).items()
-            .map { LogoutUri(it.valueAsStringFor("logout_uris")) }
-    }
-
     override fun findAll(): Iterable<ClientApplication> {
         return dynamoDbClient.scan(
             ScanRequest.builder()
