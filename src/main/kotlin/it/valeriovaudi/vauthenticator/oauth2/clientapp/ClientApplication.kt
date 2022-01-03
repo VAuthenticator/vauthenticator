@@ -15,7 +15,6 @@ data class ClientApplication(
     val autoApprove: AutoApprove = AutoApprove.approve,
     val postLogoutRedirectUri: PostLogoutRedirectUri,
     val logoutUri: LogoutUri,
-    val federation: Federation,
     val resourceIds: ResourceIds
 )
 

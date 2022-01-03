@@ -3,7 +3,6 @@ package it.valeriovaudi.vauthenticator.oauth2.clientapp
 object ClientAppFixture {
     fun aClientApp(clientAppId: ClientAppId,
                    password: Secret = Secret("secret"),
-                   federation: Federation = Federation("A_FEDERATION"),
                    logoutUri: LogoutUri = LogoutUri("http://an_uri"),
                    authorities: Authorities = Authorities(listOf(Authority("AN_AUTHORITY")))
     ) = ClientApplication(
@@ -19,7 +18,6 @@ object ClientAppFixture {
             AutoApprove.approve,
             PostLogoutRedirectUri("http://an_uri"),
             logoutUri,
-            federation,
             ResourceIds.from(ResourceId("oauth2-resource"))
     )
 }

@@ -14,14 +14,8 @@ class IdTokenEnhancer(private val clientApplicationRepository: ClientApplication
         if ("id_token" == tokenType && !context.authorizationGrantType.equals(AuthorizationGrantType.CLIENT_CREDENTIALS)) {
             val attributes =
                     context.authorization!!.attributes
-            val principle =
-                    attributes["java.security.Principal"] as Authentication
-            clientApplicationRepository.findOne(
-                    ClientAppId(context.registeredClient.clientId)
-            ).ifPresent {
-                context.claims.claim("federation", it.federation.name)
-            }
-
+            val principle = attributes["java.security.Principal"] as Authentication
+            clientApplicationRepository.findOne(ClientAppId(context.registeredClient.clientId))
             context.claims.claim("email", principle.name)
         }
     }

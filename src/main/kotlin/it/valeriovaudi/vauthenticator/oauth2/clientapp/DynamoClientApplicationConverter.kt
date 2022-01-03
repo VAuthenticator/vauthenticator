@@ -22,8 +22,7 @@ object DynamoClientApplicationConverter {
                 "refresh_token_validity" to clientApp.refreshTokenValidity.asDynamoAttribute(),
                 "auto_approve" to clientApp.autoApprove.content.asDynamoAttribute(),
                 "post_logout_redirect_uris" to clientApp.postLogoutRedirectUri.content.asDynamoAttribute(),
-                "logout_uris" to clientApp.logoutUri.content.asDynamoAttribute(),
-                "federation" to clientApp.federation.name.asDynamoAttribute()
+                "logout_uris" to clientApp.logoutUri.content.asDynamoAttribute()
         )
         if (clientApp.authorities.content.isNotEmpty()) {
             dynamoDocument["authorities"] = clientApp.authorities.asDynamoAttribute()
@@ -49,8 +48,7 @@ object DynamoClientApplicationConverter {
                 refreshTokenValidity = TokenTimeToLive(dynamoPayload.valueAsIntFor("refresh_token_validity")),
                 autoApprove = AutoApprove(dynamoPayload.valueAsBoolFor("auto_approve")),
                 postLogoutRedirectUri = PostLogoutRedirectUri(dynamoPayload.valueAsStringFor("post_logout_redirect_uris")),
-                logoutUri = LogoutUri(dynamoPayload.valueAsStringFor("logout_uris")),
-                federation = Federation(dynamoPayload.valueAsStringFor("federation"))
+                logoutUri = LogoutUri(dynamoPayload.valueAsStringFor("logout_uris"))
         )
     }
 

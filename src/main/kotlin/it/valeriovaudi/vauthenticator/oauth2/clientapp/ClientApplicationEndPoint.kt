@@ -61,8 +61,7 @@ data class ClientAppRepresentation(var clientAppName: String,
                                    var accessTokenValidity: Int,
                                    var refreshTokenValidity: Int,
                                    var postLogoutRedirectUri: String,
-                                   var logoutUri: String,
-                                   var federation: String) {
+                                   var logoutUri: String) {
     companion object {
         fun fromDomainToRepresentation(clientApplication: ClientApplication, storePassword: Boolean = false) =
                 ClientAppRepresentation(
@@ -70,14 +69,13 @@ data class ClientAppRepresentation(var clientAppName: String,
                         secret = clientApplication.secret.content,
                         storePassword = storePassword,
                         scopes = clientApplication.scopes.content.map { it.content },
-                        authorizedGrantTypes = clientApplication.authorizedGrantTypes.content.map { it.name.toLowerCase() },
+                        authorizedGrantTypes = clientApplication.authorizedGrantTypes.content.map { it.name.lowercase() },
                         webServerRedirectUri = clientApplication.webServerRedirectUri.content,
                         authorities = clientApplication.authorities.content.map { it.content },
                         accessTokenValidity = clientApplication.accessTokenValidity.content,
                         refreshTokenValidity = clientApplication.refreshTokenValidity.content,
                         postLogoutRedirectUri = clientApplication.postLogoutRedirectUri.content,
                         logoutUri = clientApplication.logoutUri.content,
-                        federation = clientApplication.federation.name
                 )
 
         fun fromRepresentationToDomain(clientAppId: String, representation: ClientAppRepresentation) =
@@ -85,14 +83,13 @@ data class ClientAppRepresentation(var clientAppName: String,
                         clientAppId = ClientAppId(clientAppId),
                         secret = Secret(representation.secret),
                         scopes = Scopes(representation.scopes.map { Scope(it) }.toSet()),
-                        authorizedGrantTypes = AuthorizedGrantTypes(representation.authorizedGrantTypes.map { it.toUpperCase() }.map { AuthorizedGrantType.valueOf(it) }),
+                        authorizedGrantTypes = AuthorizedGrantTypes(representation.authorizedGrantTypes.map { it.uppercase() }.map { AuthorizedGrantType.valueOf(it) }),
                         webServerRedirectUri = CallbackUri(representation.webServerRedirectUri),
-                        authorities = Authorities(representation.authorities.map { it.toUpperCase() }.map(::Authority)),
+                        authorities = Authorities(representation.authorities.map { it.uppercase() }.map(::Authority)),
                         accessTokenValidity = TokenTimeToLive(representation.accessTokenValidity),
                         refreshTokenValidity = TokenTimeToLive(representation.refreshTokenValidity),
                         postLogoutRedirectUri = PostLogoutRedirectUri(representation.postLogoutRedirectUri),
                         logoutUri = LogoutUri(representation.logoutUri),
-                        federation = Federation(representation.federation),
                         resourceIds = ResourceIds.from(ResourceId("oauth2-resource"))
                 )
     }
@@ -102,16 +99,14 @@ data class ClientAppRepresentation(var clientAppName: String,
 data class ClientAppInListRepresentation(var clientAppId: String,
                                          var clientAppName: String,
                                          var scopes: List<String>,
-                                         var authorizedGrantTypes: List<String>,
-                                         var federation: String) {
+                                         var authorizedGrantTypes: List<String>) {
     companion object {
         fun fromDomainToRepresentation(clientApplication: ClientApplication) =
                 ClientAppInListRepresentation(
                         clientAppName = clientApplication.clientAppId.content,
                         clientAppId = clientApplication.clientAppId.content,
                         scopes = clientApplication.scopes.content.map { it.content },
-                        authorizedGrantTypes = clientApplication.authorizedGrantTypes.content.map { it.name.toLowerCase() },
-                        federation = clientApplication.federation.name
+                        authorizedGrantTypes = clientApplication.authorizedGrantTypes.content.map { it.name.lowercase() },
                 )
     }
 }
