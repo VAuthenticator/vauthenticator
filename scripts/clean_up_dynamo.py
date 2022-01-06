@@ -28,7 +28,7 @@ def clean_table_for_primary_key_and_sort_ley(table_name, partition_key, sort_key
 
 def clean_account(account_table_name, account_role_table_name):
     clean_table_for_primary_key(account_table_name, "user_name")
-    clean_table_for_primary_key_and_sort_ley("%s" % account_role_table_name, "user_name", "role_name")
+    clean_table_for_primary_key_and_sort_ley(account_role_table_name, "user_name", "role_name")
 
 
 def clean_roles(role_table_name):
