@@ -51,7 +51,7 @@ if __name__ == '__main__':
     input_client_applications_table_name = sys.argv[4]
     input_key_table_name = sys.argv[5]
 
-    clean_roles(dynamodb, input_role_table_name)
-    clean_account(dynamodb, input_account_table_name, input_account_role_table_name)
-    clean_client_applications(dynamodb, input_client_applications_table_name)
-    clean_key(dynamodb, input_key_table_name)
+    clean_roles(input_role_table_name)
+    clean_account(input_account_table_name, input_account_role_table_name)
+    clean_client_applications(input_client_applications_table_name)
+    clean_key(input_key_table_name)
