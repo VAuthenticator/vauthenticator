@@ -1,5 +1,4 @@
 import boto3
-import csv
 import sys
 
 dynamodb = boto3.resource('dynamodb')
