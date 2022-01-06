@@ -15,8 +15,7 @@ def clean_table_for_primary_key(table, key):
         )
 
 def clean_table_for_primary_key_and_sort_key(table, partition_key, sort_key):
-    projection_exp=partition_key+","+sort_key
-    response = table.scan(ProjectionExpression=projection_exp)
+    response = table.scan(ProjectionExpression=f"{partition_key}, {sort_key}")
     items = response.get('Items', [])
     for item in items:
         table.delete_item(
