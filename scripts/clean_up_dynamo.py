@@ -41,7 +41,7 @@ def clean_client_applications(client_applications_table_name):
 
 
 def clean_key(key_table_name):
-    clean_table_for_primary_key(dynamodb.Table(key_table_name), "key_id")
+    clean_table_for_primary_key_and_sort_key(dynamodb.Table(key_table_name), "master_key_id", "key_id")
 
 
 if __name__ == '__main__':
