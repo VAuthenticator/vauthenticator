@@ -27,20 +27,20 @@ def clean_table_for_primary_key_and_sort_ley(table_name, partition_key, sort_key
 
 
 def clean_account(account_table_name, account_role_table_name):
-    clean_table_for_primary_key(dynamodb, account_table_name, "user_name")
-    clean_table_for_primary_key_and_sort_ley(dynamodb, "%s" % account_role_table_name, "user_name", "role_name")
+    clean_table_for_primary_key(account_table_name, "user_name")
+    clean_table_for_primary_key_and_sort_ley("%s" % account_role_table_name, "user_name", "role_name")
 
 
 def clean_roles(role_table_name):
-    clean_table_for_primary_key(dynamodb, role_table_name, "role_name")
+    clean_table_for_primary_key(role_table_name, "role_name")
 
 
 def clean_client_applications(client_applications_table_name):
-    clean_table_for_primary_key(dynamodb, client_applications_table_name, "client_id")
+    clean_table_for_primary_key(client_applications_table_name, "client_id")
 
 
 def clean_key(key_table_name):
-    clean_table_for_primary_key(dynamodb, key_table_name, "key_id")
+    clean_table_for_primary_key(key_table_name, "key_id")
 
 
 if __name__ == '__main__':
