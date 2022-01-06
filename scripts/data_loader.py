@@ -52,7 +52,7 @@ def load_client_applications(client_application_table_name):
                 "resource_ids": row["resource_ids"],
                 "client_secret": row["client_secret"],
                 "scopes": set(row["scope"].split(" ")),
-                "authorized_grant_types": set(row["authorized_grant_types"].split(",")),
+                "authorized_grant_types": set(row["authorized_grant_types"].split(" ")),
                 "web_server_redirect_uri": row["web_server_redirect_uri"],
                 "authorities": row["authorities"],
                 "access_token_validity": int(row["access_token_validity"]),
