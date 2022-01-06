@@ -39,13 +39,19 @@ def clean_client_applications(client_applications_table_name):
     clean_table_for_primary_key(dynamodb, client_applications_table_name, "client_id")
 
 
+def clean_key(key_table_name):
+    clean_table_for_primary_key(dynamodb, key_table_name, "key_id")
+
+
 if __name__ == '__main__':
     dynamodb = boto3.resource('dynamodb')
     input_role_table_name = sys.argv[1]
     input_account_table_name = sys.argv[2]
     input_account_role_table_name = sys.argv[3]
     input_client_applications_table_name = sys.argv[4]
+    input_key_table_name = sys.argv[5]
 
     clean_roles(dynamodb, input_role_table_name)
     clean_account(dynamodb, input_account_table_name, input_account_role_table_name)
     clean_client_applications(dynamodb, input_client_applications_table_name)
+    clean_key(dynamodb, input_key_table_name)
