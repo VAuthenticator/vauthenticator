@@ -7,7 +7,7 @@ dynamodb = boto3.resource('dynamodb')
 
 def load_account(account_table_name, account_role_table_name):
     table = dynamodb.Table(account_table_name)
-    with open(f'{env}/account.csv', mode='r') as csv_file:
+    with open(f'{base_dir}/{env}/account.csv', mode='r') as csv_file:
         csv_reader = csv.DictReader(csv_file)
         for row in csv_reader:
             table.put_item(Item={
@@ -24,7 +24,7 @@ def load_account(account_table_name, account_role_table_name):
             })
 
     table = dynamodb.Table(account_role_table_name)
-    with open(f'{env}/account_role.csv', mode='r') as csv_file:
+    with open(f'{base_dir}/{env}/account_role.csv', mode='r') as csv_file:
         csv_reader = csv.DictReader(csv_file)
         for row in csv_reader:
             table.put_item(Item={
@@ -36,7 +36,7 @@ def load_account(account_table_name, account_role_table_name):
 def load_roles(role_table_name):
     table = dynamodb.Table(role_table_name)
 
-    with open(f'{env}/role.csv', mode='r') as csv_file:
+    with open(f'{base_dir}/{env}/role.csv', mode='r') as csv_file:
         csv_reader = csv.DictReader(csv_file)
         for row in csv_reader:
             table.put_item(Item={"role_name": row["name"], "description": row["description"]})
@@ -44,7 +44,7 @@ def load_roles(role_table_name):
 
 def load_client_applications(client_application_table_name):
     table = dynamodb.Table(client_application_table_name)
-    with open(f'{env}/client_application.csv', mode='r') as csv_file:
+    with open(f'{base_dir}/{env}/client_application.csv', mode='r') as csv_file:
         csv_reader = csv.DictReader(csv_file)
         for row in csv_reader:
             table.put_item(Item={
@@ -64,12 +64,13 @@ def load_client_applications(client_application_table_name):
 
 
 if __name__ == '__main__':
-    env = sys.argv[1]
+    base_dir = sys.argv[1]
+    env = sys.argv[2]
 
-    input_role_table_name = sys.argv[2]
-    input_account_table_name = sys.argv[3]
-    input_account_role_table_name = sys.argv[4]
-    input_client_applications_table_name = sys.argv[5]
+    input_role_table_name = sys.argv[3]
+    input_account_table_name = sys.argv[4]
+    input_account_role_table_name = sys.argv[5]
+    input_client_applications_table_name = sys.argv[6]
 
     load_roles(input_role_table_name)
     load_account(input_account_table_name, input_account_role_table_name)
