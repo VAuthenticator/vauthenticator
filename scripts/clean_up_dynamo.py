@@ -14,7 +14,7 @@ def clean_table_for_primary_key(table, key):
             }
         )
 
-def clean_table_for_primary_key_and_sort_ley(table, partition_key, sort_key):
+def clean_table_for_primary_key_and_sort_key(table, partition_key, sort_key):
     projection_exp=f'{partition_key},{sort_key}'
     response = table.scan(ProjectionExpression=projection_exp)
     items = response.get('Items', [])
@@ -29,7 +29,7 @@ def clean_table_for_primary_key_and_sort_ley(table, partition_key, sort_key):
 
 def clean_account(account_table_name, account_role_table_name):
     clean_table_for_primary_key(dynamodb.Table(account_table_name), "user_name")
-    clean_table_for_primary_key_and_sort_ley(dynamodb.Table(account_role_table_name), "user_name", "role_name")
+    clean_table_for_primary_key_and_sort_key(dynamodb.Table(account_role_table_name), "user_name", "role_name")
 
 
 def clean_roles(role_table_name):
