@@ -1,6 +1,7 @@
 import boto3
 import csv
 import sys
+import bcrypt
 
 dynamodb = boto3.resource('dynamodb')
 
@@ -12,7 +13,7 @@ def load_account(account_table_name, account_role_table_name):
         for row in csv_reader:
             table.put_item(Item={
                 "user_name": row["username"],
-                "password": row["password"],
+                "password": b"{row["password"]}",
                 "firstName": row["first_name"],
                 "lastName": row["last_name"],
                 "email": row["email"],
@@ -50,7 +51,7 @@ def load_client_applications(client_application_table_name):
             table.put_item(Item={
                 "client_id": row["client_id"],
                 "resource_ids": row["resource_ids"],
-                "client_secret": row["client_secret"],
+                "client_secret": b"{row["client_secret"]}",
                 "scopes": set(row["scope"].split(" ")),
                 "authorized_grant_types": set(row["authorized_grant_types"].split(" ")),
                 "web_server_redirect_uri": row["web_server_redirect_uri"],
