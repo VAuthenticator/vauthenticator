@@ -63,9 +63,11 @@ def load_client_applications(client_application_table_name):
                 "logout_uris": row["logout_uris"],
             })
 
+
 def pass_encoded(password):
     encode = str.encode(password)
     return bcrypt.hashpw(encode, bcrypt.gensalt(12)).decode()
+
 
 if __name__ == '__main__':
     base_dir = sys.argv[1]
