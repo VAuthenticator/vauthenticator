@@ -20,6 +20,7 @@ selectorLabels:
 podAnnotations: {}
 
 logging:
+  enabled: true
   kibana:
     host: kibana.host:5601
   elasticSearch:
@@ -79,8 +80,10 @@ service:
 
 ingress:
   enabled: false
+  class: nginx
 
 istio:
+  enabled: true
   gateway:
     prefix: /vauthenticator
     port: 80

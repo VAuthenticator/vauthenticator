@@ -1,4 +1,4 @@
-{{- if eq .Values.logging.enabled "true" }}
+{{- if eq .Values.logging.enabled true }}
 ---
 
 apiVersion: v1

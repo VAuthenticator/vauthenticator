@@ -1,4 +1,4 @@
-{{- if eq .Values.istio.enabled "true" }}
+{{- if eq .Values.istio.enabled true }}
 
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway

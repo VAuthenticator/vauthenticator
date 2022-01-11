@@ -23,7 +23,7 @@ spec:
       {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-        {{- if eq .Values.logging.enabled "true" }}
+        {{- if eq .Values.logging.enabled true }}
 
         - name: filebeat
           configMap:
@@ -37,7 +37,7 @@ spec:
             name: application-config
 
       containers:
-        {{- if eq .Values.logging.enabled "true" }}
+        {{- if eq .Values.logging.enabled true }}
 
         - name: filebeats
           image: docker.elastic.co/beats/filebeat:7.6.1
