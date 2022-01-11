@@ -1,3 +1,9 @@
+# VAuthenticator Helm
+
+In this section I will go to explain how customize your value.yml file. The blueprint is something like below
+
+```yaml
+
 replicaCount: 1
 
 image:
@@ -14,7 +20,6 @@ selectorLabels:
 podAnnotations: {}
 
 logging:
-  enabled: true
   kibana:
     host: kibana.host:5601
   elasticSearch:
@@ -74,10 +79,8 @@ service:
 
 ingress:
   enabled: false
-  class: nginx
 
 istio:
-  enabled: true
   gateway:
     prefix: /vauthenticator
     port: 80
@@ -90,3 +93,4 @@ resources:
   limits:
     cpu: "512m"
     memory: "512Mi"
+```

@@ -1,3 +1,4 @@
+{{- if eq .Values.logging.enabled "true" }}
 ---
 
 apiVersion: v1
@@ -31,6 +32,9 @@ data:
 
     output.elasticsearch:
       hosts: ['{{ .Values.logging.elasticSearch.host }}']
+
+{{ end }}
+
 
 ---
 

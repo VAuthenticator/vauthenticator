@@ -19,3 +19,7 @@ VAuthenticator and the [account-service](https://github.com/mrFlick72/account-se
 while the RSA key pair are created from KMS Customer Master Key stored on Dynamo, private key crypted via KMS of course.
 VAuthenticator implements front_channel single logout openid connect specification and part of session management, in particular only 
 the needed to support a better single logout experience is implemented, however I planned to implement full session management as well
+
+# Additional content
+
+[helm](docs/helm.md)
