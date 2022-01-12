@@ -1,6 +1,8 @@
-in-namespace:
-  redis:
-    enabled: true
+# VAuthenticator Helm
+
+In this section I will go to explain how customize your value.yml file. The blueprint is something like below
+
+```yaml
 
 replicaCount: 1
 
@@ -9,7 +11,8 @@ image:
   pullPolicy: Always
   tag: "latest"
 
-lables: {}
+lables:
+  sidecar.istio.io/inject: "true"
 
 selectorLabels:
   app: vauthenticator
@@ -30,7 +33,7 @@ application:
     secretKey: xxxxxxxxx
   redis:
     database: 0
-    host: vauthenticator-redis-master.auth.svc.cluster.local
+    host: redis.host
 
   server:
     port: 8080
@@ -93,9 +96,4 @@ resources:
   limits:
     cpu: "512m"
     memory: "512Mi"
-
-redis:
-  auth:
-    enabled: false
-  replica:
-    replicaCount: 1
+```
