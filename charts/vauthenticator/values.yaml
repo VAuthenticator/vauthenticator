@@ -17,7 +17,7 @@ selectorLabels:
 podAnnotations: {}
 
 logging:
-  enabled: true
+  enabled: false
   kibana:
     host: kibana.host:5601
   elasticSearch:
@@ -76,11 +76,11 @@ service:
   type: ClusterIP
 
 ingress:
-  enabled: false
+  enabled: true
   class: nginx
 
 istio:
-  enabled: true
+  enabled: false
   gateway:
     prefix: /vauthenticator
     port: 80
@@ -96,6 +96,6 @@ resources:
 
 redis:
   auth:
-    enabled: false
+    enabled: true
   replica:
     replicaCount: 1
