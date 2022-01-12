@@ -15,7 +15,12 @@ spec:
       {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
+      {{- with .Values.podAnnotations }}
       {{- toYaml .Values.lables | nindent 8 }}
+      {{ end }}
+      {{- if eq .Values.istio.enabled true }}
+        sidecar.istio.io/inject: "true"
+      {{ end }}
     {{- include "vauthenticator.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}

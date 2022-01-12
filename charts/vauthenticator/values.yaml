@@ -9,8 +9,7 @@ image:
   pullPolicy: Always
   tag: "latest"
 
-lables:
-  sidecar.istio.io/inject: "true"
+lables: {}
 
 selectorLabels:
   app: vauthenticator
