@@ -1,3 +1,7 @@
+in-namespace:
+  redis:
+    enabled: true
+
 replicaCount: 1
 
 image:
@@ -27,7 +31,7 @@ application:
     secretKey: xxxxxxxxx
   redis:
     database: 0
-    host: redis.host
+    host: vauthenticator-redis-master.auth.svc.cluster.local
 
   server:
     port: 8080
@@ -90,3 +94,9 @@ resources:
   limits:
     cpu: "512m"
     memory: "512Mi"
+
+redis:
+  auth:
+    enabled: false
+  replica:
+    replicaCount: 1
