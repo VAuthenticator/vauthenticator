@@ -111,3 +111,11 @@ data:
           maxNumberOfMessages: {{ .Values.application.accountSync.listener.maxNumberOfMessages }}
           visibilityTimeout: {{ .Values.application.accountSync.listener.visibilityTimeout }}
           waitTimeSeconds: {{ .Values.application.accountSync.listener.waitTimeSeconds }}
+
+    {{- if eq .Values.aws.iamUser.enabled true }}
+    iamUserAwsCredentialsProvider: true
+    {{ end }}
+
+    {{- if eq .Values.aws.eks.serviceAccount.enabled true }}
+    iamServiceAccountAwsCredentialsProvider: true
+    {{ end }}
