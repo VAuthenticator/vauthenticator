@@ -27,6 +27,9 @@ spec:
       imagePullSecrets:
       {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- if eq .Values.aws.eks.serviceAccount.enabled true }}
+      serviceAccountName: {{ include "vauthenticator.name" . }}
+        {{ end }}
       volumes:
         {{- if eq .Values.logging.enabled true }}
 
@@ -86,14 +89,15 @@ spec:
           resources:
           {{- toYaml .Values.resources | nindent 12 }}
           env:
+            {{- if eq .Values.aws.iamUser.enabled true }}
             - name: AWS_ACCESS_KEY_ID
-              value: {{ .Values.application.aws.accessKey }}
+              value: {{ .Values.aws.iamUser.accessKey }}
 
             - name: AWS_SECRET_ACCESS_KEY
-              value: {{ .Values.application.aws.secretKey }}
-
+              value: {{ .Values.aws.iamUser.secretKey }}
+            {{ end }}
             - name: AWS_REGION
-              value: {{ .Values.application.aws.region }}
+              value: {{ .Values.aws.region }}
 
             - name: spring.config.additional-location
               value: /usr/local/onlyone-portal/config/
