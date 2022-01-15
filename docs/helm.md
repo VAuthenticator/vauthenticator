@@ -22,6 +22,18 @@ selectorLabels:
 
 podAnnotations: {}
 
+aws:
+  region: xxxxxxxxx
+  iamUser:
+    accessKey: xxxxxxxxx
+    secretKey: xxxxxxxxx
+    enabled: false
+  eks:
+    serviceAccount:
+      enabled: false
+      iamRole:
+        arn: arn:aws:iam::ACCOUNT_ID:role/IAM_ROLE_NAME
+
 logging:
   enabled: false
   kibana:
@@ -30,13 +42,9 @@ logging:
     host: elasticsearch.host:9200
 
 application:
-  aws:
-    region: xxxxxxxxx
-    accessKey: xxxxxxxxx
-    secretKey: xxxxxxxxx
   redis:
     database: 0
-    host: vauthenticator-redis-master.auth.svc.cluster.local #default value if you have redis in your auth namespace, assuming that your namespace is called auth
+    host: vauthenticator-redis-master.auth.svc.cluster.local
 
   server:
     port: 8080
@@ -102,7 +110,7 @@ resources:
 
 redis:
   auth:
-    enabled: true
+    enabled: false
   replica:
     replicaCount: 1
 ```
