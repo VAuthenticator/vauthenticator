@@ -2,11 +2,13 @@ package it.valeriovaudi.vauthenticator.config
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider
 import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider
 import software.amazon.awssdk.auth.credentials.WebIdentityTokenFileCredentialsProvider
 import java.util.*
 
+@Configuration
 class AwsConfig {
 
     @Bean("awsCredentialsProvider")
