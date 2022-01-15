@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider
-import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.sqs.SqsAsyncClient
 
 
@@ -14,11 +13,9 @@ class MessagingConfig {
 
 
     @Bean
-    fun sqsAsyncClient(@Value("\${aws.region}") awsRegion: String,
-                       awsCredentialsProvider: AwsCredentialsProvider): SqsAsyncClient {
+    fun sqsAsyncClient(awsCredentialsProvider: AwsCredentialsProvider): SqsAsyncClient {
         return SqsAsyncClient.builder()
                 .credentialsProvider(awsCredentialsProvider)
-                .region(Region.of(awsRegion))
                 .build()
     }
 
