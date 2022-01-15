@@ -17,7 +17,7 @@ class AwsConfig {
 
 
     @Bean("awsCredentialsProvider")
-    @ConditionalOnProperty(value = ["awsCredentialsProvider"], havingValue = "true")
+    @ConditionalOnProperty(value = ["iamServiceAccountAwsCredentialsProvider"], havingValue = "true")
     fun iamServiceAccountAwsCredentialsProvider(): AwsCredentialsProvider {
         return WebIdentityTokenFileCredentialsProvider.builder().roleSessionName("vauthenticator-${UUID.randomUUID()}").build()
     }
