@@ -16,18 +16,26 @@ selectorLabels:
 
 podAnnotations: {}
 
+aws:
+  region: xxxxxxxxx
+  iamUser:
+    accessKey: xxxxxxxxx
+    secretKey: xxxxxxxxx
+    enabled: false
+  eks:
+    serviceAccount:
+      enabled: false
+      iamRole:
+        arn: arn:aws:iam::ACCOUNT_ID:role/IAM_ROLE_NAME
+
 logging:
-  enabled: true
+  enabled: false
   kibana:
     host: kibana.host:5601
   elasticSearch:
     host: elasticsearch.host:9200
 
 application:
-  aws:
-    region: xxxxxxxxx
-    accessKey: xxxxxxxxx
-    secretKey: xxxxxxxxx
   redis:
     database: 0
     host: vauthenticator-redis-master.auth.svc.cluster.local
@@ -76,11 +84,11 @@ service:
   type: ClusterIP
 
 ingress:
-  enabled: false
+  enabled: true
   class: nginx
 
 istio:
-  enabled: true
+  enabled: false
   gateway:
     prefix: /vauthenticator
     port: 80

@@ -12,7 +12,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.crypto.password.PasswordEncoder
-import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.kms.KmsClient
 
@@ -25,8 +25,8 @@ class RepositoryConfig {
     fun keyPairConfig() = KeyPairConfig()
 
     @Bean
-    fun kmsClient() = KmsClient.builder()
-            .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
+    fun kmsClient(awsCredentialsProvider: AwsCredentialsProvider) = KmsClient.builder()
+            .credentialsProvider(awsCredentialsProvider)
             .build()
 
     @Bean
@@ -45,8 +45,8 @@ class RepositoryConfig {
 class DynamoDbRepositoryConfig {
 
     @Bean
-    fun dynamoDbClient() = DynamoDbClient.builder()
-            .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
+    fun dynamoDbClient(awsCredentialsProvider: AwsCredentialsProvider) = DynamoDbClient.builder()
+            .credentialsProvider(awsCredentialsProvider)
             .build()
 
     @Bean

@@ -26,6 +26,13 @@
     </properties>
 
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/software.amazon.awssdk/sts -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>sts</artifactId>
+            <version>${aws.sdk.version}</version>
+        </dependency>
+
         <!-- web dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
