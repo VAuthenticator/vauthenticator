@@ -10,14 +10,14 @@ import java.util.*
 class AwsConfig {
 
     @Bean("awsCredentialsProvider")
-    @ConditionalOnProperty(value = ["iamUserAwsCredentialsProvider"], havingValue = "true")
+    @ConditionalOnProperty("iamUserAwsCredentialsProvider", havingValue = "true")
     fun iamUserAwsCredentialsProvider(): AwsCredentialsProvider {
         return EnvironmentVariableCredentialsProvider.create()
     }
 
 
     @Bean("awsCredentialsProvider")
-    @ConditionalOnProperty(value = ["iamServiceAccountAwsCredentialsProvider"], havingValue = "true")
+    @ConditionalOnProperty("iamServiceAccountAwsCredentialsProvider", havingValue = "true")
     fun iamServiceAccountAwsCredentialsProvider(): AwsCredentialsProvider {
         return WebIdentityTokenFileCredentialsProvider.builder().roleSessionName("vauthenticator-${UUID.randomUUID()}").build()
     }

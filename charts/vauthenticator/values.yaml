@@ -24,7 +24,7 @@ aws:
     enabled: false
   eks:
     serviceAccount:
-      enabled: true
+      enabled: false
       iamRole:
         arn: arn:aws:iam::ACCOUNT_ID:role/IAM_ROLE_NAME
 
