@@ -104,6 +104,6 @@ resources:
 
 redis:
   auth:
-    enabled: true
+    enabled: false
   replica:
     replicaCount: 1
