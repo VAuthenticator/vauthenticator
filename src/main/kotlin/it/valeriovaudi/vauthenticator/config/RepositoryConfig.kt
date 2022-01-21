@@ -1,6 +1,6 @@
 package it.valeriovaudi.vauthenticator.config
 
-import it.valeriovaudi.vauthenticator.account.dynamo.DynamoDbAccountRepository
+import it.valeriovaudi.vauthenticator.account.repository.DynamoDbAccountRepository
 import it.valeriovaudi.vauthenticator.keypair.DynamoKeyRepository
 import it.valeriovaudi.vauthenticator.keypair.KeyPairConfig
 import it.valeriovaudi.vauthenticator.keypair.KeyRepository

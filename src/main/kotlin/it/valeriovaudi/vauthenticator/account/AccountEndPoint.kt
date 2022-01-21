@@ -34,7 +34,7 @@ class AccountEndPoint(private val accountRepository: AccountRepository) {
                         )
                         noContent().build<Unit>()
                     }
-                    .orElse(notFound().build<Unit>())
+                    .orElse(notFound().build())
 }
 
 data class AccountApiRepresentation(

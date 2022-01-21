@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator.account.dynamo
+package it.valeriovaudi.vauthenticator.account.repository
 
 import it.valeriovaudi.vauthenticator.account.Account
 import it.valeriovaudi.vauthenticator.account.AccountTestFixture
