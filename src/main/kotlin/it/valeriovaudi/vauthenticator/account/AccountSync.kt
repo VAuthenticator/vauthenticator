@@ -3,6 +3,7 @@ package it.valeriovaudi.vauthenticator.account
 import com.fasterxml.jackson.databind.ObjectMapper
 import it.valeriovaudi.aws.messaging.sqs.ReceiveMessageRequestFactory
 import it.valeriovaudi.aws.messaging.sqs.SqsReactiveListener
+import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value

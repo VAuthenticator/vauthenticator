@@ -1,9 +1,8 @@
 package it.valeriovaudi.vauthenticator.account.repository
 
 import it.valeriovaudi.vauthenticator.account.Account
-import it.valeriovaudi.vauthenticator.account.AccountAuthorities.addAuthorities
-import it.valeriovaudi.vauthenticator.account.AccountAuthorities.removeAuthorities
-import it.valeriovaudi.vauthenticator.account.AccountRepository
+import it.valeriovaudi.vauthenticator.account.repository.AccountAuthorities.addAuthorities
+import it.valeriovaudi.vauthenticator.account.repository.AccountAuthorities.removeAuthorities
 import it.valeriovaudi.vauthenticator.account.repository.DynamoAccountConverter.fromDynamoToDomain
 import it.valeriovaudi.vauthenticator.account.repository.DynamoAccountQueryFactory.deleteAccountRoleQueryFor
 import it.valeriovaudi.vauthenticator.account.repository.DynamoAccountQueryFactory.findAccountQueryForUserName

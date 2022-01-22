@@ -5,7 +5,7 @@ import com.nimbusds.jose.jwk.JWKSet
 import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jose.jwk.source.JWKSource
 import com.nimbusds.jose.proc.SecurityContext
-import it.valeriovaudi.vauthenticator.account.AccountRepository
+import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import it.valeriovaudi.vauthenticator.extentions.BcryptVAuthenticatorPasswordEncoder
 import it.valeriovaudi.vauthenticator.keypair.KeyRepository
 import it.valeriovaudi.vauthenticator.oauth2.authorizationservice.RedisOAuth2AuthorizationService
@@ -111,19 +111,19 @@ class AuthorizationServerConfig {
             )
 
 
-
-
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
-    fun authorizationServerSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
+    fun authorizationServerSecurityFilterChain(providerSettings: ProviderSettings,
+                                               http: HttpSecurity): SecurityFilterChain {
         val userInfoEnhancer = UserInfoEnhancer(accountRepository)
         val authorizationServerConfigurer = OAuth2AuthorizationServerConfigurer<HttpSecurity>()
         authorizationServerConfigurer.oidc { configurer ->
             configurer.userInfoEndpoint { customizer ->
-                customizer.userInfoMapper { context -> userInfoEnhancer.oidcUserInfoFrom(context)
+                customizer.userInfoMapper { context ->
+                    userInfoEnhancer.oidcUserInfoFrom(context)
                 }
             }
-        }.authorizationEndpoint {it.authorizationResponseHandler(sendAuthorizationResponse(SessionManagementFactory(providerSettings()), DefaultRedirectStrategy()))}
+        }.authorizationEndpoint { it.authorizationResponseHandler(sendAuthorizationResponse(SessionManagementFactory(providerSettings), DefaultRedirectStrategy())) }
         val endpointsMatcher = authorizationServerConfigurer.endpointsMatcher
 
         http

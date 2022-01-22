@@ -1,5 +1,6 @@
-package it.valeriovaudi.vauthenticator.account
+package it.valeriovaudi.vauthenticator.account.repository
 
+import it.valeriovaudi.vauthenticator.account.Account
 import java.util.*
 
 interface AccountRepository {

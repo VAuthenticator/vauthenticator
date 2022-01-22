@@ -1,11 +1,5 @@
 package it.valeriovaudi.vauthenticator.support
 
-import com.nimbusds.jose.JOSEObjectType
-import com.nimbusds.jose.JWSAlgorithm
-import com.nimbusds.jose.JWSHeader
-import com.nimbusds.jose.crypto.MACSigner
-import com.nimbusds.jwt.JWTClaimsSet
-import com.nimbusds.jwt.SignedJWT
 import it.valeriovaudi.vauthenticator.extentions.asDynamoAttribute
 import it.valeriovaudi.vauthenticator.extentions.valueAsStringFor
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
@@ -20,10 +14,10 @@ import java.net.URI
 
 object TestingFixture {
 
-    val dynamoRoleTableName: String = "TESTING_VAuthenticator_Role"
-    val dynamoAccountTableName: String = "TESTING_VAuthenticator_Account"
-    val dynamoAccountRoleTableName: String = "TESTING_VAuthenticator_Account_Role"
-    val dynamoClientApplicationTableName: String = "TESTING_VAuthenticator_ClientApplication"
+    const val dynamoRoleTableName: String = "TESTING_VAuthenticator_Role"
+    const val dynamoAccountTableName: String = "TESTING_VAuthenticator_Account"
+    const val dynamoAccountRoleTableName: String = "TESTING_VAuthenticator_Account_Role"
+    const val dynamoClientApplicationTableName: String = "TESTING_VAuthenticator_ClientApplication"
 
     val dynamoDbClient: DynamoDbClient = DynamoDbClient.builder()
         .credentialsProvider(
@@ -116,15 +110,4 @@ object TestingFixture {
             mutableListOf()
         }
 
-    fun idTokenFor(federation: String): String {
-        val macSigner = MACSigner("123123123123123123123123123123123123123123123123123123123123")
-        val plainHeader = JWSHeader.Builder(JWSAlgorithm.HS256).type(JOSEObjectType.JWT).build()
-        val jwtClaimsSet = JWTClaimsSet.Builder()
-            .claim("federation", federation)
-            .build()
-
-        val plainJWT = SignedJWT(plainHeader, jwtClaimsSet)
-        plainJWT.sign(macSigner)
-        return plainJWT.serialize()
-    }
 }

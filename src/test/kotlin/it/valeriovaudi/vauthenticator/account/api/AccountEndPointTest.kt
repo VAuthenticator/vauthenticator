@@ -1,6 +1,8 @@
-package it.valeriovaudi.vauthenticator.account
+package it.valeriovaudi.vauthenticator.account.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import it.valeriovaudi.vauthenticator.account.AccountTestFixture
+import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -35,8 +37,8 @@ internal class AccountEndPointTest {
     @Test
     internal fun `find all accounts`() {
         val expectedRepresentation = listOf(
-                AccountApiRepresentation(email = "anemail@domain.com"),
-                AccountApiRepresentation(email = "anotheremail@domain.com")
+                AccountApiAdminRepresentation(email = "anemail@domain.com"),
+                AccountApiAdminRepresentation(email = "anotheremail@domain.com")
         )
         val masterAccount = AccountTestFixture.anAccount()
 
@@ -53,7 +55,7 @@ internal class AccountEndPointTest {
 
     @Test
     internal fun `set an account as disabled`() {
-        val representation = AccountApiRepresentation(email = "anemail@domain.com", enabled = false)
+        val representation = AccountApiAdminRepresentation(email = "anemail@domain.com", enabled = false)
         val masterAccount = AccountTestFixture.anAccount().copy(enabled = false)
 
         given(accountRepository.accountFor("anemail@domain.com"))

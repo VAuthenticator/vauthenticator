@@ -1,6 +1,6 @@
 package it.valeriovaudi.vauthenticator.security.userdetails
 
-import it.valeriovaudi.vauthenticator.account.AccountRepository
+import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.authority.SimpleGrantedAuthority
