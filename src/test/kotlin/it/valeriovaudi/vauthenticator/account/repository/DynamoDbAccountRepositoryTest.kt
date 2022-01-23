@@ -68,8 +68,8 @@ internal class DynamoDbAccountRepositoryTest {
     fun `find all accounts`() {
         val anAccount = account.copy()
         val anotherAccount = account.copy(
-            email = "anotheremail@domail.com",
-            username = "anotheremail@domail.com",
+            email = "anotheremail@domain.com",
+            username = "anotheremail@domain.com",
             firstName = "A_NEW_FIRSTNAME",
             lastName = "A_NEW_LASTNAME"
         )
@@ -83,8 +83,8 @@ internal class DynamoDbAccountRepositoryTest {
     fun `find all accounts without autorities`() {
         val anAccount = account.copy()
         val anotherAccount = account.copy(
-            email = "anotheremail@domail.com",
-            username = "anotheremail@domail.com",
+            email = "anotheremail@domain.com",
+            username = "anotheremail@domain.com",
             firstName = "A_NEW_FIRSTNAME",
             lastName = "A_NEW_LASTNAME"
         )
