@@ -76,7 +76,9 @@ internal class DynamoDbAccountRepositoryTest {
         accountRepository.save(anAccount)
         accountRepository.save(anotherAccount)
 
-        Assertions.assertEquals(accountRepository.findAll(true), listOf(anAccount, anotherAccount))
+        val findAll = accountRepository.findAll(true)
+        Assertions.assertTrue(findAll.contains(anAccount))
+        Assertions.assertTrue(findAll.contains( anotherAccount))
     }
 
     @Test
@@ -91,7 +93,9 @@ internal class DynamoDbAccountRepositoryTest {
         accountRepository.save(anAccount)
         accountRepository.save(anotherAccount)
 
-        Assertions.assertEquals(accountRepository.findAll(), listOf(anAccount, anotherAccount))
+        val findAll = accountRepository.findAll()
+        Assertions.assertTrue(findAll.contains(anAccount))
+        Assertions.assertTrue(findAll.contains( anotherAccount))
     }
 
     @Test
