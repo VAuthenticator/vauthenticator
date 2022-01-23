@@ -41,8 +41,13 @@ class WebSecurityConfig {
         http.requestMatchers().antMatchers(*WHITE_LIST)
                 .and()
                 .authorizeRequests()
-                .mvcMatchers("/api/**", "/secure/**")
+                .mvcMatchers("/api/accounts/**", "/secure/**")
                 .hasAuthority(adminRole)
+                .and()
+                .authorizeRequests()
+                .mvcMatchers("/api/signup")
+                .authenticated()
+
 
         http.userDetailsService(accountUserDetailsService)
         http.oauth2ResourceServer().jwt()

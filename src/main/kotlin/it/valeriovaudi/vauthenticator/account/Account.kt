@@ -5,14 +5,14 @@ import it.valeriovaudi.vauthenticator.extentions.toSha256
 data class Account(var accountNonExpired: Boolean = false,
                    var accountNonLocked: Boolean = false,
                    var credentialsNonExpired: Boolean = false,
-                   var enabled: Boolean = true,
+                   var enabled: Boolean = false,
 
                    var username: String,
                    var password: String,
                    var authorities: List<String>,
 
                    var email: String,
-                   var emailVerified: Boolean = true,
+                   var emailVerified: Boolean = false,
 
                    var firstName: String,
                    var lastName: String

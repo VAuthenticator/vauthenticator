@@ -68,6 +68,10 @@ class DynamoDbAccountRepository(
         )
     }
 
+    override fun create(account: Account) {
+        TODO("Not yet implemented")
+    }
+
     private fun storeAccountWithRoles(
         account: Account,
         accountAuthoritiesSet: Set<String>,

@@ -15,16 +15,8 @@ internal class AccountConverterTest {
     @Test
     fun whenAccountViewIsForAdmin() {
         val anAccount = anAccount(listOf(Role(adminRole, "A ROLE DESCRIPTION")))
-        val authentication = UsernamePasswordAuthenticationToken(mock(Any::class.java), mock(Any::class.java), listOf(SimpleGrantedAuthority(adminRole)))
-        val accountApiRepresentation = fromDomainToAccountApiRepresentation(anAccount, authentication)
-        assertEquals(AccountApiAdminRepresentation(accountLocked = true, enabled = true, email = "email@domail.com", authorities = listOf(adminRole)), accountApiRepresentation)
-    }
-
-    @Test
-    fun whenAccountViewIsForFinalUser() {
-        val anAccount = anAccount(listOf(Role("A_ROLE", "A ROLE DESCRIPTION")))
-        val authentication = UsernamePasswordAuthenticationToken(mock(Any::class.java), mock(Any::class.java), listOf(SimpleGrantedAuthority("A_ROLE")))
-        val accountApiRepresentation = fromDomainToAccountApiRepresentation(anAccount, authentication)
-        assertEquals(AccountApiUserRepresentation(email = "email@domail.com", firstName = "A First Name", lastName = "A Last Name", authorities = listOf("A_ROLE")), accountApiRepresentation)
+        UsernamePasswordAuthenticationToken(mock(Any::class.java), mock(Any::class.java), listOf(SimpleGrantedAuthority(adminRole)))
+        val accountApiRepresentation = fromDomainToAccountApiRepresentation(anAccount)
+        assertEquals(AdminAccountApiRepresentation(accountLocked = true, enabled = true, email = "email@domail.com", authorities = listOf(adminRole)), accountApiRepresentation)
     }
 }
