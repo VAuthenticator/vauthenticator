@@ -5,6 +5,7 @@ import it.valeriovaudi.vauthenticator.role.Role
 object AccountTestFixture {
 
     fun anAccount() = Account(
+            enabled = true,
             username = "email@domain.com",
             password = "secret",
             authorities = emptyList(),
@@ -14,6 +15,7 @@ object AccountTestFixture {
     )
 
     fun anAccount(roles:List<Role>) = Account(
+            enabled = true,
             username = "email@domain.com",
             password = "secret",
             authorities = roles.map { it.name },

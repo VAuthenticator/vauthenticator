@@ -31,22 +31,22 @@ internal class AdminAccountEndPointTest {
 
     @BeforeEach
     internal fun setUp() {
-        mokMvc = MockMvcBuilders.standaloneSetup(AccountEndPoint(accountRepository)).build()
+        mokMvc = MockMvcBuilders.standaloneSetup(AdminAccountEndPoint(accountRepository)).build()
     }
 
     @Test
     internal fun `find all accounts`() {
         val expectedRepresentation = listOf(
-                AdminAccountApiRepresentation(email = "anemail@domain.com"),
-                AdminAccountApiRepresentation(email = "anotheremail@domain.com")
+                AdminAccountApiRepresentation(email = "anemain@domain.com"),
+                AdminAccountApiRepresentation(email = "anotheremain@domain.com")
         )
         val masterAccount = AccountTestFixture.anAccount()
 
         given(accountRepository.findAll())
                 .willReturn(
                         listOf(
-                                masterAccount.copy(email = "anemail@domain.com"),
-                                masterAccount.copy(email = "anotheremail@domain.com")
+                                masterAccount.copy(email = "anemain@domain.com"),
+                                masterAccount.copy(email = "anotheremain@domain.com")
                         )
                 )
         mokMvc.perform(get("/api/admin/accounts"))
@@ -58,10 +58,10 @@ internal class AdminAccountEndPointTest {
         val representation = AdminAccountApiRepresentation(email = "anemail@domain.com", enabled = false)
         val masterAccount = AccountTestFixture.anAccount().copy(enabled = false)
 
-        given(accountRepository.accountFor("anemail@domain.com"))
+        given(accountRepository.accountFor("anemain@domain.com"))
                 .willReturn(Optional.of(AccountTestFixture.anAccount()))
 
-        mokMvc.perform(put("/api/admin/accounts/anemail@domain.com/email")
+        mokMvc.perform(put("/api/admin/accounts/anemain@domain.com/email")
                 .contentType(APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(representation)))
                 .andExpect(status().isNoContent)
