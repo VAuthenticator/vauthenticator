@@ -41,11 +41,11 @@ class WebSecurityConfig {
         http.requestMatchers().antMatchers(*WHITE_LIST)
                 .and()
                 .authorizeRequests()
-                .mvcMatchers("/api/accounts/**", "/secure/**")
+                .mvcMatchers("/api/admin/accounts/**", "/secure/**")
                 .hasAuthority(adminRole)
                 .and()
                 .authorizeRequests()
-                .mvcMatchers("/api/signup")
+                .mvcMatchers("/api/accounts/**")
                 .authenticated()
 
 
