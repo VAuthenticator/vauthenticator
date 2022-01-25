@@ -14,22 +14,23 @@ import it.valeriovaudi.vauthenticator.extentions.filterEmptyAccountMetadata
 import it.valeriovaudi.vauthenticator.extentions.valueAsStringFor
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
+import software.amazon.awssdk.services.dynamodb.model.ConditionalCheckFailedException
 import java.util.*
 
 class DynamoDbAccountRepository(
-    private val dynamoDbClient: DynamoDbClient,
-    private val dynamoAccountTableName: String,
-    private val dynamoAccountRoleTableName: String
+        private val dynamoDbClient: DynamoDbClient,
+        private val dynamoAccountTableName: String,
+        private val dynamoAccountRoleTableName: String
 ) : AccountRepository {
 
     override fun findAll(eagerRolesLoad: Boolean): List<Account> =
-        findAllFromDynamo()
-            .map(this::convertAccountFrom)
+            findAllFromDynamo()
+                    .map(this::convertAccountFrom)
 
     private fun findAllFromDynamo() =
-        dynamoDbClient.scan(
-            findAllAccountQueryFor(dynamoAccountTableName)
-        ).items()
+            dynamoDbClient.scan(
+                    findAllAccountQueryFor(dynamoAccountTableName)
+            ).items()
 
     private fun convertAccountFrom(accountDynamoItem: MutableMap<String, AttributeValue>): Account {
         val authorities: List<String> = findAuthoritiesNameFor(accountDynamoItem.valueAsStringFor("user_name"))
@@ -39,45 +40,43 @@ class DynamoDbAccountRepository(
 
     override fun accountFor(username: String): Optional<Account> {
         return Optional.ofNullable(findAccountFor(username))
-            .flatMap {it.filterEmptyAccountMetadata()}
-            .map { account ->
-                fromDynamoToDomain(
-                    account,
-                    findAuthoritiesNameFor(username)
-                )
-            }
+                .flatMap { it.filterEmptyAccountMetadata() }
+                .map { account ->
+                    fromDynamoToDomain(
+                            account,
+                            findAuthoritiesNameFor(username)
+                    )
+                }
     }
 
     private fun findAuthoritiesNameFor(username: String): List<String> {
         return dynamoDbClient.query(
-            findAccountRoleByUserNameQueryFor(username, dynamoAccountRoleTableName)
+                findAccountRoleByUserNameQueryFor(username, dynamoAccountRoleTableName)
         ).items()
-            .map { item -> item.valueAsStringFor("role_name") }
+                .map { item -> item.valueAsStringFor("role_name") }
     }
 
     private fun findAccountFor(username: String) =
-        dynamoDbClient.getItem(
-            findAccountQueryForUserName(username, dynamoAccountTableName)
-        ).item()
+            dynamoDbClient.getItem(
+                    findAccountQueryForUserName(username, dynamoAccountTableName)
+            ).item()
 
     override fun save(account: Account) {
         storeAccountWithRoles(
-            account = account,
-            accountAuthoritiesSet = accountRolesFor(account),
-            storedAccountRolesSet = storedAccountRolesFor(account)
+                account = account,
+                accountAuthoritiesSet = accountRolesFor(account),
+                storedAccountRolesSet = storedAccountRolesFor(account),
+                withUpsert = true
         )
     }
 
-    override fun create(account: Account) {
-        TODO("Not yet implemented")
-    }
-
     private fun storeAccountWithRoles(
-        account: Account,
-        accountAuthoritiesSet: Set<String>,
-        storedAccountRolesSet: Set<String>
+            account: Account,
+            accountAuthoritiesSet: Set<String>,
+            storedAccountRolesSet: Set<String>,
+            withUpsert: Boolean
     ) {
-        storeAccountFrom(account)
+        storeAccountFrom(account, withUpsert)
         addAuthorities(accountAuthoritiesSet, storedAccountRolesSet) { authority ->
             storeAccountRoleFrom(account, authority)
         }
@@ -86,28 +85,39 @@ class DynamoDbAccountRepository(
         }
     }
 
-    private fun storeAccountFrom(account: Account) {
+    private fun storeAccountFrom(account: Account, withUpsert: Boolean) {
         dynamoDbClient.putItem(
-            storeAccountQueryFor(account, dynamoAccountTableName)
+                storeAccountQueryFor(account, dynamoAccountTableName, withUpsert)
         )
     }
 
     private fun accountRolesFor(account: Account) = account.authorities.toSet()
     private fun storedAccountRolesFor(account: Account) =
-        dynamoDbClient.query(
-            findAccountRoleByUserNameQueryFor(account.username, dynamoAccountRoleTableName)
-        )
-            .items()
-            .map { item -> item.valueAsStringFor("role_name") }
-            .toSet()
+            dynamoDbClient.query(
+                    findAccountRoleByUserNameQueryFor(account.username, dynamoAccountRoleTableName)
+            )
+                    .items()
+                    .map { item -> item.valueAsStringFor("role_name") }
+                    .toSet()
 
     private fun storeAccountRoleFrom(account: Account, authority: String) {
         dynamoDbClient.putItem(
-            storeAccountRoleQueryFor(account.username, authority, dynamoAccountRoleTableName)
+                storeAccountRoleQueryFor(account.username, authority, dynamoAccountRoleTableName)
         )
     }
 
     private fun deleteAccountRoleFrom(account: Account, roleName: String) =
-        dynamoDbClient.deleteItem(deleteAccountRoleQueryFor(account.username, roleName, dynamoAccountRoleTableName))
+            dynamoDbClient.deleteItem(deleteAccountRoleQueryFor(account.username, roleName, dynamoAccountRoleTableName))
+
+    override fun create(account: Account) = try {
+        storeAccountWithRoles(
+                account = account,
+                accountAuthoritiesSet = accountRolesFor(account),
+                storedAccountRolesSet = emptySet(),
+                withUpsert = false
+        )
+    } catch (e: ConditionalCheckFailedException) {
+        throw AccountRegistrationException("account already created", e)
+    }
 
 }
