@@ -8,7 +8,7 @@ import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsPro
 import software.amazon.awssdk.auth.credentials.WebIdentityTokenFileCredentialsProvider
 import java.util.*
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 class AwsConfig {
 
     @Bean("awsCredentialsProvider")

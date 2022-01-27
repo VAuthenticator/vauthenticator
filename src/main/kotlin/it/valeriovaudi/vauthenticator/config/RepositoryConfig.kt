@@ -17,7 +17,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.kms.KmsClient
 
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 class RepositoryConfig {
 
     @Bean

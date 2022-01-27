@@ -2,7 +2,8 @@ package it.valeriovaudi.vauthenticator.account.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import it.valeriovaudi.vauthenticator.account.AccountTestFixture
-import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
+import it.valeriovaudi.vauthenticator.account.usecase.SignUpUseCase
+import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -22,13 +23,14 @@ internal class AccountEndPointTest {
     lateinit var mokMvc: MockMvc
 
     @Mock
-    lateinit var accountRepository: AccountRepository
+    lateinit var signUpUseCase: SignUpUseCase
 
-    val objectMapper = ObjectMapper()
+    private val objectMapper = ObjectMapper()
 
     @BeforeEach
     internal fun setUp() {
-        mokMvc = MockMvcBuilders.standaloneSetup(AccountEndPoint(accountRepository)).build()
+        mokMvc = MockMvcBuilders.standaloneSetup(AccountEndPoint(signUpUseCase))
+                .build()
     }
 
 
@@ -49,6 +51,6 @@ internal class AccountEndPointTest {
         assertEquals(true, masterAccount.credentialsNonExpired)
         assertEquals(true, masterAccount.enabled)
 
-        Mockito.verify(accountRepository).create(masterAccount)
+        Mockito.verify(signUpUseCase).execute(ClientAppId(""), masterAccount)
     }
 }

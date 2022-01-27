@@ -58,6 +58,8 @@ data class Scope(val content: String) {
         val OPEN_ID = Scope("openid")
         val PROFILE = Scope("profile")
         val EMAIL = Scope("email")
+
+        val SIGN_UP = Scope("admin:signup")
     }
 }
 
