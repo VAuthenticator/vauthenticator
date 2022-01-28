@@ -22,3 +22,5 @@ fun String.toSha256(): String {
 }
 
 fun String.asDynamoAttribute(): AttributeValue = AttributeValue.builder().s(this).build()
+
+fun String.stripBearerPrefix() : String = this.substring(7)

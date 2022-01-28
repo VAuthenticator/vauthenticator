@@ -2,23 +2,20 @@ package it.valeriovaudi.vauthenticator.account.api
 
 import it.valeriovaudi.vauthenticator.account.Account
 import it.valeriovaudi.vauthenticator.account.usecase.SignUpUseCase
+import it.valeriovaudi.vauthenticator.extentions.stripBearerPrefix
+import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplication
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity.status
-import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 class AccountEndPoint(private val signUpUseCase: SignUpUseCase) {
 
     @PostMapping("/api/accounts")
-    fun signup(@AuthenticationPrincipal authentication : JwtAuthenticationToken, @RequestBody representation: FinalAccountRepresentation) =
+    fun signup(@RequestHeader("Authorization") authorization : String, @RequestBody representation: FinalAccountRepresentation) =
             SignUpAccountConverter.fromRepresentationToSignedUpAccount(representation)
                     .let {
-                        signUpUseCase.execute(authentication.)
+                        signUpUseCase.execute(ClientApplication.clientAppIdFrom(authorization.stripBearerPrefix()), it)
                     }
                     .let {
                         status(HttpStatus.CREATED).build<Unit>()

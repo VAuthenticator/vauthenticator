@@ -6,11 +6,11 @@ import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.Scope
 
-class SignUpUseCase(
+open class SignUpUseCase(
         private val clientAccountRepository: ClientApplicationRepository,
         private val accountRepository: AccountRepository
 ) {
-    fun execute(clientAppId: ClientAppId, account: Account) {
+    open fun execute(clientAppId: ClientAppId, account: Account) {
         clientAccountRepository.findOne(clientAppId)
                 .map {
                     if(it.scopes.content.contains(Scope.SIGN_UP)){
