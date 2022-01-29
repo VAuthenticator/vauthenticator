@@ -8,6 +8,9 @@
 </head>
 <body>
 
+<div id="metadata" th:each="feature : ${features}" style="display: none">
+    <div th:text="${feature}" style="display: none"></div>
+</div>
 <div id="app"></div>
 
 </body>

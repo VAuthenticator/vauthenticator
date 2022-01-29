@@ -13,6 +13,10 @@ import FormButton from "../component/FormButton";
 const Login = withStyles(vauthenticatorStyles)((props) => {
     const {classes} = props;
 
+    let signUpLink = <a href="/vauthenticator/sign-up">Sign Up</a>
+    let metadata = document.getElementById('metadata');
+    console.log("metadata: " + metadata)
+
     return (
         <Template maxWidth="sm" classes={classes}>
             <Typography variant="h3" component="h3">
@@ -35,15 +39,28 @@ const Login = withStyles(vauthenticatorStyles)((props) => {
                                         type="password"
                                         suffix={<Fingerprint fontSize="large"/>}/>
 
-                    <Separator />
+                    <Separator/>
 
-                    <FormButton type="submit" label="Login" />
+                    <FormButton type="submit" label="Login"/>
                 </div>
+
+
+                <Grid style={{marginTop: '10px'}}>
+                    <Divider/>
+                </Grid>
+
+
+                <Grid style={{marginTop: '10px'}}>
+                    {signUpLink}
+                </Grid>
             </form>
         </Template>
     )
 })
 
 if (document.getElementById('app')) {
-    ReactDOM.render(<Login/>, document.getElementById('app'));
+    let metadata = document.getElementById('metadata');
+    console.log("metadata: " + metadata)
+    window.alert("metadata: " + metadata)
+    ReactDOM.render(<Login />, document.getElementById('app'));
 }
