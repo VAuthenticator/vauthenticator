@@ -11,12 +11,19 @@ import Separator from "../component/Separator";
 import FormButton from "../component/FormButton";
 
 const Login = withStyles(vauthenticatorStyles)((props) => {
-    const {classes} = props;
+    const {classes, rawFeatures} = props;
+
 
     let signUpLink = <a href="/vauthenticator/sign-up">Sign Up</a>
-    let metadata = document.getElementById('metadata');
-    console.log("metadata: " + metadata)
+    let features = {}
+    rawFeatures.substring(1, rawFeatures.length - 1)
+        .split(",")
+        .forEach(feature => {
+            let aux = feature.split("=")
+            features[aux[0]] = aux[1]
+        })
 
+    window.alert(rawFeatures)
     return (
         <Template maxWidth="sm" classes={classes}>
             <Typography variant="h3" component="h3">
@@ -52,6 +59,7 @@ const Login = withStyles(vauthenticatorStyles)((props) => {
 
                 <Grid style={{marginTop: '10px'}}>
                     {signUpLink}
+                    {JSON.stringify(features)}
                 </Grid>
             </form>
         </Template>
@@ -59,8 +67,7 @@ const Login = withStyles(vauthenticatorStyles)((props) => {
 })
 
 if (document.getElementById('app')) {
-    let metadata = document.getElementById('metadata');
-    console.log("metadata: " + metadata)
-    window.alert("metadata: " + metadata)
-    ReactDOM.render(<Login />, document.getElementById('app'));
+    let rawFeatures = document.getElementById('features').innerHTML
+    let features = document.getElementById('features').innerHTML
+    ReactDOM.render(<Login rawFeatures={features}/>, document.getElementById('app'));
 }
