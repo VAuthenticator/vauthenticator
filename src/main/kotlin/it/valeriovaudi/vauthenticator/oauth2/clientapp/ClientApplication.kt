@@ -77,3 +77,7 @@ data class Authorities(val content: List<Authority>) {
 }
 data class Authority(val content: String)
 data class TokenTimeToLive(val content: Int)
+
+enum class ClientApplicationFeatures(val value: String) {
+    SIGNUP("signup")
+}

@@ -10,7 +10,7 @@ import FormInputTextField from "../component/FormInputTextField";
 import Separator from "../component/Separator";
 import FormButton from "../component/FormButton";
 
-const  featuresFrom = (rawFeatures) => {
+const featuresFrom = (rawFeatures) => {
     let features = {}
     rawFeatures.substring(1, rawFeatures.length - 1)
         .split(",")
@@ -24,8 +24,10 @@ const  featuresFrom = (rawFeatures) => {
 const Login = withStyles(vauthenticatorStyles)((props) => {
     const {classes, rawFeatures} = props;
 
-    let signUpLink = <a href="/vauthenticator/sign-up">Sign Up</a>
-    let features = featuresFrom(rawFeatures);
+    let signUpLink = <div>
+        <h3>are you not registered? if you want you can register  <a href="/vauthenticator/sign-up">here</a></h3>
+    </div>
+    let features = JSON.parse(rawFeatures);
 
     return (
         <Template maxWidth="sm" classes={classes}>
@@ -61,7 +63,7 @@ const Login = withStyles(vauthenticatorStyles)((props) => {
 
 
                 <Grid style={{marginTop: '10px'}}>
-                    {features.signUpLink === "true" ? signUpLink : ""}
+                    {features.signup === true ? signUpLink : ""}
                 </Grid>
             </form>
         </Template>
@@ -69,7 +71,6 @@ const Login = withStyles(vauthenticatorStyles)((props) => {
 })
 
 if (document.getElementById('app')) {
-    let rawFeatures = document.getElementById('features').innerHTML
     let features = document.getElementById('features').innerHTML
     ReactDOM.render(<Login rawFeatures={features}/>, document.getElementById('app'));
 }

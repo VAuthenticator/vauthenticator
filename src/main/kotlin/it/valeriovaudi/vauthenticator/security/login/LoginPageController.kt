@@ -1,6 +1,8 @@
 package it.valeriovaudi.vauthenticator.security.login
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import it.valeriovaudi.vauthenticator.extentions.oauth2ClientId
+import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationFeatures
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -10,22 +12,16 @@ import javax.servlet.http.HttpSession
 
 @Controller
 @SessionAttributes("features")
-class LoginPageController {
+class LoginPageController(val objectMapper: ObjectMapper) {
 
     @GetMapping("/login")
     fun loginPage(session: HttpSession, model: Model): String {
         val clientId = session.oauth2ClientId()
-        var features = listOf(
-                "signUpLink=%s",
-                "socialLogin=%s",
-        )
-        println(features)
 
-        clientId
-                .map { features = features.map { String.format(it, false) } }
-                .orElseGet { features = features.map { String.format(it, false) } }
+        val features = mutableMapOf(ClientApplicationFeatures.SIGNUP.value to false)
+        clientId.ifPresent { features[ClientApplicationFeatures.SIGNUP.value] = true }
 
-        model.addAttribute("features", features)
+        model.addAttribute("features", objectMapper.writeValueAsString(features))
 
         return "login"
     }

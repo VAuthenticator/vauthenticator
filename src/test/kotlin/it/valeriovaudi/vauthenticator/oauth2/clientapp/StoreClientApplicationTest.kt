@@ -1,6 +1,6 @@
 package it.valeriovaudi.vauthenticator.oauth2.clientapp
 
-import it.valeriovaudi.vauthenticator.extentions.VAuthenticatorPasswordEncoder
+import it.valeriovaudi.vauthenticator.security.VAuthenticatorPasswordEncoder
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

@@ -6,7 +6,6 @@ import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jose.jwk.source.JWKSource
 import com.nimbusds.jose.proc.SecurityContext
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
-import it.valeriovaudi.vauthenticator.extentions.BcryptVAuthenticatorPasswordEncoder
 import it.valeriovaudi.vauthenticator.keypair.KeyRepository
 import it.valeriovaudi.vauthenticator.oauth2.authorizationservice.RedisOAuth2AuthorizationService
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
@@ -16,6 +15,7 @@ import it.valeriovaudi.vauthenticator.openid.connect.sessionmanagement.SessionMa
 import it.valeriovaudi.vauthenticator.openid.connect.sessionmanagement.sendAuthorizationResponse
 import it.valeriovaudi.vauthenticator.openid.connect.token.IdTokenEnhancer
 import it.valeriovaudi.vauthenticator.openid.connect.userinfo.UserInfoEnhancer
+import it.valeriovaudi.vauthenticator.security.BcryptVAuthenticatorPasswordEncoder
 import it.valeriovaudi.vauthenticator.security.registeredclient.ClientAppRegisteredClientRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
