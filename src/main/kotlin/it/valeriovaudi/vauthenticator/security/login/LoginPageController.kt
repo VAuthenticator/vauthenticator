@@ -22,7 +22,7 @@ class LoginPageController {
         println(features)
 
         clientId
-                .map { features = features.map { String.format(it, true) } }
+                .map { features = features.map { String.format(it, false) } }
                 .orElseGet { features = features.map { String.format(it, false) } }
 
         model.addAttribute("features", features)

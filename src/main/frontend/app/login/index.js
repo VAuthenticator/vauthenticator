@@ -10,11 +10,7 @@ import FormInputTextField from "../component/FormInputTextField";
 import Separator from "../component/Separator";
 import FormButton from "../component/FormButton";
 
-const Login = withStyles(vauthenticatorStyles)((props) => {
-    const {classes, rawFeatures} = props;
-
-
-    let signUpLink = <a href="/vauthenticator/sign-up">Sign Up</a>
+const  featuresFrom = (rawFeatures) => {
     let features = {}
     rawFeatures.substring(1, rawFeatures.length - 1)
         .split(",")
@@ -22,8 +18,15 @@ const Login = withStyles(vauthenticatorStyles)((props) => {
             let aux = feature.split("=")
             features[aux[0]] = aux[1]
         })
+    return features;
+}
 
-    window.alert(rawFeatures)
+const Login = withStyles(vauthenticatorStyles)((props) => {
+    const {classes, rawFeatures} = props;
+
+    let signUpLink = <a href="/vauthenticator/sign-up">Sign Up</a>
+    let features = featuresFrom(rawFeatures);
+
     return (
         <Template maxWidth="sm" classes={classes}>
             <Typography variant="h3" component="h3">
@@ -58,8 +61,7 @@ const Login = withStyles(vauthenticatorStyles)((props) => {
 
 
                 <Grid style={{marginTop: '10px'}}>
-                    {signUpLink}
-                    {JSON.stringify(features)}
+                    {features.signUpLink === "true" ? signUpLink : ""}
                 </Grid>
             </form>
         </Template>
