@@ -11,7 +11,7 @@ import javax.servlet.http.HttpSession
 
 
 @Controller
-@SessionAttributes("features")
+@SessionAttributes("clientId","features")
 class LoginPageController(val objectMapper: ObjectMapper) {
 
     @GetMapping("/login")
@@ -19,7 +19,10 @@ class LoginPageController(val objectMapper: ObjectMapper) {
         val clientId = session.oauth2ClientId()
 
         val features = mutableMapOf(ClientApplicationFeatures.SIGNUP.value to false)
-        clientId.ifPresent { features[ClientApplicationFeatures.SIGNUP.value] = true }
+        clientId.ifPresent {
+            model.addAttribute("clientId", it)
+            features[ClientApplicationFeatures.SIGNUP.value] = true
+        }
 
         model.addAttribute("features", objectMapper.writeValueAsString(features))
 

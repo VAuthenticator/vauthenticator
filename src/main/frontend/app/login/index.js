@@ -10,17 +10,6 @@ import FormInputTextField from "../component/FormInputTextField";
 import Separator from "../component/Separator";
 import FormButton from "../component/FormButton";
 
-const featuresFrom = (rawFeatures) => {
-    let features = {}
-    rawFeatures.substring(1, rawFeatures.length - 1)
-        .split(",")
-        .forEach(feature => {
-            let aux = feature.split("=")
-            features[aux[0]] = aux[1]
-        })
-    return features;
-}
-
 const Login = withStyles(vauthenticatorStyles)((props) => {
     const {classes, rawFeatures} = props;
 

@@ -45,8 +45,8 @@ class WebSecurityConfig {
                 .hasAuthority(adminRole)
                 .and()
                 .authorizeRequests()
-                .mvcMatchers("/api/accounts/**")
-                .authenticated()
+                .mvcMatchers("/api/accounts")
+                .permitAll()
 
 
         http.userDetailsService(accountUserDetailsService)
