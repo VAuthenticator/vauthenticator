@@ -3,6 +3,7 @@ package it.valeriovaudi.vauthenticator.account.api
 import it.valeriovaudi.vauthenticator.account.Account
 import it.valeriovaudi.vauthenticator.account.signup.SignUpUseCase
 import it.valeriovaudi.vauthenticator.extentions.stripBearerPrefix
+import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplication
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity.status
@@ -19,17 +20,17 @@ class AccountEndPoint(private val signUpUseCase: SignUpUseCase) {
                @RequestBody representation: FinalAccountRepresentation) {
         SignUpAccountConverter.fromRepresentationToSignedUpAccount(representation)
                 .let { account ->
-                    Optional.ofNullable(authorization).map { executeSignUp(it, account) }
+                    Optional.ofNullable(authorization).map { executeSignUp(ClientApplication.clientAppIdFrom(it.stripBearerPrefix()), account) }
                             .orElseGet {
-                                Optional.ofNullable(clientId).map { executeSignUp(it, account) }
+                                Optional.ofNullable(clientId).map { executeSignUp(ClientAppId(it), account) }
                                         .orElseThrow()
                             }
                 }
         status(HttpStatus.CREATED).build<Unit>()
     }
 
-    private fun executeSignUp(it: String, account: Account) {
-        signUpUseCase.execute(ClientApplication.clientAppIdFrom(it.stripBearerPrefix()), account)
+    private fun executeSignUp(clientAppId: ClientAppId, account: Account) {
+        signUpUseCase.execute(clientAppId , account)
     }
 
     @PutMapping("/api/accounts")
