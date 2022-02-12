@@ -25,9 +25,6 @@ class AccountEndPoint(private val signUpUseCase: SignUpUseCase) {
                                         .orElseThrow()
                             }
                 }
-                .let {
-                    status(HttpStatus.CREATED).build<Unit>()
-                }
         status(HttpStatus.CREATED).build<Unit>()
     }
 
