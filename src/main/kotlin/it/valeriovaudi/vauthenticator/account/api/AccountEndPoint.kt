@@ -1,28 +1,38 @@
 package it.valeriovaudi.vauthenticator.account.api
 
 import it.valeriovaudi.vauthenticator.account.Account
-import it.valeriovaudi.vauthenticator.account.usecase.SignUpUseCase
+import it.valeriovaudi.vauthenticator.account.signup.SignUpUseCase
+import it.valeriovaudi.vauthenticator.extentions.stripBearerPrefix
+import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplication
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity.status
 import org.springframework.web.bind.annotation.*
+import java.util.*
 
 @RestController
 @SessionAttributes("clientId")
 class AccountEndPoint(private val signUpUseCase: SignUpUseCase) {
 
     @PostMapping("/api/accounts")
-    fun signup(@RequestHeader("Authorization", required = false) authorization : String?,
-               @ModelAttribute("clientId") clientId : String?,
-               @RequestBody(required = false) representation: FinalAccountRepresentation?) {
-        println("clientId: $clientId")
-//        SignUpAccountConverter.fromRepresentationToSignedUpAccount(representation)
-//                .let {
-//                        signUpUseCase.execute(ClientApplication.clientAppIdFrom(authorization.stripBearerPrefix()), it)
-//                }
-//                .let {
-//                    status(HttpStatus.CREATED).build<Unit>()
-//                }
+    fun signup(@RequestHeader("Authorization", required = false) authorization: String?,
+               @ModelAttribute("clientId") clientId: String?,
+               @RequestBody representation: FinalAccountRepresentation) {
+        SignUpAccountConverter.fromRepresentationToSignedUpAccount(representation)
+                .let { account ->
+                    Optional.ofNullable(authorization).map { executeSignUp(it, account) }
+                            .orElseGet {
+                                Optional.ofNullable(clientId).map { executeSignUp(it, account) }
+                                        .orElseThrow()
+                            }
+                }
+                .let {
+                    status(HttpStatus.CREATED).build<Unit>()
+                }
         status(HttpStatus.CREATED).build<Unit>()
+    }
+
+    private fun executeSignUp(it: String, account: Account) {
+        signUpUseCase.execute(ClientApplication.clientAppIdFrom(it.stripBearerPrefix()), account)
     }
 
     @PutMapping("/api/accounts")

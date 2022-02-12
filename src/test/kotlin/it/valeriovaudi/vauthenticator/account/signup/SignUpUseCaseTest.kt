@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator.account.usecase
+package it.valeriovaudi.vauthenticator.account.signup
 
 import it.valeriovaudi.vauthenticator.account.AccountTestFixture.anAccount
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository

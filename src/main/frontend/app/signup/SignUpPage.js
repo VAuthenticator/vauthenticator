@@ -7,6 +7,8 @@ import Divider from "@material-ui/core/Divider";
 import vauthenticatorStyles from "../component/styles";
 import FormInputTextField from "../component/FormInputTextField";
 import FormButton from "../component/FormButton";
+import {useHistory} from 'react-router-dom';
+import {signUp} from "./SignUpRepository";
 
 const SignUpPage = withStyles(vauthenticatorStyles)((props) => {
     const {classes} = props;
@@ -15,6 +17,7 @@ const SignUpPage = withStyles(vauthenticatorStyles)((props) => {
     const [password, setPassword] = React.useState("")
     const [firstName, setFirstName] = React.useState("")
     const [lastName, setLastName] = React.useState("")
+    const history = useHistory();
 
     return (
         <Template maxWidth="sm" classes={classes}>
@@ -63,10 +66,9 @@ const SignUpPage = withStyles(vauthenticatorStyles)((props) => {
             <Grid style={{marginTop: '10px'}}>
                 <Divider/>
             </Grid>
-
             <FormButton type="button"
                         onClickHandler={() => {
-                            signUp().then(r => console.log(r))
+                            signUp().then(r => history.push("/succeeded"))
                         }}
                         labelPrefix={<GroupAdd fontSize="large"/>}
                         label={"Sign Up"}/>

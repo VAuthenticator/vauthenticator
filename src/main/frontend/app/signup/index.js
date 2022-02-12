@@ -5,6 +5,7 @@ import vauthenticatorStyles from "../component/styles";
 import {HashRouter} from "react-router-dom";
 import {Route, Switch} from "react-router";
 import SignUpPage from "./SignUpPage";
+import SuccessfulSignUpPage from "./SuccessfulSignUpPage";
 
 const SignUpFlow = withStyles(vauthenticatorStyles)((props) => {
     return (
@@ -12,6 +13,8 @@ const SignUpFlow = withStyles(vauthenticatorStyles)((props) => {
             <Switch>
                 <Route exact={true} path="/"
                        render={(props) => <SignUpPage {...props} />}/>
+                <Route exact={true} path="/succeeded"
+                       render={(props) => <SuccessfulSignUpPage {...props} />}/>
             </Switch>
         </HashRouter>)
 

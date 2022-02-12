@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator.account
+package it.valeriovaudi.vauthenticator.account.signup
 
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model

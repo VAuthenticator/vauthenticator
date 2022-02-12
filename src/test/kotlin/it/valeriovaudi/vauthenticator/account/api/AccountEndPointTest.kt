@@ -2,7 +2,7 @@ package it.valeriovaudi.vauthenticator.account.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import it.valeriovaudi.vauthenticator.account.AccountTestFixture
-import it.valeriovaudi.vauthenticator.account.usecase.SignUpUseCase
+import it.valeriovaudi.vauthenticator.account.signup.SignUpUseCase
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
 import it.valeriovaudi.vauthenticator.support.TestingFixture
 import org.junit.jupiter.api.Assertions.assertEquals
