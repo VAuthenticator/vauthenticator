@@ -68,7 +68,13 @@ const SignUpPage = withStyles(vauthenticatorStyles)((props) => {
             </Grid>
             <FormButton type="button"
                         onClickHandler={() => {
-                            signUp().then(r => history.push("/succeeded"))
+                            signUp({
+                                "email": email,
+                                "password": password,
+                                "firstName": firstName,
+                                "lastName": lastName
+                            })
+                                // .then(r => history.push("/succeeded"))
                         }}
                         labelPrefix={<GroupAdd fontSize="large"/>}
                         label={"Sign Up"}/>
