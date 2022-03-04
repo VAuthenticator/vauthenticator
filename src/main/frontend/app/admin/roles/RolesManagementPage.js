@@ -114,7 +114,6 @@ const RolesManagementPage = withStyles(vauthenticatorStyles)((props) => {
 
         </AdminTemplate>
     )
-        ;
 })
 
 export default RolesManagementPage

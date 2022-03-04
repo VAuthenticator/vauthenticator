@@ -1,7 +1,7 @@
 package it.valeriovaudi.vauthenticator.openid.connect.userinfo
 
 import it.valeriovaudi.vauthenticator.account.Account
-import it.valeriovaudi.vauthenticator.account.AccountRepository
+import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import org.springframework.security.oauth2.core.oidc.OidcUserInfo
 import org.springframework.security.oauth2.server.authorization.oidc.authentication.OidcUserInfoAuthenticationContext
 import java.time.LocalDateTime

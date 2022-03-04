@@ -1,5 +1,7 @@
 package it.valeriovaudi.vauthenticator.oauth2.clientapp
 
+import com.nimbusds.jose.JWSObject
+import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames
 import java.util.*
 
 data class ClientApplication(
@@ -16,7 +18,12 @@ data class ClientApplication(
     val postLogoutRedirectUri: PostLogoutRedirectUri,
     val logoutUri: LogoutUri,
     val resourceIds: ResourceIds
-)
+) {
+    companion object {
+        fun clientAppIdFrom(jwtToken: String) =
+                ClientAppId(JWSObject.parse(jwtToken).payload.toJSONObject().get(IdTokenClaimNames.AZP) as String)
+    }
+}
 
 data class AutoApprove(val content: Boolean) {
     companion object {
@@ -58,6 +65,8 @@ data class Scope(val content: String) {
         val OPEN_ID = Scope("openid")
         val PROFILE = Scope("profile")
         val EMAIL = Scope("email")
+
+        val SIGN_UP = Scope("admin:signup")
     }
 }
 
@@ -68,3 +77,7 @@ data class Authorities(val content: List<Authority>) {
 }
 data class Authority(val content: String)
 data class TokenTimeToLive(val content: Int)
+
+enum class ClientApplicationFeatures(val value: String) {
+    SIGNUP("signup")
+}

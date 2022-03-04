@@ -1,6 +1,6 @@
 package it.valeriovaudi.vauthenticator.config
 
-import it.valeriovaudi.vauthenticator.account.dynamo.DynamoDbAccountRepository
+import it.valeriovaudi.vauthenticator.account.repository.DynamoDbAccountRepository
 import it.valeriovaudi.vauthenticator.keypair.DynamoKeyRepository
 import it.valeriovaudi.vauthenticator.keypair.KeyPairConfig
 import it.valeriovaudi.vauthenticator.keypair.KeyRepository
@@ -17,7 +17,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.kms.KmsClient
 
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 class RepositoryConfig {
 
     @Bean

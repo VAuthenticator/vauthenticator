@@ -1,8 +1,6 @@
 package it.valeriovaudi.vauthenticator.oauth2.clientapp
 
-import it.valeriovaudi.vauthenticator.extentions.VAuthenticatorPasswordEncoder
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
+import it.valeriovaudi.vauthenticator.security.VAuthenticatorPasswordEncoder
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
@@ -42,17 +40,4 @@ open class ReadClientApplication(private val clientApplicationRepository: Client
     open fun findAll(): List<ClientApplication> =
             clientApplicationRepository.findAll()
                     .map { it.copy(secret = Secret("*******")) }
-}
-
-@Configuration
-class ClientApplicationUseCasesConfig {
-
-    @Bean
-    fun readClientApplication(clientApplicationRepository: ClientApplicationRepository) =
-            ReadClientApplication(clientApplicationRepository)
-
-    @Bean
-    fun storeClientApplication(clientApplicationRepository: ClientApplicationRepository,
-                               passwordEncoder: VAuthenticatorPasswordEncoder) =
-            StoreClientApplication(clientApplicationRepository, passwordEncoder)
 }

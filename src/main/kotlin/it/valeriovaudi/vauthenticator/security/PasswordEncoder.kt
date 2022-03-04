@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator.extentions
+package it.valeriovaudi.vauthenticator.security
 
 import org.springframework.security.crypto.password.PasswordEncoder
 

@@ -11,7 +11,12 @@ import Separator from "../component/Separator";
 import FormButton from "../component/FormButton";
 
 const Login = withStyles(vauthenticatorStyles)((props) => {
-    const {classes} = props;
+    const {classes, rawFeatures} = props;
+
+    let signUpLink = <div>
+        <h3>are you not registered? if you want you can register  <a href="/vauthenticator/sign-up">here</a></h3>
+    </div>
+    let features = JSON.parse(rawFeatures);
 
     return (
         <Template maxWidth="sm" classes={classes}>
@@ -35,15 +40,26 @@ const Login = withStyles(vauthenticatorStyles)((props) => {
                                         type="password"
                                         suffix={<Fingerprint fontSize="large"/>}/>
 
-                    <Separator />
+                    <Separator/>
 
-                    <FormButton type="submit" label="Login" />
+                    <FormButton type="submit" label="Login"/>
                 </div>
+
+
+                <Grid style={{marginTop: '10px'}}>
+                    <Divider/>
+                </Grid>
+
+
+                <Grid style={{marginTop: '10px'}}>
+                    {features.signup === true ? signUpLink : ""}
+                </Grid>
             </form>
         </Template>
     )
 })
 
 if (document.getElementById('app')) {
-    ReactDOM.render(<Login/>, document.getElementById('app'));
+    let features = document.getElementById('features').innerHTML
+    ReactDOM.render(<Login rawFeatures={features}/>, document.getElementById('app'));
 }

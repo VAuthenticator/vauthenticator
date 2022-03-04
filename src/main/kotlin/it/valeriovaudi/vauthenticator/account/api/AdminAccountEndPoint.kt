@@ -1,30 +1,33 @@
-package it.valeriovaudi.vauthenticator.account
+package it.valeriovaudi.vauthenticator.account.api
 
+import it.valeriovaudi.vauthenticator.account.Account
+import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import org.springframework.http.ResponseEntity.*
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 
 @RestController
-class AccountEndPoint(private val accountRepository: AccountRepository) {
+class AdminAccountEndPoint(private val accountRepository: AccountRepository) {
 
-    @GetMapping("/api/accounts")
+    @GetMapping("/api/admin/accounts")
     fun findAll() =
             ok(
                     accountRepository.findAll()
                             .map { AccountConverter.fromDomainToAccountApiRepresentation(it) }
             )
 
-    @GetMapping("/api/accounts/{email}/email")
-    fun findAccountFor(@PathVariable email: String) =
+    @GetMapping("/api/admin/accounts/{email}/email")
+    fun findAccountFor(@PathVariable email: String, authentication: Authentication) =
             ok(
                     accountRepository.accountFor(email)
                             .map { AccountConverter.fromDomainToAccountApiRepresentation(it) }
             )
 
-    @PutMapping("/api/accounts/{email}/email")
+    @PutMapping("/api/admin/accounts/{email}/email")
     fun saveAccount(@PathVariable email: String,
-                    @RequestBody representation: AccountApiRepresentation) =
+                    @RequestBody representation: AdminAccountApiRepresentation) =
             accountRepository.accountFor(email)
-                    .map {account ->
+                    .map { account ->
                         accountRepository.save(
                                 account.copy(
                                         accountNonLocked = !representation.accountLocked,
@@ -34,12 +37,19 @@ class AccountEndPoint(private val accountRepository: AccountRepository) {
                         )
                         noContent().build<Unit>()
                     }
-                    .orElse(notFound().build<Unit>())
+                    .orElse(notFound().build())
+
 }
 
-data class AccountApiRepresentation(
+data class AdminAccountApiRepresentation(
         val accountLocked: Boolean = true,
         val enabled: Boolean = true,
         var email: String = "",
         val authorities: List<String> = emptyList()
 )
+
+object AccountConverter {
+    fun fromDomainToAccountApiRepresentation(domain: Account): AdminAccountApiRepresentation =
+            AdminAccountApiRepresentation(!domain.accountNonLocked, domain.enabled, domain.email, domain.authorities)
+
+}

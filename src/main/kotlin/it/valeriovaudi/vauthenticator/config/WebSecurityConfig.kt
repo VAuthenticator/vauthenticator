@@ -1,6 +1,6 @@
 package it.valeriovaudi.vauthenticator.config
 
-import it.valeriovaudi.vauthenticator.account.AccountRepository
+import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import it.valeriovaudi.vauthenticator.security.userdetails.AccountUserDetailsService
 import org.springframework.context.annotation.Bean
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -9,18 +9,20 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 
+const val adminRole = "VAUTHENTICATOR_ADMIN"
+
+private const val LOG_IN_URL_PAGE = "/login"
+private val WHITE_LIST = arrayOf(
+        "/logout",
+        "/oidc/logout",
+        "/login",
+        "/webjars/**",
+        "/api/**",
+        "/secure/**"
+)
+
 @EnableWebSecurity
 class WebSecurityConfig {
-
-    private val LOG_IN_URL_PAGE = "/login"
-    private val WHITE_LIST = arrayOf(
-            "/logout",
-            "/oidc/logout",
-            "/login",
-            "/webjars/**",
-            "/api/**",
-            "/secure/**"
-    )
 
     @Bean
     fun defaultSecurityFilterChain(http: HttpSecurity,
@@ -39,8 +41,13 @@ class WebSecurityConfig {
         http.requestMatchers().antMatchers(*WHITE_LIST)
                 .and()
                 .authorizeRequests()
-                .mvcMatchers("/api/**", "/secure/**")
-                .hasAuthority("VAUTHENTICATOR_ADMIN")
+                .mvcMatchers("/api/admin/accounts/**", "/secure/**")
+                .hasAuthority(adminRole)
+                .and()
+                .authorizeRequests()
+                .mvcMatchers("/api/accounts")
+                .permitAll()
+
 
         http.userDetailsService(accountUserDetailsService)
         http.oauth2ResourceServer().jwt()

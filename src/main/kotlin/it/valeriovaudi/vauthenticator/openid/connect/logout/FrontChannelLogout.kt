@@ -1,7 +1,7 @@
 package it.valeriovaudi.vauthenticator.openid.connect.logout
 
-import com.nimbusds.jose.JWSObject
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
+import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplication.Companion.clientAppIdFrom
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -37,13 +37,11 @@ class JdbcFrontChannelLogout(
     private val logger: Logger = LoggerFactory.getLogger(JdbcFrontChannelLogout::class.java)
 
     override fun getFederatedLogoutUrls(idTokenHint: String): List<String> {
-        val clientAppId = clientAppIdFrom(idTokenHint)
+        val clientAppId = clientAppIdFrom(idTokenHint).content
         val clientAppLogoutUri = applicationRepository.findOne(ClientAppId(clientAppId)).map { it.logoutUri.content }.orElse("")
         val logoutUrisWithAuthServer = listOf("$authServerBaseUrl/logout", clientAppLogoutUri)
         logger.debug("logoutUrisWithAuthServer: $logoutUrisWithAuthServer")
         return logoutUrisWithAuthServer
     }
 
-    private fun clientAppIdFrom(idTokenHint: String) =
-            JWSObject.parse(idTokenHint).payload.toJSONObject().get("azp") as String
 }

@@ -1,6 +1,8 @@
-package it.valeriovaudi.vauthenticator.account
+package it.valeriovaudi.vauthenticator.account.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import it.valeriovaudi.vauthenticator.account.AccountTestFixture
+import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -18,7 +20,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import java.util.*
 
 @ExtendWith(MockitoExtension::class)
-internal class AccountEndPointTest {
+internal class AdminAccountEndPointTest {
 
     lateinit var mokMvc: MockMvc
 
@@ -29,37 +31,37 @@ internal class AccountEndPointTest {
 
     @BeforeEach
     internal fun setUp() {
-        mokMvc = MockMvcBuilders.standaloneSetup(AccountEndPoint(accountRepository)).build()
+        mokMvc = MockMvcBuilders.standaloneSetup(AdminAccountEndPoint(accountRepository)).build()
     }
 
     @Test
     internal fun `find all accounts`() {
         val expectedRepresentation = listOf(
-                AccountApiRepresentation(email = "anemail@domain.com"),
-                AccountApiRepresentation(email = "anotheremail@domain.com")
+                AdminAccountApiRepresentation(email = "anemain@domain.com"),
+                AdminAccountApiRepresentation(email = "anotheremain@domain.com")
         )
         val masterAccount = AccountTestFixture.anAccount()
 
         given(accountRepository.findAll())
                 .willReturn(
                         listOf(
-                                masterAccount.copy(email = "anemail@domain.com"),
-                                masterAccount.copy(email = "anotheremail@domain.com")
+                                masterAccount.copy(email = "anemain@domain.com"),
+                                masterAccount.copy(email = "anotheremain@domain.com")
                         )
                 )
-        mokMvc.perform(get("/api/accounts"))
+        mokMvc.perform(get("/api/admin/accounts"))
                 .andExpect(content().string(objectMapper.writeValueAsString(expectedRepresentation)))
     }
 
     @Test
     internal fun `set an account as disabled`() {
-        val representation = AccountApiRepresentation(email = "anemail@domain.com", enabled = false)
+        val representation = AdminAccountApiRepresentation(email = "anemail@domain.com", enabled = false)
         val masterAccount = AccountTestFixture.anAccount().copy(enabled = false)
 
-        given(accountRepository.accountFor("anemail@domain.com"))
+        given(accountRepository.accountFor("anemain@domain.com"))
                 .willReturn(Optional.of(AccountTestFixture.anAccount()))
 
-        mokMvc.perform(put("/api/accounts/anemail@domain.com/email")
+        mokMvc.perform(put("/api/admin/accounts/anemain@domain.com/email")
                 .contentType(APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(representation)))
                 .andExpect(status().isNoContent)

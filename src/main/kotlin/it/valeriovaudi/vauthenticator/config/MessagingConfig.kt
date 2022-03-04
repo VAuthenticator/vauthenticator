@@ -8,7 +8,7 @@ import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider
 import software.amazon.awssdk.services.sqs.SqsAsyncClient
 
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 class MessagingConfig {
 
 
