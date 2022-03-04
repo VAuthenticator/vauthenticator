@@ -6,7 +6,10 @@ metadata:
   namespace: {{ .Release.Namespace }}
   annotations:
     kubernetes.io/ingress.class: {{ .Values.ingress.class }}
-    {{- toYaml .Values.ingress.annotations | nindent 4 }}
+    {{- with .Values.ingress.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+
 spec:
   rules:
     - http:
