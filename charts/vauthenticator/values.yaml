@@ -84,6 +84,8 @@ service:
   type: ClusterIP
 
 ingress:
+  annotations: {}
+  tls: {}
   enabled: true
   class: nginx
 
