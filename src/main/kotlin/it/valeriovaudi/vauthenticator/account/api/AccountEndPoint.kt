@@ -6,6 +6,7 @@ import it.valeriovaudi.vauthenticator.extentions.stripBearerPrefix
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplication
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.status
 import org.springframework.web.bind.annotation.*
 import java.util.*
@@ -17,7 +18,7 @@ class AccountEndPoint(private val signUpUseCase: SignUpUseCase) {
     @PostMapping("/api/accounts")
     fun signup(@RequestHeader("Authorization", required = false) authorization: String?,
                @ModelAttribute("clientId") clientId: String?,
-               @RequestBody representation: FinalAccountRepresentation) {
+               @RequestBody representation: FinalAccountRepresentation): ResponseEntity<Unit> {
         SignUpAccountConverter.fromRepresentationToSignedUpAccount(representation)
                 .let { account ->
                     Optional.ofNullable(authorization).map { executeSignUp(ClientApplication.clientAppIdFrom(it.stripBearerPrefix()), account) }
@@ -26,7 +27,7 @@ class AccountEndPoint(private val signUpUseCase: SignUpUseCase) {
                                         .orElseThrow()
                             }
                 }
-        status(HttpStatus.CREATED).build<Unit>()
+        return status(HttpStatus.CREATED).build<Unit>()
     }
 
     private fun executeSignUp(clientAppId: ClientAppId, account: Account) {

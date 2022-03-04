@@ -9,7 +9,7 @@ import vauthenticatorStyles from "../component/styles";
 const SuccessfulSignUpPage = withStyles(vauthenticatorStyles)((props) => {
     const {classes} = props;
     return (
-        <Template maxWidth="sm" classes={classes}>
+        <Template maxWidth="lg" classes={classes}>
             <Typography variant="h3" component="h3">
                 <VpnKey fontSize="large"/> Sign Up on VAuthenticator
             </Typography>
@@ -19,7 +19,7 @@ const SuccessfulSignUpPage = withStyles(vauthenticatorStyles)((props) => {
             </Grid>
 
             <Typography variant="h3" component="h3">
-                <VpnKey fontSize="large"/> Sign Up on VAuthenticator succeeded
+                Sign Up on VAuthenticator succeeded
             </Typography>
         </Template>
     )

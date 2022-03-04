@@ -74,7 +74,13 @@ const SignUpPage = withStyles(vauthenticatorStyles)((props) => {
                                 "firstName": firstName,
                                 "lastName": lastName
                             })
-                                // .then(r => history.push("/succeeded"))
+                                .then(r => {
+                                    console.log(r)
+                                    window.alert(r.status)
+                                    if(r.status == 201){
+                                        history.push("/succeeded")
+                                    }
+                                })
                         }}
                         labelPrefix={<GroupAdd fontSize="large"/>}
                         label={"Sign Up"}/>
