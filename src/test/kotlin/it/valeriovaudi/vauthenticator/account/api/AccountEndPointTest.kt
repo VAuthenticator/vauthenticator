@@ -42,6 +42,7 @@ internal class AccountEndPointTest {
         val clientAppId = "A_CLIENT_APP_ID"
         mokMvc.perform(MockMvcRequestBuilders.post("/api/accounts")
                 .contentType(MediaType.APPLICATION_JSON)
+                .sessionAttr("clientId", "clientId")
                 .header("Authorization", "Bearer ${TestingFixture.simpleJwtFor(clientAppId)}")
                 .content(objectMapper.writeValueAsString(representation)))
                 .andExpect(MockMvcResultMatchers.status().isCreated)
