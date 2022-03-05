@@ -15,12 +15,16 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Tag snapshot
-        uses: tvdias/github-tagger@v0.0.1
+      - name: Create tag
+        uses: actions/github-script@v5
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{github.event.inputs.version}}
-
+          script: |
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'refs/tags/${{github.event.inputs.version}}',
+              sha: context.sha
+            })
 
       - name: Configure Git
         run: |
