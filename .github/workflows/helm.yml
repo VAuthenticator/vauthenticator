@@ -19,7 +19,7 @@ jobs:
         uses: tvdias/github-tagger@v0.0.1
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{github.event.inputs.action}}
+          tag: ${{github.event.inputs.version}}
 
 
       - name: Configure Git
