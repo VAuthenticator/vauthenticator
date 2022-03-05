@@ -19,12 +19,9 @@ jobs:
         uses: actions/github-script@v5
         with:
           script: |
-            github.rest.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: 'refs/tags/${{github.event.inputs.version}}',
-              sha: context.sha
-            })
+            git tag -a ${{github.event.inputs.version}} -m "tag a new vauthenticator version"
+            git push origin ${{github.event.inputs.version}}
+         
 
       - name: Configure Git
         run: |
