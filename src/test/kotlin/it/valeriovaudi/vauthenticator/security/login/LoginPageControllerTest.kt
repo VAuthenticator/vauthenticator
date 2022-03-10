@@ -1,0 +1,3 @@
+package it.valeriovaudi.vauthenticator.security.login
+
+internal class LoginPageControllerTest
