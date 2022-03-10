@@ -84,6 +84,7 @@ service:
   type: ClusterIP
 
 ingress:
+  host: "*"
   annotations: {}
   tls: {}
   enabled: true
