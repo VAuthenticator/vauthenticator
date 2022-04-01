@@ -2,4 +2,5 @@ spring:
   application:
     name: vauthenticator
 
+
 iamUserAwsCredentialsProvider: true

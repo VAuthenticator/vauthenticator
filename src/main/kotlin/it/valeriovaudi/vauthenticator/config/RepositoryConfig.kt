@@ -41,7 +41,7 @@ class RepositoryConfig {
 
 }
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 class DynamoDbRepositoryConfig {
 
     @Bean

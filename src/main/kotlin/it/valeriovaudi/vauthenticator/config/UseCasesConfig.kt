@@ -1,14 +1,19 @@
 package it.valeriovaudi.vauthenticator.config
 
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
+import it.valeriovaudi.vauthenticator.account.signup.SignUpConfirmationMailConfiguration
+import it.valeriovaudi.vauthenticator.account.signup.SignUpConfirmationMailSender
 import it.valeriovaudi.vauthenticator.account.signup.SignUpUseCase
+import it.valeriovaudi.vauthenticator.mail.MailSenderService
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ReadClientApplication
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.StoreClientApplication
 import it.valeriovaudi.vauthenticator.security.VAuthenticatorPasswordEncoder
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
+@EnableConfigurationProperties(SignUpConfirmationMailConfiguration::class)
 @Configuration(proxyBeanMethods = false)
 class UseCasesConfig {
     @Bean
@@ -22,6 +27,9 @@ class UseCasesConfig {
 
     @Bean
     fun signUpUseCase(clientAccountRepository: ClientApplicationRepository,
-                      accountRepository: AccountRepository) =
-            SignUpUseCase(clientAccountRepository, accountRepository)
+                      accountRepository: AccountRepository,
+                      signUpConfirmationMailConfiguration: SignUpConfirmationMailConfiguration,
+                      mailSenderService: MailSenderService): SignUpUseCase {
+        return SignUpUseCase(clientAccountRepository, accountRepository, SignUpConfirmationMailSender(mailSenderService, signUpConfirmationMailConfiguration))
+    }
 }
