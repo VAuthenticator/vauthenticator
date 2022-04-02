@@ -10,7 +10,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-        -
+
       - name: install nodejs
         run: |
           sudo apt -y update
