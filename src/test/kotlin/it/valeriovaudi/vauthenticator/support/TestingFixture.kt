@@ -54,7 +54,7 @@ object TestingFixture {
                     StaticCredentialsProvider.create(
                             AwsBasicCredentials.create("ACCESS_KEY_ID", "SECRET_ACCESS_KEY"))
             ).region(Region.US_EAST_1)
-            .endpointOverride(URI.create("http://localhost:4566"))
+            .endpointOverride(URI.create("http://localhost:8000"))
             .build()
 
     fun initRoleTests(roleRepository: DynamoDbClient) {

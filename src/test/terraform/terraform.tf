@@ -9,6 +9,6 @@ terraform {
 
 provider "aws" {
   endpoints {
-    dynamodb = "http://localhost:4564"
+    dynamodb = "http://localhost:8000"
   }
 }
