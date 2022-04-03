@@ -34,10 +34,12 @@ open class SignUpConfirmationMailSender(
         private val mailConfiguration: SignUpConfirmationMailConfiguration) {
 
     open fun sendConfirmation(account: Account) {
-        mailSenderService.send(MailMessage(account.email,
-                mailConfiguration.from,
-                mailConfiguration.subject,
-                mailConfiguration.bodyTemplate.format(account.firstName)))
+        if(mailConfiguration.enabled) {
+            mailSenderService.send(MailMessage(account.email,
+                    mailConfiguration.from,
+                    mailConfiguration.subject,
+                    mailConfiguration.bodyTemplate.format(account.firstName)))
+        }
     }
 }
 

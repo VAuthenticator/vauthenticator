@@ -33,7 +33,7 @@ internal class SignUpConfirmationMailSenderTest {
 
     @Test
     internal fun `when a confirmation mail is sent`() {
-        val underTest = SignUpConfirmationMailSender(mailSenderService, SignUpConfirmationMailConfiguration("mail@mail.com", "signup to vauthenticator succeeded", "hi %s your signup to vauthenticator succeeded"))
+        val underTest = SignUpConfirmationMailSender(mailSenderService, SignUpConfirmationMailConfiguration(true, "mail@mail.com", "signup to vauthenticator succeeded", "hi %s your signup to vauthenticator succeeded"))
         underTest.sendConfirmation(anAccount())
 
         val mail = greenMail.receivedMessages[0]
@@ -42,6 +42,18 @@ internal class SignUpConfirmationMailSenderTest {
         Assertions.assertEquals("mail@mail.com", mail.from[0].toString())
         Assertions.assertEquals("signup to vauthenticator succeeded", mail.subject)
         Assertions.assertEquals("hi A First Name your signup to vauthenticator succeeded", mail.content.toString().trim())
+
+
+    }
+
+    @Test
+    internal fun `when a confirmation mail is disabled`() {
+        val underTest = SignUpConfirmationMailSender(mailSenderService, SignUpConfirmationMailConfiguration(false, "mail@mail.com", "signup to vauthenticator succeeded", "hi %s your signup to vauthenticator succeeded"))
+        underTest.sendConfirmation(anAccount())
+
+        val mails = greenMail.receivedMessages.size
+
+        Assertions.assertEquals(0, mails)
 
     }
 }
