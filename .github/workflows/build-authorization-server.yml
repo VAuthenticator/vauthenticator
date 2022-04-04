@@ -1,0 +1,64 @@
+name: build vauthenticator authorization server
+
+on:
+  push: { }
+  workflow_dispatch: { }
+
+jobs:
+  provisioning:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: install openjdk
+        run: |
+          sudo apt-get update && sudo apt-get install openjdk-17-jdk
+          sudo update-alternatives --set java /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+          sudo update-alternatives --set javac /usr/lib/jvm/java-17-openjdk-amd64/bin/javac
+          java -version
+
+      - name: build testing environment
+        run: |
+          git clone https://github.com/mrFlick72/aws-messaging-java-client.git
+          cd aws-messaging-java-client
+          mvn clean install
+
+      - name: build testing environment
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 0.13.5
+      - run: |
+          cd authorization-server src/test/resources
+          docker-compose up &
+          sleep 30s
+          sudo chown -R $USER:$USER *
+          chmod 777 -R docker/dynamodb
+          export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+          export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          export AWS_REGION=${{ secrets.AWS_REGION }}
+
+          cd authorization-server/../terraform/
+
+          terraform init
+          terraform apply -auto-approve
+
+      - name: Build
+        run: |
+          export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+          mvn install
+
+      - name: docker push
+        run: |
+          cd authorization-server
+
+          if [[ ${GITHUB_REF##*/} == 'master' ]]
+          then
+            DOCKER_TAG="latest"
+          else
+            DOCKER_TAG="${GITHUB_REF##*/}"
+          fi
+          echo "$DOCKER_TAG"
+          docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
+          docker build . -t mrflick72/vauthenticator-k8s:$DOCKER_TAG
+          docker push mrflick72/vauthenticator-k8s:$DOCKER_TAG
