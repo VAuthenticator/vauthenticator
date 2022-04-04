@@ -25,7 +25,6 @@ internal class JavaMailSenderServiceTest {
         javaMailSender.port = greenMail.smtp.port
         javaMailSender.host = "127.0.0.1"
         javaMailSender.username = "user"
-        javaMailSender.password = "pwd"
         mailSenderService = JavaMailSenderService(javaMailSender)
     }
 
