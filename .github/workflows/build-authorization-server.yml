@@ -29,7 +29,7 @@ jobs:
         with:
           terraform_version: 0.13.5
       - run: |
-          cd authorization-server src/test/resources
+          cd authorization-server/src/test/resources
           docker-compose up &
           sleep 30s
           sudo chown -R $USER:$USER *
@@ -38,7 +38,7 @@ jobs:
           export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
           export AWS_REGION=${{ secrets.AWS_REGION }}
 
-          cd authorization-server/../terraform/
+          cd ../terraform/
 
           terraform init
           terraform apply -auto-approve
