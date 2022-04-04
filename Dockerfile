@@ -1,4 +1,4 @@
-FROM openjdk:11
+FROM openjdk:17
 
 ADD target/vauthenticator.jar /usr/local/vauthenticator/
 

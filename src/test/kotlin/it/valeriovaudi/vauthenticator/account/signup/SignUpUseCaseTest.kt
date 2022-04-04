@@ -25,9 +25,12 @@ internal class SignUpUseCaseTest {
     @Mock
     lateinit var clientAccountRepository: ClientApplicationRepository
 
+    @Mock
+    lateinit var signUpConfirmationMailSender: SignUpConfirmationMailSender
+
     @Test
     internal fun `when a new account is created`() {
-        val underTest = SignUpUseCase(clientAccountRepository, accountRepository)
+        val underTest = SignUpUseCase(clientAccountRepository, accountRepository, signUpConfirmationMailSender)
 
         val clientAppId = ClientAppId("an_id")
         val aClientApp = ClientAppFixture.aClientApp(clientAppId).copy(scopes = Scopes(setOf(SIGN_UP)))
@@ -39,11 +42,12 @@ internal class SignUpUseCaseTest {
         underTest.execute(clientAppId, account)
 
         verify(accountRepository).create(account)
+        verify(signUpConfirmationMailSender).sendConfirmation(account)
     }
 
     @Test
     internal fun `when a new account is not created due to client app does not support sign up`() {
-        val underTest = SignUpUseCase(clientAccountRepository, accountRepository)
+        val underTest = SignUpUseCase(clientAccountRepository, accountRepository, signUpConfirmationMailSender)
 
         val clientAppId = ClientAppId("an_id")
         val aClientApp = ClientAppFixture.aClientApp(clientAppId)
