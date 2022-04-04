@@ -28,6 +28,12 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/software.amazon.awssdk/sts -->
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
