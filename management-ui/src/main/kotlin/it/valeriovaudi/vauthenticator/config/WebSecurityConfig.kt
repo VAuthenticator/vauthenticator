@@ -1,7 +1,5 @@
 package it.valeriovaudi.vauthenticator.config
 
-import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
-import it.valeriovaudi.vauthenticator.security.userdetails.AccountUserDetailsService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -25,8 +23,7 @@ private val WHITE_LIST = arrayOf(
 class WebSecurityConfig {
 
     @Bean
-    fun defaultSecurityFilterChain(http: HttpSecurity,
-                                   accountUserDetailsService: AccountUserDetailsService): SecurityFilterChain {
+    fun defaultSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http.csrf().disable()
                 .formLogin()
                 .loginProcessingUrl("/login")
@@ -49,7 +46,6 @@ class WebSecurityConfig {
                 .permitAll()
 
 
-        http.userDetailsService(accountUserDetailsService)
         http.oauth2ResourceServer().jwt()
         return http.build()
 
@@ -60,7 +56,4 @@ class WebSecurityConfig {
         return BCryptPasswordEncoder(12)
     }
 
-    @Bean
-    fun accountUserDetailsService(userRepository: AccountRepository) =
-            AccountUserDetailsService(userRepository)
 }
