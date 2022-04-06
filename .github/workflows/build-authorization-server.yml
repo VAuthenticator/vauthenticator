@@ -11,6 +11,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: install nodejs
+        run: |
+          sudo apt -y update
+          sudo apt -y install nodejs
+          sudo apt -y install npm
+
       - name: install openjdk
         run: |
           sudo apt-get update && sudo apt-get install openjdk-17-jdk
@@ -42,6 +48,12 @@ jobs:
 
           terraform init
           terraform apply -auto-approve
+
+      - name: Build frontend artifacts
+        run: |
+          cd management-ui/src/main/frontend
+          npm install
+          npm run-script build
 
       - name: Build
         run: |
