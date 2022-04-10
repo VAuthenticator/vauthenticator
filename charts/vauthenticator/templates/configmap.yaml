@@ -120,6 +120,7 @@ data:
     iamServiceAccountAwsCredentialsProvider: true
     {{ end }}
 
+{{- if eq .Values.managementUi.enabled true }}
 
 ---
 
@@ -131,9 +132,11 @@ metadata:
 data:
   application.yml: |
     endSessionWithoutDiscovery: true
-    oidcEndSessionUrl: ${vauthenticator.host}//${server.servlet.context-path}/oidc/logout
+    oidcEndSessionUrl: ${vauthenticator.host}/${server.servlet.context-path}/oidc/logout
     auth.oidcIss: ${vauthenticator.host}/${server.servlet.context-path}
     logging.file.name: /var/log/onlyone-portal/logs/${spring.application.name}.log
+
+    postLogoutRedirectUri: ${vauthenticator.host}/secure/admin/index
 
     spring:
       main:
@@ -141,12 +144,31 @@ data:
 
       security:
         oauth2:
-          resourceserver:
-            jwt:
-              jwk-set-uri: http://localhost:${server.port}${server.servlet.context-path}/oauth2/jwks
+          client:
+            registration:
+              client:
+                client-id: vauthenticator-management-ui
+                client-secret: secret
+                client-name: VAuthenticator Management UI
+                provider: vauthenticator
+                scope:
+                  - openid
+                  - profile
+                  - email
+                redirect-uri: ${vauthenticator.host}/${server.servlet.context-path}/login/oauth2/code/client
+                client-authentication-method: basic
+                authorization-grant-type: authorization_code
+            provider:
+              vauthenticator:
+                authorization-uri: ${vauthenticator.host}/vauthenticator/oauth2/authorize
+                token-uri: ${vauthenticator.host}/vauthenticator/oauth2/token
+                user-info-uri: ${vauthenticator.host}/vauthenticator/userinfo
+                user-info-authentication-method: header
+                jwk-set-uri: ${vauthenticator.host}/vauthenticator/oauth2/jwks
+                user-name-attribute: email
 
       redis:
-        database: {{ .Values.application.redis.database }}
+        database: {{ .Values.managementUi.redis.database }}
         host: {{ .Values.application.redis.host }}
 
       sleuth:
@@ -154,10 +176,10 @@ data:
           enabled: false
 
     server:
-      port: {{ .Values.application.server.port }}
+      port: {{ .Values.managementUi.server.port }}
       forward-headers-strategy: framework
       servlet:
-        context-path: {{ .Values.application.server.servlet.contextPath }}
+        context-path: {{ .Values.managementUi.server.servlet.contextPath }}
       http2:
         enabled: true
       compression:
@@ -180,13 +202,12 @@ data:
           show-details: ALWAYS
 
     vauthenticator:
+      session-management:
+        rp-iframe:
+          logout-uri: ${server.servlet.context-path}/oidc_logout.html
+      client:
+        registrationId: client
       host: {{ .Values.application.host }}
 
 
-    {{- if eq .Values.aws.iamUser.enabled true }}
-    iamUserAwsCredentialsProvider: true
-    {{ end }}
-
-    {{- if eq .Values.aws.eks.serviceAccount.enabled true }}
-    iamServiceAccountAwsCredentialsProvider: true
     {{ end }}

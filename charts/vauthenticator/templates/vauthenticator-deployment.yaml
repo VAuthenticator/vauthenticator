@@ -4,13 +4,13 @@ metadata:
   name: {{ include "vauthenticator.name" . }}
   namespace: {{ .Release.Namespace }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.application.replicaCount }}
   selector:
     matchLabels:
   {{- include "vauthenticator.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
+      {{- with .Values.application.podAnnotations }}
       annotations:
       {{- toYaml . | nindent 8 }}
       {{- end }}

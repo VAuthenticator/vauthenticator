@@ -95,7 +95,7 @@ application:
       waitTimeSeconds: 20
 
 
-management-ui:
+managementUi:
   enabled: false
   pod:
     probes:

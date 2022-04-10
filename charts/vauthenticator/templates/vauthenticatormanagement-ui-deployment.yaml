@@ -1,16 +1,17 @@
+{{- if eq .Values.managementUi.enabled true }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "vauthenticator.name" . }}
+  name: {{ include "vauthenticator-management-ui.name" . }}
   namespace: {{ .Release.Namespace }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.managementUi.replicaCount }}
   selector:
     matchLabels:
-  {{- include "vauthenticator.selectorLabels" . | nindent 6 }}
+  {{- include "vauthenticator-management-ui.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
+      {{- with .Values.managementUi.podAnnotations }}
       annotations:
       {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -18,14 +19,14 @@ spec:
       {{- with .Values.managementUi.podAnnotations }}
       {{- toYaml .Values.managementUi.lables | nindent 8 }}
       {{ end }}
-    {{- include "vauthenticator.selectorLabels" . | nindent 8 }}
+    {{- include "vauthenticator-management-ui.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
       {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- if eq .Values.aws.eks.serviceAccount.enabled true }}
-      serviceAccountName: {{ include "vauthenticator.name" . }}
+      serviceAccountName: {{ include "vauthenticator-management-ui.name" . }}
         {{ end }}
       volumes:
         {{- if eq .Values.logging.enabled true }}
@@ -37,7 +38,7 @@ spec:
         - name: application-logs
           emptyDir: { }
 
-        - name: application-config
+        - name: management-ui-config
           configMap:
             name: application-config
 
@@ -61,7 +62,7 @@ spec:
             - name: application-logs
               mountPath: /var/log/onlyone-portal/logs/
 
-            - name: application-config
+            - name: management-ui-config
               subPath: application.yml
               mountPath: /usr/local/onlyone-portal/config/application.yml
 
@@ -97,4 +98,5 @@ spec:
               value: {{ .Values.aws.region }}
 
             - name: spring.config.additional-location
-              value: /usr/local/onlyone-portal/config/
+              value: /usr/local/onlyone-portal/config/   
+    {{ end }}
