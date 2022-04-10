@@ -51,7 +51,7 @@ jobs:
 
       - name: Build frontend artifacts
         run: |
-          cd management-ui/src/main/frontend
+          cd authorization-server/src/main/frontend
           npm install
           npm run-script build
 

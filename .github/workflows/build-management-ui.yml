@@ -32,7 +32,7 @@ jobs:
 
       - name: Build frontend artifacts
         run: |
-          cd authorization-server/src/main/frontend
+          cd management-ui/src/main/frontend
           npm install
           npm run-script build
 
