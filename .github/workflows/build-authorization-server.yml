@@ -58,6 +58,7 @@ jobs:
       - name: Build
         run: |
           export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+          cd authorization-server
           mvn install
 
       - name: docker push

@@ -26,6 +26,14 @@ jobs:
 
       - name: build testing environment
         run: |
+          export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+
+          git clone https://github.com/mrFlick72/client-security-starter.git
+          cd client-security-starter
+          mvn clean install -q
+
+      - name: build testing environment
+        run: |
           git clone https://github.com/mrFlick72/aws-messaging-java-client.git
           cd aws-messaging-java-client
           mvn clean install
