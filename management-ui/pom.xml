@@ -17,6 +17,16 @@
     <description>My OpenId Connect/OAuth2 Authorization Server</description>
 
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-client</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>it.valeriovaudi.vauthenticator.security</groupId>
+            <artifactId>client-security-starter</artifactId>
+            <version>1.4</version>
+        </dependency>
 
         <!-- https://mvnrepository.com/artifact/software.amazon.awssdk/sts -->
         <dependency>

@@ -1,11 +1,18 @@
 package it.valeriovaudi.vauthenticator.config
 
+import it.valeriovaudi.vauthenticator.security.clientsecuritystarter.filter.BearerTokenInterceptor
+import it.valeriovaudi.vauthenticator.security.clientsecuritystarter.filter.OAuth2TokenResolver
+import it.valeriovaudi.vauthenticator.security.clientsecuritystarter.user.VAuthenticatorOAuth2User
+import it.valeriovaudi.vauthenticator.security.clientsecuritystarter.user.VAuthenticatorOidcUserService
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService
+import org.springframework.security.oauth2.client.userinfo.CustomUserTypesOAuth2UserService
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.web.client.RestTemplate
 
 const val adminRole = "VAUTHENTICATOR_ADMIN"
 
@@ -22,13 +29,12 @@ private val WHITE_LIST = arrayOf(
 @Configuration(proxyBeanMethods = false)
 class WebSecurityConfig {
 
+    @Value("\${vauthenticator.client.registrationId}")
+    private lateinit var registrationId: String
+
     @Bean
     fun defaultSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http.csrf().disable()
-                .formLogin()
-                .loginProcessingUrl("/login")
-                .loginPage(LOG_IN_URL_PAGE)
-                .permitAll()
 
         http.logout()
                 .deleteCookies("opbs")
@@ -38,22 +44,33 @@ class WebSecurityConfig {
         http.requestMatchers().antMatchers(*WHITE_LIST)
                 .and()
                 .authorizeRequests()
-                .mvcMatchers("/api/admin/accounts/**", "/secure/**")
+                .mvcMatchers("/secure/**")
                 .hasAuthority(adminRole)
+
+
+        http.csrf().disable()
+                .authorizeRequests().mvcMatchers("/actuator/**", "/oidc_logout.html").permitAll()
                 .and()
-                .authorizeRequests()
-                .mvcMatchers("/api/accounts")
-                .permitAll()
+                .authorizeRequests().anyRequest().hasAnyRole(adminRole)
+                .and().oauth2Login().defaultSuccessUrl("/index")
+                .userInfoEndpoint()
+                .oidcUserService(vAuthenticatorOidcUserService())
 
 
-        http.oauth2ResourceServer().jwt()
+
         return http.build()
 
     }
 
-    @Bean
-    fun passwordEncoder(): PasswordEncoder {
-        return BCryptPasswordEncoder(12)
-    }
+    fun vAuthenticatorOidcUserService(): VAuthenticatorOidcUserService =
+            VAuthenticatorOidcUserService(OidcUserService(),
+                    CustomUserTypesOAuth2UserService(mapOf(registrationId to VAuthenticatorOAuth2User::class.java)))
 
+
+    @Bean
+    fun budgetRestTemplate(oAuth2TokenResolver: OAuth2TokenResolver): RestTemplate {
+        return RestTemplateBuilder()
+                .additionalInterceptors(BearerTokenInterceptor(oAuth2TokenResolver))
+                .build()
+    }
 }

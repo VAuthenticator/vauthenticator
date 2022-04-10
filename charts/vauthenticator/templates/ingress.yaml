@@ -1,12 +1,11 @@
-{{- if eq .Values.ingress.enabled true }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ include "vauthenticator.name" . }}
   namespace: {{ .Release.Namespace }}
   annotations:
-    kubernetes.io/ingress.class: {{ .Values.ingress.class }}
-    {{- with .Values.ingress.annotations }}
+    kubernetes.io/ingress.class: {{ .Values.application.ingress.class }}
+    {{- with .Values.application.ingress.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
 
@@ -22,9 +21,8 @@ spec:
                 name: {{ include "vauthenticator.name" . }}
                 port:
                   number: {{ .Values.application.server.port }}
-      host: {{  .Values.ingress.host }}
-    {{- with .Values.ingress.tls }}
+      host: {{  .Values.application.ingress.host }}
+    {{- with .Values.application.ingress.tls }}
   tls:
   {{- toYaml . | nindent 4}}
     {{- end }}
-  {{ end }}

@@ -46,18 +46,25 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 Selector labels
 */}}
 {{- define "vauthenticator.selectorLabels" -}}
-{{- toYaml .Values.selectorLabels }}
+{{- toYaml .Values.application.selectorLabels }}
 app.kubernetes.io/name: {{ include "vauthenticator.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
-{{/*
-Create the name of the service account to use
-*/}}
-{{- define "vauthenticator.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "vauthenticator.fullname" .) .Values.serviceAccount.name }}
-{{- else }}
-{{- default "default" .Values.serviceAccount.name }}
+{{- define "vauthenticator-management-ui.labels" -}}
+helm.sh/chart: {{ include "vauthenticator.chart" . }}
+{{ include "vauthenticator.selectorLabels" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{/*
+Selector labels
+*/}}
+{{- define "vauthenticator-management-ui.selectorLabels" -}}
+{{- toYaml .Values.application.selectorLabels }}
+app.kubernetes.io/name: {{ include "vauthenticator.name" . }}-management-ui
+app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}

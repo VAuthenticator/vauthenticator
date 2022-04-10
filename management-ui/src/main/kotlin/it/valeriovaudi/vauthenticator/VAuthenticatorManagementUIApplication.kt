@@ -5,8 +5,8 @@ import org.springframework.boot.runApplication
 
 
 @SpringBootApplication
-class VAuthenticatorApplication
+class VAuthenticatorManagementUIApplication
 
 fun main(args: Array<String>) {
-    runApplication<VAuthenticatorApplication>(*args)
+    runApplication<VAuthenticatorManagementUIApplication>(*args)
 }

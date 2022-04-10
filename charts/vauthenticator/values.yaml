@@ -2,20 +2,6 @@ in-namespace:
   redis:
     enabled: true
 
-replicaCount: 1
-
-image:
-  repository: mrflick72/vauthenticator-k8s
-  pullPolicy: Always
-  tag: "latest"
-
-lables: {}
-
-selectorLabels:
-  app: vauthenticator
-
-podAnnotations: {}
-
 aws:
   region: xxxxxxxxx
   iamUser:
@@ -36,6 +22,47 @@ logging:
     host: elasticsearch.host:9200
 
 application:
+  pod:
+    probes:
+      liveness:
+        initialDelaySeconds: 10
+        periodSeconds: 30
+      rediness:
+        initialDelaySeconds: 10
+        periodSeconds: 30
+
+  service:
+    type: ClusterIP
+
+  ingress:
+    host: "*"
+    annotations: { }
+    tls: { }
+    enabled: true
+    class: nginx
+
+
+  resources:
+    requests:
+      cpu: "256m"
+      memory: "256Mi"
+    limits:
+      cpu: "512m"
+      memory: "512Mi"
+  replicaCount: 1
+
+  image:
+    repository: mrflick72/vauthenticator-k8s
+    pullPolicy: Always
+    tag: "latest"
+
+  lables: { }
+
+  selectorLabels:
+    app: vauthenticator
+
+  podAnnotations: { }
+
   redis:
     database: 0
     host: vauthenticator-redis-master.auth.svc.cluster.local
@@ -67,43 +94,66 @@ application:
       visibilityTimeout: 20
       waitTimeSeconds: 20
 
+
+management-ui:
+  enabled: false
+  pod:
+    probes:
+      liveness:
+        initialDelaySeconds: 10
+        periodSeconds: 30
+      rediness:
+        initialDelaySeconds: 10
+        periodSeconds: 30
+
+  service:
+    type: ClusterIP
+
+  ingress:
+    host: "*"
+    annotations: { }
+    tls: { }
+    enabled: true
+    class: nginx
+
+
+  resources:
+    requests:
+      cpu: "256m"
+      memory: "256Mi"
+    limits:
+      cpu: "512m"
+      memory: "512Mi"
+
+  replicaCount: 1
+
+  image:
+    repository: mrflick72/vauthenticator-management-ui-k8s
+    pullPolicy: Always
+    tag: "latest"
+
+  lables: { }
+
+  selectorLabels:
+    app: vauthenticator
+
+  podAnnotations: { }
+
+  redis:
+    database: 1
+    host: vauthenticator-redis-master.auth.svc.cluster.local
+
+  server:
+    port: 8080
+    servlet:
+      contextPath: /vauthenticator-management-ui
+
+  host: http://application-example-host.com
+
+
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
-
-pod:
-  probes:
-    liveness:
-      initialDelaySeconds: 10
-      periodSeconds: 30
-    rediness:
-      initialDelaySeconds: 10
-      periodSeconds: 30
-
-service:
-  type: ClusterIP
-
-ingress:
-  host: "*"
-  annotations: {}
-  tls: {}
-  enabled: true
-  class: nginx
-
-istio:
-  enabled: false
-  gateway:
-    prefix: /vauthenticator
-    port: 80
-    host: application-example-host.com
-
-resources:
-  requests:
-    cpu: "256m"
-    memory: "256Mi"
-  limits:
-    cpu: "512m"
-    memory: "512Mi"
 
 redis:
   auth:

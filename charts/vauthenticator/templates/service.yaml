@@ -6,7 +6,7 @@ metadata:
   labels:
     {{- include "vauthenticator.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.service.type }}
+  type: {{ .Values.application.service.type }}
   ports:
     - port: {{ .Values.application.server.port }}
       name: http
