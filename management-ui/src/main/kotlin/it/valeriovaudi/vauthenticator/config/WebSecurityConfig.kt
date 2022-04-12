@@ -16,16 +16,6 @@ import org.springframework.web.client.RestTemplate
 
 const val adminRole = "VAUTHENTICATOR_ADMIN"
 
-private const val LOG_IN_URL_PAGE = "/login"
-private val WHITE_LIST = arrayOf(
-        "/logout",
-        "/oidc/logout",
-        "/login",
-        "/webjars/**",
-        "/api/**",
-        "/secure/**"
-)
-
 @Configuration(proxyBeanMethods = false)
 class WebSecurityConfig {
 
@@ -41,21 +31,18 @@ class WebSecurityConfig {
                 .invalidateHttpSession(true)
                 .logoutSuccessUrl("/secure/admin/index")
 
-        http.requestMatchers().antMatchers(*WHITE_LIST)
-                .and()
-                .authorizeRequests()
+        http.authorizeRequests()
                 .mvcMatchers("/secure/**")
                 .hasAuthority(adminRole)
+                .anyRequest().authenticated()
 
 
-        http.csrf().disable()
-                .authorizeRequests().mvcMatchers("/actuator/**", "/oidc_logout.html").permitAll()
+        http.authorizeRequests().mvcMatchers("/actuator/**", "/oidc_logout.html").permitAll()
                 .and()
                 .authorizeRequests().anyRequest().hasAnyRole(adminRole)
                 .and().oauth2Login().defaultSuccessUrl("/index")
                 .userInfoEndpoint()
                 .oidcUserService(vAuthenticatorOidcUserService())
-
 
 
         return http.build()

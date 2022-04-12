@@ -135,7 +135,7 @@ managementUi:
   lables: { }
 
   selectorLabels:
-    app: vauthenticator
+    app: vauthenticator-management-ui
 
   podAnnotations: { }
 

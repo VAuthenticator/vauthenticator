@@ -40,7 +40,7 @@ spec:
 
         - name: management-ui-config
           configMap:
-            name: application-config
+            name: management-ui-config
 
       containers:
         {{- if eq .Values.logging.enabled true }}
