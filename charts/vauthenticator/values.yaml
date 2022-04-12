@@ -72,7 +72,7 @@ application:
     servlet:
       contextPath: /vauthenticator
 
-  host: http://application-example-host.com
+  baseUrl: http://application-example-host.com
 
   dynamoDb:
     account:
@@ -148,7 +148,7 @@ managementUi:
     servlet:
       contextPath: /vauthenticator-management-ui
 
-  host: http://application-example-host.com
+  baseUrl: http://application-example-host.com
 
 
 imagePullSecrets: []

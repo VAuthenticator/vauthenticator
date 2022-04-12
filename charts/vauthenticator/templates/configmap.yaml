@@ -132,11 +132,11 @@ metadata:
 data:
   application.yml: |
     endSessionWithoutDiscovery: true
-    oidcEndSessionUrl: {{ .Values.application.host }}/oidc/logout
-    auth.oidcIss: {{ .Values.application.host }}
+    oidcEndSessionUrl: {{ .Values.application.baseUrl }}/oidc/logout
+    auth.oidcIss: {{ .Values.application.baseUrl }}
     logging.file.name: /var/log/onlyone-portal/logs/${spring.application.name}.log
 
-    postLogoutRedirectUri: {{ .Values.managementUi.host }}/secure/admin/index
+    postLogoutRedirectUri: {{ .Values.managementUi.baseUrl }}/secure/admin/index
 
     spring:
       main:
@@ -155,16 +155,16 @@ data:
                   - openid
                   - profile
                   - email
-                redirect-uri: {{ .Values.managementUi.host }}/login/oauth2/code/client
+                redirect-uri: {{ .Values.managementUi.baseUrl }}/login/oauth2/code/client
                 client-authentication-method: basic
                 authorization-grant-type: authorization_code
             provider:
               vauthenticator:
-                authorization-uri: {{ .Values.application.host }}/vauthenticator/oauth2/authorize
-                token-uri: {{ .Values.application.host }}/vauthenticator/oauth2/token
-                user-info-uri: {{ .Values.application.host }}/vauthenticator/userinfo
+                authorization-uri: {{ .Values.application.baseUrl }}/oauth2/authorize
+                token-uri: {{ .Values.application.baseUrl }}/oauth2/token
+                user-info-uri: {{ .Values.application.baseUrl }}/userinfo
                 user-info-authentication-method: header
-                jwk-set-uri: {{ .Values.application.host }}/vauthenticator/oauth2/jwks
+                jwk-set-uri: {{ .Values.application.baseUrl }}/oauth2/jwks
                 user-name-attribute: email
 
       redis:
@@ -207,7 +207,7 @@ data:
           logout-uri: ${server.servlet.context-path}/oidc_logout.html
       client:
         registrationId: client
-      host: {{ .Values.application.host }}
+      host: {{ .Values.application.baseUrl }}
 
 
     {{ end }}
