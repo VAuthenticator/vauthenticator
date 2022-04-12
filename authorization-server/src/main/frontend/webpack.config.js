@@ -45,6 +45,7 @@ module.exports = {
     },
     output: {
         filename: 'asset/[name]_bundle.js',
+        publicPath: "/",
         path: BUID_DIR
     }
 };

@@ -46,8 +46,8 @@ metadata:
 data:
   application.yml: |
     endSessionWithoutDiscovery: true
-    oidcEndSessionUrl: {{ .Values.application.host }}/${server.servlet.context-path}/oidc/logout
-    auth.oidcIss: {{ .Values.application.host }}/${server.servlet.context-path}
+    oidcEndSessionUrl: {{ .Values.application.baseUrl }}/${server.servlet.context-path}/oidc/logout
+    auth.oidcIss: {{ .Values.application.baseUrl }}/${server.servlet.context-path}
     logging.file.name: /var/log/onlyone-portal/logs/${spring.application.name}.log
 
     spring:
@@ -95,8 +95,6 @@ data:
           show-details: ALWAYS
 
     vauthenticator:
-      host: {{ .Values.application.host }}
-
       dynamo-db:
         account.table-name: {{ .Values.application.dynamoDb.account.tableName }}
         account.role.table-name: {{ .Values.application.dynamoDb.account.role.tableName }}

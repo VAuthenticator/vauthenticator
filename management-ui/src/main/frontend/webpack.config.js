@@ -39,7 +39,7 @@ module.exports = {
     },
     output: {
         filename: 'asset/[name]_bundle.js',
-        // publicPath: "/vauthenticator/",
+        publicPath: "/",
         path: BUID_DIR
     }
 };
