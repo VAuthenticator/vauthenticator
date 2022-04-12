@@ -28,31 +28,6 @@
             <version>1.4</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/software.amazon.awssdk/sts -->
-        <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>sts</artifactId>
-            <version>${aws.sdk.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-mail</artifactId>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/com.icegreen/greenmail -->
-        <dependency>
-            <groupId>com.icegreen</groupId>
-            <artifactId>greenmail</artifactId>
-            <version>1.6.7</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.icegreen</groupId>
-            <artifactId>greenmail-junit5</artifactId>
-            <version>1.6.7</version>
-            <scope>test</scope>
-        </dependency>
-
         <!-- web dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -83,46 +58,10 @@
             <version>3.0.0</version>
         </dependency>
 
-        <!-- persistence dependencies-->
-        <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>dynamodb</artifactId>
-            <version>${aws.sdk.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>kms</artifactId>
-            <version>${aws.sdk.version}</version>
-        </dependency>
-
-        <!-- start  security dependencies -->
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-oauth2-authorization-server</artifactId>
-            <version>${oauth2-authorization-server.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
-        </dependency>
-
         <!-- tracing dependencies -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-sleuth</artifactId>
-        </dependency>
-
-        <!-- messaging -->
-        <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>sqs</artifactId>
-            <version>${aws.sdk.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>it.valeriovaudi</groupId>
-            <artifactId>aws-messaging-java-client</artifactId>
-            <version>1.0</version>
         </dependency>
 
         <!-- kotlin dependencies -->
