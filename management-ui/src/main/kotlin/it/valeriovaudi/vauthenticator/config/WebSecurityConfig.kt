@@ -31,12 +31,6 @@ class WebSecurityConfig {
                 .invalidateHttpSession(true)
                 .logoutSuccessUrl("/secure/admin/index")
 
-        http.authorizeRequests()
-                .mvcMatchers("/secure/**")
-                .hasAuthority(adminRole)
-                .anyRequest().authenticated()
-
-
         http.authorizeRequests().mvcMatchers("/actuator/**", "/oidc_logout.html").permitAll()
                 .and()
                 .authorizeRequests().anyRequest().hasAnyRole(adminRole)
