@@ -1,5 +1,5 @@
 export function findAllRoles() {
-    return fetch("/vauthenticator/api/roles",
+    return fetch("/secure/api/roles",
         {
             method: "GET",
             headers: {
@@ -12,7 +12,7 @@ export function findAllRoles() {
 }
 
 export function deleteRoleFor(roleId) {
-    return fetch(`/vauthenticator/api/roles/${roleId}`,
+    return fetch(`/secure/api/roles/${roleId}`,
         {
             method: "DELETE",
             credentials: 'same-origin'
@@ -20,7 +20,7 @@ export function deleteRoleFor(roleId) {
 }
 
 export function saveRoleFor(role) {
-    return fetch("/vauthenticator/api/roles",
+    return fetch("/secure/api/roles",
         {
             method: "PUT",
             headers: {

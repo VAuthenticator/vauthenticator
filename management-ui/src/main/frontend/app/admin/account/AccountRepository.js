@@ -1,5 +1,5 @@
 export function findAccountFor(email) {
-    return fetch(`/vauthenticator/api/accounts/${email}/email`,
+    return fetch(`/secure/api/accounts/${email}/email`,
         {
             method: "GET",
             headers: {
@@ -12,7 +12,7 @@ export function findAccountFor(email) {
 }
 
 export function findAllAccounts() {
-    return fetch("/vauthenticator/api/accounts",
+    return fetch("/secure/api/accounts",
         {
             method: "GET",
             headers: {
@@ -25,7 +25,7 @@ export function findAllAccounts() {
 }
 
 export function saveAccountFor(account) {
-    return fetch(`/vauthenticator/api/accounts/${account.email}/email`,
+    return fetch(`/secure/api/accounts/${account.email}/email`,
         {
             method: "PUT",
             headers: {

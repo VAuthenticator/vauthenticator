@@ -1,0 +1,3 @@
+package it.valeriovaudi.vauthenticator.proxy
+
+internal class VAuthenticatorApiProxyTest

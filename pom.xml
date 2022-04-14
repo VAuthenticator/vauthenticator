@@ -33,12 +33,4 @@
         <module>authorization-server</module>
     </modules>
 
-    <dependencies>
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-registry-prometheus</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-    </dependencies>
-
 </project>

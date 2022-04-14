@@ -1,5 +1,5 @@
 export function findAllClientApplications() {
-    return fetch("/vauthenticator/api/client-applications",
+    return fetch("/secure/api/client-applications",
         {
             method: "GET",
             headers: {
@@ -12,7 +12,7 @@ export function findAllClientApplications() {
 }
 
 export function findClientApplicationFor(clientAppId) {
-    return fetch(`/vauthenticator/api/client-applications/${clientAppId}`,
+    return fetch(`/secure/api/client-applications/${clientAppId}`,
         {
             method: "GET",
             headers: {
@@ -25,7 +25,7 @@ export function findClientApplicationFor(clientAppId) {
 }
 
 export function saveClientApplicationFor(clientAppId, clientApp) {
-    return fetch(`/vauthenticator/api/client-applications/${clientAppId}`,
+    return fetch(`/secure/api/client-applications/${clientAppId}`,
         {
             method: "PUT",
             headers: {
@@ -38,7 +38,7 @@ export function saveClientApplicationFor(clientAppId, clientApp) {
 }
 
 export function resetSecretFor(clientAppId, secret) {
-    return fetch(`/vauthenticator/api/client-applications/${clientAppId}`,
+    return fetch(`/secure/api/client-applications/${clientAppId}`,
         {
             method: "PATCH",
             headers: {
@@ -51,7 +51,7 @@ export function resetSecretFor(clientAppId, secret) {
 }
 
 export function deleteClientApplicationFor(clientAppId) {
-    return fetch(`/vauthenticator/api/client-applications/${clientAppId}`,
+    return fetch(`/secure/api/client-applications/${clientAppId}`,
         {
             method: "DELETE",
             credentials: 'same-origin'
