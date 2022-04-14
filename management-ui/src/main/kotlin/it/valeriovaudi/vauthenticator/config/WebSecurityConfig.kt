@@ -33,8 +33,8 @@ class WebSecurityConfig {
 
         http.authorizeRequests().mvcMatchers("/actuator/**", "/oidc_logout.html").permitAll()
                 .and()
-                .authorizeRequests().anyRequest().hasAnyRole(adminRole)
-                .and().oauth2Login().defaultSuccessUrl("/index")
+                .authorizeRequests().anyRequest().hasAnyAuthority(adminRole)
+                .and().oauth2Login().defaultSuccessUrl("/secure/admin/index")
                 .userInfoEndpoint()
                 .oidcUserService(vAuthenticatorOidcUserService())
 
