@@ -26,6 +26,7 @@
         <aws.sdk.version>2.16.48</aws.sdk.version>
 
         <oauth2-authorization-server.version>0.2.3</oauth2-authorization-server.version>
+        <wiremock.version>2.27.2</wiremock.version>
     </properties>
 
     <modules>
