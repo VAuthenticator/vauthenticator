@@ -12,7 +12,6 @@
 
     <groupId>it.valeriovaudi</groupId>
     <artifactId>vauthenticator</artifactId>
-    <packaging>pom</packaging>
     <version>2.x</version>
 
     <name>vauthenticator</name>
