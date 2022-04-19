@@ -1,4 +1,4 @@
-name: build vauthenticator authorization server
+name: build vauthenticator
 
 on:
   push: { }
