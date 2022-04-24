@@ -1,7 +1,6 @@
 package it.valeriovaudi.vauthenticator.oauth2.clientapp
 
 import it.valeriovaudi.vauthenticator.extentions.*
-import org.springframework.security.crypto.password.PasswordEncoder
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 
 const val resourceId: String = "oauth2-resource"

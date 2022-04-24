@@ -6,9 +6,29 @@ metadata:
   labels:
     {{- include "vauthenticator.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.service.type }}
+  type: {{ .Values.application.service.type }}
   ports:
     - port: {{ .Values.application.server.port }}
       name: http
   selector:
     {{- include "vauthenticator.selectorLabels" . | nindent 4 }}
+
+{{- if eq .Values.managementUi.enabled true }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "vauthenticator-management-ui.name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "vauthenticator-management-ui.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.managementUi.service.type }}
+  ports:
+    - port: {{ .Values.managementUi.server.port }}
+      name: http
+  selector:
+    {{- include "vauthenticator-management-ui.selectorLabels" . | nindent 4 }}
+
+  {{ end }}

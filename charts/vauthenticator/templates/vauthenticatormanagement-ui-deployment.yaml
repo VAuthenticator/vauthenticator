@@ -1,34 +1,32 @@
+{{- if eq .Values.managementUi.enabled true }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "vauthenticator.name" . }}
+  name: {{ include "vauthenticator-management-ui.name" . }}
   namespace: {{ .Release.Namespace }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.managementUi.replicaCount }}
   selector:
     matchLabels:
-  {{- include "vauthenticator.selectorLabels" . | nindent 6 }}
+  {{- include "vauthenticator-management-ui.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
+      {{- with .Values.managementUi.podAnnotations }}
       annotations:
       {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-      {{- with .Values.podAnnotations }}
-      {{- toYaml .Values.lables | nindent 8 }}
+      {{- with .Values.managementUi.podAnnotations }}
+      {{- toYaml .Values.managementUi.lables | nindent 8 }}
       {{ end }}
-      {{- if eq .Values.istio.enabled true }}
-        sidecar.istio.io/inject: "true"
-      {{ end }}
-    {{- include "vauthenticator.selectorLabels" . | nindent 8 }}
+    {{- include "vauthenticator-management-ui.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
       {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- if eq .Values.aws.eks.serviceAccount.enabled true }}
-      serviceAccountName: {{ include "vauthenticator.name" . }}
+      serviceAccountName: {{ include "vauthenticator-management-ui.name" . }}
         {{ end }}
       volumes:
         {{- if eq .Values.logging.enabled true }}
@@ -40,9 +38,9 @@ spec:
         - name: application-logs
           emptyDir: { }
 
-        - name: application-config
+        - name: management-ui-config
           configMap:
-            name: application-config
+            name: management-ui-config
 
       containers:
         {{- if eq .Values.logging.enabled true }}
@@ -64,30 +62,30 @@ spec:
             - name: application-logs
               mountPath: /var/log/onlyone-portal/logs/
 
-            - name: application-config
+            - name: management-ui-config
               subPath: application.yml
               mountPath: /usr/local/onlyone-portal/config/application.yml
 
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.managementUi.image.repository }}:{{ .Values.managementUi.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.managementUi.image.pullPolicy }}
           ports:
-            - containerPort: {{ .Values.application.server.port }}
+            - containerPort: {{ .Values.managementUi.server.port }}
             - containerPort: 8081
           livenessProbe:
             httpGet:
               path: /actuator/health
               port: 8081
-            initialDelaySeconds: {{ .Values.pod.probes.liveness.initialDelaySeconds }}
-            periodSeconds: {{ .Values.pod.probes.liveness.periodSeconds }}
+            initialDelaySeconds: {{ .Values.managementUi.pod.probes.liveness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.managementUi.pod.probes.liveness.periodSeconds }}
 
           readinessProbe:
             httpGet:
               path: /actuator/health
               port: 8081
-            initialDelaySeconds: {{ .Values.pod.probes.rediness.initialDelaySeconds }}
-            periodSeconds: {{ .Values.pod.probes.rediness.periodSeconds }}
+            initialDelaySeconds: {{ .Values.managementUi.pod.probes.rediness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.managementUi.pod.probes.rediness.periodSeconds }}
           resources:
-          {{- toYaml .Values.resources | nindent 12 }}
+          {{- toYaml .Values.managementUi.resources | nindent 12 }}
           env:
             {{- if eq .Values.aws.iamUser.enabled true }}
             - name: AWS_ACCESS_KEY_ID
@@ -100,4 +98,5 @@ spec:
               value: {{ .Values.aws.region }}
 
             - name: spring.config.additional-location
-              value: /usr/local/onlyone-portal/config/
+              value: /usr/local/onlyone-portal/config/   
+    {{ end }}

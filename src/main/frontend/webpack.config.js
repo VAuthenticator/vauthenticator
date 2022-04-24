@@ -7,18 +7,12 @@ module.exports = {
     mode: 'development',
     entry: {
         login: path.resolve(__dirname, './app/login/index.js'),
-        admin: path.resolve(__dirname, './app/admin/index.js'),
         signup: path.resolve(__dirname, './app/signup/index.js'),
     },
     resolve: {
         extensions: [".js", ".jsx"]
     },
     plugins: [
-        new HtmlWebpackPlugin({
-            chunks: ['admin'],
-            filename: "../templates/secure/admin.html",
-            template: path.resolve(__dirname, "../resources/templates/template.html")
-        }),
         new HtmlWebpackPlugin({
             chunks: ['login'],
             filename: "../templates/login.html",
@@ -51,7 +45,7 @@ module.exports = {
     },
     output: {
         filename: 'asset/[name]_bundle.js',
-        publicPath: "/vauthenticator/",
+        publicPath: "/",
         path: BUID_DIR
     }
 };

@@ -2,12 +2,13 @@ package it.valeriovaudi.vauthenticator.oauth2.clientapp
 
 import it.valeriovaudi.vauthenticator.extentions.asDynamoAttribute
 import it.valeriovaudi.vauthenticator.extentions.filterEmptyAccountMetadata
-import it.valeriovaudi.vauthenticator.extentions.valueAsStringFor
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.DynamoClientApplicationConverter.fromDomainToDynamo
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.DynamoClientApplicationConverter.fromDynamoToDomain
-import org.springframework.security.crypto.password.PasswordEncoder
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
-import software.amazon.awssdk.services.dynamodb.model.*
+import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
+import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
+import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
+import software.amazon.awssdk.services.dynamodb.model.ScanRequest
 import java.util.*
 
 class DynamoDbClientApplicationRepository(
