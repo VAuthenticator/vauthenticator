@@ -85,7 +85,7 @@ class AuthorizationServerConfig {
     fun jwtCustomizer(clientApplicationRepository: ClientApplicationRepository): OAuth2TokenCustomizer<JwtEncodingContext> {
         return OAuth2TokenCustomizer { context: JwtEncodingContext ->
             OAuth2TokenEnhancer().customize(context)
-            IdTokenEnhancer(clientApplicationRepository).customize(context)
+            IdTokenEnhancer().customize(context)
         }
     }
 
