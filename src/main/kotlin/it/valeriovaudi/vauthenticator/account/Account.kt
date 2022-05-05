@@ -47,7 +47,7 @@ data class Date(val localDate: LocalDate,
     }
 }
 
-class Phone(private val countryPrefix: String, private val prefix: String, private val phoneNumber: String) {
+data class Phone(private val countryPrefix: String, private val prefix: String, private val phoneNumber: String) {
     fun formattedPhone(): String {
         return String.format("%s %s %s", countryPrefix, prefix, phoneNumber).trim { it <= ' ' }
     }
