@@ -47,6 +47,9 @@ object ProfileClaimsProvider : ClaimsProvider {
         claims["family_name"] = account.lastName
         claims["middle_name"] = ""
         claims["updated_at"] = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
+        claims["phone_number"] = account.phone.formattedPhone()
+        claims["phone_number_verified"] = true
+        claims["birthdate"] = account.birthDate.iso8601FormattedDate()
         return claims
     }
 

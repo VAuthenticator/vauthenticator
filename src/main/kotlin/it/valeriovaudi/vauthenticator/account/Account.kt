@@ -32,6 +32,9 @@ data class Date(val localDate: LocalDate,
     fun formattedDate(): String {
         return dateTimeFormatter.format(localDate)
     }
+    fun iso8601FormattedDate(): String {
+        return USER_INFO_DEFAULT_DATE_TIME_FORMATTER.format(localDate)
+    }
 
     override operator fun compareTo(o: Date): Int {
         return this.localDate.compareTo(o.localDate)
@@ -39,6 +42,7 @@ data class Date(val localDate: LocalDate,
 
     companion object {
         val DEFAULT_DATE_TIME_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+        val USER_INFO_DEFAULT_DATE_TIME_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         fun nullValue(): Date = dateFor("01/01/1970")
 
         fun dateFor(date: String): Date {
