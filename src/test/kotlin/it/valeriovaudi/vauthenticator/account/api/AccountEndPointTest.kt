@@ -36,7 +36,7 @@ internal class AccountEndPointTest {
 
     @Test
     internal fun `sign up a new account`() {
-        val representation = FinalAccountRepresentation(email = "email@domain.com", password = "secret", firstName = "A First Name", lastName = "A Last Name", authorities = emptyList())
+        val representation = FinalAccountRepresentation(email = "email@domain.com", password = "secret", firstName = "A First Name", lastName = "A Last Name", authorities = emptyList(), birthDate = "01/01/1970", phone = "")
         val masterAccount = AccountTestFixture.anAccount().copy(accountNonExpired = true, emailVerified = true, accountNonLocked = true, credentialsNonExpired = true, enabled = true)
 
         val clientAppId = "A_CLIENT_APP_ID"

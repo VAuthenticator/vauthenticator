@@ -39,6 +39,8 @@ data class Date(val localDate: LocalDate,
 
     companion object {
         val DEFAULT_DATE_TIME_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+        fun nullValue(): Date = dateFor("01/01/1970")
+
         fun dateFor(date: String): Date {
             return Date(LocalDate.parse(date, DEFAULT_DATE_TIME_FORMATTER))
         }

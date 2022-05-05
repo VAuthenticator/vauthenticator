@@ -1,6 +1,8 @@
 package it.valeriovaudi.vauthenticator.account.api
 
 import it.valeriovaudi.vauthenticator.account.Account
+import it.valeriovaudi.vauthenticator.account.Date
+import it.valeriovaudi.vauthenticator.account.Phone
 import it.valeriovaudi.vauthenticator.account.signup.SignUpUseCase
 import it.valeriovaudi.vauthenticator.extentions.stripBearerPrefix
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
@@ -45,6 +47,8 @@ data class FinalAccountRepresentation(
         var password: String = "",
         var firstName: String,
         var lastName: String,
+        var birthDate : String,
+        var phone: String,
         val authorities: List<String> = emptyList()
 )
 
@@ -61,7 +65,9 @@ object SignUpAccountConverter {
                     lastName = representation.lastName,
                     email = representation.email,
                     emailVerified = true,
-                    authorities = emptyList()
+                    authorities = emptyList(),
+                    birthDate = Date.nullValue(),
+                    phone = Phone.nullValue()
             )
 
 }
