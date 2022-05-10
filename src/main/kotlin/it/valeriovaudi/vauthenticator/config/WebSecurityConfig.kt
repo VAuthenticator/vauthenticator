@@ -5,9 +5,13 @@ import it.valeriovaudi.vauthenticator.security.userdetails.AccountUserDetailsSer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.oauth2.jwt.Jwt
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter
 import org.springframework.security.web.SecurityFilterChain
+
 
 const val adminRole = "VAUTHENTICATOR_ADMIN"
 
@@ -49,11 +53,19 @@ class WebSecurityConfig {
                 .and()
 
         http.userDetailsService(accountUserDetailsService)
-        http.oauth2ResourceServer().jwt()
-        return http.build()
+        http.oauth2ResourceServer().jwt().jwtAuthenticationConverter(jwtAuthenticationConverter())
 
+        return http.build()
     }
 
+    fun jwtAuthenticationConverter(): JwtAuthenticationConverter? {
+        val jwtAuthenticationConverter = JwtAuthenticationConverter()
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter { jwt: Jwt ->
+            val authoritiesClaims = jwt.getClaim<List<String>>("authorities")
+            authoritiesClaims.map { role: String -> SimpleGrantedAuthority(role) }
+        }
+        return jwtAuthenticationConverter
+    }
     @Bean
     fun passwordEncoder(): PasswordEncoder {
         return BCryptPasswordEncoder(12)
