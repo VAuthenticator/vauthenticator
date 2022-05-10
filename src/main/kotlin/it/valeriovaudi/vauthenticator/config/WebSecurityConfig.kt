@@ -39,13 +39,14 @@ class WebSecurityConfig {
         http.requestMatchers().antMatchers(*WHITE_LIST)
                 .and()
                 .authorizeRequests()
-                .mvcMatchers("/api/admin/accounts/**")
-                .hasAuthority(adminRole)
-                .and()
-                .authorizeRequests()
                 .mvcMatchers("/api/accounts")
                 .permitAll()
+                .and()
 
+                .authorizeRequests()
+                .mvcMatchers("/api/**")
+                .hasAnyAuthority(adminRole)
+                .and()
 
         http.userDetailsService(accountUserDetailsService)
         http.oauth2ResourceServer().jwt()
