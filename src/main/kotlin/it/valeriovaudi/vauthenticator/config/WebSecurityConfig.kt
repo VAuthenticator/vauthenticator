@@ -17,8 +17,7 @@ private val WHITE_LIST = arrayOf(
         "/oidc/logout",
         "/login",
         "/webjars/**",
-        "/api/**",
-        "/secure/**"
+        "/api/**"
 )
 
 @Configuration(proxyBeanMethods = false)
@@ -36,12 +35,11 @@ class WebSecurityConfig {
         http.logout()
                 .deleteCookies("opbs")
                 .invalidateHttpSession(true)
-                .logoutSuccessUrl("/secure/admin/index")
 
         http.requestMatchers().antMatchers(*WHITE_LIST)
                 .and()
                 .authorizeRequests()
-                .mvcMatchers("/api/admin/accounts/**", "/secure/**")
+                .mvcMatchers("/api/admin/accounts/**")
                 .hasAuthority(adminRole)
                 .and()
                 .authorizeRequests()

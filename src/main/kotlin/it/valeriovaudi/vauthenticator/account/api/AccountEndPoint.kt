@@ -29,7 +29,7 @@ class AccountEndPoint(private val signUpUseCase: SignUpUseCase) {
                                         .orElseThrow()
                             }
                 }
-        return status(HttpStatus.CREATED).build<Unit>()
+        return status(HttpStatus.CREATED).build()
     }
 
     private fun executeSignUp(clientAppId: ClientAppId, account: Account) {
