@@ -78,7 +78,7 @@ class SessionManagementIFrameController(private val providerSettings: ProviderSe
 
 
     @GetMapping("/session/management")
-    @CrossOrigin(origins = ["*"], allowedHeaders = ["*"])
+    @CrossOrigin(origins = ["/**"], allowedHeaders = ["*"])
     fun sessionManagerIframe(model: Model): String {
         val issuer = providerSettings.issuer
 
