@@ -9,7 +9,6 @@ import org.springframework.security.web.RedirectStrategy
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.util.StringUtils
-import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.util.UriComponentsBuilder
 import java.util.*
@@ -78,7 +77,6 @@ class SessionManagementIFrameController(private val providerSettings: ProviderSe
 
 
     @GetMapping("/session/management")
-    @CrossOrigin(origins = ["/**"], allowedHeaders = ["*"])
     fun sessionManagerIframe(model: Model): String {
         val issuer = providerSettings.issuer
 
