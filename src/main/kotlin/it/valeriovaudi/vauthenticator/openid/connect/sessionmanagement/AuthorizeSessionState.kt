@@ -44,7 +44,7 @@ class SessionManagementFactory(private val providerSettings: ProviderSettings) {
 
     fun opbsCookieFor(request: HttpServletRequest): Cookie {
         val cookie = Cookie("opbs", opbsCookieValue(request))
-        cookie.path = request.contextPath
+        cookie.path = "/"
         return cookie
     }
 
