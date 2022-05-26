@@ -2,8 +2,8 @@ package it.valeriovaudi.vauthenticator.openid.connect.token
 
 import org.springframework.security.core.Authentication
 import org.springframework.security.oauth2.core.AuthorizationGrantType
-import org.springframework.security.oauth2.server.authorization.JwtEncodingContext
-import org.springframework.security.oauth2.server.authorization.OAuth2TokenCustomizer
+import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer
 
 class IdTokenEnhancer : OAuth2TokenCustomizer<JwtEncodingContext> {
     override fun customize(context: JwtEncodingContext) {

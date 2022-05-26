@@ -31,12 +31,13 @@ import org.springframework.security.config.annotation.web.configurers.CsrfConfig
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.authorization.OAuth2AuthorizationServerConfigurer
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.jwt.JwtDecoder
-import org.springframework.security.oauth2.jwt.NimbusJwsEncoder
-import org.springframework.security.oauth2.server.authorization.JwtEncodingContext
+import org.springframework.security.oauth2.jwt.JwtEncoder
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService
-import org.springframework.security.oauth2.server.authorization.OAuth2TokenCustomizer
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository
 import org.springframework.security.oauth2.server.authorization.config.ProviderSettings
+import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer
 import org.springframework.security.web.DefaultRedirectStrategy
 import org.springframework.security.web.SecurityFilterChain
 import java.security.interfaces.RSAPrivateKey
@@ -77,8 +78,8 @@ class AuthorizationServerConfig {
     }
 
     @Bean
-    fun nimbusJwsEncoder(jwkSource: JWKSource<SecurityContext?>?): NimbusJwsEncoder {
-        return NimbusJwsEncoder(jwkSource)
+    fun nimbusJwsEncoder(jwkSource: JWKSource<SecurityContext?>?): JwtEncoder {
+        return NimbusJwtEncoder(jwkSource)
     }
 
     @Bean

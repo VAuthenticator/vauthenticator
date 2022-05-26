@@ -5,8 +5,8 @@ import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationReposito
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.oauth2.core.AuthorizationGrantType
-import org.springframework.security.oauth2.server.authorization.JwtEncodingContext
-import org.springframework.security.oauth2.server.authorization.OAuth2TokenCustomizer
+import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer
 import java.util.stream.Collectors
 
 class OAuth2TokenEnhancer(private val clientApplicationRepository: ClientApplicationRepository) : OAuth2TokenCustomizer<JwtEncodingContext> {
