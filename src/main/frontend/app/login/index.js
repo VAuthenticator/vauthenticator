@@ -14,7 +14,7 @@ const Login = withStyles(vauthenticatorStyles)((props) => {
     const {classes, rawFeatures} = props;
 
     let signUpLink = <div>
-        <h3>are you not registered? if you want you can register  <a href="/vauthenticator/sign-up">here</a></h3>
+        <h3>are you not registered? if you want you can register  <a href="/sign-up">here</a></h3>
     </div>
     let features = JSON.parse(rawFeatures);
 

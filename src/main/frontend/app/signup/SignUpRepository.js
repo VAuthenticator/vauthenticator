@@ -1,5 +1,5 @@
 export function signUp(account) {
-    return fetch("/vauthenticator/api/accounts",
+    return fetch("/api/accounts",
         {
             method: "POST",
             headers: {
