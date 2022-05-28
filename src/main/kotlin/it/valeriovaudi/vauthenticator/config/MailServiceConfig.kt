@@ -14,7 +14,7 @@ import javax.mail.internet.MimeMessage
 class MailServiceConfig {
 
     @Bean("mailSenderService")
-    @ConditionalOnProperty(value = ["sign-up.mail.enabled"], havingValue = "false", matchIfMissing = false)
+    @ConditionalOnProperty(value = ["spring.mail.enabled"], havingValue = "false", matchIfMissing = false)
     fun mailSenderService() = JavaMailSenderService(object : JavaMailSender {
         override fun send(mimeMessage: MimeMessage) {
             TODO("Not yet implemented")
@@ -50,7 +50,7 @@ class MailServiceConfig {
     })
 
     @Bean("mailSenderService")
-    @ConditionalOnProperty(value = ["sign-up.mail.enabled"], havingValue = "true", matchIfMissing = false)
+    @ConditionalOnProperty(value = ["spring.mail.enabled"], havingValue = "true", matchIfMissing = false)
     fun mailSenderService(javaMailSender: JavaMailSender) = JavaMailSenderService(javaMailSender)
 
 }
