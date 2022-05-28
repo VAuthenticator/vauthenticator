@@ -96,8 +96,6 @@ const SignUpPage = withStyles(vauthenticatorStyles)((props) => {
                                 "birthDate": birthDate
                             })
                                 .then(r => {
-                                    console.log(r)
-                                    window.alert(r.status)
                                     if(r.status === 201){
                                         navigate("/succeeded", { replace: true });
                                     }
