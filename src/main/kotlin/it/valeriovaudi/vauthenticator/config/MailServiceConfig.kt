@@ -14,7 +14,7 @@ import javax.mail.internet.MimeMessage
 class MailServiceConfig {
 
     @Bean("mailSenderService")
-    @ConditionalOnProperty(value = ["features.mail-sender-enabled"], havingValue = "false", matchIfMissing = false)
+    @ConditionalOnProperty(value = ["features.mail-sender-enabled"], havingValue = "false", matchIfMissing = true)
     fun mailSenderService() = JavaMailSenderService(object : JavaMailSender {
         override fun send(mimeMessage: MimeMessage) {
             TODO("Not yet implemented")
