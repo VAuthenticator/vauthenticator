@@ -22,6 +22,9 @@ data class ClientApplication(
     companion object {
         fun clientAppIdFrom(jwtToken: String) =
                 ClientAppId(JWSObject.parse(jwtToken).payload.toJSONObject().get(IdTokenClaimNames.AZP) as String)
+        fun userNameFrom(jwtToken: String): String =
+               Optional.ofNullable(JWSObject.parse(jwtToken).payload.toJSONObject().get("user_name") as String?)
+                       .orElse("")
     }
 }
 

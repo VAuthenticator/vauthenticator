@@ -32,16 +32,21 @@ object TestingFixture {
             .keyID("123")
             .generate()
 
-    fun simpleJwtFor(clientAppId: String): String {
+    fun simpleJwtFor(clientAppId: String, email: String = ""): String {
         val header = JWSHeader.Builder(JWSAlgorithm.ES256)
                 .type(JOSEObjectType.JWT)
                 .keyID("123")
                 .build();
 
 
-        val payload = JWTClaimsSet.Builder()
+        var claim = JWTClaimsSet.Builder()
                 .claim(IdTokenClaimNames.AZP, clientAppId)
-                .build()
+
+        if(email.isNotBlank()){
+            claim = claim.claim("user_name", email)
+        }
+
+        val payload = claim.build()
 
         val signedJWT = SignedJWT(header, payload)
         signedJWT.sign(ECDSASigner(key.toECPrivateKey()))

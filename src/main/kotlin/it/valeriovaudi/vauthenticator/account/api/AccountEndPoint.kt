@@ -3,10 +3,12 @@ package it.valeriovaudi.vauthenticator.account.api
 import it.valeriovaudi.vauthenticator.account.Account
 import it.valeriovaudi.vauthenticator.account.Date
 import it.valeriovaudi.vauthenticator.account.Phone
+import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import it.valeriovaudi.vauthenticator.account.signup.SignUpUseCase
 import it.valeriovaudi.vauthenticator.extentions.stripBearerPrefix
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplication
+import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplication.Companion.userNameFrom
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.status
@@ -15,7 +17,10 @@ import java.util.*
 
 @RestController
 @SessionAttributes("clientId")
-class AccountEndPoint(private val signUpUseCase: SignUpUseCase) {
+class AccountEndPoint(
+        private val signUpUseCase: SignUpUseCase,
+        private val accountRepository: AccountRepository
+) {
 
     @PostMapping("/api/accounts")
     fun signup(@RequestHeader("Authorization", required = false) authorization: String?,
@@ -33,11 +38,39 @@ class AccountEndPoint(private val signUpUseCase: SignUpUseCase) {
     }
 
     private fun executeSignUp(clientAppId: ClientAppId, account: Account) {
-        signUpUseCase.execute(clientAppId , account)
+        signUpUseCase.execute(clientAppId, account)
     }
 
     @PutMapping("/api/accounts")
-    fun save() = status(HttpStatus.INTERNAL_SERVER_ERROR).build<Unit>()
+    fun save(@RequestHeader("Authorization", required = false) authorization: String?,
+             @RequestBody representation: FinalAccountRepresentation): ResponseEntity<Unit> {
+        val accessToken = accessTokenFrom(authorization)
+
+        if (accessToken.trim() == "") {
+            return status(HttpStatus.UNAUTHORIZED).build()
+        }
+
+        val userName = userNameFrom(accessToken)
+        return if (emailAndUserNameMach(userName, representation)) {
+            accountRepository.save(SignUpAccountConverter.fromRepresentationToSignedUpAccount(representation))
+            ResponseEntity.noContent().build()
+        } else {
+            status(HttpStatus.FORBIDDEN).build()
+        }
+    }
+
+    private fun emailAndUserNameMach(userName: String, representation: FinalAccountRepresentation) =
+            userName == representation.email
+
+    private fun accessTokenFrom(authorization: String?) =
+            Optional.ofNullable(authorization).map {
+                try {
+                    it.stripBearerPrefix()
+                } catch (e: Exception) {
+                    ""
+                }
+
+            }.orElse("")
 
 }
 
@@ -47,7 +80,7 @@ data class FinalAccountRepresentation(
         var password: String = "",
         var firstName: String,
         var lastName: String,
-        var birthDate : String,
+        var birthDate: String,
         var phone: String,
         val authorities: List<String> = emptyList()
 )
