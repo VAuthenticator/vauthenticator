@@ -8,6 +8,7 @@ terraform {
 }
 
 provider "aws" {
+  region = "eu-central-1"
   endpoints {
     dynamodb = "http://localhost:8000"
   }

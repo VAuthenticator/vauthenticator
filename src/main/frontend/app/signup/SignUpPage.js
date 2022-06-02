@@ -7,8 +7,9 @@ import Divider from "@material-ui/core/Divider";
 import vauthenticatorStyles from "../component/styles";
 import FormInputTextField from "../component/FormInputTextField";
 import FormButton from "../component/FormButton";
-import {useHistory} from 'react-router-dom';
+
 import {signUp} from "./SignUpRepository";
+import {useNavigate} from "react-router";
 
 const SignUpPage = withStyles(vauthenticatorStyles)((props) => {
     const {classes} = props;
@@ -17,7 +18,10 @@ const SignUpPage = withStyles(vauthenticatorStyles)((props) => {
     const [password, setPassword] = React.useState("")
     const [firstName, setFirstName] = React.useState("")
     const [lastName, setLastName] = React.useState("")
-    const history = useHistory();
+    const [birthDate, setBirthDate] = React.useState("")
+    const [phone, setPhone] = React.useState("")
+
+    let navigate = useNavigate();
 
     return (
         <Template maxWidth="sm" classes={classes}>
@@ -62,6 +66,21 @@ const SignUpPage = withStyles(vauthenticatorStyles)((props) => {
                                 }}
                                 value={lastName || ""}/>
 
+            <FormInputTextField id="birthDate"
+                                label="Birth Date"
+                                required={true}
+                                handler={(value) => {
+                                    setBirthDate(value.target.value)
+                                }}
+                                value={birthDate || ""}/>
+
+            <FormInputTextField id="phone"
+                                label="Phone"
+                                required={true}
+                                handler={(value) => {
+                                    setPhone(value.target.value)
+                                }}
+                                value={phone || ""}/>
 
             <Grid style={{marginTop: '10px'}}>
                 <Divider/>
@@ -72,13 +91,13 @@ const SignUpPage = withStyles(vauthenticatorStyles)((props) => {
                                 "email": email,
                                 "password": password,
                                 "firstName": firstName,
-                                "lastName": lastName
+                                "lastName": lastName,
+                                "phone": phone,
+                                "birthDate": birthDate
                             })
                                 .then(r => {
-                                    console.log(r)
-                                    window.alert(r.status)
-                                    if(r.status == 201){
-                                        history.push("/succeeded")
+                                    if(r.status === 201){
+                                        navigate("/succeeded", { replace: true });
                                     }
                                 })
                         }}

@@ -1,6 +1,8 @@
 package it.valeriovaudi.vauthenticator.account.repository
 
 import it.valeriovaudi.vauthenticator.account.Account
+import it.valeriovaudi.vauthenticator.account.Date
+import it.valeriovaudi.vauthenticator.account.Phone
 import it.valeriovaudi.vauthenticator.extentions.asDynamoAttribute
 import it.valeriovaudi.vauthenticator.extentions.valueAsBoolFor
 import it.valeriovaudi.vauthenticator.extentions.valueAsStringFor
@@ -21,7 +23,9 @@ object DynamoAccountConverter {
         emailVerified = dynamoPayload.valueAsBoolFor("emailVerified"),
         firstName = dynamoPayload.valueAsStringFor("firstName"),
         lastName = dynamoPayload.valueAsStringFor("lastName"),
-        authorities = authorities
+        authorities = authorities,
+        birthDate = Date.dateFor(dynamoPayload.valueAsStringFor("birthDate")),
+        phone = Phone.phoneFor(dynamoPayload.valueAsStringFor("phone"))
     )
 
     fun fromDomainToDynamo(account: Account) =
@@ -35,6 +39,8 @@ object DynamoAccountConverter {
             "email" to account.email.asDynamoAttribute(),
             "emailVerified" to account.emailVerified.asDynamoAttribute(),
             "firstName" to account.firstName.asDynamoAttribute(),
-            "lastName" to account.lastName.asDynamoAttribute()
+            "lastName" to account.lastName.asDynamoAttribute(),
+            "birthDate" to account.birthDate.asDynamoAttribute(),
+            "phone" to account.phone.asDynamoAttribute()
         )
 }

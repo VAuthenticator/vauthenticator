@@ -4,7 +4,6 @@ import org.springframework.security.web.savedrequest.DefaultSavedRequest
 import java.util.*
 import javax.servlet.http.HttpSession
 
-
 fun HttpSession.oauth2ClientId(): Optional<String> {
     val attribute = Optional.ofNullable(this.getAttribute("SPRING_SECURITY_SAVED_REQUEST"))
     return attribute.flatMap {

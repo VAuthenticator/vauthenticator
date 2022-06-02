@@ -25,12 +25,6 @@ jobs:
           java -version
 
       - name: build testing environment
-        run: |
-          git clone https://github.com/mrFlick72/aws-messaging-java-client.git
-          cd aws-messaging-java-client
-          mvn clean install
-
-      - name: build testing environment
         uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: 0.13.5
