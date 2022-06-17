@@ -10,4 +10,4 @@ interface AccountRepository {
     fun create(account: Account)
 }
 
-class AccountRegistrationException(message: String, e: RuntimeException) : RuntimeException(e)
+class AccountRegistrationException(message: String, e: RuntimeException) : RuntimeException(message, e)

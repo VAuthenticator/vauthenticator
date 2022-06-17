@@ -79,20 +79,6 @@ internal class AccountEndPointTest {
     }
 
     @Test
-    internal fun `when update account details fails due to different email in user name claim in access token and email in body request`() {
-        val representation = FinalAccountRepresentation(email = "email@domain.com", password = "secret", firstName = "A First Name", lastName = "A Last Name", authorities = emptyList(), birthDate = Date.nullValue().formattedDate(), phone = Phone.nullValue().formattedPhone())
-        val clientAppId = "A_CLIENT_APP_ID"
-
-
-        mokMvc.perform(MockMvcRequestBuilders.put("/api/accounts")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer ${TestingFixture.simpleJwtFor(clientAppId, "another_email@domain.com")}")
-                .content(objectMapper.writeValueAsString(representation)))
-                .andExpect(MockMvcResultMatchers.status().isForbidden)
-
-        Mockito.verifyNoInteractions(accountRepository)
-    }
-    @Test
     internal fun `when update account details fails due to token without user_name claim in access token`() {
         val representation = FinalAccountRepresentation(email = "email@domain.com", password = "secret", firstName = "A First Name", lastName = "A Last Name", authorities = emptyList(), birthDate = Date.nullValue().formattedDate(), phone = Phone.nullValue().formattedPhone())
         val clientAppId = "A_CLIENT_APP_ID"

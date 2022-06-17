@@ -9,6 +9,8 @@ import it.valeriovaudi.vauthenticator.extentions.stripBearerPrefix
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplication
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplication.Companion.userNameFrom
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.status
@@ -21,6 +23,7 @@ class AccountEndPoint(
         private val signUpUseCase: SignUpUseCase,
         private val accountRepository: AccountRepository
 ) {
+    val logger: Logger = LoggerFactory.getLogger(AccountEndPoint::class.java)
 
     @PostMapping("/api/accounts")
     fun signup(@RequestHeader("Authorization", required = false) authorization: String?,
@@ -51,16 +54,19 @@ class AccountEndPoint(
         }
 
         val userName = userNameFrom(accessToken)
-        return if (emailAndUserNameMach(userName, representation)) {
-            accountRepository.save(SignUpAccountConverter.fromRepresentationToSignedUpAccount(representation))
-            ResponseEntity.noContent().build()
-        } else {
+
+        return if(userName.isNotEmpty()) {
+            if (representation.email.isNotEmpty()) {
+                logger.warn("there is an email in the body.............. it will be ignored in favour of the access token identity")
+            }
+
+            accountRepository.save(SignUpAccountConverter.fromRepresentationToSignedUpAccount(representation.copy(email = userName)))
+            return ResponseEntity.noContent().build()
+        }else {
             status(HttpStatus.FORBIDDEN).build()
         }
-    }
 
-    private fun emailAndUserNameMach(userName: String, representation: FinalAccountRepresentation) =
-            userName == representation.email
+    }
 
     private fun accessTokenFrom(authorization: String?) =
             Optional.ofNullable(authorization).map {
