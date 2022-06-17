@@ -55,14 +55,22 @@ class AccountEndPoint(
 
         val userName = userNameFrom(accessToken)
 
-        return if(userName.isNotEmpty()) {
+        return if (userName.isNotEmpty()) {
             if (representation.email.isNotEmpty()) {
                 logger.warn("there is an email in the body.............. it will be ignored in favour of the access token identity")
             }
 
-            accountRepository.save(SignUpAccountConverter.fromRepresentationToSignedUpAccount(representation.copy(email = userName)))
-            return ResponseEntity.noContent().build()
-        }else {
+            accountRepository.accountFor(userName)
+                    .map { account ->
+                        val filledRepresentation = representation.copy(email = userName, password = account.password, authorities = account.authorities)
+                        accountRepository.save(SignUpAccountConverter.fromRepresentationToSignedUpAccount(filledRepresentation))
+                        ResponseEntity.noContent().build<Unit>()
+                    }
+                    .orElseGet {
+                        ResponseEntity.noContent().build<Unit>()
+                    }
+
+        } else {
             status(HttpStatus.FORBIDDEN).build()
         }
 
@@ -105,8 +113,8 @@ object SignUpAccountConverter {
                     email = representation.email,
                     emailVerified = true,
                     authorities = emptyList(),
-                    birthDate = Date.nullValue(),
-                    phone = Phone.nullValue()
+                    birthDate = Date.dateFor(representation.birthDate),
+                    phone = Phone.phoneFor(representation.phone)
             )
 
 }

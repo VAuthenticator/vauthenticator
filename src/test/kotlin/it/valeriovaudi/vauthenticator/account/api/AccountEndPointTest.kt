@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.BDDMockito.given
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
@@ -20,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
+import java.util.*
 
 @ExtendWith(MockitoExtension::class)
 internal class AccountEndPointTest {
@@ -68,6 +70,8 @@ internal class AccountEndPointTest {
         val masterAccount = AccountTestFixture.anAccount().copy(accountNonExpired = true, emailVerified = true, accountNonLocked = true, credentialsNonExpired = true, enabled = true,)
         val clientAppId = "A_CLIENT_APP_ID"
 
+        given(accountRepository.accountFor("email@domain.com"))
+                .willAnswer { Optional.of(masterAccount) }
 
         mokMvc.perform(MockMvcRequestBuilders.put("/api/accounts")
                 .contentType(MediaType.APPLICATION_JSON)
