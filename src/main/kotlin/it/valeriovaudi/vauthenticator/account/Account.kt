@@ -27,7 +27,7 @@ data class Account(var accountNonExpired: Boolean = false,
 }
 
 data class Date(val localDate: LocalDate,
-                val dateTimeFormatter: DateTimeFormatter = DEFAULT_DATE_TIME_FORMATTER) : Comparable<Date> {
+                val dateTimeFormatter: DateTimeFormatter = USER_INFO_DEFAULT_DATE_TIME_FORMATTER) : Comparable<Date> {
 
     fun formattedDate(): String {
         return dateTimeFormatter.format(localDate)
@@ -41,15 +41,8 @@ data class Date(val localDate: LocalDate,
     }
 
     companion object {
-        val DEFAULT_DATE_TIME_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
         val USER_INFO_DEFAULT_DATE_TIME_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         fun nullValue(): Date = isoDateFor("1970-01-01")
-
-/*
-        fun dateFor(date: String): Date {
-            return Date(LocalDate.parse(date, DEFAULT_DATE_TIME_FORMATTER))
-        }
-*/
 
         fun isoDateFor(date: String): Date {
             return Date(LocalDate.parse(date, USER_INFO_DEFAULT_DATE_TIME_FORMATTER))
