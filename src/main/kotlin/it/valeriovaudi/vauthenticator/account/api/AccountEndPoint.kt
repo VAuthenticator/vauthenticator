@@ -113,7 +113,7 @@ object SignUpAccountConverter {
                     email = representation.email,
                     emailVerified = true,
                     authorities = emptyList(),
-                    birthDate = Date.dateFor(representation.birthDate),
+                    birthDate = Date.isoDateFor(representation.birthDate),
                     phone = Phone.phoneFor(representation.phone)
             )
 

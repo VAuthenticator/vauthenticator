@@ -24,7 +24,7 @@ object DynamoAccountConverter {
         firstName = dynamoPayload.valueAsStringFor("firstName"),
         lastName = dynamoPayload.valueAsStringFor("lastName"),
         authorities = authorities,
-        birthDate = Date.dateFor(dynamoPayload.valueAsStringFor("birthDate")),
+        birthDate = Date.isoDateFor(dynamoPayload.valueAsStringFor("birthDate")),
         phone = Phone.phoneFor(dynamoPayload.valueAsStringFor("phone"))
     )
 
