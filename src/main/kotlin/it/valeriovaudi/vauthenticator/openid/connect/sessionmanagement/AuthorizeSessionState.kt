@@ -90,7 +90,7 @@ class SessionManagementIFrameController(
         val issuer = providerSettings.issuer
 
         model.addAttribute("issuer", issuer)
-        model.addAttribute("iconsole_debug",consoleDebug)
+        model.addAttribute("console_debug",consoleDebug)
         return "session/management"
     }
 
