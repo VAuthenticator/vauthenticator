@@ -24,7 +24,7 @@ class JdbcFrontChannelLogoutTest {
     @BeforeEach
     fun setUp() {
         fontEndChannelLogout =
-            JdbcFrontChannelLogout("http://localhost/vauthenticator", clientApplicationRepository)
+            JdbcFrontChannelLogout("http://localhost/vauthenticator")
     }
 
     @Test

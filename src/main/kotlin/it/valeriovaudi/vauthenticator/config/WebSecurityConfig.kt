@@ -1,14 +1,18 @@
 package it.valeriovaudi.vauthenticator.config
 
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
+import it.valeriovaudi.vauthenticator.openid.connect.logout.ClearSessionStateLogoutHandler
+import it.valeriovaudi.vauthenticator.openid.connect.sessionmanagement.SessionManagementFactory
 import it.valeriovaudi.vauthenticator.security.userdetails.AccountUserDetailsService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.jwt.Jwt
+import org.springframework.security.oauth2.server.authorization.config.ProviderSettings
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter
 import org.springframework.security.web.SecurityFilterChain
 
@@ -25,7 +29,9 @@ private val WHITE_LIST = arrayOf(
 )
 
 @Configuration(proxyBeanMethods = false)
-class WebSecurityConfig {
+class WebSecurityConfig(
+        private val providerSettings: ProviderSettings,
+        private val redisTemplate: RedisTemplate<String, String?>) {
 
     @Bean
     fun defaultSecurityFilterChain(http: HttpSecurity,
@@ -37,7 +43,7 @@ class WebSecurityConfig {
                 .permitAll()
 
         http.logout()
-                .deleteCookies("opbs")
+                .addLogoutHandler(ClearSessionStateLogoutHandler(SessionManagementFactory(providerSettings), redisTemplate))
                 .invalidateHttpSession(true)
 
         http.requestMatchers().antMatchers(*WHITE_LIST)
@@ -55,6 +61,7 @@ class WebSecurityConfig {
         http.userDetailsService(accountUserDetailsService)
         http.oauth2ResourceServer().jwt().jwtAuthenticationConverter(jwtAuthenticationConverter())
 
+        http.csrf().disable().headers().frameOptions().sameOrigin()
         return http.build()
     }
 

@@ -1,6 +1,9 @@
 package it.valeriovaudi.vauthenticator.openid.connect.sessionmanagement
 
 import it.valeriovaudi.vauthenticator.extentions.toSha256
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2AuthorizationCodeRequestAuthenticationToken
@@ -10,13 +13,15 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.util.StringUtils
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 import java.util.*
-import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 fun sendAuthorizationResponse(
+        redisTemplate: RedisTemplate<String, String?>,
         factory: SessionManagementFactory,
         redirectStrategy: RedirectStrategy
 ) = { request: HttpServletRequest,
@@ -32,30 +37,33 @@ fun sendAuthorizationResponse(
     }
 
     val sessionState = factory.sessionStateFor(request, authentication)
-    val cookie = factory.opbsCookieFor(request)
-    response.addCookie(cookie)
+
+    val sessionId = factory.sessionIdFor(request)
+    redisTemplate.opsForHash<String, String?>().put(sessionId, sessionId.toSha256(), sessionState)
+    redisTemplate.opsForHash<String, String?>().put(sessionState, sessionState.toSha256(), factory.opbsStateValue(request))
 
     uriBuilder.queryParam("session_state", sessionState)
-
     redirectStrategy.sendRedirect(request, response, uriBuilder.toUriString())
 }
 
 class SessionManagementFactory(private val providerSettings: ProviderSettings) {
 
-    fun opbsCookieFor(request: HttpServletRequest): Cookie {
-        val cookie = Cookie("opbs", opbsCookieValue(request))
-        cookie.path = "/"
-        return cookie
-    }
+    fun sessionIdFor(request: HttpServletRequest) =
+            Arrays.stream(request.cookies)
+                    .filter { it.name.equals("SESSION") }
+                    .map { it.value }
+                    .findFirst()
+                    .orElseThrow()
 
-    fun opbsCookieValue(request: HttpServletRequest): String {
-        val opbs: String = (request.session.getAttribute("opbs_cookie_value") ?: "") as String
+    fun opbsStateValue(request: HttpServletRequest): String {
+        var opbs: String = (request.session.getAttribute("opbs_session_value") ?: "") as String
         if (opbs.isEmpty()) {
-            val opbs = UUID.randomUUID().toString();
-            request.session.setAttribute("opbs_cookie_value", opbs)
+            opbs = UUID.randomUUID().toString();
+            request.session.setAttribute("opbs_session_value", opbs)
         }
 
-        return opbs;
+        println("opbs $opbs")
+        return opbs
     }
 
     fun sessionStateFor(request: HttpServletRequest, authentication: OAuth2AuthorizationCodeRequestAuthenticationToken): String {
@@ -63,24 +71,41 @@ class SessionManagementFactory(private val providerSettings: ProviderSettings) {
         val issuer = providerSettings.issuer
         val salt = saltFor(request)
 
-        return "$clientId $issuer ${opbsCookieValue(request)} $salt".toSha256() + ".$salt"
+        return "$clientId $issuer ${opbsStateValue(request)} $salt".toSha256() + ".$salt"
     }
 
     fun saltFor(request: HttpServletRequest) =
-            opbsCookieValue(request).toSha256()
+            opbsStateValue(request).toSha256()
 
 
 }
 
 @Controller
-class SessionManagementIFrameController(private val providerSettings: ProviderSettings) {
-
+class SessionManagementIFrameController(
+        @Value("\${consoleDebug:false}")  private val consoleDebug : Boolean,
+        private val providerSettings: ProviderSettings) {
 
     @GetMapping("/session/management")
-    fun sessionManagerIframe(model: Model): String {
+    fun sessionManagerIframe(model: Model) : String {
         val issuer = providerSettings.issuer
 
         model.addAttribute("issuer", issuer)
+        model.addAttribute("iconsole_debug",consoleDebug)
         return "session/management"
     }
+
 }
+
+@RestController
+class CheckSessionEndPoint(private val redisTemplate: RedisTemplate<String, String?>) {
+
+    @GetMapping("/check_session")
+    fun checkSession(@RequestParam state: String) = Optional.ofNullable(
+            redisTemplate.opsForHash<String, String?>().get(state, state.toSha256()))
+            .map { ResponseEntity.ok(CheckSessionResponse(it)) }
+            .orElseGet { ResponseEntity.notFound().build() }
+
+}
+
+
+data class CheckSessionResponse(val state: String?)
