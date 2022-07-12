@@ -10,7 +10,6 @@ import it.valeriovaudi.vauthenticator.keypair.KeyRepository
 import it.valeriovaudi.vauthenticator.oauth2.authorizationservice.RedisOAuth2AuthorizationService
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
 import it.valeriovaudi.vauthenticator.oauth2.token.OAuth2TokenEnhancer
-import it.valeriovaudi.vauthenticator.openid.connect.logout.JdbcFrontChannelLogout
 import it.valeriovaudi.vauthenticator.openid.connect.sessionmanagement.SessionManagementFactory
 import it.valeriovaudi.vauthenticator.openid.connect.sessionmanagement.sendAuthorizationResponse
 import it.valeriovaudi.vauthenticator.openid.connect.token.IdTokenEnhancer
@@ -106,15 +105,9 @@ class AuthorizationServerConfig {
     }
 
     @Bean
-    fun frontChannelLogout(applicationRepository: ClientApplicationRepository) =
-            JdbcFrontChannelLogout(
-                    oidcIss, applicationRepository
-            )
-
-
-    @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     fun authorizationServerSecurityFilterChain(providerSettings: ProviderSettings,
+                                               redisTemplate: RedisTemplate<String, String?>,
                                                http: HttpSecurity): SecurityFilterChain {
         val userInfoEnhancer = UserInfoEnhancer(accountRepository)
         val authorizationServerConfigurer = OAuth2AuthorizationServerConfigurer<HttpSecurity>()
@@ -124,7 +117,7 @@ class AuthorizationServerConfig {
                     userInfoEnhancer.oidcUserInfoFrom(context)
                 }
             }
-        }.authorizationEndpoint { it.authorizationResponseHandler(sendAuthorizationResponse(SessionManagementFactory(providerSettings), DefaultRedirectStrategy())) }
+        }.authorizationEndpoint { it.authorizationResponseHandler(sendAuthorizationResponse(redisTemplate, SessionManagementFactory(providerSettings), DefaultRedirectStrategy())) }
         val endpointsMatcher = authorizationServerConfigurer.endpointsMatcher
 
         http
