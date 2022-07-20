@@ -25,7 +25,7 @@
         <io.mockk.version>1.11.0</io.mockk.version>
         <aws.sdk.version>2.16.48</aws.sdk.version>
 
-        <oauth2-authorization-server.version>0.3.0</oauth2-authorization-server.version>
+        <oauth2-authorization-server.version>0.3.1</oauth2-authorization-server.version>
         <wiremock.version>2.27.2</wiremock.version>
     </properties>
 
