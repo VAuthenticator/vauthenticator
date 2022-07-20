@@ -46,7 +46,7 @@ jobs:
       - name: Build frontend artifacts
         run: |
           cd src/main/frontend
-          npm install
+          npm install --legacy-peer-deps
           npm run-script build
 
       - name: Build
