@@ -145,4 +145,5 @@ object TestingFixture {
                 mutableListOf()
             }
 
+    fun loadFileFor(path : String) = String(ClassLoader.getSystemResourceAsStream(path).readAllBytes())
 }
