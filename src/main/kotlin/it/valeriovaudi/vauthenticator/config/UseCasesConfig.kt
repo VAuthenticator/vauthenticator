@@ -29,7 +29,8 @@ class UseCasesConfig {
     fun signUpUseCase(clientAccountRepository: ClientApplicationRepository,
                       accountRepository: AccountRepository,
                       signUpConfirmationMailConfiguration: SignUpConfirmationMailConfiguration,
-                      mailSenderService: MailSenderService): SignUpUseCase {
-        return SignUpUseCase(clientAccountRepository, accountRepository, SignUpConfirmationMailSender(mailSenderService, signUpConfirmationMailConfiguration))
+                      mailSenderService: MailSenderService,
+                      vAuthenticatorPasswordEncoder : VAuthenticatorPasswordEncoder): SignUpUseCase {
+        return SignUpUseCase(clientAccountRepository, accountRepository, SignUpConfirmationMailSender(mailSenderService, signUpConfirmationMailConfiguration), vAuthenticatorPasswordEncoder)
     }
 }

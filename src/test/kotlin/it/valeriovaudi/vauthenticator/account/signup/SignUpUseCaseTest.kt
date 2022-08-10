@@ -7,6 +7,7 @@ import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.Scope.Companion.SIGN_UP
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.Scopes
+import it.valeriovaudi.vauthenticator.security.VAuthenticatorPasswordEncoder
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -28,26 +29,33 @@ internal class SignUpUseCaseTest {
     @Mock
     lateinit var signUpConfirmationMailSender: SignUpConfirmationMailSender
 
+    @Mock
+    lateinit var vAuthenticatorPasswordEncoder: VAuthenticatorPasswordEncoder
+
     @Test
     internal fun `when a new account is created`() {
-        val underTest = SignUpUseCase(clientAccountRepository, accountRepository, signUpConfirmationMailSender)
+        val underTest = SignUpUseCase(clientAccountRepository, accountRepository, signUpConfirmationMailSender, vAuthenticatorPasswordEncoder)
 
         val clientAppId = ClientAppId("an_id")
         val aClientApp = ClientAppFixture.aClientApp(clientAppId).copy(scopes = Scopes(setOf(SIGN_UP)))
-        val account = anAccount().copy(authorities = listOf("AN_AUTHORITY"))
+        val account = anAccount().copy(authorities = listOf("AN_AUTHORITY"), password = "encrypted_secret")
 
         given(clientAccountRepository.findOne(clientAppId))
                 .willReturn(Optional.of(aClientApp))
 
-        underTest.execute(clientAppId, account)
+        given(vAuthenticatorPasswordEncoder.encode("secret"))
+                .willReturn("encrypted_secret")
+
+        underTest.execute(clientAppId, account.copy(password = "secret"))
 
         verify(accountRepository).create(account)
         verify(signUpConfirmationMailSender).sendConfirmation(account)
+        verify(vAuthenticatorPasswordEncoder).encode("secret")
     }
 
     @Test
     internal fun `when a new account is not created due to client app does not support sign up`() {
-        val underTest = SignUpUseCase(clientAccountRepository, accountRepository, signUpConfirmationMailSender)
+        val underTest = SignUpUseCase(clientAccountRepository, accountRepository, signUpConfirmationMailSender, vAuthenticatorPasswordEncoder)
 
         val clientAppId = ClientAppId("an_id")
         val aClientApp = ClientAppFixture.aClientApp(clientAppId)
