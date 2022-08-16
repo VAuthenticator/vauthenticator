@@ -1,5 +1,6 @@
 package it.valeriovaudi.vauthenticator.mail
 
+import com.hubspot.jinjava.Jinjava
 import it.valeriovaudi.vauthenticator.document.DocumentRepository
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
@@ -20,6 +21,13 @@ interface MailSenderService {
 interface MailTemplateResolver {
 
     fun compile(template: String, context: Map<String, Any>): String
+
+}
+
+class JinjavaMailTemplateResolver(private val engine: Jinjava) : MailTemplateResolver {
+    override fun compile(template: String, context: Map<String, Any>): String {
+        return engine.render(template, context)
+    }
 
 }
 
