@@ -4,6 +4,7 @@ import it.valeriovaudi.vauthenticator.account.Account
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import it.valeriovaudi.vauthenticator.mail.MailMessage
 import it.valeriovaudi.vauthenticator.mail.MailSenderService
+import it.valeriovaudi.vauthenticator.mail.MailType
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.Scope
@@ -40,7 +41,9 @@ open class SignUpConfirmationMailSender(
     open fun sendConfirmation(account: Account) {
         mailSenderService.send(MailMessage(account.email,
                 mailConfiguration.from,
-                mailConfiguration.subject
+                mailConfiguration.subject,
+                MailType.SIGN_UP,
+                emptyMap()
         ))
     }
 }
