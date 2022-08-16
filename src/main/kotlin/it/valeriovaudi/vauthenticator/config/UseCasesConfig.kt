@@ -28,9 +28,13 @@ class UseCasesConfig {
     @Bean
     fun signUpUseCase(clientAccountRepository: ClientApplicationRepository,
                       accountRepository: AccountRepository,
-                      signUpConfirmationMailConfiguration: SignUpConfirmationMailConfiguration,
+                      signUpConfirmationMailSender : SignUpConfirmationMailSender,
                       mailSenderService: MailSenderService,
                       vAuthenticatorPasswordEncoder : VAuthenticatorPasswordEncoder): SignUpUseCase {
-        return SignUpUseCase(clientAccountRepository, accountRepository, SignUpConfirmationMailSender(mailSenderService, signUpConfirmationMailConfiguration), vAuthenticatorPasswordEncoder)
+        return SignUpUseCase(clientAccountRepository, accountRepository, signUpConfirmationMailSender, vAuthenticatorPasswordEncoder)
     }
+
+    @Bean
+    fun signUpConfirmationMailSender(mailSenderService: MailSenderService, signUpConfirmationMailConfiguration: SignUpConfirmationMailConfiguration) =
+            SignUpConfirmationMailSender(mailSenderService, signUpConfirmationMailConfiguration)
 }

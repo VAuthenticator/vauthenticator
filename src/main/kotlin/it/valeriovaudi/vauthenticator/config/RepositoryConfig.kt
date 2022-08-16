@@ -1,6 +1,7 @@
 package it.valeriovaudi.vauthenticator.config
 
 import it.valeriovaudi.vauthenticator.account.repository.DynamoDbAccountRepository
+import it.valeriovaudi.vauthenticator.document.S3DocumentRepository
 import it.valeriovaudi.vauthenticator.keypair.DynamoKeyRepository
 import it.valeriovaudi.vauthenticator.keypair.KeyPairConfig
 import it.valeriovaudi.vauthenticator.keypair.KeyRepository
@@ -12,22 +13,25 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.crypto.password.PasswordEncoder
-import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.kms.KmsClient
-
+import software.amazon.awssdk.services.s3.S3Client
 
 @Configuration(proxyBeanMethods = false)
-class RepositoryConfig {
+class DocumentRepositoryConfig {
+
+    @Bean
+    fun documentRepository(@Value("\${document.bucket-name}") documentBucketName : String, s3Client: S3Client) =
+            S3DocumentRepository(s3Client, documentBucketName)
+
+}
+
+@Configuration(proxyBeanMethods = false)
+class KeyRepositoryConfig {
 
     @Bean
     @ConfigurationProperties(prefix = "key-store")
     fun keyPairConfig() = KeyPairConfig()
-
-    @Bean
-    fun kmsClient(awsCredentialsProvider: AwsCredentialsProvider) = KmsClient.builder()
-            .credentialsProvider(awsCredentialsProvider)
-            .build()
 
     @Bean
     fun keyRepository(kmsClient: KmsClient,
@@ -43,11 +47,6 @@ class RepositoryConfig {
 
 @Configuration(proxyBeanMethods = false)
 class DynamoDbRepositoryConfig {
-
-    @Bean
-    fun dynamoDbClient(awsCredentialsProvider: AwsCredentialsProvider) = DynamoDbClient.builder()
-            .credentialsProvider(awsCredentialsProvider)
-            .build()
 
     @Bean
     fun accountRepository(dynamoDbClient: DynamoDbClient,

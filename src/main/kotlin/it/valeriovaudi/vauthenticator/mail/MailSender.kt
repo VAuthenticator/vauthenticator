@@ -1,13 +1,12 @@
 package it.valeriovaudi.vauthenticator.mail
 
 import it.valeriovaudi.vauthenticator.document.DocumentRepository
-import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import javax.mail.internet.MimeMessage
 
 
-data class MailMessage(val to: String, val from: String, val subject: String, val text: String, val type: MailType = MailType.SIGN_UP)
+data class MailMessage(val to: String, val from: String, val subject: String, val type: MailType = MailType.SIGN_UP)
 
 enum class MailType(val path: String) {
     SIGN_UP("templates/sign-up.html"), EMAIL_VERIFICATION(""), RESET_PASSWORD("");
@@ -18,27 +17,11 @@ interface MailSenderService {
     fun send(mail: MailMessage)
 }
 
-class JavaMailSenderService(private val javaMailSender: JavaMailSender) : MailSenderService {
-
-    override fun send(mail: MailMessage) {
-        javaMailSender.send(simpleMailMessage(mail))
-    }
-
-    private fun simpleMailMessage(mail: MailMessage): SimpleMailMessage {
-        val simpleMailMessage = SimpleMailMessage()
-        simpleMailMessage.setTo(mail.to)
-        simpleMailMessage.setFrom(mail.from)
-        simpleMailMessage.setSubject(mail.subject)
-        simpleMailMessage.setText(mail.text)
-        return simpleMailMessage
-    }
-
-}
 
 private const val MAIL_DOCUMENT_TYPE = "mail"
 
-class TypedMailSenderService(private val documentRepository: DocumentRepository,
-                             private val mailSender: JavaMailSender) : MailSenderService {
+class JavaMailSenderService(private val documentRepository: DocumentRepository,
+                            private val mailSender: JavaMailSender) : MailSenderService {
 
     override fun send(mail: MailMessage) {
         val documentContent = documentRepository.loadDocument(MAIL_DOCUMENT_TYPE, mailTemplatePathFor(mail.type))

@@ -3,14 +3,16 @@ package it.valeriovaudi.vauthenticator.mail
 import com.icegreen.greenmail.configuration.GreenMailConfiguration
 import com.icegreen.greenmail.junit5.GreenMailExtension
 import com.icegreen.greenmail.util.ServerSetupTest
-import org.junit.jupiter.api.Assertions
+import it.valeriovaudi.vauthenticator.document.DocumentRepository
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
+import org.mockito.BDDMockito.given
+import org.mockito.Mockito.mock
 import org.springframework.mail.javamail.JavaMailSenderImpl
 
 internal class JavaMailSenderServiceTest {
-
     @RegisterExtension
     val greenMail: GreenMailExtension = GreenMailExtension(ServerSetupTest.SMTP)
             .withConfiguration(GreenMailConfiguration.aConfig().withUser("user", "pwd"))
@@ -19,23 +21,28 @@ internal class JavaMailSenderServiceTest {
 
     lateinit var mailSenderService: MailSenderService
 
+    private val documentRepository: DocumentRepository = mock(DocumentRepository::class.java)
+
     @BeforeEach
-    fun setUp(){
+    fun setUp() {
         val javaMailSender = JavaMailSenderImpl()
         javaMailSender.port = greenMail.smtp.port
         javaMailSender.host = "127.0.0.1"
         javaMailSender.username = "user"
-        mailSenderService = JavaMailSenderService(javaMailSender)
+        mailSenderService = JavaMailSenderService(documentRepository, javaMailSender)
     }
 
     @Test
     internal fun `when a mail is sent`() {
-        mailSenderService.send(MailMessage("mail@mail.com","mail@mail.com", "test", "test message body"))
-        val mail = greenMail.receivedMessages[0]
-        Assertions.assertEquals("mail@mail.com", mail.allRecipients[0].toString())
-        Assertions.assertEquals("mail@mail.com", mail.from[0].toString())
-        Assertions.assertEquals("test", mail.subject)
-        Assertions.assertEquals("test message body", mail.content.toString().trim())
-    }
+        val mailTemplateContent = "test message body".toByteArray()
+        given(documentRepository.loadDocument("mail", MailType.SIGN_UP.path))
+                .willReturn(mailTemplateContent)
 
+        mailSenderService.send(MailMessage("mail@mail.com", "mail@mail.com", "test"))
+        val mail = greenMail.receivedMessages[0]
+        assertEquals("mail@mail.com", mail.allRecipients[0].toString())
+        assertEquals("mail@mail.com", mail.from[0].toString())
+        assertEquals("test", mail.subject)
+        assertEquals("test message body", mail.content.toString().trim())
+    }
 }
