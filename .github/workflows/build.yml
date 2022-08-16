@@ -33,7 +33,7 @@ jobs:
           docker-compose up &
           sleep 30s
           sudo chown -R $USER:$USER *
-          chmod 777 -R docker/dynamodb
+          chmod 777 -R docker.dynamodb
           export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
           export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
           export AWS_REGION=${{ secrets.AWS_REGION }}
