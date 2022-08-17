@@ -39,8 +39,8 @@ jobs:
           export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
           export AWS_REGION=${{ secrets.AWS_REGION }}
 
-          aws s3api create-bucket --bucket bucket --endpoint http://localhost:4566 
-          aws s3 cp  index.html s3://bucket/mail/templates/sign-up.html --endpoint http://localhost:4566 
+          aws s3api create-bucket --bucket bucket --endpoint http://localhost:4566 --region ${{ secrets.AWS_REGION }}
+          aws s3 cp  index.html s3://bucket/mail/templates/sign-up.html --endpoint http://localhost:4566 --region ${{ secrets.AWS_REGION }}
           
           cd ../terraform/
 
