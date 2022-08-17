@@ -2,13 +2,13 @@ package it.valeriovaudi.vauthenticator.mail
 
 import it.valeriovaudi.vauthenticator.account.Account
 
-interface MailPreRenderRule {
+interface MailContextFactory {
 
     fun apply(account: Account, requestContext: MailContext): MailContext
 
 }
 
-class SimpleMailPreRenderRule : MailPreRenderRule {
+class SimpleMailContextFactory : MailContextFactory {
 
     override fun apply(account: Account, requestContext: MailContext): MailContext {
         return mapOf(

@@ -4,11 +4,11 @@ import it.valeriovaudi.vauthenticator.account.AccountTestFixture
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
-internal class SimpleMailPreRenderRuleTest {
+internal class SimpleMailContextFactoryTest {
 
     @Test
     internal fun `happy path`() {
-        val rule = SimpleMailPreRenderRule()
+        val rule = SimpleMailContextFactory()
         val account = AccountTestFixture.anAccount()
         val actual = rule.apply(account, mapOf("key" to "value"))
         val expected = mapOf(
