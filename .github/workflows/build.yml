@@ -38,6 +38,7 @@ jobs:
           export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
           export AWS_REGION=${{ secrets.AWS_REGION }}
 
+          ./test_setup.sh
           cd ../terraform/
 
           terraform init
@@ -52,7 +53,7 @@ jobs:
       - name: Build
         run: |
           export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-          mvn install
+          mvn install -q
 
       - name: docker push
         run: |
