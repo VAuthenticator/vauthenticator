@@ -2,6 +2,7 @@ package it.valeriovaudi.vauthenticator.account.signup
 
 import it.valeriovaudi.vauthenticator.account.Account
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
+import it.valeriovaudi.vauthenticator.mail.MailContextFactory
 import it.valeriovaudi.vauthenticator.mail.MailMessage
 import it.valeriovaudi.vauthenticator.mail.MailSenderService
 import it.valeriovaudi.vauthenticator.mail.MailType
@@ -36,6 +37,7 @@ open class SignUpUseCase(
 
 open class SignUpConfirmationMailSender(
         private val mailSenderService: MailSenderService,
+        private val mailContextFactory: MailContextFactory,
         private val mailConfiguration: SignUpConfirmationMailConfiguration) {
 
     open fun sendConfirmation(account: Account) {
@@ -43,7 +45,7 @@ open class SignUpConfirmationMailSender(
                 mailConfiguration.from,
                 mailConfiguration.subject,
                 MailType.SIGN_UP,
-                emptyMap()
+                mailContextFactory.apply(account, emptyMap())
         ))
     }
 }
