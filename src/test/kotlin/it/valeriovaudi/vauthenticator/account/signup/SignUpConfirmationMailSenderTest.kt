@@ -42,16 +42,6 @@ internal class SignUpConfirmationMailSenderTest {
     internal fun `when a mail is sent`() {
         val account = anAccount().copy(firstName = "Jhon", lastName = "Miller")
         val mailTemplateContent = "hi {{ firstName }} {{ lastName }} your signup to vauthenticator succeeded".toByteArray()
-        val context = mapOf(
-                "enabled" to account.enabled,
-                "username" to account.username,
-                "authorities" to account.authorities,
-                "email" to account.email,
-                "firstName" to account.firstName,
-                "lastName" to account.lastName,
-                "birthDate" to account.birthDate.iso8601FormattedDate(),
-                "phone" to account.phone.formattedPhone(),
-        )
 
         BDDMockito.given(documentRepository.loadDocument("mail", MailType.SIGN_UP.path))
                 .willReturn(mailTemplateContent)
