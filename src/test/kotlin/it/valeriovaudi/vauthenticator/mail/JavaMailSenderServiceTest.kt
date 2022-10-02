@@ -38,13 +38,13 @@ internal class JavaMailSenderServiceTest {
         val mailTemplateContent = "hi %s your signup to vauthenticator succeeded".toByteArray()
         val context = mapOf("firstName" to "A First Name")
 
-        given(documentRepository.loadDocument("mail", MailType.SIGN_UP.path))
+        given(documentRepository.loadDocument("mail", MailType.WELCOME.path))
                 .willReturn(mailTemplateContent)
 
         given(templateResolver.compile("hi %s your signup to vauthenticator succeeded", context))
                 .willReturn("hi A First Name your signup to vauthenticator succeeded")
 
-        mailSenderService.send(MailMessage("mail@mail.com", "mail@mail.com", "test", MailType.SIGN_UP, context))
+        mailSenderService.send(MailMessage("mail@mail.com", "mail@mail.com", "test", MailType.WELCOME, context))
         val mail = greenMail.receivedMessages[0]
         assertEquals("mail@mail.com", mail.allRecipients[0].toString())
         assertEquals("mail@mail.com", mail.from[0].toString())

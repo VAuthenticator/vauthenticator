@@ -2,8 +2,8 @@ package it.valeriovaudi.vauthenticator.config
 
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import it.valeriovaudi.vauthenticator.account.signup.SignUpConfirmationMailConfiguration
-import it.valeriovaudi.vauthenticator.account.signup.SignUpConfirmationMailSender
 import it.valeriovaudi.vauthenticator.account.signup.SignUpUseCase
+import it.valeriovaudi.vauthenticator.account.welcome.WelcomeMailSender
 import it.valeriovaudi.vauthenticator.mail.MailSenderService
 import it.valeriovaudi.vauthenticator.mail.SimpleMailContextFactory
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
@@ -29,13 +29,13 @@ class UseCasesConfig {
     @Bean
     fun signUpUseCase(clientAccountRepository: ClientApplicationRepository,
                       accountRepository: AccountRepository,
-                      signUpConfirmationMailSender : SignUpConfirmationMailSender,
+                      welcomeMailSender : WelcomeMailSender,
                       mailSenderService: MailSenderService,
                       vAuthenticatorPasswordEncoder : VAuthenticatorPasswordEncoder): SignUpUseCase {
-        return SignUpUseCase(clientAccountRepository, accountRepository, signUpConfirmationMailSender, vAuthenticatorPasswordEncoder)
+        return SignUpUseCase(clientAccountRepository, accountRepository, welcomeMailSender, vAuthenticatorPasswordEncoder)
     }
 
     @Bean
     fun signUpConfirmationMailSender(mailSenderService: MailSenderService, signUpConfirmationMailConfiguration: SignUpConfirmationMailConfiguration) =
-            SignUpConfirmationMailSender(mailSenderService, SimpleMailContextFactory(), signUpConfirmationMailConfiguration)
+            WelcomeMailSender(mailSenderService, SimpleMailContextFactory(), signUpConfirmationMailConfiguration)
 }

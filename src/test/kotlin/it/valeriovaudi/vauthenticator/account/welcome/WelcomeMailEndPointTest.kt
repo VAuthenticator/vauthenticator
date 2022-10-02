@@ -3,7 +3,6 @@ package it.valeriovaudi.vauthenticator.account.welcome
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
-import it.valeriovaudi.vauthenticator.account.signup.SignUpConfirmationMailSender
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -20,11 +19,11 @@ internal class WelcomeMailEndPointTest {
     lateinit var accountRepository: AccountRepository
 
     @MockK
-    lateinit var signUpConfirmationMailSender: SignUpConfirmationMailSender
+    lateinit var welcomeMailSender: WelcomeMailSender
 
     @BeforeEach
     internal fun setUp() {
-        mokMvc = MockMvcBuilders.standaloneSetup(WelcomeMailEndPoint(accountRepository, signUpConfirmationMailSender)).build()
+        mokMvc = MockMvcBuilders.standaloneSetup(WelcomeMailEndPoint(accountRepository, welcomeMailSender)).build()
     }
 
     @Test

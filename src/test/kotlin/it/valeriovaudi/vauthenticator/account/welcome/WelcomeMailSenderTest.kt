@@ -1,10 +1,11 @@
-package it.valeriovaudi.vauthenticator.account.signup
+package it.valeriovaudi.vauthenticator.account.welcome
 
 import com.hubspot.jinjava.Jinjava
 import com.icegreen.greenmail.configuration.GreenMailConfiguration
 import com.icegreen.greenmail.junit5.GreenMailExtension
 import com.icegreen.greenmail.util.ServerSetupTest
 import it.valeriovaudi.vauthenticator.account.AccountTestFixture.anAccount
+import it.valeriovaudi.vauthenticator.account.signup.SignUpConfirmationMailConfiguration
 import it.valeriovaudi.vauthenticator.document.DocumentRepository
 import it.valeriovaudi.vauthenticator.mail.*
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -15,7 +16,7 @@ import org.mockito.BDDMockito
 import org.mockito.Mockito
 import org.springframework.mail.javamail.JavaMailSenderImpl
 
-internal class SignUpConfirmationMailSenderTest {
+internal class WelcomeMailSenderTest {
     @RegisterExtension
     val greenMail: GreenMailExtension = GreenMailExtension(ServerSetupTest.SMTP)
             .withConfiguration(GreenMailConfiguration.aConfig().withUser("user", "pwd"))
@@ -23,7 +24,7 @@ internal class SignUpConfirmationMailSenderTest {
 
 
     lateinit var mailSenderService: MailSenderService
-    lateinit var sender: SignUpConfirmationMailSender
+    lateinit var sender: WelcomeMailSender
 
     private val documentRepository: DocumentRepository = Mockito.mock(DocumentRepository::class.java)
     private val templateResolver: MailTemplateResolver = JinjavaMailTemplateResolver(Jinjava())
@@ -35,7 +36,7 @@ internal class SignUpConfirmationMailSenderTest {
         javaMailSender.host = "127.0.0.1"
         javaMailSender.username = "user"
         mailSenderService = JavaMailSenderService(documentRepository, javaMailSender, templateResolver)
-        sender = SignUpConfirmationMailSender(mailSenderService,SimpleMailContextFactory(), SignUpConfirmationMailConfiguration("mail@mail.com", "test"))
+        sender = WelcomeMailSender(mailSenderService,SimpleMailContextFactory(), SignUpConfirmationMailConfiguration("mail@mail.com", "test"))
     }
 
     @Test
@@ -43,11 +44,11 @@ internal class SignUpConfirmationMailSenderTest {
         val account = anAccount().copy(firstName = "Jhon", lastName = "Miller")
         val mailTemplateContent = "hi {{ firstName }} {{ lastName }} your signup to vauthenticator succeeded".toByteArray()
 
-        BDDMockito.given(documentRepository.loadDocument("mail", MailType.SIGN_UP.path))
+        BDDMockito.given(documentRepository.loadDocument("mail", MailType.WELCOME.path))
                 .willReturn(mailTemplateContent)
 
 
-        sender.sendConfirmation(account)
+        sender.sendFor(account)
         val mail = greenMail.receivedMessages[0]
         assertEquals(account.email, mail.allRecipients[0].toString())
         assertEquals("mail@mail.com", mail.from[0].toString())

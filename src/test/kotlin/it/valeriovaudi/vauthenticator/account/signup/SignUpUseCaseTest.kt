@@ -2,6 +2,7 @@ package it.valeriovaudi.vauthenticator.account.signup
 
 import it.valeriovaudi.vauthenticator.account.AccountTestFixture.anAccount
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
+import it.valeriovaudi.vauthenticator.account.welcome.WelcomeMailSender
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppFixture
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
@@ -27,14 +28,14 @@ internal class SignUpUseCaseTest {
     lateinit var clientAccountRepository: ClientApplicationRepository
 
     @Mock
-    lateinit var signUpConfirmationMailSender: SignUpConfirmationMailSender
+    lateinit var welcomeMailSender: WelcomeMailSender
 
     @Mock
     lateinit var vAuthenticatorPasswordEncoder: VAuthenticatorPasswordEncoder
 
     @Test
     internal fun `when a new account is created`() {
-        val underTest = SignUpUseCase(clientAccountRepository, accountRepository, signUpConfirmationMailSender, vAuthenticatorPasswordEncoder)
+        val underTest = SignUpUseCase(clientAccountRepository, accountRepository, welcomeMailSender, vAuthenticatorPasswordEncoder)
 
         val clientAppId = ClientAppId("an_id")
         val aClientApp = ClientAppFixture.aClientApp(clientAppId).copy(scopes = Scopes(setOf(SIGN_UP)))
@@ -49,13 +50,13 @@ internal class SignUpUseCaseTest {
         underTest.execute(clientAppId, account.copy(password = "secret"))
 
         verify(accountRepository).create(account)
-        verify(signUpConfirmationMailSender).sendConfirmation(account)
+        verify(welcomeMailSender).sendFor(account)
         verify(vAuthenticatorPasswordEncoder).encode("secret")
     }
 
     @Test
     internal fun `when a new account is not created due to client app does not support sign up`() {
-        val underTest = SignUpUseCase(clientAccountRepository, accountRepository, signUpConfirmationMailSender, vAuthenticatorPasswordEncoder)
+        val underTest = SignUpUseCase(clientAccountRepository, accountRepository, welcomeMailSender, vAuthenticatorPasswordEncoder)
 
         val clientAppId = ClientAppId("an_id")
         val aClientApp = ClientAppFixture.aClientApp(clientAppId)

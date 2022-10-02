@@ -28,7 +28,7 @@ class JavaMailSenderService(private val documentRepository: DocumentRepository,
 
     private fun mailTemplatePathFor(mailType: MailType): String =
             when (mailType) {
-                MailType.SIGN_UP -> mailType.path
+                MailType.WELCOME -> mailType.path
                 else -> throw UnsupportedOperationException("mail tpe not supported")
             }
 
