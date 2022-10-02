@@ -1,7 +1,12 @@
 package it.valeriovaudi.vauthenticator.account.welcome
 
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import io.mockk.just
+import io.mockk.runs
+import io.mockk.verify
+import it.valeriovaudi.vauthenticator.account.AccountTestFixture
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -10,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
+import java.util.*
 
 @ExtendWith(MockKExtension::class)
 internal class WelcomeMailEndPointTest {
@@ -28,7 +34,13 @@ internal class WelcomeMailEndPointTest {
 
     @Test
     internal fun `happy path`() {
-        mokMvc.perform(get("/sign-up/mail/mail@test.com/welcome"))
-                .andExpect(status().isOk())
+        val anAccount = AccountTestFixture.anAccount()
+        every { accountRepository.accountFor("email@domain.com") } returns Optional.of(anAccount)
+        every { welcomeMailSender.sendFor(anAccount) } just runs
+
+        mokMvc.perform(get("/sign-up/mail/email@domain.com/welcome"))
+                .andExpect(status().isNoContent)
+
+        verify { welcomeMailSender.sendFor(anAccount) }
     }
 }

@@ -7,23 +7,11 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.security.crypto.password.PasswordEncoder
 import java.util.*
 
 internal class DynamoDbClientApplicationRepositoryTest {
 
     lateinit var dynamoDbClientApplicationRepository: DynamoDbClientApplicationRepository
-
-    object passwordEncoder : PasswordEncoder {
-        override fun encode(p0: CharSequence): String =
-                p0.toString()
-
-
-        override fun matches(p0: CharSequence?, p1: String?): Boolean {
-            TODO("Not yet implemented")
-        }
-
-    }
 
     @BeforeEach
     fun setUp() {
