@@ -1,11 +1,8 @@
 package it.valeriovaudi.vauthenticator.account.mailverification
 
+import it.valeriovaudi.vauthenticator.account.AccountNotFoundException
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplication
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.Scope
-import org.springframework.web.bind.annotation.PathVariable
+import it.valeriovaudi.vauthenticator.oauth2.clientapp.*
 
 class MailVerificationUseCase(private val clientAccountRepository: ClientApplicationRepository,
                               private val accountRepository: AccountRepository,
@@ -16,19 +13,24 @@ class MailVerificationUseCase(private val clientAccountRepository: ClientApplica
         clientAccountRepository.findOne(clientAppId)
                 .map { clientApp ->
                     if (allowedOperationFor(clientApp)) {
-                        accountRepository.accountFor(mail)
-                                .map { account ->
-                                    val verificationTicket = mailVerificationTicketFactory.createTicketFor(account, clientApp)
-                                    mailVerificationMailSender.sendFor(account, verificationTicket)
-                                }
+                        sendVerificationTicketFor(mail, clientApp)
+                    } else {
+                        throw InsufficientClientApplicationScopeException("The client app ${clientAppId.content} does not support mail verification use case........ consider to add ${Scope.MAIL_VERIFY.content} as scope")
                     }
                 }
 
     }
 
+    private fun sendVerificationTicketFor(mail: String, clientApp: ClientApplication) =
+            accountRepository.accountFor(mail)
+                    .map { account ->
+                        val verificationTicket = mailVerificationTicketFactory.createTicketFor(account, clientApp)
+                        mailVerificationMailSender.sendFor(account, verificationTicket)
+                    }.orElseThrow { AccountNotFoundException("account not found") }
+
     private fun allowedOperationFor(clientApp: ClientApplication) =
             clientApp.scopes.content.contains(Scope.MAIL_VERIFY)
 
-    fun verifyMail(@PathVariable mail: String, clientAppId: ClientAppId): Unit = TODO()
+    fun verifyMail(): Unit = TODO()
 
 }

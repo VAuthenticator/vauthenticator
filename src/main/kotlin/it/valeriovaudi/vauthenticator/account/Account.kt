@@ -19,7 +19,7 @@ data class Account(var accountNonExpired: Boolean = false,
                    var firstName: String,
                    var lastName: String,
 
-                   val birthDate : Date,
+                   val birthDate: Date,
                    val phone: Phone
 ) {
     val sub: String
@@ -32,6 +32,7 @@ data class Date(val localDate: LocalDate,
     fun formattedDate(): String {
         return dateTimeFormatter.format(localDate)
     }
+
     fun iso8601FormattedDate(): String {
         return USER_INFO_DEFAULT_DATE_TIME_FORMATTER.format(localDate)
     }
@@ -72,3 +73,6 @@ data class Phone(private val countryPrefix: String, private val prefix: String, 
         }
     }
 }
+
+
+class AccountNotFoundException(message: String) : RuntimeException(message)

@@ -3,11 +3,8 @@ package it.valeriovaudi.vauthenticator.account.signup
 import it.valeriovaudi.vauthenticator.account.AccountTestFixture.anAccount
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import it.valeriovaudi.vauthenticator.account.welcome.WelcomeMailSender
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppFixture
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
+import it.valeriovaudi.vauthenticator.oauth2.clientapp.*
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.Scope.Companion.SIGN_UP
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.Scopes
 import it.valeriovaudi.vauthenticator.security.VAuthenticatorPasswordEncoder
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -65,7 +62,7 @@ internal class SignUpUseCaseTest {
         given(clientAccountRepository.findOne(clientAppId))
                 .willReturn(Optional.of(aClientApp))
 
-        Assertions.assertThrows(UnsupportedSignUpUseCaseException::class.java) {
+        Assertions.assertThrows(InsufficientClientApplicationScopeException::class.java) {
             underTest.execute(clientAppId, account)
         }
 

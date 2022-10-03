@@ -5,6 +5,7 @@ import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import it.valeriovaudi.vauthenticator.account.welcome.WelcomeMailSender
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
+import it.valeriovaudi.vauthenticator.oauth2.clientapp.InsufficientClientApplicationScopeException
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.Scope
 import it.valeriovaudi.vauthenticator.security.VAuthenticatorPasswordEncoder
 
@@ -24,7 +25,7 @@ open class SignUpUseCase(
                         accountRepository.create(registeredAccount)
                         welcomeMailSender.sendFor(registeredAccount)
                     } else {
-                        throw UnsupportedSignUpUseCaseException("The client app ${clientAppId.content} does not support signup use case........ consider to add ${Scope.SIGN_UP.content} as scope")
+                        throw InsufficientClientApplicationScopeException("The client app ${clientAppId.content} does not support signup use case........ consider to add ${Scope.SIGN_UP.content} as scope")
                     }
 
                 }
@@ -32,4 +33,3 @@ open class SignUpUseCase(
 
 }
 
-class UnsupportedSignUpUseCaseException(message: String) : RuntimeException(message)
