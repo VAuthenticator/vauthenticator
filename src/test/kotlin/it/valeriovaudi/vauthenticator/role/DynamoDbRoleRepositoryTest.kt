@@ -1,8 +1,9 @@
 package it.valeriovaudi.vauthenticator.role
 
-import it.valeriovaudi.vauthenticator.support.TestingFixture
-import it.valeriovaudi.vauthenticator.support.TestingFixture.dynamoDbClient
-import it.valeriovaudi.vauthenticator.support.TestingFixture.dynamoRoleTableName
+import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoDbClient
+import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoRoleTableName
+import it.valeriovaudi.vauthenticator.support.DatabaseUtils.initRoleTests
+import it.valeriovaudi.vauthenticator.support.DatabaseUtils.resetDatabase
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -14,12 +15,12 @@ internal class DynamoDbRoleRepositoryTest {
     @BeforeEach
     fun setUp() {
         roleRepository = DynamoDbRoleRepository(dynamoDbClient, dynamoRoleTableName)
-        TestingFixture.initRoleTests(dynamoDbClient)
+        initRoleTests(dynamoDbClient)
     }
 
     @AfterEach
     fun tearDown() {
-        TestingFixture.resetDatabase(dynamoDbClient)
+        resetDatabase(dynamoDbClient)
     }
 
     @Test

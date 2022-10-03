@@ -3,10 +3,10 @@ package it.valeriovaudi.vauthenticator.account.repository
 import it.valeriovaudi.vauthenticator.account.Account
 import it.valeriovaudi.vauthenticator.account.AccountTestFixture
 import it.valeriovaudi.vauthenticator.role.Role
-import it.valeriovaudi.vauthenticator.support.TestingFixture
-import it.valeriovaudi.vauthenticator.support.TestingFixture.dynamoAccountRoleTableName
-import it.valeriovaudi.vauthenticator.support.TestingFixture.dynamoAccountTableName
-import it.valeriovaudi.vauthenticator.support.TestingFixture.dynamoDbClient
+import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoAccountRoleTableName
+import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoAccountTableName
+import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoDbClient
+import it.valeriovaudi.vauthenticator.support.DatabaseUtils.resetDatabase
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -29,7 +29,7 @@ internal class DynamoDbAccountRepositoryTest {
 
     @AfterEach
     fun tearDown() {
-        TestingFixture.resetDatabase(dynamoDbClient)
+        resetDatabase(dynamoDbClient)
     }
 
 

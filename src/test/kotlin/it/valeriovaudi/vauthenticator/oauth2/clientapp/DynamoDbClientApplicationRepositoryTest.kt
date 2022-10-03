@@ -1,8 +1,8 @@
 package it.valeriovaudi.vauthenticator.oauth2.clientapp
 
-import it.valeriovaudi.vauthenticator.support.TestingFixture
-import it.valeriovaudi.vauthenticator.support.TestingFixture.dynamoClientApplicationTableName
-import it.valeriovaudi.vauthenticator.support.TestingFixture.dynamoDbClient
+import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoClientApplicationTableName
+import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoDbClient
+import it.valeriovaudi.vauthenticator.support.DatabaseUtils.resetDatabase
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -21,7 +21,7 @@ internal class DynamoDbClientApplicationRepositoryTest {
 
     @AfterEach
     fun tearDown() {
-        TestingFixture.resetDatabase(dynamoDbClient)
+        resetDatabase(dynamoDbClient)
     }
 
     @Test

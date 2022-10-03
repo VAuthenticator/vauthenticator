@@ -84,3 +84,20 @@ resource "aws_dynamodb_table" "keys_table_staging" {
     Environment = "testing"
   }
 }
+
+
+resource "aws_dynamodb_table" "mail_verification_ticket_table" {
+  name         = "TESTING_Authenticator_mail_verification_ticket"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "mail_verification_ticket"
+
+  attribute {
+    name = "mail_verification_ticket"
+    type = "S"
+  }
+
+
+  tags = {
+    Environment = "testing"
+  }
+}
