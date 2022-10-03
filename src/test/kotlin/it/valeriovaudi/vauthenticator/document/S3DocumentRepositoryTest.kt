@@ -21,7 +21,7 @@ internal class S3DocumentRepositoryTest {
                 .build()
 
         val documentRepository = S3DocumentRepository(s3Client, "bucket")
-        val document = documentRepository.loadDocument("mail", "templates/sign-up.html")
+        val document = documentRepository.loadDocument("mail", "templates/welcome.html")
 
         val expected = loadFileFor("index.html")
         Assertions.assertEquals(expected, String(document))
