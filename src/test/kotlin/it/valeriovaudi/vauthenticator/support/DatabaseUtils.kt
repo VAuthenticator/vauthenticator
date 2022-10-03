@@ -1,23 +1,21 @@
 package it.valeriovaudi.vauthenticator.support
 
-import it.valeriovaudi.vauthenticator.extentions.asDynamoAttribute
-import it.valeriovaudi.vauthenticator.extentions.valueAsStringFor
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue
-import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
-import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
-import software.amazon.awssdk.services.dynamodb.model.ScanRequest
+import software.amazon.awssdk.services.dynamodb.model.*
 import java.net.URI
 
+
 object DatabaseUtils {
-    const val dynamoRoleTableName: String = "TESTING_VAuthenticator_Role"
-    const val dynamoAccountTableName: String = "TESTING_VAuthenticator_Account"
-    const val dynamoAccountRoleTableName: String = "TESTING_VAuthenticator_Account_Role"
     const val dynamoClientApplicationTableName: String = "TESTING_VAuthenticator_ClientApplication"
-    
+    const val dynamoAccountTableName: String = "TESTING_VAuthenticator_Account"
+    const val dynamoRoleTableName: String = "TESTING_VAuthenticator_Role"
+    const val dynamoAccountRoleTableName: String = "TESTING_VAuthenticator_Account_Role"
+    const val dynamoKeysTableName: String = "TESTING_VAuthenticator_Keys"
+    const val dynamoMailVerificationTicketTableName: String = "TESTING_Authenticator_mail_verification_ticket"
+
     val dynamoDbClient: DynamoDbClient = DynamoDbClient.builder()
             .credentialsProvider(
                     StaticCredentialsProvider.create(
@@ -41,72 +39,146 @@ object DatabaseUtils {
         roleRepository.putItem(item)
     }
 
-    fun resetDatabase(client: DynamoDbClient) {
+    fun resetDatabase() {
+        try {
+            dynamoDbClient.deleteTable(DeleteTableRequest.builder()
+                    .tableName(dynamoClientApplicationTableName)
+                    .build())
+            dynamoDbClient.deleteTable(DeleteTableRequest.builder()
+                    .tableName(dynamoAccountTableName)
+                    .build())
+            dynamoDbClient.deleteTable(DeleteTableRequest.builder()
+                    .tableName(dynamoRoleTableName)
+                    .build())
+            dynamoDbClient.deleteTable(DeleteTableRequest.builder()
+                    .tableName(dynamoAccountRoleTableName)
+                    .build())
+        } catch (e: java.lang.Exception) {
+        }
+        try {
+            createDynamoClientApplicationTable()
+            createDynamoAccountTable()
+            createDynamoRoleTable()
+            createDynamoAccountRoleTable()
+            createDynamoKeysTable()
+            createDynamoMailVerificationTicketTable()
+        } catch (e: java.lang.Exception) {
+        }
 
-        scanFor(client, dynamoRoleTableName, "role_name")
-                .forEach {
-                    val deleteItemRequest = DeleteItemRequest.builder().tableName(dynamoRoleTableName)
-                            .key(
-                                    mutableMapOf(
-                                            "role_name" to it.valueAsStringFor("role_name").asDynamoAttribute()
-                                    )
-                            )
-                            .build()
-                    client.deleteItem(deleteItemRequest)
-                }
-
-        scanFor(client, dynamoAccountTableName, "user_name")
-                .forEach {
-                    val deleteItemRequest = DeleteItemRequest.builder().tableName(dynamoAccountTableName)
-                            .key(
-                                    mutableMapOf(
-                                            "user_name" to it.valueAsStringFor("user_name").asDynamoAttribute(),
-                                    )
-                            )
-                            .build()
-                    client.deleteItem(deleteItemRequest)
-                }
-
-        scanFor(client, dynamoAccountRoleTableName, "user_name", "role_name")
-                .forEach {
-                    val deleteItemRequest = DeleteItemRequest.builder().tableName(dynamoAccountRoleTableName)
-                            .key(
-                                    mutableMapOf(
-                                            "user_name" to it.valueAsStringFor("user_name").asDynamoAttribute(),
-                                            "role_name" to it.valueAsStringFor("role_name").asDynamoAttribute()
-                                    )
-                            )
-                            .build()
-                    client.deleteItem(deleteItemRequest)
-                }
-
-        scanFor(client, dynamoClientApplicationTableName, "client_id")
-                .forEach {
-                    val deleteItemRequest = DeleteItemRequest.builder().tableName(dynamoClientApplicationTableName)
-                            .key(
-                                    mutableMapOf(
-                                            "client_id" to it.valueAsStringFor("client_id").asDynamoAttribute(),
-                                    )
-                            )
-                            .build()
-                    client.deleteItem(deleteItemRequest)
-                }
     }
 
-    private fun scanFor(
-            client: DynamoDbClient,
-            tableName: String,
-            vararg attributeToGet: String
-    ): MutableList<MutableMap<String, AttributeValue>> =
-            try {
-                client.scan(
-                        ScanRequest.builder()
-                                .tableName(tableName)
-                                .attributesToGet(*attributeToGet)
-                                .build()
-                ).items()
-            } catch (e: Exception) {
-                println("e.message ${e.message}")
-                mutableListOf()
-            }
+    private fun createDynamoAccountRoleTable() {
+        dynamoDbClient.createTable(CreateTableRequest.builder()
+                .tableName(dynamoAccountRoleTableName)
+                .keySchema(KeySchemaElement.builder()
+                        .attributeName("user_name")
+                        .keyType(KeyType.HASH)
+                        .build(),
+                        KeySchemaElement.builder()
+                                .attributeName("role_name")
+                                .keyType(KeyType.RANGE)
+                                .build())
+                .attributeDefinitions(AttributeDefinition.builder()
+                        .attributeName("user_name")
+                        .attributeType(ScalarAttributeType.S)
+                        .build(),
+                        AttributeDefinition.builder()
+                                .attributeName("role_name")
+                                .attributeType(ScalarAttributeType.S)
+                                .build())
+                .billingMode(BillingMode.PAY_PER_REQUEST)
+                .build());
+    }
+
+    private fun createDynamoRoleTable() {
+        dynamoDbClient.createTable(CreateTableRequest.builder()
+                .tableName(dynamoRoleTableName)
+                .keySchema(KeySchemaElement.builder()
+                        .attributeName("role_name")
+                        .keyType(KeyType.HASH)
+                        .build()
+                )
+                .attributeDefinitions(AttributeDefinition.builder()
+                        .attributeName("role_name")
+                        .attributeType(ScalarAttributeType.S)
+                        .build()
+                )
+                .billingMode(BillingMode.PAY_PER_REQUEST)
+                .build())
+    }
+
+    private fun createDynamoAccountTable() {
+        dynamoDbClient.createTable(CreateTableRequest.builder()
+                .tableName(dynamoAccountTableName)
+                .keySchema(KeySchemaElement.builder()
+                        .attributeName("user_name")
+                        .keyType(KeyType.HASH)
+                        .build()
+                )
+                .attributeDefinitions(AttributeDefinition.builder()
+                        .attributeName("user_name")
+                        .attributeType(ScalarAttributeType.S)
+                        .build()
+                )
+                .billingMode(BillingMode.PAY_PER_REQUEST)
+                .build())
+    }
+
+    private fun createDynamoClientApplicationTable() {
+        dynamoDbClient.createTable(CreateTableRequest.builder()
+                .tableName(dynamoClientApplicationTableName)
+                .keySchema(KeySchemaElement.builder()
+                        .attributeName("client_id")
+                        .keyType(KeyType.HASH)
+                        .build()
+                )
+                .attributeDefinitions(AttributeDefinition.builder()
+                        .attributeName("client_id")
+                        .attributeType(ScalarAttributeType.S)
+                        .build()
+                )
+                .billingMode(BillingMode.PAY_PER_REQUEST)
+                .build())
+    }
+
+    private fun createDynamoKeysTable() {
+        dynamoDbClient.createTable(CreateTableRequest.builder()
+                .tableName(dynamoKeysTableName)
+                .keySchema(KeySchemaElement.builder()
+                        .attributeName("master_key_id")
+                        .keyType(KeyType.HASH)
+                        .build(),
+                        KeySchemaElement.builder()
+                                .attributeName("key_id")
+                                .keyType(KeyType.RANGE)
+                                .build())
+                .attributeDefinitions(AttributeDefinition.builder()
+                        .attributeName("master_key_id")
+                        .attributeType(ScalarAttributeType.S)
+                        .build(),
+                        AttributeDefinition.builder()
+                                .attributeName("key_id")
+                                .attributeType(ScalarAttributeType.S)
+                                .build())
+                .billingMode(BillingMode.PAY_PER_REQUEST)
+                .build());
+    }
+
+    private fun createDynamoMailVerificationTicketTable() {
+        dynamoDbClient.createTable(CreateTableRequest.builder()
+                .tableName(dynamoMailVerificationTicketTableName)
+                .keySchema(KeySchemaElement.builder()
+                        .attributeName("mail_verification_ticket")
+                        .keyType(KeyType.HASH)
+                        .build()
+                )
+                .attributeDefinitions(AttributeDefinition.builder()
+                        .attributeName("mail_verification_ticket")
+                        .attributeType(ScalarAttributeType.S)
+                        .build()
+                )
+                .billingMode(BillingMode.PAY_PER_REQUEST)
+                .build());
+    }
+
 }

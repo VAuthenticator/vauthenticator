@@ -21,7 +21,7 @@ internal class DynamoDbClientApplicationRepositoryTest {
 
     @AfterEach
     fun tearDown() {
-        resetDatabase(dynamoDbClient)
+        resetDatabase()
     }
 
     @Test

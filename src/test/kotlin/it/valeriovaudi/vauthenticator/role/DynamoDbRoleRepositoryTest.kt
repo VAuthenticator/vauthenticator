@@ -20,7 +20,7 @@ internal class DynamoDbRoleRepositoryTest {
 
     @AfterEach
     fun tearDown() {
-        resetDatabase(dynamoDbClient)
+        resetDatabase()
     }
 
     @Test
