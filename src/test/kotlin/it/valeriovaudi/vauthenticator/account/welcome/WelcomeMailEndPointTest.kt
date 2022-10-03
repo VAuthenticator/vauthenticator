@@ -38,7 +38,7 @@ internal class WelcomeMailEndPointTest {
         every { accountRepository.accountFor("email@domain.com") } returns Optional.of(anAccount)
         every { welcomeMailSender.sendFor(anAccount) } just runs
 
-        mokMvc.perform(get("/sign-up/mail/email@domain.com/welcome"))
+        mokMvc.perform(get("/api/sign-up/mail/email@domain.com/welcome"))
                 .andExpect(status().isNoContent)
 
         verify { welcomeMailSender.sendFor(anAccount) }

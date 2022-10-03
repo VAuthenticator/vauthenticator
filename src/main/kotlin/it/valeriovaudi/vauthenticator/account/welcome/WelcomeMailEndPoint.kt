@@ -12,13 +12,11 @@ class WelcomeMailEndPoint(
         private val welcomeMailSender: WelcomeMailSender
 ) {
 
-    @GetMapping("/sign-up/mail/{mail}/welcome")
+    @GetMapping("/api/sign-up/mail/{mail}/welcome")
     fun welcome(@PathVariable mail: String) =
             accountRepository.accountFor(mail)
                     .map {
                         welcomeMailSender.sendFor(it)
                         ResponseEntity.noContent().build<Unit>()
                     }.orElse(ResponseEntity.notFound().build())
-
-
 }
