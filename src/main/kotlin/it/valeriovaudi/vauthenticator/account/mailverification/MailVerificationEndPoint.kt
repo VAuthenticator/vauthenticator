@@ -4,7 +4,8 @@ import org.springframework.web.bind.annotation.PathVariable
 
 class MailVerificationEndPoint {
 
+    fun sendVerifyMail(@PathVariable mail: String): Unit = TODO()
 
-    fun verify(@PathVariable mail: String): Unit = TODO()
+    fun verifyMail(@PathVariable mail: String): Unit = TODO()
 
 }

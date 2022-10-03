@@ -70,6 +70,9 @@ data class Scope(val content: String) {
         val EMAIL = Scope("email")
 
         val SIGN_UP = Scope("admin:signup")
+        val WELCOME = Scope("admin:welcome")
+        val MAIL_VERIFY = Scope("admin:mail-verify")
+        val RESET_PASSWORD = Scope("admin:reset-password")
     }
 }
 

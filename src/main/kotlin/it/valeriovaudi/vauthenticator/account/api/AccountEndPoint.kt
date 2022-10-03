@@ -49,16 +49,14 @@ class AccountEndPoint(
              @RequestBody representation: FinalAccountRepresentation): ResponseEntity<Unit> {
         val accessToken = accessTokenFrom(authorization)
 
-        if (accessToken.trim() == "") {
+        if (isBlankAccessTokenFrom(accessToken)) {
             return status(HttpStatus.UNAUTHORIZED).build()
         }
 
         val userName = userNameFrom(accessToken)
 
         return if (userName.isNotEmpty()) {
-            if (representation.email.isNotEmpty()) {
-                logger.warn("there is an email in the body.............. it will be ignored in favour of the access token identity")
-            }
+            logWarningForNotEmptyUserNameInRequestBodyFor(representation)
 
             accountRepository.accountFor(userName)
                     .map { account ->
@@ -67,7 +65,7 @@ class AccountEndPoint(
                         ResponseEntity.noContent().build<Unit>()
                     }
                     .orElseGet {
-                        ResponseEntity.noContent().build<Unit>()
+                        ResponseEntity.noContent().build()
                     }
 
         } else {
@@ -75,6 +73,14 @@ class AccountEndPoint(
         }
 
     }
+
+    private fun logWarningForNotEmptyUserNameInRequestBodyFor(representation: FinalAccountRepresentation) {
+        if (representation.email.isNotEmpty()) {
+            logger.warn("there is an email in the body.............. it will be ignored in favour of the access token identity")
+        }
+    }
+
+    private fun isBlankAccessTokenFrom(accessToken: String) = accessToken.trim().isBlank()
 
     private fun accessTokenFrom(authorization: String?) =
             Optional.ofNullable(authorization).map {
