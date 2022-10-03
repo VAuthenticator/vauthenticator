@@ -37,7 +37,7 @@ class ClientAppRegisteredClientRepository(private val clientApplicationRepositor
                         .authorizationGrantTypes { authorizationGrantTypes ->
                             authorizationGrantTypes.addAll(clientApp.authorizedGrantTypes.content.map {
                                 AuthorizationGrantType(
-                                        it.name.toLowerCase()
+                                        it.name.lowercase()
                                 )
                             })
                         }
