@@ -1,0 +1,2 @@
+- [ ] move WelcomeMailEndPoint logic in a use case
+- [ ] add KeyRepository based on dynamo and kms tests

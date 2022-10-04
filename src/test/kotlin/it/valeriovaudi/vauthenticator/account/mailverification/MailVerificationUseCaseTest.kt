@@ -9,6 +9,7 @@ import io.mockk.verify
 import it.valeriovaudi.vauthenticator.account.AccountNotFoundException
 import it.valeriovaudi.vauthenticator.account.AccountTestFixture.anAccount
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
+import it.valeriovaudi.vauthenticator.account.tiket.VerificationTicket
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.*
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -48,17 +49,17 @@ internal class MailVerificationUseCaseTest {
         val clientAppId = ClientAppId("A_CLIENT_APP_ID")
         val account = anAccount()
         val clientApplication = ClientAppFixture.aClientApp(clientAppId).copy(scopes = Scopes.from(Scope.MAIL_VERIFY))
-        val mailVerificationTicket = MailVerificationTicket("A_TICKET")
+        val verificationTicket = VerificationTicket("A_TICKET")
 
 
         every { clientAccountRepository.findOne(clientAppId) } returns Optional.of(clientApplication)
         every { accountRepository.accountFor(account.email) } returns Optional.of(account)
-        every { mailVerificationTicketFactory.createTicketFor(account, clientApplication) } returns mailVerificationTicket
-        every { mailVerificationMailSender.sendFor(account, mailVerificationTicket) } just runs
+        every { mailVerificationTicketFactory.createTicketFor(account, clientApplication) } returns verificationTicket
+        every { mailVerificationMailSender.sendFor(account, verificationTicket) } just runs
 
         underTest.sendVerifyMail(account.email, clientAppId)
 
-        verify { mailVerificationMailSender.sendFor(account, mailVerificationTicket) }
+        verify { mailVerificationMailSender.sendFor(account, verificationTicket) }
     }
 
     @Test

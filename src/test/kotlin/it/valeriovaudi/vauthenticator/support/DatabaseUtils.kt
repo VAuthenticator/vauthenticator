@@ -14,7 +14,7 @@ object DatabaseUtils {
     const val dynamoRoleTableName: String = "TESTING_VAuthenticator_Role"
     const val dynamoAccountRoleTableName: String = "TESTING_VAuthenticator_Account_Role"
     const val dynamoKeysTableName: String = "TESTING_VAuthenticator_Keys"
-    const val dynamoMailVerificationTicketTableName: String = "TESTING_Authenticator_mail_verification_ticket"
+    const val dynamoMailVerificationTicketTableName: String = "TESTING_VAuthenticator_mail_verification_ticket"
 
     val dynamoDbClient: DynamoDbClient = DynamoDbClient.builder()
             .credentialsProvider(
@@ -52,6 +52,12 @@ object DatabaseUtils {
                     .build())
             dynamoDbClient.deleteTable(DeleteTableRequest.builder()
                     .tableName(dynamoAccountRoleTableName)
+                    .build())
+            dynamoDbClient.deleteTable(DeleteTableRequest.builder()
+                    .tableName(dynamoKeysTableName)
+                    .build())
+            dynamoDbClient.deleteTable(DeleteTableRequest.builder()
+                    .tableName(dynamoMailVerificationTicketTableName)
                     .build())
         } catch (e: java.lang.Exception) {
         }
@@ -168,12 +174,12 @@ object DatabaseUtils {
         dynamoDbClient.createTable(CreateTableRequest.builder()
                 .tableName(dynamoMailVerificationTicketTableName)
                 .keySchema(KeySchemaElement.builder()
-                        .attributeName("mail_verification_ticket")
+                        .attributeName("ticket")
                         .keyType(KeyType.HASH)
                         .build()
                 )
                 .attributeDefinitions(AttributeDefinition.builder()
-                        .attributeName("mail_verification_ticket")
+                        .attributeName("ticket")
                         .attributeType(ScalarAttributeType.S)
                         .build()
                 )
