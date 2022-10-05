@@ -9,7 +9,7 @@ import javax.mail.internet.MimeMessage
 private const val MAIL_DOCUMENT_TYPE = "mail"
 
 interface MailSenderService {
-    fun sendFor(account: Account, requestContext: MailContext = emptyMap())
+    fun sendFor(account: Account, mailContext: MailContext = emptyMap())
 }
 
 interface MailMessageFactory {
@@ -39,8 +39,8 @@ class JavaMailSenderService(private val documentRepository: DocumentRepository,
                             private val templateResolver: MailTemplateResolver,
                             private val mailMessageFactory: MailMessageFactory) : MailSenderService {
 
-    override fun sendFor(account: Account, requestContext: MailContext) {
-        val mailMessage = mailMessageFactory.makeMailMessageFor(account, requestContext)
+    override fun sendFor(account: Account, mailContext: MailContext) {
+        val mailMessage = mailMessageFactory.makeMailMessageFor(account, mailContext)
         val mailContent = mailContentFor(mailMessage)
         val mail = composeMailFor(mailContent, mailMessage)
         mailSender.send(mail)
@@ -51,11 +51,7 @@ class JavaMailSenderService(private val documentRepository: DocumentRepository,
         return String(documentContent)
     }
 
-    private fun mailTemplatePathFor(mailType: MailType): String =
-            when (mailType) {
-                MailType.WELCOME, MailType.EMAIL_VERIFICATION, MailType.RESET_PASSWORD -> mailType.path
-                else -> throw UnsupportedOperationException("mail tpe not supported")
-            }
+    private fun mailTemplatePathFor(mailType: MailType): String = mailType.path
 
     private fun composeMailFor(mailContent: String, mailMessage: MailMessage): MimeMessage {
         val mimeMessage: MimeMessage = mailSender.createMimeMessage()

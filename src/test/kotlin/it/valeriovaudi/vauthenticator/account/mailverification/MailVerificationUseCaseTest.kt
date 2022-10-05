@@ -10,6 +10,7 @@ import it.valeriovaudi.vauthenticator.account.AccountNotFoundException
 import it.valeriovaudi.vauthenticator.account.AccountTestFixture.anAccount
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import it.valeriovaudi.vauthenticator.account.tiket.VerificationTicket
+import it.valeriovaudi.vauthenticator.mail.MailSenderService
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.*
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -30,7 +31,7 @@ internal class MailVerificationUseCaseTest {
     lateinit var mailVerificationTicketFactory: MailVerificationTicketFactory
 
     @MockK
-    lateinit var mailVerificationMailSender: MailVerificationMailSender
+    lateinit var mailVerificationMailSender: MailSenderService
 
     private lateinit var underTest: MailVerificationUseCase
 
@@ -40,7 +41,8 @@ internal class MailVerificationUseCaseTest {
                 clientAccountRepository,
                 accountRepository,
                 mailVerificationTicketFactory,
-                mailVerificationMailSender
+                mailVerificationMailSender,
+                "https://vauthenticator.com"
         )
     }
 
@@ -50,16 +52,17 @@ internal class MailVerificationUseCaseTest {
         val account = anAccount()
         val clientApplication = ClientAppFixture.aClientApp(clientAppId).copy(scopes = Scopes.from(Scope.MAIL_VERIFY))
         val verificationTicket = VerificationTicket("A_TICKET")
+        val requestContext = mapOf("verificationMailLink" to "https://vauthenticator.com/verify-mail/A_TICKET")
 
 
         every { clientAccountRepository.findOne(clientAppId) } returns Optional.of(clientApplication)
         every { accountRepository.accountFor(account.email) } returns Optional.of(account)
         every { mailVerificationTicketFactory.createTicketFor(account, clientApplication) } returns verificationTicket
-        every { mailVerificationMailSender.sendFor(account, verificationTicket) } just runs
+        every { mailVerificationMailSender.sendFor(account, requestContext) } just runs
 
         underTest.sendVerifyMail(account.email, clientAppId)
 
-        verify { mailVerificationMailSender.sendFor(account, verificationTicket) }
+        verify { mailVerificationMailSender.sendFor(account, requestContext) }
     }
 
     @Test
