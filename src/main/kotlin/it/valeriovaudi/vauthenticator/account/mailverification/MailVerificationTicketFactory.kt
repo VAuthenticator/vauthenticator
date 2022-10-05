@@ -8,7 +8,6 @@ import it.valeriovaudi.vauthenticator.extentions.asDynamoAttribute
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplication
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
-import java.time.Duration
 
 interface MailVerificationTicketFactory {
     fun createTicketFor(account: Account,
@@ -18,12 +17,13 @@ interface MailVerificationTicketFactory {
 
 class DynamoDbMailVerificationTicketFactory(private val tableName: String,
                                             private val dynamoDbClient: DynamoDbClient,
-                                            private val ticketGenerator: () -> String) : MailVerificationTicketFactory {
+                                            private val ticketGenerator: () -> String,
+                                            private val verificationTicketFeatures: VerificationTicketFeatures) : MailVerificationTicketFactory {
     override fun createTicketFor(account: Account, clientApplication: ClientApplication): VerificationTicket {
         val verificationTicket = VerificationTicket(ticketGenerator.invoke())
         val ticket = Ticket(
                 verificationTicket,
-                VerificationTicketFeatures(Duration.ZERO, false),
+                verificationTicketFeatures,
                 account.email,
                 clientApplication.clientAppId.content
         )

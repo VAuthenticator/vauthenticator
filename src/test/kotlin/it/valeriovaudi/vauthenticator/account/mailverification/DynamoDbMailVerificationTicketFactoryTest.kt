@@ -3,6 +3,7 @@ package it.valeriovaudi.vauthenticator.account.mailverification
 import io.mockk.junit5.MockKExtension
 import it.valeriovaudi.vauthenticator.account.AccountTestFixture.anAccount
 import it.valeriovaudi.vauthenticator.account.tiket.VerificationTicket
+import it.valeriovaudi.vauthenticator.account.tiket.VerificationTicketFeatures
 import it.valeriovaudi.vauthenticator.extentions.asDynamoAttribute
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppFixture.aClientApp
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
@@ -14,10 +15,11 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
+import java.time.Duration
 import java.util.*
 
 @ExtendWith(MockKExtension::class)
-internal class DynamoDbVerificationTicketFactoryTest {
+internal class DynamoDbMailVerificationTicketFactoryTest {
 
     private val ticket = UUID.randomUUID().toString()
     private val ticketGenerator = { ticket }
@@ -29,7 +31,8 @@ internal class DynamoDbVerificationTicketFactoryTest {
         underTest = DynamoDbMailVerificationTicketFactory(
                 dynamoMailVerificationTicketTableName,
                 dynamoDbClient,
-                ticketGenerator
+                ticketGenerator,
+                VerificationTicketFeatures(Duration.ZERO, false)
         )
         resetDatabase()
     }
