@@ -3,9 +3,7 @@ package it.valeriovaudi.vauthenticator.config
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import it.valeriovaudi.vauthenticator.account.signup.SignUpConfirmationMailConfiguration
 import it.valeriovaudi.vauthenticator.account.signup.SignUpUseCase
-import it.valeriovaudi.vauthenticator.account.welcome.WelcomeMailSender
 import it.valeriovaudi.vauthenticator.mail.MailSenderService
-import it.valeriovaudi.vauthenticator.mail.SimpleMailContextFactory
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ReadClientApplication
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.StoreClientApplication
@@ -29,13 +27,10 @@ class UseCasesConfig {
     @Bean
     fun signUpUseCase(clientAccountRepository: ClientApplicationRepository,
                       accountRepository: AccountRepository,
-                      welcomeMailSender : WelcomeMailSender,
+                      welcomeMailSender : MailSenderService,
                       mailSenderService: MailSenderService,
                       vAuthenticatorPasswordEncoder : VAuthenticatorPasswordEncoder): SignUpUseCase {
         return SignUpUseCase(clientAccountRepository, accountRepository, welcomeMailSender, vAuthenticatorPasswordEncoder)
     }
 
-    @Bean
-    fun signUpConfirmationMailSender(mailSenderService: MailSenderService, signUpConfirmationMailConfiguration: SignUpConfirmationMailConfiguration) =
-            WelcomeMailSender(mailSenderService, SimpleMailContextFactory(), signUpConfirmationMailConfiguration)
 }

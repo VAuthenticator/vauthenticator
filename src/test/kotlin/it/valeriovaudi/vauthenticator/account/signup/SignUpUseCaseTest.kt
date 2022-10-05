@@ -2,7 +2,7 @@ package it.valeriovaudi.vauthenticator.account.signup
 
 import it.valeriovaudi.vauthenticator.account.AccountTestFixture.anAccount
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
-import it.valeriovaudi.vauthenticator.account.welcome.WelcomeMailSender
+import it.valeriovaudi.vauthenticator.mail.MailSenderService
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.*
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.Scope.Companion.SIGN_UP
 import it.valeriovaudi.vauthenticator.security.VAuthenticatorPasswordEncoder
@@ -25,7 +25,7 @@ internal class SignUpUseCaseTest {
     lateinit var clientAccountRepository: ClientApplicationRepository
 
     @Mock
-    lateinit var welcomeMailSender: WelcomeMailSender
+    lateinit var welcomeMailSender: MailSenderService
 
     @Mock
     lateinit var vAuthenticatorPasswordEncoder: VAuthenticatorPasswordEncoder
@@ -47,7 +47,7 @@ internal class SignUpUseCaseTest {
         underTest.execute(clientAppId, account.copy(password = "secret"))
 
         verify(accountRepository).create(account)
-        verify(welcomeMailSender).sendFor(account)
+        verify(welcomeMailSender).sendFor(account, aClientApp)
         verify(vAuthenticatorPasswordEncoder).encode("secret")
     }
 
