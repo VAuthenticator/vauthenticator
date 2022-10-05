@@ -6,10 +6,6 @@ import com.icegreen.greenmail.junit5.GreenMailExtension
 import com.icegreen.greenmail.util.ServerSetupTest
 import it.valeriovaudi.vauthenticator.account.AccountTestFixture.anAccount
 import it.valeriovaudi.vauthenticator.document.DocumentRepository
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppFixture.aClientApp
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.Scope
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.Scopes
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
@@ -42,7 +38,6 @@ internal class JavaMailSenderServiceTest {
     internal fun `when a welcome mail is sent`() {
         val account = anAccount().copy(firstName = "Jhon", lastName = "Miller")
         val mailTemplateContent = "hi {{ firstName }} {{ lastName }} your signup to vauthenticator succeeded".toByteArray()
-        val clientApplication = aClientApp(ClientAppId("A_CLIENT_APP_ID")).copy(scopes = Scopes(setOf(Scope.MAIL_VERIFY)))
 
         mailSenderService = JavaMailSenderService(documentRepository, newJavaMail(), templateResolver, SimpleMailMessageFactory("mail@mail.com", "test", MailType.WELCOME))
 

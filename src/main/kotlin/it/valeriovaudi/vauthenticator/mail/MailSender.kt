@@ -9,7 +9,6 @@ import javax.mail.internet.MimeMessage
 private const val MAIL_DOCUMENT_TYPE = "mail"
 
 interface MailSenderService {
-    fun send(mail: MailMessage)
     fun sendFor(account: Account, requestContext: MailContext = emptyMap())
 }
 
@@ -39,12 +38,6 @@ class JavaMailSenderService(private val documentRepository: DocumentRepository,
                             private val mailSender: JavaMailSender,
                             private val templateResolver: MailTemplateResolver,
                             private val mailMessageFactory: MailMessageFactory) : MailSenderService {
-
-    override fun send(mailMessage: MailMessage) {
-        val mailContent = mailContentFor(mailMessage)
-        val mail = composeMailFor(mailContent, mailMessage)
-        mailSender.send(mail)
-    }
 
     override fun sendFor(account: Account, requestContext: MailContext) {
         val mailMessage = mailMessageFactory.makeMailMessageFor(account, requestContext)
