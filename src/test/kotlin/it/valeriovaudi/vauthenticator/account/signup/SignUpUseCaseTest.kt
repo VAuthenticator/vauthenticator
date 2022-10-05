@@ -47,7 +47,7 @@ internal class SignUpUseCaseTest {
         underTest.execute(clientAppId, account.copy(password = "secret"))
 
         verify(accountRepository).create(account)
-        verify(welcomeMailSender).sendFor(account, aClientApp)
+        verify(welcomeMailSender).sendFor(account)
         verify(vAuthenticatorPasswordEncoder).encode("secret")
     }
 

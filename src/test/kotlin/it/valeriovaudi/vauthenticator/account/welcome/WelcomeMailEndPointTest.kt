@@ -8,6 +8,7 @@ import io.mockk.runs
 import io.mockk.verify
 import it.valeriovaudi.vauthenticator.account.AccountTestFixture
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
+import it.valeriovaudi.vauthenticator.mail.MailSenderService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -25,7 +26,7 @@ internal class WelcomeMailEndPointTest {
     lateinit var accountRepository: AccountRepository
 
     @MockK
-    lateinit var welcomeMailSender: WelcomeMailSender
+    lateinit var welcomeMailSender: MailSenderService
 
     @BeforeEach
     internal fun setUp() {

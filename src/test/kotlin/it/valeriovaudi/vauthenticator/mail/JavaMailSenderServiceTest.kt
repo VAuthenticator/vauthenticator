@@ -30,8 +30,7 @@ internal class JavaMailSenderServiceTest {
     private val templateResolver: MailTemplateResolver = JinjavaMailTemplateResolver(Jinjava())
 
 
-
-    private fun newJavaMail()  : JavaMailSenderImpl{
+    private fun newJavaMail(): JavaMailSenderImpl {
         val javaMailSender = JavaMailSenderImpl()
         javaMailSender.port = greenMail.smtp.port
         javaMailSender.host = "127.0.0.1"
@@ -51,7 +50,7 @@ internal class JavaMailSenderServiceTest {
                 .willReturn(mailTemplateContent)
 
 
-        mailSenderService.sendFor(account, clientApplication)
+        mailSenderService.sendFor(account)
         val mail = greenMail.receivedMessages[0]
         assertEquals(account.email, mail.allRecipients[0].toString())
         assertEquals("mail@mail.com", mail.from[0].toString())
@@ -62,18 +61,18 @@ internal class JavaMailSenderServiceTest {
     @Test
     internal fun `when a mail verification mail is sent`() {
         val account = anAccount().copy(firstName = "Jhon", lastName = "Miller")
-        val clientApplication = aClientApp(ClientAppId("A_CLIENT_APP_ID")).copy(scopes = Scopes(setOf(Scope.MAIL_VERIFY)))
         val mailTemplateContent = "hi {{ firstName }} {{ lastName }} in order to verify your mail click <a href='{{ mailVerificationTicket }}'>here</a>".toByteArray()
+
+        mailSenderService = JavaMailSenderService(documentRepository, newJavaMail(), templateResolver, SimpleMailMessageFactory("mail@mail.com", "test", MailType.EMAIL_VERIFICATION))
 
         given(documentRepository.loadDocument("mail", MailType.EMAIL_VERIFICATION.path))
                 .willReturn(mailTemplateContent)
 
-
-        mailSenderService.sendFor(account, clientApplication)
+        mailSenderService.sendFor(account, mapOf("mailVerificationTicket" to "https://vauthenticator.com/reset-password/uuid-1234-uuid"))
         val mail = greenMail.receivedMessages[0]
         assertEquals(account.email, mail.allRecipients[0].toString())
         assertEquals("mail@mail.com", mail.from[0].toString())
         assertEquals("test", mail.subject)
-        assertEquals("hi Jhon Miller in order to verify your mail click <a href='https://vauthenticator.com/reset-password/uuid-1234-uuid'>here</a>d", mail.content.toString().trim())
+        assertEquals("hi Jhon Miller in order to verify your mail click <a href='https://vauthenticator.com/reset-password/uuid-1234-uuid'>here</a>", mail.content.toString().trim())
     }
 }

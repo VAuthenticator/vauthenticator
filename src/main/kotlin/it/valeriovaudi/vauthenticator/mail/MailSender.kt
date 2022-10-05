@@ -2,7 +2,6 @@ package it.valeriovaudi.vauthenticator.mail
 
 import it.valeriovaudi.vauthenticator.account.Account
 import it.valeriovaudi.vauthenticator.document.DocumentRepository
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplication
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import javax.mail.internet.MimeMessage
@@ -11,16 +10,16 @@ private const val MAIL_DOCUMENT_TYPE = "mail"
 
 interface MailSenderService {
     fun send(mail: MailMessage)
-    fun sendFor(account: Account, clientApplication: ClientApplication, requestContext: MailContext = emptyMap())
+    fun sendFor(account: Account, requestContext: MailContext = emptyMap())
 }
 
 interface MailMessageFactory {
-    fun makeMailMessageFor(account: Account, clientApplication: ClientApplication, requestContext: MailContext): MailMessage
+    fun makeMailMessageFor(account: Account, requestContext: MailContext): MailMessage
 }
 
 class SimpleMailMessageFactory(val from: String, val subject: String, val mailType: MailType) : MailMessageFactory {
 
-    override fun makeMailMessageFor(account: Account, clientApplication: ClientApplication, requestContext: MailContext): MailMessage {
+    override fun makeMailMessageFor(account: Account, requestContext: MailContext): MailMessage {
         val context = mapOf(
                 "enabled" to account.enabled,
                 "username" to account.username,
@@ -47,8 +46,8 @@ class JavaMailSenderService(private val documentRepository: DocumentRepository,
         mailSender.send(mail)
     }
 
-    override fun sendFor(account: Account, clientApplication: ClientApplication, requestContext: MailContext) {
-        val mailMessage = mailMessageFactory.makeMailMessageFor(account, clientApplication, requestContext)
+    override fun sendFor(account: Account, requestContext: MailContext) {
+        val mailMessage = mailMessageFactory.makeMailMessageFor(account, requestContext)
         val mailContent = mailContentFor(mailMessage)
         val mail = composeMailFor(mailContent, mailMessage)
         mailSender.send(mail)
@@ -61,7 +60,7 @@ class JavaMailSenderService(private val documentRepository: DocumentRepository,
 
     private fun mailTemplatePathFor(mailType: MailType): String =
             when (mailType) {
-                MailType.WELCOME -> mailType.path
+                MailType.WELCOME, MailType.EMAIL_VERIFICATION, MailType.RESET_PASSWORD -> mailType.path
                 else -> throw UnsupportedOperationException("mail tpe not supported")
             }
 

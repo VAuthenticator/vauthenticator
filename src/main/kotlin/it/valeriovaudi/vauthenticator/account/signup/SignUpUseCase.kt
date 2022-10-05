@@ -23,7 +23,7 @@ open class SignUpUseCase(
                                 authorities = it.authorities.content.map { it.content },
                                 password = vAuthenticatorPasswordEncoder.encode(account.password))
                         accountRepository.create(registeredAccount)
-                        welcomeMailSender.sendFor(registeredAccount, it)
+                        welcomeMailSender.sendFor(registeredAccount)
                     } else {
                         throw InsufficientClientApplicationScopeException("The client app ${clientAppId.content} does not support signup use case........ consider to add ${Scope.SIGN_UP.content} as scope")
                     }
