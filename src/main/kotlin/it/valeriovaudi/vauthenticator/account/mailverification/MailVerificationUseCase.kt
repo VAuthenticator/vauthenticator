@@ -30,7 +30,7 @@ class MailVerificationUseCase(private val clientAccountRepository: ClientApplica
             accountRepository.accountFor(mail)
                     .map { account ->
                         val verificationTicket = mailVerificationTicketFactory.createTicketFor(account, clientApp)
-                        var mailContext = mailContextFrom(verificationTicket)
+                        val mailContext = mailContextFrom(verificationTicket)
                         mailVerificationMailSender.sendFor(account, mailContext)
                     }.orElseThrow { AccountNotFoundException("account not found") }
 

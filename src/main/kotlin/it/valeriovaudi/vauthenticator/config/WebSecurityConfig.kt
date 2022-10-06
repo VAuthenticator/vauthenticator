@@ -60,6 +60,11 @@ class WebSecurityConfig(
                 .and()
 
                 .authorizeRequests()
+                .mvcMatchers("/api/mail/{mail}/verify-challenge")
+                .hasAnyAuthority(Scope.MAIL_VERIFY.content)
+                .and()
+
+                .authorizeRequests()
                 .mvcMatchers("/api/**")
                 .hasAnyAuthority(adminRole)
                 .and()

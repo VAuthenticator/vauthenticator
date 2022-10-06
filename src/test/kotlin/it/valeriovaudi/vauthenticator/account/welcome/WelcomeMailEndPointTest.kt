@@ -13,7 +13,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import java.util.*
@@ -39,7 +39,7 @@ internal class WelcomeMailEndPointTest {
         every { accountRepository.accountFor("email@domain.com") } returns Optional.of(anAccount)
         every { welcomeMailSender.sendFor(anAccount) } just runs
 
-        mokMvc.perform(get("/api/sign-up/mail/email@domain.com/welcome"))
+        mokMvc.perform(put("/api/sign-up/mail/email@domain.com/welcome"))
                 .andExpect(status().isNoContent)
 
         verify { welcomeMailSender.sendFor(anAccount) }

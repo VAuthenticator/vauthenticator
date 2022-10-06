@@ -14,7 +14,7 @@ object DatabaseUtils {
     const val dynamoRoleTableName: String = "TESTING_VAuthenticator_Role"
     const val dynamoAccountRoleTableName: String = "TESTING_VAuthenticator_Account_Role"
     const val dynamoKeysTableName: String = "TESTING_VAuthenticator_Keys"
-    const val dynamoMailVerificationTicketTableName: String = "TESTING_VAuthenticator_mail_verification_ticket"
+    const val dynamoMailVerificationTicketTableName: String = "TESTING_VAuthenticator_ticket"
 
     val dynamoDbClient: DynamoDbClient = DynamoDbClient.builder()
             .credentialsProvider(

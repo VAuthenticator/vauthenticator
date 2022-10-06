@@ -3,8 +3,8 @@ package it.valeriovaudi.vauthenticator.account.welcome
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import it.valeriovaudi.vauthenticator.mail.MailSenderService
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -13,7 +13,7 @@ class WelcomeMailEndPoint(
         private val welcomeMailSender: MailSenderService
 ) {
 
-    @GetMapping("/api/sign-up/mail/{mail}/welcome")
+    @PutMapping("/api/sign-up/mail/{mail}/welcome")
     fun welcome(@PathVariable mail: String) =
             accountRepository.accountFor(mail)
                     .map {
