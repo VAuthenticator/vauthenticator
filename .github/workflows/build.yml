@@ -20,6 +20,8 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
       - run: |
           aws s3 cp communication/default/mail/welcome.html s3://${{ secrets.VAUTHENTICATOR_BUCKET }}/mail/templates/welcome.html
+          aws s3 cp communication/default/mail/verify-challenge.html s3://${{ secrets.VAUTHENTICATOR_BUCKET }}/mail/templates/verify-challenge.html
+          aws s3 cp communication/default/mail/reset-password.html s3://${{ secrets.VAUTHENTICATOR_BUCKET }}/mail/templates/reset-password.html
   provisioning:
     runs-on: ubuntu-20.04
 
