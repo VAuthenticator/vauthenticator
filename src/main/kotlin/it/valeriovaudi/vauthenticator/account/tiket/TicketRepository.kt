@@ -1,10 +1,8 @@
 package it.valeriovaudi.vauthenticator.account.tiket
 
-import it.valeriovaudi.vauthenticator.extentions.asDynamoAttribute
-import it.valeriovaudi.vauthenticator.extentions.valueAsBoolFor
-import it.valeriovaudi.vauthenticator.extentions.valueAsLongFor
-import it.valeriovaudi.vauthenticator.extentions.valueAsStringFor
+import it.valeriovaudi.vauthenticator.extentions.*
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
 import java.time.Duration
@@ -45,19 +43,25 @@ class DynamoDbTicketRepository(private val dynamoDbClient: DynamoDbClient,
                                 .key(mapOf("ticket" to verificationTicket.content.asDynamoAttribute()))
                                 .build()
                 ).item()
-        ).map {
-            Ticket(
-                    VerificationTicket(it.valueAsStringFor("ticket")),
-                    VerificationTicketFeatures(Duration.ofSeconds(it.valueAsLongFor("ttl")), it.valueAsBoolFor("fireAndForget")),
-                    it.valueAsStringFor("email"),
-                    it.valueAsStringFor("client_application_id")
-            )
-        }
-
+        )
+                .flatMap { it.filterEmptyAccountMetadata() }
+                .map {
+                    Ticket(
+                            VerificationTicket(it.valueAsStringFor("ticket")),
+                            VerificationTicketFeatures(Duration.ofSeconds(it.valueAsLongFor("ttl")), it.valueAsBoolFor("fireAndForget")),
+                            it.valueAsStringFor("email"),
+                            it.valueAsStringFor("client_application_id")
+                    )
+                }
     }
 
     override fun delete(verificationTicket: VerificationTicket) {
-        TODO("Not yet implemented")
+        dynamoDbClient.deleteItem(
+                DeleteItemRequest.builder()
+                        .tableName(tableName)
+                        .key(mapOf("ticket" to verificationTicket.content.asDynamoAttribute()))
+                        .build()
+        )
     }
 
 }

@@ -71,4 +71,33 @@ internal class DynamoDbTicketRepositoryTest {
 
         assertEquals(Optional.of(expected), actual)
     }
+
+    @Test
+    internal fun `when a ticket is not present`() {
+        val verificationTicket = VerificationTicket(ticketGenerator.invoke())
+        val actual = underTest.loadFor(verificationTicket)
+        assertEquals(Optional.empty<Ticket>(), actual)
+    }
+
+    @Test
+    internal fun `when a ticket is delete`() {
+        val verificationTicket = VerificationTicket(ticketGenerator.invoke())
+        val expected = Ticket(
+                verificationTicket,
+                VerificationTicketFeatures(Duration.ofSeconds(200), false),
+                "email@domain.com",
+                "A_CLIENT_APP_ID"
+        )
+
+        underTest.store(expected)
+
+        val actual = underTest.loadFor(verificationTicket)
+
+        assertEquals(Optional.of(expected), actual)
+
+        underTest.delete(verificationTicket)
+        val actualAfterDeletion = underTest.loadFor(verificationTicket)
+
+        assertEquals(Optional.empty<Ticket>(), actualAfterDeletion)
+    }
 }
