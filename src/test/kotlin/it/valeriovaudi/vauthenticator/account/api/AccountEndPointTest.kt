@@ -45,7 +45,7 @@ internal class AccountEndPointTest {
     @Test
     internal fun `sign up a new account`() {
         val representation = FinalAccountRepresentation(email = "email@domain.com", password = "secret", firstName = "A First Name", lastName = "A Last Name", authorities = emptyList(), birthDate = Date.nullValue().formattedDate(), phone = Phone.nullValue().formattedPhone())
-        val masterAccount = AccountTestFixture.anAccount().copy(accountNonExpired = true, emailVerified = true, accountNonLocked = true, credentialsNonExpired = true, enabled = true,)
+        val masterAccount = AccountTestFixture.anAccount().copy(accountNonExpired = true, emailVerified = false, accountNonLocked = false, credentialsNonExpired = true, enabled = false,)
 
         val clientAppId = "A_CLIENT_APP_ID"
         mokMvc.perform(MockMvcRequestBuilders.post("/api/accounts")
@@ -57,11 +57,11 @@ internal class AccountEndPointTest {
 
         Mockito.verify(signUpUseCase).execute(ClientAppId(clientAppId), masterAccount)
 
-        assertEquals(true, masterAccount.accountNonLocked)
-        assertEquals(true, masterAccount.emailVerified)
+        assertEquals(false, masterAccount.accountNonLocked)
+        assertEquals(false, masterAccount.emailVerified)
         assertEquals(true, masterAccount.accountNonExpired)
         assertEquals(true, masterAccount.credentialsNonExpired)
-        assertEquals(true, masterAccount.enabled)
+        assertEquals(false, masterAccount.enabled)
     }
 
     @Test

@@ -61,7 +61,14 @@ class AccountEndPoint(
             accountRepository.accountFor(userName)
                     .map { account ->
                         val filledRepresentation = representation.copy(email = userName, password = account.password, authorities = account.authorities)
-                        accountRepository.save(SignUpAccountConverter.fromRepresentationToSignedUpAccount(filledRepresentation))
+                        val accountToBeSaved = SignUpAccountConverter.fromRepresentationToSignedUpAccount(filledRepresentation).copy(
+                                accountNonExpired = account.accountNonExpired,
+                                accountNonLocked = account.accountNonLocked,
+                                credentialsNonExpired = account.credentialsNonExpired,
+                                enabled = account.enabled,
+                                emailVerified = account.emailVerified,
+                        )
+                        accountRepository.save(accountToBeSaved)
                         ResponseEntity.noContent().build<Unit>()
                     }
                     .orElseGet {
@@ -109,15 +116,15 @@ object SignUpAccountConverter {
     fun fromRepresentationToSignedUpAccount(representation: FinalAccountRepresentation): Account =
             Account(
                     accountNonExpired = true,
-                    accountNonLocked = true,
+                    accountNonLocked = false,
                     credentialsNonExpired = true,
-                    enabled = true,
+                    enabled = false,
+                    emailVerified = false,
                     username = representation.email,
                     password = representation.password,
                     firstName = representation.firstName,
                     lastName = representation.lastName,
                     email = representation.email,
-                    emailVerified = true,
                     authorities = representation.authorities,
                     birthDate = Date.isoDateFor(representation.birthDate),
                     phone = Phone.phoneFor(representation.phone)
