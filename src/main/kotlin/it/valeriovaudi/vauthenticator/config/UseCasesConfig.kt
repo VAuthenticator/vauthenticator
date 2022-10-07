@@ -12,6 +12,7 @@ import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationReposito
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ReadClientApplication
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.StoreClientApplication
 import it.valeriovaudi.vauthenticator.security.VAuthenticatorPasswordEncoder
+import it.valeriovaudi.vauthenticator.time.UtcClocker
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -30,6 +31,7 @@ class UseCasesConfig {
             DynamoDbMailVerificationTicketFactory(tableName,
                     dynamoDbClient,
                     { UUID.randomUUID().toString() },
+                    UtcClocker(),
                     VerificationTicketFeatures(Duration.ofMinutes(5), false)
             )
 

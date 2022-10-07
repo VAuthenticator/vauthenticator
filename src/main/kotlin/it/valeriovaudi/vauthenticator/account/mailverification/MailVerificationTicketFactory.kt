@@ -6,6 +6,7 @@ import it.valeriovaudi.vauthenticator.account.tiket.VerificationTicket
 import it.valeriovaudi.vauthenticator.account.tiket.VerificationTicketFeatures
 import it.valeriovaudi.vauthenticator.extentions.asDynamoAttribute
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplication
+import it.valeriovaudi.vauthenticator.time.Clocker
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
 
@@ -18,6 +19,7 @@ interface MailVerificationTicketFactory {
 class DynamoDbMailVerificationTicketFactory(private val tableName: String,
                                             private val dynamoDbClient: DynamoDbClient,
                                             private val ticketGenerator: () -> String,
+                                            private val clocker: Clocker,
                                             private val verificationTicketFeatures: VerificationTicketFeatures) : MailVerificationTicketFactory {
     override fun createTicketFor(account: Account, clientApplication: ClientApplication): VerificationTicket {
         val verificationTicket = VerificationTicket(ticketGenerator.invoke())
@@ -39,7 +41,7 @@ class DynamoDbMailVerificationTicketFactory(private val tableName: String,
                                 mapOf(
                                         "ticket" to ticket.verificationTicket.content.asDynamoAttribute(),
                                         "fireAndForget" to ticket.features.fireAndForget.asDynamoAttribute(),
-                                        "ttl" to ticket.features.ttl.seconds.asDynamoAttribute(),
+                                        "ttl" to (clocker.now().epochSecond + ticket.features.ttl.seconds).asDynamoAttribute(),
                                         "user_name" to ticket.userName.asDynamoAttribute(),
                                         "client_application_id" to ticket.clientAppId.asDynamoAttribute()
                                 )
