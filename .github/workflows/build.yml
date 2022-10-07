@@ -19,9 +19,12 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
       - run: |
-          aws s3 cp communication/default/mail/welcome.html s3://${{ secrets.VAUTHENTICATOR_BUCKET }}/mail/templates/welcome.html
-          aws s3 cp communication/default/mail/mail-verify-challenge.html s3://${{ secrets.VAUTHENTICATOR_BUCKET }}/mail/templates/mail-verify-challenge.html
-          aws s3 cp communication/default/mail/reset-password.html s3://${{ secrets.VAUTHENTICATOR_BUCKET }}/mail/templates/reset-password.html
+          TEMPLATES=("welcome.html" , "mail-verify-challenge.html", "reset-password.html", "successful-mail-verify.html")
+          for TEMPLATE in ${TEMPLATES[@]}
+          do 
+            aws s3 cp communication/default/mail/$TEMPLATE s3://${{ secrets.VAUTHENTICATOR_BUCKET }}/mail/templates/$TEMPLATE
+          done
+          
   provisioning:
     runs-on: ubuntu-20.04
 
