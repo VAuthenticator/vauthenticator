@@ -8,7 +8,7 @@ import it.valeriovaudi.vauthenticator.oauth2.clientapp.*
 
 private const val LINK_KEY = "verificationMailLink"
 
-class MailVerificationUseCase(private val clientAccountRepository: ClientApplicationRepository,
+class SendVerifyMailChallenge(private val clientAccountRepository: ClientApplicationRepository,
                               private val accountRepository: AccountRepository,
                               private val mailVerificationTicketFactory: MailVerificationTicketFactory,
                               private val mailVerificationMailSender: MailSenderService,
@@ -40,7 +40,5 @@ class MailVerificationUseCase(private val clientAccountRepository: ClientApplica
 
     private fun allowedOperationFor(clientApp: ClientApplication) =
             clientApp.scopes.content.contains(Scope.MAIL_VERIFY)
-
-    fun verifyMail(): Unit = TODO()
 
 }

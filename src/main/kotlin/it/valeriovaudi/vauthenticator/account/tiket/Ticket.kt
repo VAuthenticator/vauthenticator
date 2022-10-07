@@ -4,7 +4,7 @@ import java.time.Duration
 
 data class Ticket(val verificationTicket: VerificationTicket,
                   val features: VerificationTicketFeatures,
-                  val userName: String,
+                  val email: String,
                   val clientAppId: String
 )
 data class VerificationTicket(val content: String)

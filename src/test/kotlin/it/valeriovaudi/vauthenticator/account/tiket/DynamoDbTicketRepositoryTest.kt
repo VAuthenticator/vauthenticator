@@ -1,15 +1,10 @@
-package it.valeriovaudi.vauthenticator.account.mailverification
+package it.valeriovaudi.vauthenticator.account.tiket
 
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
-import it.valeriovaudi.vauthenticator.account.AccountTestFixture.anAccount
-import it.valeriovaudi.vauthenticator.account.tiket.VerificationTicket
-import it.valeriovaudi.vauthenticator.account.tiket.VerificationTicketFeatures
 import it.valeriovaudi.vauthenticator.extentions.asDynamoAttribute
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppFixture.aClientApp
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
-import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoDbClient
+import it.valeriovaudi.vauthenticator.support.DatabaseUtils
 import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoMailVerificationTicketTableName
 import it.valeriovaudi.vauthenticator.support.DatabaseUtils.resetDatabase
 import it.valeriovaudi.vauthenticator.time.Clocker
@@ -22,44 +17,37 @@ import java.time.Duration
 import java.time.Instant
 import java.util.*
 
-@ExtendWith(MockKExtension::class)
-internal class DynamoDbMailVerificationTicketFactoryTest {
 
+@ExtendWith(MockKExtension::class)
+internal class DynamoDbTicketRepositoryTest {
     private val ticket = UUID.randomUUID().toString()
     private val ticketGenerator = { ticket }
 
     @MockK
-    lateinit var clocker : Clocker
+    lateinit var clocker: Clocker
 
-    private lateinit var underTest: DynamoDbMailVerificationTicketFactory
+    private lateinit var underTest: DynamoDbTicketRepository
 
     @BeforeEach
     internal fun setUp() {
-        DynamoDbMailVerificationTicketFactory(
-                dynamoMailVerificationTicketTableName,
-                dynamoDbClient,
-                ticketGenerator,
-                clocker,
-                VerificationTicketFeatures(Duration.ofSeconds(100), false)
-        ).also { underTest = it }
+        underTest = DynamoDbTicketRepository(DatabaseUtils.dynamoDbClient, clocker, dynamoMailVerificationTicketTableName)
         resetDatabase()
     }
 
     @Test
     internal fun `happy path`() {
-        val account = anAccount()
-
         val now = Instant.ofEpochSecond(100)
         every { clocker.now() } returns now
 
-        val clientApplication = aClientApp(ClientAppId("A_CLIENT_APP_ID"))
+        val ticket = Ticket(
+                VerificationTicket(ticketGenerator.invoke()),
+                VerificationTicketFeatures(Duration.ofSeconds(100), false),
+                "email@domain.com",
+                "A_CLIENT_APP_ID"
+        )
+        underTest.store(ticket)
 
-        val expected = VerificationTicket(ticketGenerator.invoke())
-        val actual = underTest.createTicketFor(account, clientApplication)
-
-        assertEquals(expected, actual)
-
-        val item = dynamoDbClient.getItem(
+        val item = DatabaseUtils.dynamoDbClient.getItem(
                 GetItemRequest.builder()
                         .tableName(dynamoMailVerificationTicketTableName)
                         .key(mapOf(
@@ -71,7 +59,7 @@ internal class DynamoDbMailVerificationTicketFactoryTest {
         val ticketFromDynamo = item["ticket"]!!.s()
         val ticketTTLFromDynamo = item["ttl"]!!.n()
 
-        assertEquals(ticketFromDynamo, actual.content)
+        assertEquals(ticketFromDynamo, ticket.verificationTicket.content)
         assertEquals(ticketTTLFromDynamo, "200")
     }
 }

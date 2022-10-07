@@ -15,6 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
@@ -26,23 +27,34 @@ internal class MailVerificationEndPointTest {
     lateinit var mokMvc: MockMvc
 
     @MockK
-    lateinit var mailVerificationUseCase: MailVerificationUseCase
+    lateinit var sendVerifyMailChallenge: SendVerifyMailChallenge
+
+    @MockK
+    lateinit var mailVerifyMailChallengeSent: VerifyMailChallengeSent
 
     @BeforeEach
     internal fun setUp() {
-        mokMvc = MockMvcBuilders.standaloneSetup(MailVerificationEndPoint(mailVerificationUseCase))
+        mokMvc = MockMvcBuilders.standaloneSetup(MailVerificationEndPoint(sendVerifyMailChallenge, mailVerifyMailChallengeSent))
                 .build()
     }
 
     @Test
-    internal fun `happy path`() {
-        every { mailVerificationUseCase.sendVerifyMail("email@domain.com", ClientAppId("A_CLIENT_APP_ID")) } just runs
+    internal fun `when a challenge is sent`() {
+        every { sendVerifyMailChallenge.sendVerifyMail("email@domain.com", ClientAppId("A_CLIENT_APP_ID")) } just runs
 
         val signedJWT = signedJWTFor("A_CLIENT_APP_ID", "email@domain.com")
         val principal = JwtAuthenticationToken(Jwt(TestingFixture.simpleJwtFor("A_CLIENT_APP_ID"), Instant.now(), Instant.now().plusSeconds(100), signedJWT.header.toJSONObject(), signedJWT.payload.toJSONObject()))
 
         mokMvc.perform(put("/api/mail/{mail}/verify-challenge", "email@domain.com")
                 .principal(principal))
+                .andExpect(status().isNoContent)
+    }
+
+    @Test
+    internal fun `when the challenge is verified`() {
+        every { mailVerifyMailChallengeSent.verifyMail("A_TICKET") } just runs
+
+        mokMvc.perform(get("/api/mail-verify/A_TICKET"))
                 .andExpect(status().isNoContent)
     }
 }
