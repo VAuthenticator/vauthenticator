@@ -1,6 +1,7 @@
 package it.valeriovaudi.vauthenticator.config
 
 import it.valeriovaudi.vauthenticator.account.mailverification.SendVerifyMailChallenge
+import it.valeriovaudi.vauthenticator.account.mailverification.VerifyMailChallengeSent
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import it.valeriovaudi.vauthenticator.account.signup.SignUpUseCase
 import it.valeriovaudi.vauthenticator.account.tiket.TicketRepository
@@ -26,7 +27,7 @@ class UseCasesConfig {
 
 
     @Bean
-    fun mailVerificationTicketFactory(ticketRepository: TicketRepository) =
+    fun verificationTicketFactory(ticketRepository: TicketRepository) =
             VerificationTicketFactory({ UUID.randomUUID().toString() }, UtcClocker(), ticketRepository,
                     VerificationTicketFeatures(Duration.ofMinutes(5), false)
             )
@@ -44,8 +45,9 @@ class UseCasesConfig {
     fun signUpUseCase(clientAccountRepository: ClientApplicationRepository,
                       accountRepository: AccountRepository,
                       welcomeMailSender: MailSenderService,
+                      sendVerifyMailChallenge: SendVerifyMailChallenge,
                       vAuthenticatorPasswordEncoder: VAuthenticatorPasswordEncoder): SignUpUseCase {
-        return SignUpUseCase(clientAccountRepository, accountRepository, welcomeMailSender, vAuthenticatorPasswordEncoder)
+        return SignUpUseCase(clientAccountRepository, accountRepository, welcomeMailSender,sendVerifyMailChallenge, vAuthenticatorPasswordEncoder)
     }
 
     @Bean
@@ -59,4 +61,10 @@ class UseCasesConfig {
                     verificationTicketFactory,
                     verificationMailSender,
                     frontChannelBaseUrl)
+
+    @Bean
+    fun verifyMailChallengeSent(clientAccountRepository: ClientApplicationRepository,
+                                accountRepository: AccountRepository,
+                                ticketRepository: TicketRepository) =
+            VerifyMailChallengeSent(clientAccountRepository, accountRepository, ticketRepository)
 }

@@ -16,14 +16,12 @@ class VerifyMailChallengeSent(private val clientAccountRepository: ClientApplica
                               private val ticketRepository: TicketRepository) {
 
 
-    fun verifyMail(ticket: String) {
+    fun verifyMail(ticket: String)  {
         ticketRepository.loadFor(VerificationTicket(ticket))
                 .map { ticket ->
                     enableAccountForEnabledClientAppFrom(ticket)
                     revoke(ticket)
                 }.orElseThrow { throw InsufficientTicketException("Te ticket $ticket is not a valid ticket") }
-
-
     }
 
 

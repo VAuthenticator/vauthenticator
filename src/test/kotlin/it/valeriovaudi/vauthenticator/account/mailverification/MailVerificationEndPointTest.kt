@@ -15,7 +15,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
@@ -29,12 +28,9 @@ internal class MailVerificationEndPointTest {
     @MockK
     lateinit var sendVerifyMailChallenge: SendVerifyMailChallenge
 
-    @MockK
-    lateinit var mailVerifyMailChallengeSent: VerifyMailChallengeSent
-
     @BeforeEach
     internal fun setUp() {
-        mokMvc = MockMvcBuilders.standaloneSetup(MailVerificationEndPoint(sendVerifyMailChallenge, mailVerifyMailChallengeSent))
+        mokMvc = MockMvcBuilders.standaloneSetup(MailVerificationEndPoint(sendVerifyMailChallenge))
                 .build()
     }
 
@@ -50,11 +46,5 @@ internal class MailVerificationEndPointTest {
                 .andExpect(status().isNoContent)
     }
 
-    @Test
-    internal fun `when the challenge is verified`() {
-        every { mailVerifyMailChallengeSent.verifyMail("A_TICKET") } just runs
 
-        mokMvc.perform(get("/api/mail-verify/A_TICKET"))
-                .andExpect(status().isNoContent)
-    }
 }

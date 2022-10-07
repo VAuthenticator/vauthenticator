@@ -1,7 +1,6 @@
 package it.valeriovaudi.vauthenticator.account.mailverification
 
 import it.valeriovaudi.vauthenticator.extentions.clientAppId
-import it.valeriovaudi.vauthenticator.mail.MailType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.stereotype.Controller
@@ -24,10 +23,10 @@ class MailVerificationEndPoint(private val sendVerifyMailChallenge: SendVerifyMa
 @Controller
 class MailVerificationController(private val verifyMailChallengeSent: VerifyMailChallengeSent) {
 
-
-    @GetMapping("/api/mail-verify/{ticket}")
-    fun verifyMail(@PathVariable ticket: String) =
-            verifyMailChallengeSent.verifyMail(ticket)
-                    .let { MailType.SUCCESSFUL_EMAIL_VERIFICATION }
+    @GetMapping("/mail-verify/{ticket}")
+    fun verifyMail(@PathVariable ticket: String): String {
+        verifyMailChallengeSent.verifyMail(ticket)
+        return "account/mail-verification/successful-mail-verify"
+    }
 
 }
