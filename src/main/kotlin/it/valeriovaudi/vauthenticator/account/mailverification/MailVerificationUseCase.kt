@@ -23,7 +23,6 @@ class MailVerificationUseCase(private val clientAccountRepository: ClientApplica
                         throw InsufficientClientApplicationScopeException("The client app ${clientAppId.content} does not support mail verification use case........ consider to add ${Scope.MAIL_VERIFY.content} as scope")
                     }
                 }
-
     }
 
     private fun sendVerificationTicketFor(mail: String, clientApp: ClientApplication) =
