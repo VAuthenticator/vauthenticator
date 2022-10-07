@@ -10,6 +10,7 @@ import it.valeriovaudi.vauthenticator.account.AccountNotFoundException
 import it.valeriovaudi.vauthenticator.account.AccountTestFixture.anAccount
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import it.valeriovaudi.vauthenticator.account.tiket.VerificationTicket
+import it.valeriovaudi.vauthenticator.account.tiket.VerificationTicketFactory
 import it.valeriovaudi.vauthenticator.mail.MailSenderService
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.*
 import org.junit.jupiter.api.Assertions
@@ -28,7 +29,7 @@ internal class SendVerifyMailChallengeTest {
     lateinit var accountRepository: AccountRepository
 
     @MockK
-    lateinit var mailVerificationTicketFactory: MailVerificationTicketFactory
+    lateinit var verificationTicketFactory: VerificationTicketFactory
 
     @MockK
     lateinit var mailVerificationMailSender: MailSenderService
@@ -40,7 +41,7 @@ internal class SendVerifyMailChallengeTest {
         underTest = SendVerifyMailChallenge(
                 clientAccountRepository,
                 accountRepository,
-                mailVerificationTicketFactory,
+                verificationTicketFactory,
                 mailVerificationMailSender,
                 "https://vauthenticator.com"
         )
@@ -57,7 +58,7 @@ internal class SendVerifyMailChallengeTest {
 
         every { clientAccountRepository.findOne(clientAppId) } returns Optional.of(clientApplication)
         every { accountRepository.accountFor(account.email) } returns Optional.of(account)
-        every { mailVerificationTicketFactory.createTicketFor(account, clientApplication) } returns verificationTicket
+        every { verificationTicketFactory.createTicketFor(account, clientApplication) } returns verificationTicket
         every { mailVerificationMailSender.sendFor(account, requestContext) } just runs
 
         underTest.sendVerifyMail(account.email, clientAppId)

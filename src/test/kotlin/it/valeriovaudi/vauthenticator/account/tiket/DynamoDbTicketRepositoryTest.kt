@@ -1,20 +1,16 @@
 package it.valeriovaudi.vauthenticator.account.tiket
 
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import it.valeriovaudi.vauthenticator.extentions.asDynamoAttribute
 import it.valeriovaudi.vauthenticator.support.DatabaseUtils
 import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoMailVerificationTicketTableName
 import it.valeriovaudi.vauthenticator.support.DatabaseUtils.resetDatabase
-import it.valeriovaudi.vauthenticator.time.Clocker
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
 import java.time.Duration
-import java.time.Instant
 import java.util.*
 
 
@@ -23,22 +19,17 @@ internal class DynamoDbTicketRepositoryTest {
     private val ticket = UUID.randomUUID().toString()
     private val ticketGenerator = { ticket }
 
-    @MockK
-    lateinit var clocker: Clocker
 
     private lateinit var underTest: DynamoDbTicketRepository
 
     @BeforeEach
     internal fun setUp() {
-        underTest = DynamoDbTicketRepository(DatabaseUtils.dynamoDbClient, clocker, dynamoMailVerificationTicketTableName)
+        underTest = DynamoDbTicketRepository(DatabaseUtils.dynamoDbClient, dynamoMailVerificationTicketTableName)
         resetDatabase()
     }
 
     @Test
-    internal fun `happy path`() {
-        val now = Instant.ofEpochSecond(100)
-        every { clocker.now() } returns now
-
+    internal fun `when a ticket is stored`() {
         val ticket = Ticket(
                 VerificationTicket(ticketGenerator.invoke()),
                 VerificationTicketFeatures(Duration.ofSeconds(100), false),
@@ -60,6 +51,24 @@ internal class DynamoDbTicketRepositoryTest {
         val ticketTTLFromDynamo = item["ttl"]!!.n()
 
         assertEquals(ticketFromDynamo, ticket.verificationTicket.content)
-        assertEquals(ticketTTLFromDynamo, "200")
+        assertEquals(ticketTTLFromDynamo, "100")
+    }
+
+
+    @Test
+    internal fun `when a ticket is retrieved`() {
+        val verificationTicket = VerificationTicket(ticketGenerator.invoke())
+        val expected = Ticket(
+                verificationTicket,
+                VerificationTicketFeatures(Duration.ofSeconds(200), false),
+                "email@domain.com",
+                "A_CLIENT_APP_ID"
+        )
+
+        underTest.store(expected)
+
+        val actual = underTest.loadFor(verificationTicket)
+
+        assertEquals(Optional.of(expected), actual)
     }
 }

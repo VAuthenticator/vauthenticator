@@ -1,10 +1,10 @@
 package it.valeriovaudi.vauthenticator.config
 
-import it.valeriovaudi.vauthenticator.account.mailverification.MailVerificationTicketFactory
 import it.valeriovaudi.vauthenticator.account.mailverification.SendVerifyMailChallenge
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import it.valeriovaudi.vauthenticator.account.signup.SignUpUseCase
 import it.valeriovaudi.vauthenticator.account.tiket.TicketRepository
+import it.valeriovaudi.vauthenticator.account.tiket.VerificationTicketFactory
 import it.valeriovaudi.vauthenticator.account.tiket.VerificationTicketFeatures
 import it.valeriovaudi.vauthenticator.mail.MailSenderService
 import it.valeriovaudi.vauthenticator.mail.NoReplyMailConfiguration
@@ -12,6 +12,7 @@ import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationReposito
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ReadClientApplication
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.StoreClientApplication
 import it.valeriovaudi.vauthenticator.security.VAuthenticatorPasswordEncoder
+import it.valeriovaudi.vauthenticator.time.UtcClocker
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -26,7 +27,7 @@ class UseCasesConfig {
 
     @Bean
     fun mailVerificationTicketFactory(ticketRepository: TicketRepository) =
-            MailVerificationTicketFactory({ UUID.randomUUID().toString() }, ticketRepository,
+            VerificationTicketFactory({ UUID.randomUUID().toString() }, UtcClocker(), ticketRepository,
                     VerificationTicketFeatures(Duration.ofMinutes(5), false)
             )
 
@@ -50,12 +51,12 @@ class UseCasesConfig {
     @Bean
     fun mailVerificationUseCase(clientAccountRepository: ClientApplicationRepository,
                                 accountRepository: AccountRepository,
-                                mailVerificationTicketFactory: MailVerificationTicketFactory,
+                                verificationTicketFactory: VerificationTicketFactory,
                                 verificationMailSender: MailSenderService,
                                 @Value("\${vauthenticator.host}") frontChannelBaseUrl: String) =
             SendVerifyMailChallenge(clientAccountRepository,
                     accountRepository,
-                    mailVerificationTicketFactory,
+                    verificationTicketFactory,
                     verificationMailSender,
                     frontChannelBaseUrl)
 }

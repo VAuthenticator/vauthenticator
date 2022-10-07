@@ -3,6 +3,7 @@ package it.valeriovaudi.vauthenticator.account.mailverification
 import it.valeriovaudi.vauthenticator.account.AccountNotFoundException
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import it.valeriovaudi.vauthenticator.account.tiket.VerificationTicket
+import it.valeriovaudi.vauthenticator.account.tiket.VerificationTicketFactory
 import it.valeriovaudi.vauthenticator.mail.MailSenderService
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.*
 
@@ -10,7 +11,7 @@ private const val LINK_KEY = "verificationMailLink"
 
 class SendVerifyMailChallenge(private val clientAccountRepository: ClientApplicationRepository,
                               private val accountRepository: AccountRepository,
-                              private val mailVerificationTicketFactory: MailVerificationTicketFactory,
+                              private val verificationTicketFactory: VerificationTicketFactory,
                               private val mailVerificationMailSender: MailSenderService,
                               private val frontChannelBaseUrl: String) {
 
@@ -28,7 +29,7 @@ class SendVerifyMailChallenge(private val clientAccountRepository: ClientApplica
     private fun sendVerificationTicketFor(mail: String, clientApp: ClientApplication) =
             accountRepository.accountFor(mail)
                     .map { account ->
-                        val verificationTicket = mailVerificationTicketFactory.createTicketFor(account, clientApp)
+                        val verificationTicket = verificationTicketFactory.createTicketFor(account, clientApp)
                         val mailContext = mailContextFrom(verificationTicket)
                         mailVerificationMailSender.sendFor(account, mailContext)
                     }.orElseThrow { AccountNotFoundException("account not found") }

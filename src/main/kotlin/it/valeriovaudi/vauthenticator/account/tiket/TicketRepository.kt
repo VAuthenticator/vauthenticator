@@ -1,9 +1,13 @@
 package it.valeriovaudi.vauthenticator.account.tiket
 
 import it.valeriovaudi.vauthenticator.extentions.asDynamoAttribute
-import it.valeriovaudi.vauthenticator.time.Clocker
+import it.valeriovaudi.vauthenticator.extentions.valueAsBoolFor
+import it.valeriovaudi.vauthenticator.extentions.valueAsLongFor
+import it.valeriovaudi.vauthenticator.extentions.valueAsStringFor
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
+import java.time.Duration
 import java.util.*
 
 interface TicketRepository {
@@ -13,7 +17,6 @@ interface TicketRepository {
 }
 
 class DynamoDbTicketRepository(private val dynamoDbClient: DynamoDbClient,
-                               private val clocker: Clocker,
                                private val tableName: String) : TicketRepository {
 
     override fun store(ticket: Ticket) {
@@ -24,7 +27,7 @@ class DynamoDbTicketRepository(private val dynamoDbClient: DynamoDbClient,
                                 mapOf(
                                         "ticket" to ticket.verificationTicket.content.asDynamoAttribute(),
                                         "fireAndForget" to ticket.features.fireAndForget.asDynamoAttribute(),
-                                        "ttl" to (clocker.now().epochSecond + ticket.features.ttl.seconds).asDynamoAttribute(),
+                                        "ttl" to (ticket.features.ttl.seconds).asDynamoAttribute(),
                                         "email" to ticket.email.asDynamoAttribute(),
                                         "client_application_id" to ticket.clientAppId.asDynamoAttribute()
                                 )
@@ -35,7 +38,22 @@ class DynamoDbTicketRepository(private val dynamoDbClient: DynamoDbClient,
 
 
     override fun loadFor(verificationTicket: VerificationTicket): Optional<Ticket> {
-        TODO("Not yet implemented")
+        return Optional.ofNullable(
+                dynamoDbClient.getItem(
+                        GetItemRequest.builder()
+                                .tableName(tableName)
+                                .key(mapOf("ticket" to verificationTicket.content.asDynamoAttribute()))
+                                .build()
+                ).item()
+        ).map {
+            Ticket(
+                    VerificationTicket(it.valueAsStringFor("ticket")),
+                    VerificationTicketFeatures(Duration.ofSeconds(it.valueAsLongFor("ttl")), it.valueAsBoolFor("fireAndForget")),
+                    it.valueAsStringFor("email"),
+                    it.valueAsStringFor("client_application_id")
+            )
+        }
+
     }
 
     override fun delete(verificationTicket: VerificationTicket) {

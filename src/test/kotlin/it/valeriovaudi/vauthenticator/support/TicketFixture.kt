@@ -7,5 +7,5 @@ import java.time.Duration
 
 object TicketFixture {
     fun ticketFor(verificationTicketValue: String, mail: String, clientAppId: String) =
-            Ticket(VerificationTicket(verificationTicketValue), VerificationTicketFeatures(Duration.ofSeconds(100), false), mail, clientAppId)
+            Ticket(VerificationTicket(verificationTicketValue), VerificationTicketFeatures(Duration.ofSeconds(200), false), mail, clientAppId)
 }

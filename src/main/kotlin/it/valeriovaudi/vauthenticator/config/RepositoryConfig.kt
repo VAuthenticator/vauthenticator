@@ -9,7 +9,6 @@ import it.valeriovaudi.vauthenticator.keypair.KeyRepository
 import it.valeriovaudi.vauthenticator.keypair.KmsKeyRepository
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.DynamoDbClientApplicationRepository
 import it.valeriovaudi.vauthenticator.role.DynamoDbRoleRepository
-import it.valeriovaudi.vauthenticator.time.UtcClocker
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -73,7 +72,7 @@ class DynamoDbTicketRepositoryConfig {
 
     @Bean
     fun ticketRepository(@Value("\${vauthenticator.dynamo-db.ticket.table-name}") tableName: String, dynamoDbClient: DynamoDbClient) =
-            DynamoDbTicketRepository(dynamoDbClient, UtcClocker(), tableName)
+            DynamoDbTicketRepository(dynamoDbClient, tableName)
 
 
 }
