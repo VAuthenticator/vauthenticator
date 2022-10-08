@@ -53,7 +53,7 @@ internal class SendVerifyMailChallengeTest {
         val account = anAccount()
         val clientApplication = ClientAppFixture.aClientApp(clientAppId).copy(scopes = Scopes.from(Scope.MAIL_VERIFY))
         val verificationTicket = VerificationTicket("A_TICKET")
-        val requestContext = mapOf("verificationMailLink" to "https://vauthenticator.com/verify-mail/A_TICKET")
+        val requestContext = mapOf("verificationMailLink" to "https://vauthenticator.com/mail-verify/A_TICKET")
 
 
         every { clientAccountRepository.findOne(clientAppId) } returns Optional.of(clientApplication)

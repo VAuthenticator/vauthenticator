@@ -35,7 +35,7 @@ class SendVerifyMailChallenge(private val clientAccountRepository: ClientApplica
                     }.orElseThrow { AccountNotFoundException("account not found") }
 
     private fun mailContextFrom(verificationTicket: VerificationTicket): Map<String, String> {
-        val verificationLink = "$frontChannelBaseUrl/verify-mail/${verificationTicket.content}"
+        val verificationLink = "$frontChannelBaseUrl/mail-verify/${verificationTicket.content}"
         return mapOf(LINK_KEY to verificationLink)
     }
 

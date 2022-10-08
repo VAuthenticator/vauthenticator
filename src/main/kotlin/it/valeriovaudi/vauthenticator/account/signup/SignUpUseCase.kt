@@ -20,7 +20,7 @@ open class SignUpUseCase(
     open fun execute(clientAppId: ClientAppId, account: Account) {
         clientAccountRepository.findOne(clientAppId)
                 .map {
-                    if (it.scopes.content.containsAll(listOf(Scope.SIGN_UP, Scope.MAIL_VERIFY))) {
+                    if(hasScopes(it.scopes.content)) {
                         val registeredAccount = account.copy(
                                 authorities = it.authorities.content.map { it.content },
                                 password = vAuthenticatorPasswordEncoder.encode(account.password))
@@ -34,5 +34,7 @@ open class SignUpUseCase(
                 }
     }
 
+    private fun hasScopes(scope : Set<Scope>) = scope.stream().anyMatch(::hasScope)
+    private fun hasScope(scope : Scope) = setOf(Scope.SIGN_UP, Scope.MAIL_VERIFY).contains(scope)
 }
 

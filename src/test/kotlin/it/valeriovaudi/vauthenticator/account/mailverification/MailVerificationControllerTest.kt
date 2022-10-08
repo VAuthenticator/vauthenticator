@@ -32,7 +32,7 @@ internal class MailVerificationControllerTest {
     internal fun `when the challenge is verified`() {
         every { mailVerifyMailChallengeSent.verifyMail("A_TICKET") } just runs
 
-        mokMvc.perform(MockMvcRequestBuilders.get("/api/mail-verify/A_TICKET"))
+        mokMvc.perform(MockMvcRequestBuilders.get("/mail-verify/A_TICKET"))
                 .andExpect(MockMvcResultMatchers.status().isOk)
     }
 }
