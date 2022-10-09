@@ -21,7 +21,7 @@ class VerifyMailChallengeSent(private val clientAccountRepository: ClientApplica
                 .map { ticket ->
                     enableAccountForEnabledClientAppFrom(ticket)
                     revoke(ticket)
-                }.orElseThrow { throw InsufficientTicketException("Te ticket $ticket is not a valid ticket") }
+                }.orElseThrow { throw InsufficientTicketException("Te ticket $ticket is not a valid ticket it seems to be expired") }
     }
 
 
@@ -33,7 +33,7 @@ class VerifyMailChallengeSent(private val clientAccountRepository: ClientApplica
                     } else {
                         throw InsufficientClientApplicationScopeException("The client app ${ticket.clientAppId} does not support signup use case........ consider to add ${Scope.MAIL_VERIFY.content} as scope")
                     }
-                }.orElseThrow { throw InsufficientTicketException("Te ticket ${ticket.verificationTicket.content} is not a valid ticket") }
+                }.orElseThrow { throw InsufficientTicketException("Te ticket ${ticket.verificationTicket.content} is not a valid ticket it seems to be assigned to a client app that does not exist") }
 
     }
 
