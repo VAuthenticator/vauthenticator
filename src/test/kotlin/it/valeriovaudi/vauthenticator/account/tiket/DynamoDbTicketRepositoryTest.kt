@@ -32,7 +32,7 @@ internal class DynamoDbTicketRepositoryTest {
     internal fun `when a ticket is stored`() {
         val ticket = Ticket(
                 VerificationTicket(ticketGenerator.invoke()),
-                VerificationTicketFeatures(Duration.ofSeconds(100), false),
+                VerificationTicketFeatures(Duration.ofSeconds(100)),
                 "email@domain.com",
                 "A_CLIENT_APP_ID"
         )
@@ -60,7 +60,7 @@ internal class DynamoDbTicketRepositoryTest {
         val verificationTicket = VerificationTicket(ticketGenerator.invoke())
         val expected = Ticket(
                 verificationTicket,
-                VerificationTicketFeatures(Duration.ofSeconds(200), false),
+                VerificationTicketFeatures(Duration.ofSeconds(200)),
                 "email@domain.com",
                 "A_CLIENT_APP_ID"
         )
@@ -84,7 +84,7 @@ internal class DynamoDbTicketRepositoryTest {
         val verificationTicket = VerificationTicket(ticketGenerator.invoke())
         val expected = Ticket(
                 verificationTicket,
-                VerificationTicketFeatures(Duration.ofSeconds(200), false),
+                VerificationTicketFeatures(Duration.ofSeconds(200)),
                 "email@domain.com",
                 "A_CLIENT_APP_ID"
         )

@@ -1,7 +1,7 @@
 package it.valeriovaudi.vauthenticator.account.mailverification
 
 import it.valeriovaudi.vauthenticator.extentions.clientAppId
-import org.springframework.http.ResponseEntity
+import org.springframework.http.ResponseEntity.*
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
@@ -15,7 +15,7 @@ class MailVerificationEndPoint(private val sendVerifyMailChallenge: SendVerifyMa
     @PutMapping("/api/mail/{mail}/verify-challenge")
     fun sendVerifyMail(@PathVariable mail: String, principal: JwtAuthenticationToken) =
             sendVerifyMailChallenge.sendVerifyMail(mail, principal.clientAppId())
-                    .let { ResponseEntity.noContent().build<Unit>() }
+                    .let { noContent().build<Unit>() }
 
 
 }

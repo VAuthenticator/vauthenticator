@@ -29,7 +29,7 @@ class UseCasesConfig {
     @Bean
     fun verificationTicketFactory(ticketRepository: TicketRepository) =
             VerificationTicketFactory({ UUID.randomUUID().toString() }, UtcClocker(), ticketRepository,
-                    VerificationTicketFeatures(Duration.ofMinutes(5), false)
+                    VerificationTicketFeatures(Duration.ofMinutes(5))
             )
 
     @Bean

@@ -39,7 +39,7 @@ internal class VerificationTicketFactoryTest {
 
     @BeforeEach
     internal fun setUp() {
-        underTest = VerificationTicketFactory(ticketGenerator, clocker, ticketRepository, VerificationTicketFeatures(Duration.ofSeconds(100), false))
+        underTest = VerificationTicketFactory(ticketGenerator, clocker, ticketRepository, VerificationTicketFeatures(Duration.ofSeconds(100)))
     }
 
     @Test

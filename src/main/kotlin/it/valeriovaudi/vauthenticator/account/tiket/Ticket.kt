@@ -9,6 +9,6 @@ data class Ticket(val verificationTicket: VerificationTicket,
 )
 data class VerificationTicket(val content: String)
 
-data class VerificationTicketFeatures(val ttl: Duration, val fireAndForget: Boolean)
+data class VerificationTicketFeatures(val ttl: Duration)
 
 class InsufficientTicketException(message: String) : RuntimeException(message)

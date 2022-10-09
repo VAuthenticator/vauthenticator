@@ -1,6 +1,9 @@
 package it.valeriovaudi.vauthenticator.account.tiket
 
-import it.valeriovaudi.vauthenticator.extentions.*
+import it.valeriovaudi.vauthenticator.extentions.asDynamoAttribute
+import it.valeriovaudi.vauthenticator.extentions.filterEmptyAccountMetadata
+import it.valeriovaudi.vauthenticator.extentions.valueAsLongFor
+import it.valeriovaudi.vauthenticator.extentions.valueAsStringFor
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
@@ -24,7 +27,6 @@ class DynamoDbTicketRepository(private val dynamoDbClient: DynamoDbClient,
                         .item(
                                 mapOf(
                                         "ticket" to ticket.verificationTicket.content.asDynamoAttribute(),
-                                        "fireAndForget" to ticket.features.fireAndForget.asDynamoAttribute(),
                                         "ttl" to (ticket.features.ttl.seconds).asDynamoAttribute(),
                                         "email" to ticket.email.asDynamoAttribute(),
                                         "client_application_id" to ticket.clientAppId.asDynamoAttribute()
@@ -48,7 +50,7 @@ class DynamoDbTicketRepository(private val dynamoDbClient: DynamoDbClient,
                 .map {
                     Ticket(
                             VerificationTicket(it.valueAsStringFor("ticket")),
-                            VerificationTicketFeatures(Duration.ofSeconds(it.valueAsLongFor("ttl")), it.valueAsBoolFor("fireAndForget")),
+                            VerificationTicketFeatures(Duration.ofSeconds(it.valueAsLongFor("ttl"))),
                             it.valueAsStringFor("email"),
                             it.valueAsStringFor("client_application_id")
                     )
