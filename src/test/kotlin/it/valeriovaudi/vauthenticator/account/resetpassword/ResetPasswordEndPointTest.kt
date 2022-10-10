@@ -6,6 +6,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
+import it.valeriovaudi.vauthenticator.account.tiket.VerificationTicket
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -26,11 +27,11 @@ internal class ResetPasswordEndPointTest {
     lateinit var sendResetPasswordMailChallenge: SendResetPasswordMailChallenge
 
     @MockK
-    lateinit var sendResetPasswordChallengeSent: SendResetPasswordChallengeSent
+    lateinit var resetPasswordChallengeSent: ResetPasswordChallengeSent
 
     @BeforeEach
     internal fun setUp() {
-        mokMvc = MockMvcBuilders.standaloneSetup(ResetPasswordEndPoint(sendResetPasswordMailChallenge, sendResetPasswordChallengeSent))
+        mokMvc = MockMvcBuilders.standaloneSetup(ResetPasswordEndPoint(sendResetPasswordMailChallenge, resetPasswordChallengeSent))
                 .build()
     }
 
@@ -43,12 +44,12 @@ internal class ResetPasswordEndPointTest {
     }
 
     @Test
-    internal fun `when a password is resetted`() {
+    internal fun `when a password is reset`() {
         val objectMapper = ObjectMapper()
         val request = ResetPasswordRequest("A_NEW_PSWD")
         val ticket = "A_TICKET"
 
-        every { sendResetPasswordChallengeSent.resetPassword(ticket, request) } just runs
+        every { resetPasswordChallengeSent.resetPassword(VerificationTicket(ticket) , request) } just runs
         mokMvc.perform(MockMvcRequestBuilders.put("/api/reset-password/{ticket}", ticket)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsBytes(request))
