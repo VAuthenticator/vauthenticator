@@ -70,6 +70,11 @@ class WebSecurityConfig(
                 .and()
 
                 .authorizeRequests()
+                .mvcMatchers("/api/reset-password/{ticket}")
+                .permitAll()
+                .and()
+
+                .authorizeRequests()
                 .mvcMatchers("/api/**")
                 .hasAnyAuthority(adminRole)
                 .and()
