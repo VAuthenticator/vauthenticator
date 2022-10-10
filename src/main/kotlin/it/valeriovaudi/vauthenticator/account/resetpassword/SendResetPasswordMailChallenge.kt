@@ -7,13 +7,14 @@ import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
 
 class SendResetPasswordMailChallenge(private val accountRepository: AccountRepository,
                                      private val ticketFactory: VerificationTicketFactory,
-                                     private val mailSenderService: MailSenderService) {
+                                     private val mailSenderService: MailSenderService,
+                                     private val frontChannelBaseUrl: String) {
 
     fun sendResetPasswordMail(mail: String) {
         accountRepository.accountFor(username = mail)
                 .map {
                     val ticket = ticketFactory.createTicketFor(it, ClientAppId.empty())
-                    mailSenderService.sendFor(account = it, mapOf("resetPasswordTicket" to ticket.content))
+                    mailSenderService.sendFor(account = it, mapOf("resetPasswordLink" to "$frontChannelBaseUrl/reset-password/${ticket.content}"))
                 }
     }
 

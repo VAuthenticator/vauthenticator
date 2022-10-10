@@ -18,7 +18,7 @@ object KeyPairFixture {
         return Pair(expectedAsPrivate, expectedAsPublic)
     }
 
-    fun keyPair(content: ByteArray): KeyPair {
+    private fun keyPair(content: ByteArray): KeyPair {
         val keyStoreKeyFactory = KeyStoreKeyFactory(ByteArrayResource(content), "secret".toCharArray())
         val keyPair = keyStoreKeyFactory.getKeyPair("secret")
         return keyPair

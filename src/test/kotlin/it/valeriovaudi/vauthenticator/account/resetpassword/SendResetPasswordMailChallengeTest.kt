@@ -33,7 +33,7 @@ internal class SendResetPasswordMailChallengeTest {
 
     @BeforeEach
     internal fun setUp() {
-        underTest = SendResetPasswordMailChallenge(accountRepository, ticketFactory, mailSenderService)
+        underTest = SendResetPasswordMailChallenge(accountRepository, ticketFactory, mailSenderService,"https://vauthenticator.com")
     }
 
     @Test
@@ -42,7 +42,7 @@ internal class SendResetPasswordMailChallengeTest {
 
         every { accountRepository.accountFor(anAccount.email) } returns Optional.of(anAccount)
         every { ticketFactory.createTicketFor(anAccount, empty()) } returns VerificationTicket("A_TICKET")
-        every { mailSenderService.sendFor(anAccount, mapOf("resetPasswordTicket" to "A_TICKET")) } just runs
+        every { mailSenderService.sendFor(anAccount, mapOf("resetPasswordLink" to "https://vauthenticator.com/reset-password/A_TICKET")) } just runs
 
         underTest.sendResetPasswordMail(anAccount.email)
     }
