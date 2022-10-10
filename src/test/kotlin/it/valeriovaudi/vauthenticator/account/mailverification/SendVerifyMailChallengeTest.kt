@@ -58,7 +58,7 @@ internal class SendVerifyMailChallengeTest {
 
         every { clientAccountRepository.findOne(clientAppId) } returns Optional.of(clientApplication)
         every { accountRepository.accountFor(account.email) } returns Optional.of(account)
-        every { verificationTicketFactory.createTicketFor(account, clientApplication) } returns verificationTicket
+        every { verificationTicketFactory.createTicketFor(account, clientAppId ) } returns verificationTicket
         every { mailVerificationMailSender.sendFor(account, requestContext) } just runs
 
         underTest.sendVerifyMail(account.email, clientAppId)

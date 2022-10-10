@@ -29,7 +29,7 @@ class SendVerifyMailChallenge(private val clientAccountRepository: ClientApplica
     private fun sendVerificationTicketFor(mail: String, clientApp: ClientApplication) =
             accountRepository.accountFor(mail)
                     .map { account ->
-                        val verificationTicket = verificationTicketFactory.createTicketFor(account, clientApp)
+                        val verificationTicket = verificationTicketFactory.createTicketFor(account, clientApp.clientAppId)
                         val mailContext = mailContextFrom(verificationTicket)
                         mailVerificationMailSender.sendFor(account, mailContext)
                     }.orElseThrow { AccountNotFoundException("account not found") }

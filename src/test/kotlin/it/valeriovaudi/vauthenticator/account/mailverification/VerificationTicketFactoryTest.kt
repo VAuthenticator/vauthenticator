@@ -10,7 +10,6 @@ import it.valeriovaudi.vauthenticator.account.tiket.TicketRepository
 import it.valeriovaudi.vauthenticator.account.tiket.VerificationTicket
 import it.valeriovaudi.vauthenticator.account.tiket.VerificationTicketFactory
 import it.valeriovaudi.vauthenticator.account.tiket.VerificationTicketFeatures
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppFixture.aClientApp
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
 import it.valeriovaudi.vauthenticator.support.TicketFixture.ticketFor
 import it.valeriovaudi.vauthenticator.time.Clocker
@@ -46,7 +45,6 @@ internal class VerificationTicketFactoryTest {
     internal fun `happy path`() {
         val now = Instant.ofEpochSecond(100)
         val account = anAccount()
-        val clientApplication = aClientApp(ClientAppId("A_CLIENT_APP_ID"))
 
         val ticket = ticketFor(ticketGenerator.invoke(), "email@domain.com", "A_CLIENT_APP_ID")
 
@@ -55,7 +53,7 @@ internal class VerificationTicketFactoryTest {
 
 
         val expected = VerificationTicket(ticketGenerator.invoke())
-        val actual = underTest.createTicketFor(account, clientApplication)
+        val actual = underTest.createTicketFor(account, ClientAppId("A_CLIENT_APP_ID"))
 
         assertEquals(expected, actual)
     }

@@ -3,6 +3,7 @@ package it.valeriovaudi.vauthenticator.account.resetpassword
 import it.valeriovaudi.vauthenticator.account.tiket.VerificationTicket
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.*
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
@@ -12,7 +13,7 @@ class ResetPasswordEndPoint(private val sendResetPasswordMailChallenge: SendRese
                             private val resetPasswordChallengeSent: ResetPasswordChallengeSent) {
 
     @PutMapping("/api/mail/{mail}/rest-password-challenge")
-    fun sendVerifyMail(@PathVariable mail: String) =
+    fun sendVerifyMail(@PathVariable mail: String, principal: JwtAuthenticationToken) =
             sendResetPasswordMailChallenge.sendResetPasswordMail(mail)
                     .let { noContent().build<Unit>() }
 

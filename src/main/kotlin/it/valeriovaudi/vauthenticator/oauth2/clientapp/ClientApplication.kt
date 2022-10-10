@@ -1,7 +1,6 @@
 package it.valeriovaudi.vauthenticator.oauth2.clientapp
 
 import com.nimbusds.jose.JWSObject
-import it.valeriovaudi.vauthenticator.account.Account
 import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames
 import java.util.*
 
@@ -93,5 +92,6 @@ data class Authority(val content: String)
 data class TokenTimeToLive(val content: Int)
 
 enum class ClientApplicationFeatures(val value: String) {
-    SIGNUP("signup")
+    SIGNUP("signup"),
+    RESET_PASSWORD("reset-password")
 }

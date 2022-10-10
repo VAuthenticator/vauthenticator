@@ -24,12 +24,13 @@ class LoginPageController(
     fun loginPage(session: HttpSession, model: Model): String {
         val clientId = session.oauth2ClientId()
 
-        val features = mutableMapOf(ClientApplicationFeatures.SIGNUP.value to false)
+        val features = defaultFeature()
         clientId.ifPresent {
             model.addAttribute("clientId", it)
             clientApplicationRepository.findOne(ClientAppId(it))
-                    .map {clientApp ->
+                    .map { clientApp ->
                         features[ClientApplicationFeatures.SIGNUP.value] = clientApp.scopes.content.contains(Scope.SIGN_UP)
+                        features[ClientApplicationFeatures.RESET_PASSWORD.value] = clientApp.scopes.content.contains(Scope.RESET_PASSWORD)
                     }
         }
 
@@ -38,5 +39,10 @@ class LoginPageController(
         return "login"
     }
 
+    private fun defaultFeature() =
+            mutableMapOf(
+                    ClientApplicationFeatures.SIGNUP.value to false,
+                    ClientApplicationFeatures.RESET_PASSWORD.value to false
+            )
 
 }

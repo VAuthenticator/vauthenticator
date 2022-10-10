@@ -25,6 +25,7 @@ class AccountEndPoint(
 ) {
     val logger: Logger = LoggerFactory.getLogger(AccountEndPoint::class.java)
 
+    //todo check if we can use plain spring features to inject the principal
     @PostMapping("/api/accounts")
     fun signup(@RequestHeader("Authorization", required = false) authorization: String?,
                @ModelAttribute("clientId") clientId: String?,
@@ -44,6 +45,7 @@ class AccountEndPoint(
         signUpUseCase.execute(clientAppId, account)
     }
 
+    //todo check if we can use plain spring features to inject the principal
     @PutMapping("/api/accounts")
     fun save(@RequestHeader("Authorization", required = false) authorization: String?,
              @RequestBody representation: FinalAccountRepresentation): ResponseEntity<Unit> {
