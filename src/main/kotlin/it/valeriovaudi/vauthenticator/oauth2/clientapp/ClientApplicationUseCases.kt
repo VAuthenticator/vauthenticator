@@ -1,10 +1,8 @@
 package it.valeriovaudi.vauthenticator.oauth2.clientapp
 
 import it.valeriovaudi.vauthenticator.security.VAuthenticatorPasswordEncoder
-import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
-@Transactional
 class StoreClientApplication(private val clientApplicationRepository: ClientApplicationRepository,
                              private val passwordEncoder: VAuthenticatorPasswordEncoder) {
     fun store(aClientApp: ClientApplication, storeWithPassword: Boolean) {
