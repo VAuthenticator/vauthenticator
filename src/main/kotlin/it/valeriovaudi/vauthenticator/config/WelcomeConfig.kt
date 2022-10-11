@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.mail.javamail.JavaMailSender
 
 @Configuration(proxyBeanMethods = false)
-class MailServiceConfig {
+class WelcomeConfig {
 
     @Bean
     fun welcomeMailSender(javaMailSender: JavaMailSender, documentRepository: DocumentRepository, noReplyMailConfiguration: NoReplyMailConfiguration) =
@@ -17,12 +17,4 @@ class MailServiceConfig {
                     JinjavaMailTemplateResolver(Jinjava()),
                     SimpleMailMessageFactory(noReplyMailConfiguration.from, noReplyMailConfiguration.welcomeMailSubject, MailType.WELCOME)
             )
-    @Bean
-    fun verificationMailSender(javaMailSender: JavaMailSender, documentRepository: DocumentRepository, noReplyMailConfiguration: NoReplyMailConfiguration) =
-            JavaMailSenderService(documentRepository,
-                    javaMailSender,
-                    JinjavaMailTemplateResolver(Jinjava()),
-                    SimpleMailMessageFactory(noReplyMailConfiguration.from, noReplyMailConfiguration.welcomeMailSubject, MailType.EMAIL_VERIFICATION)
-            )
-
 }

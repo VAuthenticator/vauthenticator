@@ -1,7 +1,9 @@
-package it.valeriovaudi.vauthenticator.account.resetpassword
+package it.valeriovaudi.vauthenticator.config
 
 import com.hubspot.jinjava.Jinjava
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
+import it.valeriovaudi.vauthenticator.account.resetpassword.ResetPasswordChallengeSent
+import it.valeriovaudi.vauthenticator.account.resetpassword.SendResetPasswordMailChallenge
 import it.valeriovaudi.vauthenticator.account.tiket.TicketRepository
 import it.valeriovaudi.vauthenticator.account.tiket.VerificationTicketFactory
 import it.valeriovaudi.vauthenticator.document.DocumentRepository
