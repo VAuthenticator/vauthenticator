@@ -10,10 +10,10 @@ class SendResetPasswordMailChallenge(private val accountRepository: AccountRepos
                                      private val mailSenderService: MailSenderService,
                                      private val frontChannelBaseUrl: String) {
 
-    fun sendResetPasswordMail(mail: String) {
+    fun sendResetPasswordMail(mail: String, clientAppId: ClientAppId) {
         accountRepository.accountFor(username = mail)
                 .map {
-                    val ticket = ticketFactory.createTicketFor(it, ClientAppId.empty())
+                    val ticket = ticketFactory.createTicketFor(it, clientAppId)
                     mailSenderService.sendFor(account = it, mapOf("resetPasswordLink" to "$frontChannelBaseUrl/reset-password/${ticket.content}"))
                 }
     }

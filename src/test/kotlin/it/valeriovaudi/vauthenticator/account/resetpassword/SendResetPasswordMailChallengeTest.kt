@@ -10,7 +10,7 @@ import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import it.valeriovaudi.vauthenticator.account.tiket.VerificationTicket
 import it.valeriovaudi.vauthenticator.account.tiket.VerificationTicketFactory
 import it.valeriovaudi.vauthenticator.mail.MailSenderService
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId.Companion.empty
+import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppFixture.aClientAppId
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -33,17 +33,18 @@ internal class SendResetPasswordMailChallengeTest {
 
     @BeforeEach
     internal fun setUp() {
-        underTest = SendResetPasswordMailChallenge(accountRepository, ticketFactory, mailSenderService,"https://vauthenticator.com")
+        underTest = SendResetPasswordMailChallenge(accountRepository, ticketFactory, mailSenderService, "https://vauthenticator.com")
     }
 
     @Test
     internal fun `happy path`() {
         val anAccount = anAccount()
 
+        val clientAppId = aClientAppId()
         every { accountRepository.accountFor(anAccount.email) } returns Optional.of(anAccount)
-        every { ticketFactory.createTicketFor(anAccount, empty()) } returns VerificationTicket("A_TICKET")
+        every { ticketFactory.createTicketFor(anAccount, clientAppId) } returns VerificationTicket("A_TICKET")
         every { mailSenderService.sendFor(anAccount, mapOf("resetPasswordLink" to "https://vauthenticator.com/reset-password/A_TICKET")) } just runs
 
-        underTest.sendResetPasswordMail(anAccount.email)
+        underTest.sendResetPasswordMail(anAccount.email, clientAppId)
     }
 }

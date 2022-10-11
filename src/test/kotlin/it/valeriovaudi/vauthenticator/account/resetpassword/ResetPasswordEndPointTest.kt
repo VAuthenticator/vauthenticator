@@ -7,20 +7,24 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
 import it.valeriovaudi.vauthenticator.account.tiket.VerificationTicket
+import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
+import it.valeriovaudi.vauthenticator.support.TestingFixture.principalFor
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
 @ExtendWith(MockKExtension::class)
 internal class ResetPasswordEndPointTest {
 
     lateinit var mokMvc: MockMvc
+
+    val clientAppId = ClientAppId("A_CLIENT_APP_ID")
 
 
     @MockK
@@ -37,10 +41,19 @@ internal class ResetPasswordEndPointTest {
 
     @Test
     internal fun `when a challenge is sent`() {
-        every { sendResetPasswordMailChallenge.sendResetPasswordMail("email@domain.com") } just runs
+        every { sendResetPasswordMailChallenge.sendResetPasswordMail("email@domain.com", clientAppId) } just runs
 
-        mokMvc.perform(MockMvcRequestBuilders.put("/api/mail/{mail}/rest-password-challenge", "email@domain.com"))
-                .andExpect(MockMvcResultMatchers.status().isNoContent)
+        mokMvc.perform(put("/api/mail/{mail}/rest-password-challenge", "email@domain.com")
+                .principal(principalFor("A_CLIENT_APP_ID", "email@domain.com")))
+                .andExpect(status().isNoContent)
+    }
+    @Test
+    internal fun `when a password is reset as anonymous but starting from ui`() {
+        every { sendResetPasswordMailChallenge.sendResetPasswordMail("email@domain.com", clientAppId) } just runs
+
+        mokMvc.perform(put("/api/mail/{mail}/rest-password-challenge", "email@domain.com")
+                .sessionAttr("client_id", "A_CLIENT_APP_ID")
+        ).andExpect(status().isNoContent)
     }
 
     @Test
@@ -50,12 +63,11 @@ internal class ResetPasswordEndPointTest {
         val ticket = "A_TICKET"
 
         every { resetPasswordChallengeSent.resetPassword(VerificationTicket(ticket) , request) } just runs
-        mokMvc.perform(MockMvcRequestBuilders.put("/api/reset-password/{ticket}", ticket)
+        mokMvc.perform(put("/api/reset-password/{ticket}", ticket)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsBytes(request))
         )
-                .andExpect(MockMvcResultMatchers.status().isNoContent)
+                .andExpect(status().isNoContent)
     }
-
 
 }

@@ -44,7 +44,6 @@ class AccountEndPoint(
         signUpUseCase.execute(clientAppId, account)
     }
 
-    //todo check if we can use plain spring features to inject the principal
     @PutMapping("/api/accounts")
     fun save(principal: JwtAuthenticationToken,
              @RequestBody representation: FinalAccountRepresentation): ResponseEntity<Unit> {
