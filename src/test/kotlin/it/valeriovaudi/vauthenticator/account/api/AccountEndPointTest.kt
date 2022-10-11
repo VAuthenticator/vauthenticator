@@ -50,7 +50,7 @@ internal class AccountEndPointTest {
         val clientAppId = "A_CLIENT_APP_ID"
         mokMvc.perform(MockMvcRequestBuilders.post("/api/accounts")
                 .contentType(MediaType.APPLICATION_JSON)
-                .principal(principalFor(clientAppId, "email@domain.com"))
+                .principal(principalFor(clientAppId, "email@domain.com", listOf("VAUTHENTICATOR_ADMIN")))
                 .content(objectMapper.writeValueAsString(representation)))
                 .andExpect(MockMvcResultMatchers.status().isCreated)
 
@@ -94,7 +94,7 @@ internal class AccountEndPointTest {
 
         mokMvc.perform(MockMvcRequestBuilders.put("/api/accounts")
                 .contentType(MediaType.APPLICATION_JSON)
-                .principal(principalFor(clientAppId, "email@domain.com"))
+                .principal(principalFor(clientAppId, "email@domain.com", listOf("VAUTHENTICATOR_ADMIN")))
                 .content(objectMapper.writeValueAsString(representation)))
                 .andExpect(MockMvcResultMatchers.status().isNoContent)
 

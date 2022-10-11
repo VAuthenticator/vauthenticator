@@ -9,6 +9,7 @@ import com.nimbusds.jose.jwk.ECKey
 import com.nimbusds.jose.jwk.gen.ECKeyGenerator
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
@@ -50,7 +51,7 @@ object TestingFixture {
 
     fun loadFileFor(path: String) = String(ClassLoader.getSystemResourceAsStream(path).readAllBytes())
 
-    fun principalFor(clientAppId: String, mail: String) =
+    fun principalFor(clientAppId: String, mail: String, authorities: List<String> = emptyList()) =
             signedJWTFor(clientAppId, mail).let { signedJWT ->
                 JwtAuthenticationToken(
                         Jwt(
@@ -60,7 +61,7 @@ object TestingFixture {
                                 signedJWT.header.toJSONObject(),
                                 signedJWT.payload.toJSONObject()
                         ),
-                        emptyList(),
+                        authorities.map(::SimpleGrantedAuthority),
                         mail
                 )
             }
