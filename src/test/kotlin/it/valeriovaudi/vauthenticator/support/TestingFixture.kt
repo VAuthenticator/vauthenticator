@@ -10,6 +10,9 @@ import com.nimbusds.jose.jwk.gen.ECKeyGenerator
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
 import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames
+import org.springframework.security.oauth2.jwt.Jwt
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
+import java.time.Instant
 
 object TestingFixture {
 
@@ -45,5 +48,10 @@ object TestingFixture {
     }
 
 
-    fun loadFileFor(path : String) = String(ClassLoader.getSystemResourceAsStream(path).readAllBytes())
+    fun loadFileFor(path: String) = String(ClassLoader.getSystemResourceAsStream(path).readAllBytes())
+
+    fun principalFor(clientAppId: String, mail: String) =
+            signedJWTFor(clientAppId, mail).let { signedJWT ->
+                JwtAuthenticationToken(Jwt(simpleJwtFor(clientAppId), Instant.now(), Instant.now().plusSeconds(100), signedJWT.header.toJSONObject(), signedJWT.payload.toJSONObject()))
+            }
 }

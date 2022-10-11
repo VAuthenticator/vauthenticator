@@ -8,6 +8,7 @@ import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import it.valeriovaudi.vauthenticator.account.signup.SignUpUseCase
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
 import it.valeriovaudi.vauthenticator.support.TestingFixture
+import it.valeriovaudi.vauthenticator.support.TestingFixture.principalFor
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -50,8 +51,27 @@ internal class AccountEndPointTest {
         val clientAppId = "A_CLIENT_APP_ID"
         mokMvc.perform(MockMvcRequestBuilders.post("/api/accounts")
                 .contentType(MediaType.APPLICATION_JSON)
-                .sessionAttr("clientId", "clientId")
-                .header("Authorization", "Bearer ${TestingFixture.simpleJwtFor(clientAppId)}")
+                .principal(principalFor(clientAppId, "email@domain.com"))
+                .content(objectMapper.writeValueAsString(representation)))
+                .andExpect(MockMvcResultMatchers.status().isCreated)
+
+        Mockito.verify(signUpUseCase).execute(ClientAppId(clientAppId), masterAccount)
+
+        assertEquals(false, masterAccount.accountNonLocked)
+        assertEquals(false, masterAccount.emailVerified)
+        assertEquals(true, masterAccount.accountNonExpired)
+        assertEquals(true, masterAccount.credentialsNonExpired)
+        assertEquals(false, masterAccount.enabled)
+    }
+    @Test
+    internal fun `sign up a new account like form ui with client app id in the session`() {
+        val representation = FinalAccountRepresentation(email = "email@domain.com", password = "secret", firstName = "A First Name", lastName = "A Last Name", authorities = emptyList(), birthDate = Date.nullValue().formattedDate(), phone = Phone.nullValue().formattedPhone())
+        val masterAccount = AccountTestFixture.anAccount().copy(accountNonExpired = true, emailVerified = false, accountNonLocked = false, credentialsNonExpired = true, enabled = false,)
+
+        val clientAppId = "A_CLIENT_APP_ID"
+        mokMvc.perform(MockMvcRequestBuilders.post("/api/accounts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .sessionAttr("clientId", "A_CLIENT_APP_ID")
                 .content(objectMapper.writeValueAsString(representation)))
                 .andExpect(MockMvcResultMatchers.status().isCreated)
 

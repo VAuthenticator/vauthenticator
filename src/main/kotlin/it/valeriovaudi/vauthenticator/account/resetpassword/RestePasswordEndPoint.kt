@@ -3,12 +3,11 @@ package it.valeriovaudi.vauthenticator.account.resetpassword
 import it.valeriovaudi.vauthenticator.account.tiket.VerificationTicket
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.*
-import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
 
-@RestController
-@SessionAttributes("client_id")
+//@RestController
+//@SessionAttributes("client_id")
 class ResetPasswordEndPoint(private val sendResetPasswordMailChallenge: SendResetPasswordMailChallenge,
                             private val resetPasswordChallengeSent: ResetPasswordChallengeSent) {
 
@@ -24,7 +23,7 @@ class ResetPasswordEndPoint(private val sendResetPasswordMailChallenge: SendRese
     }
 }
 
-@Controller
+//@Controller
 class ResetPasswordController {
 
     @GetMapping("/reset-password/{ticket}")

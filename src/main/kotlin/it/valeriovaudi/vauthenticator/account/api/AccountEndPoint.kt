@@ -5,17 +5,19 @@ import it.valeriovaudi.vauthenticator.account.Date
 import it.valeriovaudi.vauthenticator.account.Phone
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import it.valeriovaudi.vauthenticator.account.signup.SignUpUseCase
+import it.valeriovaudi.vauthenticator.extentions.clientAppId
 import it.valeriovaudi.vauthenticator.extentions.stripBearerPrefix
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplication
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplication.Companion.userNameFrom
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.status
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.web.bind.annotation.*
 import java.util.*
+import javax.servlet.http.HttpSession
 
 @RestController
 @SessionAttributes("clientId")
@@ -25,16 +27,15 @@ class AccountEndPoint(
 ) {
     val logger: Logger = LoggerFactory.getLogger(AccountEndPoint::class.java)
 
-    //todo check if we can use plain spring features to inject the principal
     @PostMapping("/api/accounts")
-    fun signup(@RequestHeader("Authorization", required = false) authorization: String?,
-               @ModelAttribute("clientId") clientId: String?,
+    fun signup(principal: JwtAuthenticationToken?,
+               session : HttpSession,
                @RequestBody representation: FinalAccountRepresentation): ResponseEntity<Unit> {
         SignUpAccountConverter.fromRepresentationToSignedUpAccount(representation)
                 .let { account ->
-                    Optional.ofNullable(authorization).map { executeSignUp(ClientApplication.clientAppIdFrom(it.stripBearerPrefix()), account) }
+                    Optional.ofNullable(principal).map { executeSignUp(it.clientAppId(), account) }
                             .orElseGet {
-                                Optional.ofNullable(clientId).map { executeSignUp(ClientAppId(it), account) }
+                                Optional.ofNullable(session.getAttribute("clientId") as String?).map { executeSignUp(ClientAppId(it), account) }
                                         .orElseThrow()
                             }
                 }
