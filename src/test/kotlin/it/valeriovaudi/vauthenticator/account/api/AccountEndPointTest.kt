@@ -7,7 +7,6 @@ import it.valeriovaudi.vauthenticator.account.Phone
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import it.valeriovaudi.vauthenticator.account.signup.SignUpUseCase
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
-import it.valeriovaudi.vauthenticator.support.TestingFixture
 import it.valeriovaudi.vauthenticator.support.TestingFixture.principalFor
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -95,65 +94,11 @@ internal class AccountEndPointTest {
 
         mokMvc.perform(MockMvcRequestBuilders.put("/api/accounts")
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer ${TestingFixture.simpleJwtFor(clientAppId, "email@domain.com")}")
+                .principal(principalFor(clientAppId, "email@domain.com"))
                 .content(objectMapper.writeValueAsString(representation)))
                 .andExpect(MockMvcResultMatchers.status().isNoContent)
 
         Mockito.verify(accountRepository).save(masterAccount)
     }
 
-    @Test
-    internal fun `when update account details fails due to token without user_name claim in access token`() {
-        val representation = FinalAccountRepresentation(email = "email@domain.com", password = "secret", firstName = "A First Name", lastName = "A Last Name", authorities = emptyList(), birthDate = Date.nullValue().formattedDate(), phone = Phone.nullValue().formattedPhone())
-        val clientAppId = "A_CLIENT_APP_ID"
-
-
-        mokMvc.perform(MockMvcRequestBuilders.put("/api/accounts")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer ${TestingFixture.simpleJwtFor(clientAppId)}")
-                .content(objectMapper.writeValueAsString(representation)))
-                .andExpect(MockMvcResultMatchers.status().isForbidden)
-
-        Mockito.verifyNoInteractions(accountRepository)
-    }
-    @Test
-    internal fun `when update account details fails due to no token in the request`() {
-        val representation = FinalAccountRepresentation(email = "email@domain.com", password = "secret", firstName = "A First Name", lastName = "A Last Name", authorities = emptyList(), birthDate = Date.nullValue().formattedDate(), phone = Phone.nullValue().formattedPhone())
-
-
-        mokMvc.perform(MockMvcRequestBuilders.put("/api/accounts")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(representation)))
-                .andExpect(MockMvcResultMatchers.status().isUnauthorized)
-
-        Mockito.verifyNoInteractions(accountRepository)
-    }
-
-    @Test
-    internal fun `when update account details fails due to empty token in the request`() {
-        val representation = FinalAccountRepresentation(email = "email@domain.com", password = "secret", firstName = "A First Name", lastName = "A Last Name", authorities = emptyList(), birthDate = Date.nullValue().formattedDate(), phone = Phone.nullValue().formattedPhone())
-
-
-        mokMvc.perform(MockMvcRequestBuilders.put("/api/accounts")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer ")
-                .content(objectMapper.writeValueAsString(representation)))
-                .andExpect(MockMvcResultMatchers.status().isUnauthorized)
-
-        Mockito.verifyNoInteractions(accountRepository)
-    }
-
-    @Test
-    internal fun `when update account details fails due to empty Authorization header`() {
-        val representation = FinalAccountRepresentation(email = "email@domain.com", password = "secret", firstName = "A First Name", lastName = "A Last Name", authorities = emptyList(), birthDate = Date.nullValue().formattedDate(), phone = Phone.nullValue().formattedPhone())
-
-
-        mokMvc.perform(MockMvcRequestBuilders.put("/api/accounts")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", " ")
-                .content(objectMapper.writeValueAsString(representation)))
-                .andExpect(MockMvcResultMatchers.status().isUnauthorized)
-
-        Mockito.verifyNoInteractions(accountRepository)
-    }
 }

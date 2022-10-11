@@ -52,6 +52,16 @@ object TestingFixture {
 
     fun principalFor(clientAppId: String, mail: String) =
             signedJWTFor(clientAppId, mail).let { signedJWT ->
-                JwtAuthenticationToken(Jwt(simpleJwtFor(clientAppId), Instant.now(), Instant.now().plusSeconds(100), signedJWT.header.toJSONObject(), signedJWT.payload.toJSONObject()))
+                JwtAuthenticationToken(
+                        Jwt(
+                                simpleJwtFor(clientAppId),
+                                Instant.now(),
+                                Instant.now().plusSeconds(100),
+                                signedJWT.header.toJSONObject(),
+                                signedJWT.payload.toJSONObject()
+                        ),
+                        emptyList(),
+                        mail
+                )
             }
 }

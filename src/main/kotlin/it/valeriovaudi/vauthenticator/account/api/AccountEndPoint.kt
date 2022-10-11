@@ -6,9 +6,7 @@ import it.valeriovaudi.vauthenticator.account.Phone
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import it.valeriovaudi.vauthenticator.account.signup.SignUpUseCase
 import it.valeriovaudi.vauthenticator.extentions.clientAppId
-import it.valeriovaudi.vauthenticator.extentions.stripBearerPrefix
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplication.Companion.userNameFrom
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -29,7 +27,7 @@ class AccountEndPoint(
 
     @PostMapping("/api/accounts")
     fun signup(principal: JwtAuthenticationToken?,
-               session : HttpSession,
+               session: HttpSession,
                @RequestBody representation: FinalAccountRepresentation): ResponseEntity<Unit> {
         SignUpAccountConverter.fromRepresentationToSignedUpAccount(representation)
                 .let { account ->
@@ -48,39 +46,29 @@ class AccountEndPoint(
 
     //todo check if we can use plain spring features to inject the principal
     @PutMapping("/api/accounts")
-    fun save(@RequestHeader("Authorization", required = false) authorization: String?,
+    fun save(principal: JwtAuthenticationToken,
              @RequestBody representation: FinalAccountRepresentation): ResponseEntity<Unit> {
-        val accessToken = accessTokenFrom(authorization)
 
-        if (isBlankAccessTokenFrom(accessToken)) {
-            return status(HttpStatus.UNAUTHORIZED).build()
-        }
 
-        val userName = userNameFrom(accessToken)
+        val userName = principal.name
 
-        return if (userName.isNotEmpty()) {
-            logWarningForNotEmptyUserNameInRequestBodyFor(representation)
-
-            accountRepository.accountFor(userName)
-                    .map { account ->
-                        val filledRepresentation = representation.copy(email = userName, password = account.password, authorities = account.authorities)
-                        val accountToBeSaved = SignUpAccountConverter.fromRepresentationToSignedUpAccount(filledRepresentation).copy(
-                                accountNonExpired = account.accountNonExpired,
-                                accountNonLocked = account.accountNonLocked,
-                                credentialsNonExpired = account.credentialsNonExpired,
-                                enabled = account.enabled,
-                                emailVerified = account.emailVerified,
-                        )
-                        accountRepository.save(accountToBeSaved)
-                        ResponseEntity.noContent().build<Unit>()
-                    }
-                    .orElseGet {
-                        ResponseEntity.noContent().build()
-                    }
-
-        } else {
-            status(HttpStatus.FORBIDDEN).build()
-        }
+        logWarningForNotEmptyUserNameInRequestBodyFor(representation)
+        return accountRepository.accountFor(userName)
+                .map { account ->
+                    val filledRepresentation = representation.copy(email = userName, password = account.password, authorities = account.authorities)
+                    val accountToBeSaved = SignUpAccountConverter.fromRepresentationToSignedUpAccount(filledRepresentation).copy(
+                            accountNonExpired = account.accountNonExpired,
+                            accountNonLocked = account.accountNonLocked,
+                            credentialsNonExpired = account.credentialsNonExpired,
+                            enabled = account.enabled,
+                            emailVerified = account.emailVerified,
+                    )
+                    accountRepository.save(accountToBeSaved)
+                    ResponseEntity.noContent().build<Unit>()
+                }
+                .orElseGet {
+                    ResponseEntity.noContent().build()
+                }
 
     }
 
@@ -89,18 +77,6 @@ class AccountEndPoint(
             logger.warn("there is an email in the body.............. it will be ignored in favour of the access token identity")
         }
     }
-
-    private fun isBlankAccessTokenFrom(accessToken: String) = accessToken.trim().isBlank()
-
-    private fun accessTokenFrom(authorization: String?) =
-            Optional.ofNullable(authorization).map {
-                try {
-                    it.stripBearerPrefix()
-                } catch (e: Exception) {
-                    ""
-                }
-
-            }.orElse("")
 
 }
 
