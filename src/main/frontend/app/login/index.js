@@ -10,7 +10,7 @@ import FormInputTextField from "../component/FormInputTextField";
 import Separator from "../component/Separator";
 import FormButton from "../component/FormButton";
 import {HashRouter, Link} from "react-router-dom";
-import {Route, Routes} from "react-router";
+import {Route, Routes, useNavigate} from "react-router";
 
 const LoginMainPage = withStyles(vauthenticatorStyles)((props) => {
     return (
@@ -18,8 +18,10 @@ const LoginMainPage = withStyles(vauthenticatorStyles)((props) => {
             <Routes>
                 <Route index path="/"
                        element={<Login {...props} />}/>
-                <Route exact={true} path="/reset-password"
-                       element={<ResetPassword {...props} />}/>
+                <Route exact={true} path="/reset-password-challenge"
+                       element={<ResetPasswordChallengeSender {...props} />}/>
+                <Route exact={true} path="/reset-password-challenge-sent"
+                       element={<SuccessfulResetPasswordMailChallenge {...props} />}/>
             </Routes>
         </HashRouter>)
 })
@@ -32,7 +34,7 @@ const Login = withStyles(vauthenticatorStyles)((props) => {
         <h3>are you not registered? if you want you can register <a href="/sign-up">here</a></h3>
     </div>
     let resetPasswordLink = <div>
-        <h3>do you have forgot your password? please click <Link to={'/reset-password'}>here</Link> to recover your
+        <h3>do you have forgot your password? please click <Link to={'/reset-password-challenge'}>here</Link> to recover your
             password</h3>
     </div>
     let features = JSON.parse(rawFeatures);
@@ -79,15 +81,20 @@ const Login = withStyles(vauthenticatorStyles)((props) => {
     )
 })
 
-const ResetPassword = withStyles(vauthenticatorStyles)((props) => {
+const ResetPasswordChallengeSender = withStyles(vauthenticatorStyles)((props) => {
     const {classes} = props;
     const [email, setEmail] = React.useState("")
+    let navigate = useNavigate();
 
     const resetPasswordAction = (email) => {
         console.log("email: " + email)
         fetch(`/api/mail/${email}/rest-password-challenge`, {
             method: "PUT",
             credentials: 'same-origin'
+        }).then(r => {
+            if(r.status === 204){
+                navigate("/reset-password-challenge-sent", { replace: true });
+            }
         })
     }
 
@@ -116,6 +123,26 @@ const ResetPassword = withStyles(vauthenticatorStyles)((props) => {
 
                 <FormButton type="button" label="Reset passwrd" onClickHandler={resetPasswordAction(email)}/>
             </div>
+        </Template>
+    )
+})
+
+const SuccessfulResetPasswordMailChallenge = withStyles(vauthenticatorStyles)((props) => {
+    const {classes} = props;
+    return (
+        <Template maxWidth="lg" classes={classes}>
+            <Typography variant="h3" component="h3">
+                <VpnKey fontSize="large"/> Reset Password
+            </Typography>
+
+            <Grid style={{marginTop: '10px'}}>
+                <Divider/>
+            </Grid>
+
+            <Typography variant="h3" component="h3">
+                We are sent an email on your account inbox please follow the instruction on the mail to reset yout
+                password
+            </Typography>
         </Template>
     )
 })
