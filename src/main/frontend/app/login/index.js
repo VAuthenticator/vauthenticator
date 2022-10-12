@@ -34,7 +34,8 @@ const Login = withStyles(vauthenticatorStyles)((props) => {
         <h3>are you not registered? if you want you can register <a href="/sign-up">here</a></h3>
     </div>
     let resetPasswordLink = <div>
-        <h3>do you have forgot your password? please click <Link to={'/reset-password-challenge'}>here</Link> to recover your
+        <h3>do you have forgot your password? please click <Link to={'/reset-password-challenge'}>here</Link> to recover
+            your
             password</h3>
     </div>
     let features = JSON.parse(rawFeatures);
@@ -86,14 +87,13 @@ const ResetPasswordChallengeSender = withStyles(vauthenticatorStyles)((props) =>
     const [email, setEmail] = React.useState("")
     let navigate = useNavigate();
 
-    const resetPasswordAction = (email) => {
-        console.log("email: " + email)
-        fetch(`/api/mail/${email}/rest-password-challenge`, {
+    const sentResetPAsswordChallenge = (email) => {
+        return fetch(`/api/mail/${email}/rest-password-challenge`, {
             method: "PUT",
             credentials: 'same-origin'
         }).then(r => {
-            if(r.status === 204){
-                navigate("/reset-password-challenge-sent", { replace: true });
+            if (r.status === 204) {
+                navigate("/reset-password-challenge-sent", {replace: true});
             }
         })
     }
@@ -121,7 +121,7 @@ const ResetPasswordChallengeSender = withStyles(vauthenticatorStyles)((props) =>
 
                 <Separator/>
 
-                <FormButton type="button" label="Reset passwrd" onClickHandler={resetPasswordAction(email)}/>
+                <FormButton type="button" label="Reset passwrd" onClickHandler={sentResetPAsswordChallenge(email)}/>
             </div>
         </Template>
     )
