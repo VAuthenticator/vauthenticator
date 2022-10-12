@@ -8,6 +8,7 @@ import it.valeriovaudi.vauthenticator.account.tiket.TicketRepository
 import it.valeriovaudi.vauthenticator.account.tiket.VerificationTicketFactory
 import it.valeriovaudi.vauthenticator.document.DocumentRepository
 import it.valeriovaudi.vauthenticator.mail.*
+import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -18,10 +19,13 @@ class ResetPasswordConfig {
 
     @Bean
     fun sendResetPasswordMailChallenge(accountRepository: AccountRepository,
+                                       clientApplicationRepository: ClientApplicationRepository,
                                        verificationTicketFactory: VerificationTicketFactory,
                                        resetPasswordMailSender: MailSenderService,
                                        @Value("\${vauthenticator.host}") frontChannelBaseUrl: String) =
-            SendResetPasswordMailChallenge(accountRepository,
+            SendResetPasswordMailChallenge(
+                    clientApplicationRepository,
+                    accountRepository,
                     verificationTicketFactory,
                     resetPasswordMailSender,
                     frontChannelBaseUrl
