@@ -29,6 +29,7 @@ class LoginPageController(
             model.addAttribute("clientId", it)
             clientApplicationRepository.findOne(ClientAppId(it))
                     .map { clientApp ->
+                        println(clientApp.scopes.content)
                         features[ClientApplicationFeatures.SIGNUP.value] = clientApp.scopes.content.contains(Scope.SIGN_UP)
                         features[ClientApplicationFeatures.RESET_PASSWORD.value] = clientApp.scopes.content.contains(Scope.RESET_PASSWORD)
                     }

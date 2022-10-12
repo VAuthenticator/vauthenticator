@@ -13,7 +13,7 @@ import java.util.*
 import javax.servlet.http.HttpSession
 
 @RestController
-@SessionAttributes("client_id")
+@SessionAttributes("clientId")
 class ResetPasswordEndPoint(private val sendResetPasswordMailChallenge: SendResetPasswordMailChallenge,
                             private val resetPasswordChallengeSent: ResetPasswordChallengeSent) {
 
@@ -26,7 +26,7 @@ class ResetPasswordEndPoint(private val sendResetPasswordMailChallenge: SendRese
             }
 
     private fun clientIdFrom(session: HttpSession, principal: JwtAuthenticationToken?): ClientAppId =
-            Optional.ofNullable(principal).map { it.clientAppId() }.orElseGet { ClientAppId(session.getAttribute("client_id") as String) }
+            Optional.ofNullable(principal).map { it.clientAppId() }.orElseGet { ClientAppId(session.getAttribute("clientId") as String) }
 
 
     @PutMapping("/api/reset-password/{ticket}")

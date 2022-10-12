@@ -66,7 +66,7 @@ class WebSecurityConfig(
 
                 .authorizeRequests()
                 .mvcMatchers("/api/mail/{mail}/rest-password-challenge")
-                .hasAnyAuthority(Scope.RESET_PASSWORD.content)
+                .permitAll()
                 .and()
 
                 .authorizeRequests()

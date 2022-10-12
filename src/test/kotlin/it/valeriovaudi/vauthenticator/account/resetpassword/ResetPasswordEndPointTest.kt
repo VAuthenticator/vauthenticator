@@ -52,7 +52,7 @@ internal class ResetPasswordEndPointTest {
         every { sendResetPasswordMailChallenge.sendResetPasswordMail("email@domain.com", clientAppId) } just runs
 
         mokMvc.perform(put("/api/mail/{mail}/rest-password-challenge", "email@domain.com")
-                .sessionAttr("client_id", "A_CLIENT_APP_ID")
+                .sessionAttr("clientId", "A_CLIENT_APP_ID")
         ).andExpect(status().isNoContent)
     }
 
