@@ -87,7 +87,7 @@ const ResetPasswordChallengeSender = withStyles(vauthenticatorStyles)((props) =>
     const [email, setEmail] = React.useState("")
     let navigate = useNavigate();
 
-    const sentResetPAsswordChallenge = (email) => {
+    const sentResetPasswordChallenge = (email) => {
         return fetch(`/api/mail/${email}/rest-password-challenge`, {
             method: "PUT",
             credentials: 'same-origin'
@@ -121,7 +121,7 @@ const ResetPasswordChallengeSender = withStyles(vauthenticatorStyles)((props) =>
 
                 <Separator/>
 
-                <FormButton type="button" label="Reset passwrd" onClickHandler={sentResetPAsswordChallenge(email)}/>
+                <FormButton type="button" label="Reset passwrd" onClickHandler={sentResetPasswordChallenge(email)}/>
             </div>
         </Template>
     )

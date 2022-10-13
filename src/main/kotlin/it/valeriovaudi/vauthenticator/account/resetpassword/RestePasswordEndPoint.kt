@@ -1,5 +1,6 @@
 package it.valeriovaudi.vauthenticator.account.resetpassword
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import it.valeriovaudi.vauthenticator.account.tiket.VerificationTicket
 import it.valeriovaudi.vauthenticator.extentions.clientAppId
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
@@ -37,11 +38,12 @@ class ResetPasswordEndPoint(private val sendResetPasswordMailChallenge: SendRese
 }
 
 @Controller
-class ResetPasswordController {
+class ResetPasswordController(val objectMapper: ObjectMapper) {
 
     @GetMapping("/reset-password/{ticket}")
     fun resetPasswordPage(@PathVariable ticket: String, model: Model): String {
-        model.addAttribute("ticket", ticket)
+        val metadata = mapOf("ticket" to ticket)
+        model.addAttribute("metadata", objectMapper.writeValueAsString(metadata))
         return "account/reset-password/reset-password"
     }
 

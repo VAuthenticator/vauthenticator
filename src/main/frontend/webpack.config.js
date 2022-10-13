@@ -8,6 +8,8 @@ module.exports = {
     entry: {
         login: path.resolve(__dirname, './app/login/index.js'),
         signup: path.resolve(__dirname, './app/signup/index.js'),
+        resetPassword: path.resolve(__dirname, './app/reset-password/reset-password.js'),
+        successfulPasswordReset: path.resolve(__dirname, './app/reset-password/successful-password-reset.js')
     },
     resolve: {
         extensions: [".js", ".jsx"]
@@ -21,6 +23,16 @@ module.exports = {
         new HtmlWebpackPlugin({
             chunks: ['signup'],
             filename: "../templates/signup.html",
+            template: path.resolve(__dirname, "../resources/templates/template.html")
+        }),
+        new HtmlWebpackPlugin({
+            chunks: ['resetPassword'],
+            filename: "../templates/account/reset-password/reset-password.html",
+            template: path.resolve(__dirname, "../resources/templates/template.html")
+        }),
+        new HtmlWebpackPlugin({
+            chunks: ['successfulPasswordReset'],
+            filename: "../templates/account/reset-password/successful-password-reset.html",
             template: path.resolve(__dirname, "../resources/templates/template.html")
         })
     ],

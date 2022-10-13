@@ -20,9 +20,10 @@ internal class ResetPasswordControllerTest {
     internal fun `when the reset password page is shown`() {
         mokMvc.perform(get("/reset-password/{ticket}", "A_TICKET"))
                 .andExpect(status().isOk)
-                .andExpect(model().attribute("ticket", "A_TICKET"))
+                .andExpect(model().attribute("metadata", mapOf("ticket" to "A_TICKET")))
                 .andExpect(view().name("account/reset-password/reset-password"))
     }
+
     @Test
     internal fun `when the successful reset password page is shown`() {
         mokMvc.perform(get("/reset-password/successful-password-reset"))
