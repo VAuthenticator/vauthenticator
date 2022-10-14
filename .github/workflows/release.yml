@@ -1,0 +1,69 @@
+name: build vauthenticator
+
+on:
+  push: { }
+  workflow_dispatch: { }
+
+jobs:
+
+  release:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: install node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+
+      - name: build testing environment
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 0.13.5
+      - run: |
+          cd src/test/resources
+          docker-compose up &
+          sleep 80s
+          sudo chown -R $USER:$USER *
+          chmod 777 -R docker/dynamodb
+          
+          export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+          export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          export AWS_REGION=${{ secrets.AWS_REGION }}
+
+          aws s3api create-bucket --bucket bucket --endpoint http://localhost:4566 --region us-east-1
+          aws s3 cp  index.html s3://bucket/mail/templates/welcome.html --endpoint http://localhost:4566 --region us-east-1
+          
+
+      - name: Build frontend artifacts
+        run: |
+          cd src/main/frontend
+          npm install --legacy-peer-deps
+          npm run-script build
+
+      - name: Build
+        run: |
+          mvn install -q
+
+      - name: Release
+        uses: qcastel/github-actions-maven-release@master
+        with:
+
+      - name: docker push
+        run: |
+          if [[ ${GITHUB_REF##*/} == 'master' ]]
+          then
+            DOCKER_TAG="latest"
+          else
+            DOCKER_TAG="${GITHUB_REF##*/}"
+          fi
+          echo "$DOCKER_TAG"
+          docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
+          docker build . -t mrflick72/vauthenticator-k8s:$DOCKER_TAG
+          docker push mrflick72/vauthenticator-k8s:$DOCKER_TAG
