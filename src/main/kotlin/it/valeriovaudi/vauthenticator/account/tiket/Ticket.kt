@@ -11,4 +11,4 @@ data class VerificationTicket(val content: String)
 
 data class VerificationTicketFeatures(val ttl: Duration)
 
-class InsufficientTicketException(message: String) : RuntimeException(message)
+class InvalidTicketException(message: String) : RuntimeException(message)

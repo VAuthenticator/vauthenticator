@@ -7,6 +7,7 @@ import io.mockk.just
 import io.mockk.runs
 import it.valeriovaudi.vauthenticator.account.AccountTestFixture.anAccount
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
+import it.valeriovaudi.vauthenticator.account.tiket.InvalidTicketException
 import it.valeriovaudi.vauthenticator.account.tiket.TicketRepository
 import it.valeriovaudi.vauthenticator.account.tiket.VerificationTicket
 import it.valeriovaudi.vauthenticator.support.TicketFixture
@@ -46,5 +47,14 @@ internal class ResetPasswordChallengeSentTest {
         every { accountRepository.save(anAccount.copy(password = "NEW_PSWD")) } just runs
 
         underTest.resetPassword(verificationTicket, ResetPasswordRequest("NEW_PSWD"))
+    }
+
+    @Test
+    internal fun `when a ticket was revoked`() {
+        val verificationTicket = VerificationTicket("A_TIKET")
+
+        every { ticketRepository.loadFor(verificationTicket) } returns Optional.empty()
+
+        assertThrows(InvalidTicketException::class.java) { underTest.resetPassword(verificationTicket, ResetPasswordRequest("NEW_PSWD")) }
     }
 }

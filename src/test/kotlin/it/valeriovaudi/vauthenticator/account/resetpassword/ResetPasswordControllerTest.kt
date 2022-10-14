@@ -1,5 +1,6 @@
 package it.valeriovaudi.vauthenticator.account.resetpassword
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.test.web.servlet.MockMvc
@@ -12,7 +13,7 @@ internal class ResetPasswordControllerTest {
 
     @BeforeEach
     internal fun setUp() {
-        mokMvc = MockMvcBuilders.standaloneSetup(ResetPasswordController())
+        mokMvc = MockMvcBuilders.standaloneSetup(ResetPasswordController(ObjectMapper()))
                 .build()
     }
 

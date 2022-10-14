@@ -27,6 +27,7 @@ const ResetPasswordPage = withStyles(vauthenticatorStyles)((props) => {
                 newPassword: password
             })
         }).then(r => {
+            console.log("send reset password")
             if (r.status === 204) {
                 window.document.location.href = "/reset-password/successful-password-reset"
             }
@@ -57,11 +58,12 @@ const ResetPasswordPage = withStyles(vauthenticatorStyles)((props) => {
                 <Separator/>
 
                 <FormButton type="button" label="Reset passwrd"
-                            onClickHandler={resetPassword(metadata["ticket"], password)}/>
+                            onClickHandler={() => resetPassword(JSON.parse(metadata)["ticket"], password)}/>
             </div>
         </Template>
     )
 })
+
 if (document.getElementById('app')) {
     let metadata = document.getElementById('metadata').innerHTML
     ReactDOM.render(<ResetPasswordPage metadata={metadata}/>, document.getElementById('app'));

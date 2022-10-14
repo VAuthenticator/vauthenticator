@@ -7,7 +7,7 @@ import io.mockk.just
 import io.mockk.runs
 import it.valeriovaudi.vauthenticator.account.AccountTestFixture
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
-import it.valeriovaudi.vauthenticator.account.tiket.InsufficientTicketException
+import it.valeriovaudi.vauthenticator.account.tiket.InvalidTicketException
 import it.valeriovaudi.vauthenticator.account.tiket.TicketRepository
 import it.valeriovaudi.vauthenticator.account.tiket.VerificationTicket
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.*
@@ -79,7 +79,7 @@ internal class VerifyMailChallengeSentTest {
         every { ticketRepository.loadFor(verificationTicket) } returns Optional.of(TicketFixture.ticketFor(verificationTicket.content, account.email, clientAppId.content))
         every { clientAccountRepository.findOne(clientAppId) } returns Optional.empty()
 
-        assertThrows(InsufficientTicketException::class.java) { underTest.verifyMail("A_TICKET") }
+        assertThrows(InvalidTicketException::class.java) { underTest.verifyMail("A_TICKET") }
     }
 
     @Test
@@ -93,7 +93,7 @@ internal class VerifyMailChallengeSentTest {
         every { clientAccountRepository.findOne(clientAppId) } returns Optional.of(clientApplication)
         every { accountRepository.accountFor(account.email) } returns Optional.empty()
 
-        assertThrows(InsufficientTicketException::class.java) { underTest.verifyMail("A_TICKET") }
+        assertThrows(InvalidTicketException::class.java) { underTest.verifyMail("A_TICKET") }
     }
 
     @Test
@@ -102,7 +102,7 @@ internal class VerifyMailChallengeSentTest {
 
         every { ticketRepository.loadFor(verificationTicket) } returns Optional.empty()
 
-        assertThrows(InsufficientTicketException::class.java) { underTest.verifyMail("A_TICKET") }
+        assertThrows(InvalidTicketException::class.java) { underTest.verifyMail("A_TICKET") }
     }
 
 }

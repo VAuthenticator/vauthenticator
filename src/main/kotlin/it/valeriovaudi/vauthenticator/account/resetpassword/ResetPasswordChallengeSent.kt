@@ -1,6 +1,7 @@
 package it.valeriovaudi.vauthenticator.account.resetpassword
 
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
+import it.valeriovaudi.vauthenticator.account.tiket.InvalidTicketException
 import it.valeriovaudi.vauthenticator.account.tiket.Ticket
 import it.valeriovaudi.vauthenticator.account.tiket.TicketRepository
 import it.valeriovaudi.vauthenticator.account.tiket.VerificationTicket
@@ -11,6 +12,7 @@ class ResetPasswordChallengeSent(private val accountRepository: AccountRepositor
     fun resetPassword(verificationTicket: VerificationTicket, request: ResetPasswordRequest) {
         invalidateTicketFor(verificationTicket)
                 .map { passwordResetFor(it, request) }
+                .orElseThrow { throw InvalidTicketException("Te ticket ${verificationTicket.content} is not a valid ticket it seems to be used or expired") }
     }
 
     private fun invalidateTicketFor(verificationTicket: VerificationTicket): Optional<Ticket> =
