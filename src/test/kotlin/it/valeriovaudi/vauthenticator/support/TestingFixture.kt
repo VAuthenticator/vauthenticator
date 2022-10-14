@@ -9,30 +9,24 @@ import com.nimbusds.jose.jwk.ECKey
 import com.nimbusds.jose.jwk.gen.ECKeyGenerator
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
-import it.valeriovaudi.vauthenticator.extentions.asDynamoAttribute
-import it.valeriovaudi.vauthenticator.extentions.valueAsStringFor
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
-import software.amazon.awssdk.regions.Region
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue
-import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
-import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
-import software.amazon.awssdk.services.dynamodb.model.ScanRequest
-import java.net.URI
+import org.springframework.security.oauth2.jwt.Jwt
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
+import java.time.Instant
 
 object TestingFixture {
 
-    const val dynamoRoleTableName: String = "TESTING_VAuthenticator_Role"
-    const val dynamoAccountTableName: String = "TESTING_VAuthenticator_Account"
-    const val dynamoAccountRoleTableName: String = "TESTING_VAuthenticator_Account_Role"
-    const val dynamoClientApplicationTableName: String = "TESTING_VAuthenticator_ClientApplication"
-    val key: ECKey = ECKeyGenerator(Curve.P_256)
+    private val key: ECKey = ECKeyGenerator(Curve.P_256)
             .keyID("123")
             .generate()
 
     fun simpleJwtFor(clientAppId: String, email: String = ""): String {
+        val signedJWT = signedJWTFor(clientAppId, email)
+        return signedJWT.serialize()
+    }
+
+    fun signedJWTFor(clientAppId: String, email: String): SignedJWT {
         val header = JWSHeader.Builder(JWSAlgorithm.ES256)
                 .type(JOSEObjectType.JWT)
                 .keyID("123")
@@ -41,8 +35,9 @@ object TestingFixture {
 
         var claim = JWTClaimsSet.Builder()
                 .claim(IdTokenClaimNames.AZP, clientAppId)
+                .claim(IdTokenClaimNames.AUD, clientAppId)
 
-        if(email.isNotBlank()){
+        if (email.isNotBlank()) {
             claim = claim.claim("user_name", email)
         }
 
@@ -50,99 +45,24 @@ object TestingFixture {
 
         val signedJWT = SignedJWT(header, payload)
         signedJWT.sign(ECDSASigner(key.toECPrivateKey()))
-
-        return signedJWT.serialize()
+        return signedJWT
     }
 
-    val dynamoDbClient: DynamoDbClient = DynamoDbClient.builder()
-            .credentialsProvider(
-                    StaticCredentialsProvider.create(
-                            AwsBasicCredentials.create("ACCESS_KEY_ID", "SECRET_ACCESS_KEY"))
-            ).region(Region.US_EAST_1)
-            .endpointOverride(URI.create("http://localhost:8000"))
-            .build()
 
-    fun initRoleTests(roleRepository: DynamoDbClient) {
-        val roleName = AttributeValue.builder().s("a_role").build()
-        val description = AttributeValue.builder().s("A_ROLE").build()
-        val item = PutItemRequest.builder()
-                .tableName(dynamoRoleTableName)
-                .item(
-                        mutableMapOf(
-                                "role_name" to roleName,
-                                "description" to description
-                        )
+    fun loadFileFor(path: String) = String(ClassLoader.getSystemResourceAsStream(path).readAllBytes())
+
+    fun principalFor(clientAppId: String, mail: String, authorities: List<String> = emptyList()) =
+            signedJWTFor(clientAppId, mail).let { signedJWT ->
+                JwtAuthenticationToken(
+                        Jwt(
+                                simpleJwtFor(clientAppId),
+                                Instant.now(),
+                                Instant.now().plusSeconds(100),
+                                signedJWT.header.toJSONObject(),
+                                signedJWT.payload.toJSONObject()
+                        ),
+                        authorities.map(::SimpleGrantedAuthority),
+                        mail
                 )
-                .build()
-        roleRepository.putItem(item)
-    }
-
-    fun resetDatabase(client: DynamoDbClient) {
-        scanFor(client, dynamoRoleTableName, "role_name")
-                .forEach {
-                    val deleteItemRequest = DeleteItemRequest.builder().tableName(dynamoRoleTableName)
-                            .key(
-                                    mutableMapOf(
-                                            "role_name" to it.valueAsStringFor("role_name").asDynamoAttribute()
-                                    )
-                            )
-                            .build()
-                    client.deleteItem(deleteItemRequest)
-                }
-
-        scanFor(client, dynamoAccountTableName, "user_name")
-                .forEach {
-                    val deleteItemRequest = DeleteItemRequest.builder().tableName(dynamoAccountTableName)
-                            .key(
-                                    mutableMapOf(
-                                            "user_name" to it.valueAsStringFor("user_name").asDynamoAttribute(),
-                                    )
-                            )
-                            .build()
-                    client.deleteItem(deleteItemRequest)
-                }
-
-        scanFor(client, dynamoAccountRoleTableName, "user_name", "role_name")
-                .forEach {
-                    val deleteItemRequest = DeleteItemRequest.builder().tableName(dynamoAccountRoleTableName)
-                            .key(
-                                    mutableMapOf(
-                                            "user_name" to it.valueAsStringFor("user_name").asDynamoAttribute(),
-                                            "role_name" to it.valueAsStringFor("role_name").asDynamoAttribute()
-                                    )
-                            )
-                            .build()
-                    client.deleteItem(deleteItemRequest)
-                }
-
-        scanFor(client, dynamoClientApplicationTableName, "client_id")
-                .forEach {
-                    val deleteItemRequest = DeleteItemRequest.builder().tableName(dynamoClientApplicationTableName)
-                            .key(
-                                    mutableMapOf(
-                                            "client_id" to it.valueAsStringFor("client_id").asDynamoAttribute(),
-                                    )
-                            )
-                            .build()
-                    client.deleteItem(deleteItemRequest)
-                }
-    }
-
-    private fun scanFor(
-            client: DynamoDbClient,
-            tableName: String,
-            vararg attributeToGet: String
-    ): MutableList<MutableMap<String, AttributeValue>> =
-            try {
-                client.scan(
-                        ScanRequest.builder()
-                                .tableName(tableName)
-                                .attributesToGet(*attributeToGet)
-                                .build()
-                ).items()
-            } catch (e: Exception) {
-                println("e.message ${e.message}")
-                mutableListOf()
             }
-
 }

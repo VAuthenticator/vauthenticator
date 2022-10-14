@@ -23,7 +23,7 @@ internal class RoleEndPointTest {
     @Mock
     lateinit var roleRepository: RoleRepository
 
-    val objectMapper = ObjectMapper()
+    private val objectMapper = ObjectMapper()
 
     @BeforeEach
     internal fun setUp() {

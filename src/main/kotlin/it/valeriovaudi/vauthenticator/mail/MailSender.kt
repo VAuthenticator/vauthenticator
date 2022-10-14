@@ -1,28 +1,68 @@
 package it.valeriovaudi.vauthenticator.mail
 
-import org.springframework.mail.SimpleMailMessage
+import it.valeriovaudi.vauthenticator.account.Account
+import it.valeriovaudi.vauthenticator.document.DocumentRepository
 import org.springframework.mail.javamail.JavaMailSender
+import org.springframework.mail.javamail.MimeMessageHelper
+import javax.mail.internet.MimeMessage
 
-data class MailMessage(val to: String, val from: String, val subject: String, val text: String)
+private const val MAIL_DOCUMENT_TYPE = "mail"
 
 interface MailSenderService {
-
-    fun send(mail: MailMessage)
+    fun sendFor(account: Account, mailContext: MailContext = emptyMap())
 }
 
-class JavaMailSenderService(private val javaMailSender: JavaMailSender) : MailSenderService {
+interface MailMessageFactory {
+    fun makeMailMessageFor(account: Account, requestContext: MailContext): MailMessage
+}
 
-    override fun send(mail: MailMessage) {
-        javaMailSender.send(simpleMailMessage(mail))
+class SimpleMailMessageFactory(val from: String, val subject: String, val mailType: MailType) : MailMessageFactory {
+
+    override fun makeMailMessageFor(account: Account, requestContext: MailContext): MailMessage {
+        val context = mapOf(
+                "enabled" to account.enabled,
+                "username" to account.username,
+                "authorities" to account.authorities,
+                "email" to account.email,
+                "firstName" to account.firstName,
+                "lastName" to account.lastName,
+                "birthDate" to account.birthDate.iso8601FormattedDate(),
+                "phone" to account.phone.formattedPhone(),
+        ) + requestContext
+        return MailMessage(account.email, from, subject, mailType, context)
     }
 
-    private fun simpleMailMessage(mail: MailMessage): SimpleMailMessage {
-        val simpleMailMessage = SimpleMailMessage()
-        simpleMailMessage.setTo(mail.to)
-        simpleMailMessage.setFrom(mail.from)
-        simpleMailMessage.setSubject(mail.subject)
-        simpleMailMessage.setText(mail.text)
-        return simpleMailMessage
+}
+
+class JavaMailSenderService(private val documentRepository: DocumentRepository,
+                            private val mailSender: JavaMailSender,
+                            private val templateResolver: MailTemplateResolver,
+                            private val mailMessageFactory: MailMessageFactory) : MailSenderService {
+
+    override fun sendFor(account: Account, mailContext: MailContext) {
+        val mailMessage = mailMessageFactory.makeMailMessageFor(account, mailContext)
+        val mailContent = mailContentFor(mailMessage)
+        val mail = composeMailFor(mailContent, mailMessage)
+        mailSender.send(mail)
+    }
+
+    private fun mailContentFor(mail: MailMessage): String {
+        val documentContent = documentRepository.loadDocument(MAIL_DOCUMENT_TYPE, mailTemplatePathFor(mail.type))
+        return String(documentContent)
+    }
+
+    private fun mailTemplatePathFor(mailType: MailType): String = mailType.path
+
+    private fun composeMailFor(mailContent: String, mailMessage: MailMessage): MimeMessage {
+        val mimeMessage: MimeMessage = mailSender.createMimeMessage()
+
+        val helper = MimeMessageHelper(mimeMessage, "utf-8")
+        helper.setText(templateResolver.compile(mailContent, mailMessage.context), true) // Use this or above line.
+        helper.setTo(mailMessage.to)
+        helper.setSubject(mailMessage.subject)
+        helper.setFrom(mailMessage.from)
+
+        return mimeMessage
     }
 
 }

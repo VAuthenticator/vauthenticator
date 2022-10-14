@@ -5,17 +5,17 @@ import it.valeriovaudi.vauthenticator.account.Date
 import it.valeriovaudi.vauthenticator.account.Phone
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import it.valeriovaudi.vauthenticator.account.signup.SignUpUseCase
-import it.valeriovaudi.vauthenticator.extentions.stripBearerPrefix
+import it.valeriovaudi.vauthenticator.extentions.clientAppId
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplication
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplication.Companion.userNameFrom
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.status
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.web.bind.annotation.*
 import java.util.*
+import javax.servlet.http.HttpSession
 
 @RestController
 @SessionAttributes("clientId")
@@ -26,14 +26,14 @@ class AccountEndPoint(
     val logger: Logger = LoggerFactory.getLogger(AccountEndPoint::class.java)
 
     @PostMapping("/api/accounts")
-    fun signup(@RequestHeader("Authorization", required = false) authorization: String?,
-               @ModelAttribute("clientId") clientId: String?,
+    fun signup(principal: JwtAuthenticationToken?,
+               session: HttpSession,
                @RequestBody representation: FinalAccountRepresentation): ResponseEntity<Unit> {
         SignUpAccountConverter.fromRepresentationToSignedUpAccount(representation)
                 .let { account ->
-                    Optional.ofNullable(authorization).map { executeSignUp(ClientApplication.clientAppIdFrom(it.stripBearerPrefix()), account) }
+                    Optional.ofNullable(principal).map { executeSignUp(it.clientAppId(), account) }
                             .orElseGet {
-                                Optional.ofNullable(clientId).map { executeSignUp(ClientAppId(it), account) }
+                                Optional.ofNullable(session.getAttribute("clientId") as String?).map { executeSignUp(ClientAppId(it), account) }
                                         .orElseThrow()
                             }
                 }
@@ -45,46 +45,37 @@ class AccountEndPoint(
     }
 
     @PutMapping("/api/accounts")
-    fun save(@RequestHeader("Authorization", required = false) authorization: String?,
+    fun save(principal: JwtAuthenticationToken,
              @RequestBody representation: FinalAccountRepresentation): ResponseEntity<Unit> {
-        val accessToken = accessTokenFrom(authorization)
 
-        if (accessToken.trim() == "") {
-            return status(HttpStatus.UNAUTHORIZED).build()
-        }
 
-        val userName = userNameFrom(accessToken)
+        val userName = principal.name
 
-        return if (userName.isNotEmpty()) {
-            if (representation.email.isNotEmpty()) {
-                logger.warn("there is an email in the body.............. it will be ignored in favour of the access token identity")
-            }
-
-            accountRepository.accountFor(userName)
-                    .map { account ->
-                        val filledRepresentation = representation.copy(email = userName, password = account.password, authorities = account.authorities)
-                        accountRepository.save(SignUpAccountConverter.fromRepresentationToSignedUpAccount(filledRepresentation))
-                        ResponseEntity.noContent().build<Unit>()
-                    }
-                    .orElseGet {
-                        ResponseEntity.noContent().build<Unit>()
-                    }
-
-        } else {
-            status(HttpStatus.FORBIDDEN).build()
-        }
+        logWarningForNotEmptyUserNameInRequestBodyFor(representation)
+        return accountRepository.accountFor(userName)
+                .map { account ->
+                    val filledRepresentation = representation.copy(email = userName, password = account.password, authorities = account.authorities)
+                    val accountToBeSaved = SignUpAccountConverter.fromRepresentationToSignedUpAccount(filledRepresentation).copy(
+                            accountNonExpired = account.accountNonExpired,
+                            accountNonLocked = account.accountNonLocked,
+                            credentialsNonExpired = account.credentialsNonExpired,
+                            enabled = account.enabled,
+                            emailVerified = account.emailVerified,
+                    )
+                    accountRepository.save(accountToBeSaved)
+                    ResponseEntity.noContent().build<Unit>()
+                }
+                .orElseGet {
+                    ResponseEntity.noContent().build()
+                }
 
     }
 
-    private fun accessTokenFrom(authorization: String?) =
-            Optional.ofNullable(authorization).map {
-                try {
-                    it.stripBearerPrefix()
-                } catch (e: Exception) {
-                    ""
-                }
-
-            }.orElse("")
+    private fun logWarningForNotEmptyUserNameInRequestBodyFor(representation: FinalAccountRepresentation) {
+        if (representation.email.isNotEmpty()) {
+            logger.warn("there is an email in the body.............. it will be ignored in favour of the access token identity")
+        }
+    }
 
 }
 
@@ -103,15 +94,15 @@ object SignUpAccountConverter {
     fun fromRepresentationToSignedUpAccount(representation: FinalAccountRepresentation): Account =
             Account(
                     accountNonExpired = true,
-                    accountNonLocked = true,
+                    accountNonLocked = false,
                     credentialsNonExpired = true,
-                    enabled = true,
+                    enabled = false,
+                    emailVerified = false,
                     username = representation.email,
                     password = representation.password,
                     firstName = representation.firstName,
                     lastName = representation.lastName,
                     email = representation.email,
-                    emailVerified = true,
                     authorities = representation.authorities,
                     birthDate = Date.isoDateFor(representation.birthDate),
                     phone = Phone.phoneFor(representation.phone)

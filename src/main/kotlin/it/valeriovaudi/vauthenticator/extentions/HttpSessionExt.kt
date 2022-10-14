@@ -6,9 +6,9 @@ import javax.servlet.http.HttpSession
 
 fun HttpSession.oauth2ClientId(): Optional<String> {
     val attribute = Optional.ofNullable(this.getAttribute("SPRING_SECURITY_SAVED_REQUEST"))
-    return attribute.flatMap {
-        when (it) {
-            is DefaultSavedRequest -> whenSessionHaveA(it)
+    return attribute.flatMap { savedRequest ->
+        when (savedRequest) {
+            is DefaultSavedRequest -> clientIdFromSessionWithinA(savedRequest)
             else -> Optional.empty()
         }
 
@@ -16,7 +16,7 @@ fun HttpSession.oauth2ClientId(): Optional<String> {
 
 }
 
-private fun whenSessionHaveA(defaultSavedRequest: DefaultSavedRequest): Optional<String> {
+private fun clientIdFromSessionWithinA(defaultSavedRequest: DefaultSavedRequest): Optional<String> {
     return if (defaultSavedRequest.parameterNames.contains("client_id")) {
         Optional.ofNullable(defaultSavedRequest.getParameterValues("client_id").firstOrNull())
     } else {

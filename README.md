@@ -1,4 +1,4 @@
-# VAuthenticator
+# VAuthenticator 0.3
 
 This project is actually a journey. This is a big evolution of the OAuth2 authorization server 
 developed during my master thesis to an OpenID Connect authentication server.
@@ -13,13 +13,25 @@ all written in Kotlin based on Spring Boot 2.x and more over to the latest sprin
 ## Features
 Right now it is based, as said before to the latest version on spring oauth2/open id connect framework [spring-authorization-server](https://github.com/spring-projects-experimental/spring-authorization-server).
 
-Client Applications, roles and openid projection of accounts are stored in a DynamoDB, while for authorization code, distributed session store and 
-distributed cache, Redis store is my choice. 
-VAuthenticator and the [account-service](https://github.com/mrFlick72/account-service) are synchronized with a secure AWS SQS channel, 
-while the RSA key pair are created from KMS Customer Master Key stored on Dynamo, private key crypted via KMS of course.
-VAuthenticator implements front_channel single logout openid connect specification and part of session management, in particular only 
-the needed to support a better single logout experience is implemented, however I planned to implement full session management as well
+**API:**
 
-# Additional content
+- Client Applications management  
+- roles management
+- account management
+- sign up: admin:signup scope is required
+- welcome mail: admin:welcome scope is required
+- email verification: admin:mail-verify scope is required
+- reset password: admin:reset-password scope is required
 
-[helm](docs/helm.md)
+**Storage:**
+
+- DynamoDB 
+- Redis:
+  - authorization code
+  - distributed session store
+  - distributed cache
+- RSA key pair are created from KMS Customer Master Key stored on Dynamo, private key encrypted via KMS of course stored on Dynamo.
+
+**General Feature:**
+
+VAuthenticator implements front_channel single logout openid connect specification session management

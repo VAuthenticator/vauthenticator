@@ -15,6 +15,8 @@ fun MutableMap<String, AttributeValue>.valueAsBoolFor(key: String): Boolean =
 fun MutableMap<String, AttributeValue>.valueAsIntFor(key: String): Int =
         this[key]?.n()!!.toInt()
 
+fun MutableMap<String, AttributeValue>.valueAsLongFor(key: String): Long =
+        this[key]?.n()!!.toLong()
 
 fun MutableMap<String, AttributeValue>.filterEmptyAccountMetadata() =
         if (this.isEmpty()) {

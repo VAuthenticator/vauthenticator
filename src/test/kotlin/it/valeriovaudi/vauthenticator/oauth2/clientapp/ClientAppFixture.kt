@@ -20,4 +20,7 @@ object ClientAppFixture {
             logoutUri,
             ResourceIds.from(ResourceId("oauth2-resource"))
     )
+
+    fun aClientAppId(): ClientAppId = ClientAppId("A_CLIENT_APP_ID")
+
 }

@@ -5,26 +5,27 @@ import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames
 import java.util.*
 
 data class ClientApplication(
-    val clientAppId: ClientAppId,
-    val secret: Secret,
-    val scopes: Scopes,
-    val authorizedGrantTypes: AuthorizedGrantTypes,
-    val webServerRedirectUri: CallbackUri,
-    val authorities: Authorities,
-    val accessTokenValidity: TokenTimeToLive,
-    val refreshTokenValidity: TokenTimeToLive,
-    val additionalInformation: Map<String, Objects> = emptyMap(),
-    val autoApprove: AutoApprove = AutoApprove.approve,
-    val postLogoutRedirectUri: PostLogoutRedirectUri,
-    val logoutUri: LogoutUri,
-    val resourceIds: ResourceIds
+        val clientAppId: ClientAppId,
+        val secret: Secret,
+        val scopes: Scopes,
+        val authorizedGrantTypes: AuthorizedGrantTypes,
+        val webServerRedirectUri: CallbackUri,
+        val authorities: Authorities,
+        val accessTokenValidity: TokenTimeToLive,
+        val refreshTokenValidity: TokenTimeToLive,
+        val additionalInformation: Map<String, Objects> = emptyMap(),
+        val autoApprove: AutoApprove = AutoApprove.approve,
+        val postLogoutRedirectUri: PostLogoutRedirectUri,
+        val logoutUri: LogoutUri,
+        val resourceIds: ResourceIds
 ) {
     companion object {
         fun clientAppIdFrom(jwtToken: String) =
                 ClientAppId(JWSObject.parse(jwtToken).payload.toJSONObject().get(IdTokenClaimNames.AZP) as String)
+
         fun userNameFrom(jwtToken: String): String =
-               Optional.ofNullable(JWSObject.parse(jwtToken).payload.toJSONObject().get("user_name") as String?)
-                       .orElse("")
+                Optional.ofNullable(JWSObject.parse(jwtToken).payload.toJSONObject().get("user_name") as String?)
+                        .orElse("")
     }
 }
 
@@ -52,7 +53,12 @@ data class ResourceIds(val content: List<ResourceId>) {
 data class Secret(val content: String)
 
 data class ResourceId(val content: String)
-data class ClientAppId(val content: String)
+data class ClientAppId(val content: String) {
+    companion object {
+        fun empty(): ClientAppId = ClientAppId("")
+    }
+}
+
 data class CallbackUri(val content: String)
 data class PostLogoutRedirectUri(val content: String)
 data class LogoutUri(val content: String)
@@ -70,6 +76,9 @@ data class Scope(val content: String) {
         val EMAIL = Scope("email")
 
         val SIGN_UP = Scope("admin:signup")
+        val WELCOME = Scope("admin:welcome")
+        val MAIL_VERIFY = Scope("admin:mail-verify")
+        val RESET_PASSWORD = Scope("admin:reset-password")
     }
 }
 
@@ -78,9 +87,11 @@ data class Authorities(val content: List<Authority>) {
         fun empty() = Authorities(emptyList())
     }
 }
+
 data class Authority(val content: String)
 data class TokenTimeToLive(val content: Int)
 
 enum class ClientApplicationFeatures(val value: String) {
-    SIGNUP("signup")
+    SIGNUP("signup"),
+    RESET_PASSWORD("reset-password")
 }

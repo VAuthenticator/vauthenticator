@@ -1,29 +1,17 @@
 package it.valeriovaudi.vauthenticator.oauth2.clientapp
 
-import it.valeriovaudi.vauthenticator.support.TestingFixture
-import it.valeriovaudi.vauthenticator.support.TestingFixture.dynamoClientApplicationTableName
-import it.valeriovaudi.vauthenticator.support.TestingFixture.dynamoDbClient
+import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoClientApplicationTableName
+import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoDbClient
+import it.valeriovaudi.vauthenticator.support.DatabaseUtils.resetDatabase
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.security.crypto.password.PasswordEncoder
 import java.util.*
 
 internal class DynamoDbClientApplicationRepositoryTest {
 
     lateinit var dynamoDbClientApplicationRepository: DynamoDbClientApplicationRepository
-
-    object passwordEncoder : PasswordEncoder {
-        override fun encode(p0: CharSequence): String =
-                p0.toString()
-
-
-        override fun matches(p0: CharSequence?, p1: String?): Boolean {
-            TODO("Not yet implemented")
-        }
-
-    }
 
     @BeforeEach
     fun setUp() {
@@ -33,7 +21,7 @@ internal class DynamoDbClientApplicationRepositoryTest {
 
     @AfterEach
     fun tearDown() {
-        TestingFixture.resetDatabase(dynamoDbClient)
+        resetDatabase()
     }
 
     @Test

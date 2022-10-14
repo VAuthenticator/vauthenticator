@@ -5,6 +5,26 @@ on:
   workflow_dispatch: { }
 
 jobs:
+  template-loading:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: load templates on s3
+        uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - run: |
+          TEMPLATES=("welcome.html" "mail-verify-challenge.html" "reset-password.html" "successful-mail-verify.html")
+          for TEMPLATE in ${TEMPLATES[@]}
+          do 
+            aws s3 cp communication/default/mail/$TEMPLATE s3://${{ secrets.VAUTHENTICATOR_BUCKET }}/mail/templates/$TEMPLATE
+          done
+
   provisioning:
     runs-on: ubuntu-20.04
 
@@ -31,17 +51,17 @@ jobs:
       - run: |
           cd src/test/resources
           docker-compose up &
-          sleep 30s
+          sleep 80s
           sudo chown -R $USER:$USER *
           chmod 777 -R docker/dynamodb
+          
           export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
           export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
           export AWS_REGION=${{ secrets.AWS_REGION }}
 
-          cd ../terraform/
-
-          terraform init
-          terraform apply -auto-approve
+          aws s3api create-bucket --bucket bucket --endpoint http://localhost:4566 --region us-east-1
+          aws s3 cp  index.html s3://bucket/mail/templates/welcome.html --endpoint http://localhost:4566 --region us-east-1
+          
 
       - name: Build frontend artifacts
         run: |
@@ -52,7 +72,7 @@ jobs:
       - name: Build
         run: |
           export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-          mvn install
+          mvn install -q
 
       - name: docker push
         run: |

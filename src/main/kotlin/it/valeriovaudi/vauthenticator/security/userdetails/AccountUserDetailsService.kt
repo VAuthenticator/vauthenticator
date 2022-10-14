@@ -15,9 +15,15 @@ open class AccountUserDetailsService(private val userRepository: AccountReposito
             userRepository.accountFor(username)
                     .map {
                         logger.info("Account found for $username username")
-                        User(it.username,
+                        User(
+                                it.username,
                                 it.password,
-                                it.authorities.map { SimpleGrantedAuthority(it) })
+                                it.enabled,
+                                it.accountNonExpired,
+                                it.credentialsNonExpired,
+                                it.accountNonLocked,
+                                it.authorities.map { SimpleGrantedAuthority(it) }
+                        )
                     }
                     .orElseThrow {
                         logger.error("Account not found for $username username")

@@ -12,7 +12,7 @@
 
     <groupId>it.valeriovaudi</groupId>
     <artifactId>vauthenticator</artifactId>
-    <version>2.x</version>
+    <version>0.3</version>
 
     <name>vauthenticator</name>
     <description>My OpenId Connect/OAuth2 Authorization Server</description>
@@ -21,22 +21,16 @@
         <java.version>17</java.version>
         <kotlin.version>1.6.21</kotlin.version>
         <spring-cloud.version>2021.0.3</spring-cloud.version>
+        <snakeyaml.version>1.32</snakeyaml.version>
 
-        <io.mockk.version>1.11.0</io.mockk.version>
-        <aws.sdk.version>2.16.48</aws.sdk.version>
-
+        <io.mockk.version>1.13.1</io.mockk.version>
+        <aws.sdk.version>2.17.276</aws.sdk.version>
+        <greenmail.version>1.6.10</greenmail.version>
         <oauth2-authorization-server.version>0.3.1</oauth2-authorization-server.version>
         <wiremock.version>2.27.2</wiremock.version>
     </properties>
 
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/software.amazon.awssdk/sts -->
-        <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>sts</artifactId>
-            <version>${aws.sdk.version}</version>
-        </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
@@ -46,13 +40,13 @@
         <dependency>
             <groupId>com.icegreen</groupId>
             <artifactId>greenmail</artifactId>
-            <version>1.6.7</version>
+            <version>${greenmail.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.icegreen</groupId>
             <artifactId>greenmail-junit5</artifactId>
-            <version>1.6.7</version>
+            <version>${greenmail.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -77,13 +71,19 @@
         <dependency>
             <groupId>org.webjars.bower</groupId>
             <artifactId>crypto-js</artifactId>
-            <version>3.1.9-1</version>
+            <version>4.1.1</version>
         </dependency>
 
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>jquery</artifactId>
-            <version>3.0.0</version>
+            <version>3.6.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hubspot.jinjava</groupId>
+            <artifactId>jinjava</artifactId>
+            <version>2.6.0</version>
         </dependency>
 
         <dependency>
@@ -92,7 +92,13 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- persistence dependencies-->
+        <!-- https://mvnrepository.com/artifact/software.amazon.awssdk/sts -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>sts</artifactId>
+            <version>${aws.sdk.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>dynamodb</artifactId>
@@ -101,6 +107,12 @@
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>kms</artifactId>
+            <version>${aws.sdk.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
             <version>${aws.sdk.version}</version>
         </dependency>
 
@@ -120,7 +132,6 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-sleuth</artifactId>
         </dependency>
-
 
         <!-- kotlin dependencies -->
         <dependency>
@@ -153,12 +164,14 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>io.mockk</groupId>
-            <artifactId>mockk</artifactId>
+            <artifactId>mockk-jvm</artifactId>
             <version>${io.mockk.version}</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>

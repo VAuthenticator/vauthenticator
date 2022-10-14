@@ -8,7 +8,6 @@ import {Route, Routes} from "react-router";
 import {createRoot} from "react-dom/client";
 
 const SignUpFlow = withStyles(vauthenticatorStyles)((props) => {
-    console.log("render it")
     return (
         <HashRouter>
             <Routes>
