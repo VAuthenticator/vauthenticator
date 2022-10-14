@@ -1,4 +1,4 @@
-# VAuthenticator
+# VAuthenticator 0.3
 
 This project is actually a journey. This is a big evolution of the OAuth2 authorization server 
 developed during my master thesis to an OpenID Connect authentication server.
