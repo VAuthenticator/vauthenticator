@@ -31,11 +31,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: install nodejs
-        run: |
-          sudo apt -y update
-          sudo apt -y install nodejs
-          sudo apt -y install npm
+      - name: install node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
 
       - name: Set up JDK 17
         uses: actions/setup-java@v1
