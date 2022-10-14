@@ -51,7 +51,7 @@ jobs:
       - run: |
           cd src/test/resources
           docker-compose up &
-          sleep 60s
+          sleep 80s
           sudo chown -R $USER:$USER *
           chmod 777 -R docker/dynamodb
           
