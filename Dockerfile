@@ -1,4 +1,4 @@
-FROM openjdk:17
+FROM amazoncorretto:17.0.4
 
 ADD target/vauthenticator.jar /usr/local/vauthenticator/
 

@@ -51,6 +51,8 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: 17
+          distribution: 'corretto'
+
 
       - name: build testing environment
         uses: aws-actions/configure-aws-credentials@v1-node16
@@ -80,6 +82,7 @@ jobs:
 
       - name: Create tag
         if: ${{github.event.inputs.version}} != ''
+
         uses: ncipollo/release-action@v1
         with:
           tag: ${{github.event.inputs.version}}
