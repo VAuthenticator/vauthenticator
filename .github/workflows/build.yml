@@ -2,12 +2,12 @@ name: build vauthenticator
 
 on:
   push: { }
-  workflow_dispatch: {
+  workflow_dispatch:
     inputs:
       version:
         description: 'make a tag'
         required: false
-  }
+
 
 jobs:
   template-loading:
