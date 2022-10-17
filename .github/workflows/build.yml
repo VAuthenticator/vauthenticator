@@ -81,12 +81,11 @@ jobs:
           mvn install -q
 
       - name: Create tag
-        if: ${{github.event.inputs.version}} != ''
+        if: "${{github.event.inputs.version}}" != ""
 
         uses: ncipollo/release-action@v1
         with:
           tag: ${{github.event.inputs.version}}
-          token: ${{ secrets.YOUR_GITHUB_TOKEN }}
 
       - name: docker push
         run: |
