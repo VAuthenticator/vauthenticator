@@ -1,4 +1,4 @@
-name: build vauthenticator
+name: build vauthenticator release
 
 on:
   push: { }
