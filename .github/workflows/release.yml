@@ -1,0 +1,24 @@
+name: build vauthenticator
+
+on:
+  push: { }
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'make a tag'
+        required: false
+
+
+jobs:
+  provisioning:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: make an echo
+        if: ${{github.event.inputs.version}} != "" || ${{github.event.inputs.version}} != " "
+
+        run: |
+          echo version ${{github.event.inputs.version}}
