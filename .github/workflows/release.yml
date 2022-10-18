@@ -1,4 +1,4 @@
-name: build vauthenticator release
+name: release
 
 on:
   push: { }
@@ -10,7 +10,7 @@ on:
 
 
 jobs:
-  provisioning:
+  release:
     runs-on: ubuntu-20.04
 
     steps:
