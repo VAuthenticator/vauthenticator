@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: make an echo
-        if: ${{github.event.inputs.version}} != "" || ${{github.event.inputs.version}} != " "
+        if: github.event.inputs.version != "" || github.event.inputs.version != " "
 
         run: |
           echo version ${{github.event.inputs.version}}
