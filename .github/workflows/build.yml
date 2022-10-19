@@ -104,10 +104,8 @@ jobs:
 
       - name: Docker tag
         if: github.event.inputs.version != '' || github.event.inputs.version != ' '
+
         run: |               
-          if [[ ${{github.event.inputs.version}} ne '' ]]
-          then
-           DOCKER_TAG="${{github.event.inputs.version}}"
-           docker build . -t mrflick72/vauthenticator-k8s:$DOCKER_TAG
-           docker push mrflick72/vauthenticator-k8s:$DOCKER_TAG
-          fi
+          DOCKER_TAG="${{github.event.inputs.version}}"
+          docker build . -t mrflick72/vauthenticator-k8s:$DOCKER_TAG
+          docker push mrflick72/vauthenticator-k8s:$DOCKER_TAG
