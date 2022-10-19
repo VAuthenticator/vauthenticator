@@ -25,7 +25,7 @@
 
         <io.mockk.version>1.13.1</io.mockk.version>
         <aws.sdk.version>2.17.276</aws.sdk.version>
-        <greenmail.version>1.6.10</greenmail.version>
+        <greenmail.version>1.6.11</greenmail.version>
         <oauth2-authorization-server.version>0.3.1</oauth2-authorization-server.version>
         <wiremock.version>2.27.2</wiremock.version>
     </properties>
@@ -74,11 +74,6 @@
             <version>4.1.1</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>jquery</artifactId>
-            <version>3.6.1</version>
-        </dependency>
 
         <dependency>
             <groupId>com.hubspot.jinjava</groupId>
@@ -191,6 +186,13 @@
         </dependencies>
     </dependencyManagement>
 
+    <scm>
+        <connection>scm:git:${project.scm.url}</connection>
+        <developerConnection>scm:git:${project.scm.url}</developerConnection>
+        <url>git@github.com:mrFlick72/vauthenticator.git</url>
+        <tag>HEAD</tag>
+    </scm>
+
     <build>
         <finalName>vauthenticator</finalName>
 
@@ -198,6 +200,13 @@
         <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
 
         <plugins>
+            <plugin>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <scmCommentPrefix>[ci skip]</scmCommentPrefix>
+                    <tagNameFormat>@{project.version}</tagNameFormat>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
