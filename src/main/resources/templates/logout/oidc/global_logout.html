@@ -18,8 +18,8 @@
 
     const newLogoutIFrame = (logoutUrl) => {
         let clone = logoutIframe.cloneNode(true);
-        clone.attr("src", logoutUrl);
-        clone.attr("style", "visibility: hidden;");
+        clone.setAttribute("src", logoutUrl);
+        clone.setAttribute("style", "visibility: hidden;");
         return clone;
     }
 
