@@ -80,25 +80,6 @@ jobs:
         run: |
           mvn install -q -DskipTests
 
-      - name: Create tag
-        if: github.event.inputs.version != '' || github.event.inputs.version != ' '
-
-        uses: ncipollo/release-action@v1
-        with:
-          tag: ${{github.event.inputs.version}}
-
-      - name: Docker tag
-        if: github.event.inputs.version != '' || github.event.inputs.version != ' '
-        run: |
-          docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
-               
-          if [[ ${{github.event.inputs.version}} ne '' ]]
-          then
-           DOCKER_TAG="${{github.event.inputs.version}}"
-           docker build . -t mrflick72/vauthenticator-k8s:$DOCKER_TAG
-           docker push mrflick72/vauthenticator-k8s:$DOCKER_TAG
-          fi
-
       - name: docker push
         run: |
           docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
@@ -113,3 +94,20 @@ jobs:
           echo "$DOCKER_TAG"
           docker build . -t mrflick72/vauthenticator-k8s:$DOCKER_TAG
           docker push mrflick72/vauthenticator-k8s:$DOCKER_TAG
+
+      - name: Create tag
+        if: github.event.inputs.version != '' || github.event.inputs.version != ' '
+
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{github.event.inputs.version}}
+
+      - name: Docker tag
+        if: github.event.inputs.version != '' || github.event.inputs.version != ' '
+        run: |               
+          if [[ ${{github.event.inputs.version}} ne '' ]]
+          then
+           DOCKER_TAG="${{github.event.inputs.version}}"
+           docker build . -t mrflick72/vauthenticator-k8s:$DOCKER_TAG
+           docker push mrflick72/vauthenticator-k8s:$DOCKER_TAG
+          fi
