@@ -103,7 +103,7 @@ jobs:
           docker push mrflick72/vauthenticator-k8s:$DOCKER_TAG
           
           
-          if [[ ${{github.event.inputs.version}} != '' ]]
+          if [[ ${{github.event.inputs.version}} ne '' ]]
           then
             DOCKER_TAG="${{github.event.inputs.version}}"
             docker build . -t mrflick72/vauthenticator-k8s:$DOCKER_TAG
