@@ -58,7 +58,7 @@ jobs:
 
       - name: Build
         run: |
-          mvn install -q -DskipTests
+          mvn install -q
 
       - name: docker push
         run: |
