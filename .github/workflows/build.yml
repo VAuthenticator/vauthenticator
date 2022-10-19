@@ -78,7 +78,7 @@ jobs:
 
       - name: Build
         run: |
-          mvn install -q
+          mvn install -q -DskipTests
 
       - name: Create tag
         if: github.event.inputs.version != '' || github.event.inputs.version != ' '
@@ -86,6 +86,16 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           tag: ${{github.event.inputs.version}}
+        run: |
+          docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
+          
+          
+          if [[ ${{github.event.inputs.version}} ne '' ]]
+          then
+           DOCKER_TAG="${{github.event.inputs.version}}"
+           docker build . -t mrflick72/vauthenticator-k8s:$DOCKER_TAG
+           docker push mrflick72/vauthenticator-k8s:$DOCKER_TAG
+          fi
 
       - name: docker push
         run: |
@@ -101,11 +111,3 @@ jobs:
           echo "$DOCKER_TAG"
           docker build . -t mrflick72/vauthenticator-k8s:$DOCKER_TAG
           docker push mrflick72/vauthenticator-k8s:$DOCKER_TAG
-          
-          
-          if [[ ${{github.event.inputs.version}} ne '' ]]
-          then
-            DOCKER_TAG="${{github.event.inputs.version}}"
-            docker build . -t mrflick72/vauthenticator-k8s:$DOCKER_TAG
-            docker push mrflick72/vauthenticator-k8s:$DOCKER_TAG
-          fi
