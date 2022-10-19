@@ -1,4 +1,4 @@
-name: build vauthenticator
+name: build VAuthenticator
 
 on:
   push: { }
@@ -34,11 +34,6 @@ jobs:
           distribution: 'corretto'
 
       - name: build testing environment
-#        uses: aws-actions/configure-aws-credentials@v1-node16
-#        with:
-#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#          aws-region: ${{ secrets.AWS_REGION }}
         run: |
           export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
           export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -46,12 +41,11 @@ jobs:
 
           cd src/test/resources
           docker-compose up &
+          
           sleep 80s
+          
           sudo chown -R $USER:$USER *
           chmod 777 -R docker/dynamodb
-
-          aws s3api create-bucket --bucket bucket --endpoint http://localhost:4566 --region us-east-1
-          aws s3 cp  index.html s3://bucket/mail/templates/welcome.html --endpoint http://localhost:4566 --region us-east-1
 
       - name: Build frontend artifacts
         run: |
