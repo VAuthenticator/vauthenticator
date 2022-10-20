@@ -20,11 +20,11 @@
     <properties>
         <java.version>17</java.version>
         <kotlin.version>1.6.21</kotlin.version>
-        <spring-cloud.version>2021.0.3</spring-cloud.version>
+        <spring-cloud.version>2021.0.4</spring-cloud.version>
         <snakeyaml.version>1.32</snakeyaml.version>
 
-        <io.mockk.version>1.13.1</io.mockk.version>
-        <aws.sdk.version>2.17.276</aws.sdk.version>
+        <io.mockk.version>1.13.2</io.mockk.version>
+        <aws.sdk.version>2.17.292</aws.sdk.version>
         <greenmail.version>1.6.11</greenmail.version>
         <oauth2-authorization-server.version>0.3.1</oauth2-authorization-server.version>
         <wiremock.version>2.27.2</wiremock.version>
