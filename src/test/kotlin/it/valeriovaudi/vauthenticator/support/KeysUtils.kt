@@ -39,15 +39,13 @@ object KeysUtils {
             .endpointOverride(URI.create("http://localhost:4566"))
             .build()
 
-    fun aNewMasterKey() = {
-        kmsClient.createKey(
-                CreateKeyRequest.builder()
-                        .keySpec("SYMMETRIC_DEFAULT")
-                        .description("A_KEY_DESCRIPTION")
-                        .keyUsage(KeyUsageType.ENCRYPT_DECRYPT)
-                        .policy(policy)
-                        .build()
-        ).keyMetadata().keyId()
-    }
+    fun aNewMasterKey(): String =kmsClient.createKey(
+            CreateKeyRequest.builder()
+                    .keySpec("SYMMETRIC_DEFAULT")
+                    .description("A_KEY_DESCRIPTION")
+                    .keyUsage(KeyUsageType.ENCRYPT_DECRYPT)
+                    .policy(policy)
+                    .build()
+    ).keyMetadata().keyId()
 
 }

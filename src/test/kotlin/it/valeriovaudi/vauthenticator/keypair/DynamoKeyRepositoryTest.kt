@@ -19,9 +19,8 @@ internal class DynamoKeyRepositoryTest {
 
     @Test
     internal fun `when create a new key`() {
-        val aNewMasterKey = aNewMasterKey()
+        val masterKid = aNewMasterKey()
 
-        val masterKid = aNewMasterKey.invoke()
         println("masterKid $masterKid")
         println("masterKid $masterKid")
         println("kid ${keyRepository.createKeyFrom(masterKid)}")
