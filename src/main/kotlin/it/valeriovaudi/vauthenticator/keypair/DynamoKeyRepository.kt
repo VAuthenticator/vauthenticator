@@ -8,7 +8,9 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 import software.amazon.awssdk.services.dynamodb.model.ScanRequest
 import software.amazon.awssdk.services.kms.KmsClient
+import software.amazon.awssdk.services.kms.model.DataKeyPairSpec
 import software.amazon.awssdk.services.kms.model.DecryptRequest
+import software.amazon.awssdk.services.kms.model.GenerateDataKeyPairRequest
 import java.security.KeyFactory
 import java.security.KeyPair
 import java.security.PrivateKey
@@ -21,11 +23,29 @@ import java.util.*
 open class DynamoKeyRepository(
         private val table: String,
         private val kmsKeyRepository: KmsKeyRepository,
+        private val kmsClient: KmsClient,
         private val dynamoDbClient: DynamoDbClient
 ) : KeyRepository {
 
-    override fun getKeyPair(): KeyPair {
-        TODO()
+    /*table.put_item(Item={
+        "master_key_id": key_pair["KeyId"],
+        "key_id": str(uuid.uuid4()),
+        "private_key_ciphertext_blob": base64.b64encode(key_pair["PrivateKeyCiphertextBlob"]).decode(),
+        "public_key": base64.b64encode(key_pair["PublicKey"]).decode(),
+        "enabled": True
+    })*/
+    override fun createKeyFrom(masterKid: MasterKid): Kid {
+        val dataKeyPair = kmsClient.generateDataKeyPair(
+                GenerateDataKeyPairRequest.builder()
+                        .keyId(masterKid)
+                        .keyPairSpec(DataKeyPairSpec.RSA_2048)
+                        .build()
+        )
+        return dataKeyPair.keyId()
+    }
+
+    override fun deleteKeyFor(kid: Kid) {
+        TODO("Not yet implemented")
     }
 
     override fun keys(): Keys {

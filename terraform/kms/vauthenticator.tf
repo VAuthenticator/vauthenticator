@@ -9,6 +9,7 @@ resource "aws_kms_alias" "vauthenticator-alias" {
 resource "aws_kms_key" "vauthenticator-jwt-token-sign-key" {
   description              = var.key_description
   customer_master_key_spec = "SYMMETRIC_DEFAULT"
+  key_usage                = "ENCRYPT_DECRYPT"
   deletion_window_in_days  = var.deletion_window_in_days
   tags                     = {
     "application" : var.application

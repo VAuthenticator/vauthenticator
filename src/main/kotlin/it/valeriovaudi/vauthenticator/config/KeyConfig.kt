@@ -24,6 +24,7 @@ class KeyConfig {
             DynamoKeyRepository(
                     tableName,
                     KmsKeyRepository(kmsClient),
+                    kmsClient,
                     dynamoDbClient
             )
 }
