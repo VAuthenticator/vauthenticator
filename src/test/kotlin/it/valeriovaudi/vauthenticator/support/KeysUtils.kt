@@ -5,8 +5,11 @@ import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.kms.KmsClient
 import software.amazon.awssdk.services.kms.model.CreateKeyRequest
+import software.amazon.awssdk.services.kms.model.GenerateDataKeyPairRequest
+import software.amazon.awssdk.services.kms.model.GenerateDataKeyPairResponse
 import software.amazon.awssdk.services.kms.model.KeyUsageType
 import java.net.URI
+import java.util.*
 
 
 object KeysUtils {
@@ -48,4 +51,13 @@ object KeysUtils {
                     .build()
     ).keyMetadata().keyId()
 
+}
+
+class KmsClientWrapper(private val kmsClient: KmsClient, var generateDataKeyPairRecorder : Optional<GenerateDataKeyPairResponse>  = Optional.empty()) : KmsClient by kmsClient {
+
+    override fun generateDataKeyPair(request:  GenerateDataKeyPairRequest): GenerateDataKeyPairResponse {
+        val generateDataKeyPair = kmsClient.generateDataKeyPair(request)
+        generateDataKeyPairRecorder = Optional.of(generateDataKeyPair)
+        return generateDataKeyPair
+    }
 }

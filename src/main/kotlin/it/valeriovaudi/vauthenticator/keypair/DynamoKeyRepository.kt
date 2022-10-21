@@ -1,11 +1,11 @@
 package it.valeriovaudi.vauthenticator.keypair
 
-import it.valeriovaudi.vauthenticator.extentions.valueAsBoolFor
-import it.valeriovaudi.vauthenticator.extentions.valueAsStringFor
+import it.valeriovaudi.vauthenticator.extentions.*
 import it.valeriovaudi.vauthenticator.keypair.KeyPairFactory.keyPairFor
 import software.amazon.awssdk.core.SdkBytes.fromByteArray
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
+import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
 import software.amazon.awssdk.services.dynamodb.model.ScanRequest
 import software.amazon.awssdk.services.kms.KmsClient
 import software.amazon.awssdk.services.kms.model.DataKeyPairSpec
@@ -19,8 +19,8 @@ import java.security.spec.PKCS8EncodedKeySpec
 import java.security.spec.X509EncodedKeySpec
 import java.util.*
 
-
 open class DynamoKeyRepository(
+        private val kidGenerator: () -> String,
         private val table: String,
         private val kmsKeyRepository: KmsKeyRepository,
         private val kmsClient: KmsClient,
@@ -41,7 +41,22 @@ open class DynamoKeyRepository(
                         .keyPairSpec(DataKeyPairSpec.RSA_2048)
                         .build()
         )
-        return dataKeyPair.keyId()
+        val kid = kidGenerator.invoke()
+        dynamoDbClient.putItem(
+                PutItemRequest.builder()
+                        .tableName(table)
+                        .item(
+                                mapOf(
+                                        "master_key_id" to masterKid.asDynamoAttribute(),
+                                        "key_id" to kid.asDynamoAttribute(),
+                                        "private_key_ciphertext_blob" to encoder.encode(dataKeyPair.privateKeyCiphertextBlob().asByteArray()).decodeToString().asDynamoAttribute(),
+                                        "public_key" to encoder.encode(dataKeyPair.publicKey().asByteArray()).decodeToString().asDynamoAttribute(),
+                                        "enabled" to true.asDynamoAttribute()),
+                        )
+                        .build()
+        )
+
+        return kid
     }
 
     override fun deleteKeyFor(kid: Kid) {
@@ -80,11 +95,11 @@ class KmsKeyRepository(
     fun getKeyPairFor(privateKey: String, pubKey: String): KeyPair {
         val generateDataKeyPair = kmsClient.decrypt(
                 DecryptRequest.builder()
-                        .ciphertextBlob(fromByteArray(Base64.getDecoder().decode(privateKey)))
+                        .ciphertextBlob(fromByteArray(decoder.decode(privateKey)))
                         .build()
         )
 
-        return keyPairFor(Base64.getEncoder().encode(generateDataKeyPair.plaintext().asByteArray()).decodeToString(), pubKey)
+        return keyPairFor(encoder.encode(generateDataKeyPair.plaintext().asByteArray()).decodeToString(), pubKey)
     }
 
 }

@@ -6,7 +6,7 @@ import java.math.BigInteger
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
-val logger = LoggerFactory.getLogger(StringExt::class.java.name)
+private val logger = LoggerFactory.getLogger(StringExt::class.java.name)
 
 class StringExt
 
@@ -22,5 +22,3 @@ fun String.toSha256(): String {
 }
 
 fun String.asDynamoAttribute(): AttributeValue = AttributeValue.builder().s(this).build()
-
-fun String.stripBearerPrefix() : String = this.substring(7)
