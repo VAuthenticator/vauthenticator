@@ -16,7 +16,7 @@ import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
 
 internal class DynamoKeyRepositoryTest {
 
-    lateinit var keyRepository: KeyRepository
+    private lateinit var keyRepository: KeyRepository
 
     private val kidGenerator = { "KID" }
 
