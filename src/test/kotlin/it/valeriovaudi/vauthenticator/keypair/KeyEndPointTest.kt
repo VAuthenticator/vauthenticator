@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders.*
 
 @ExtendWith(MockKExtension::class)
-internal class KeyEndPontTest {
+internal class KeyEndPointTest {
 
     lateinit var mokMvc: MockMvc
 
@@ -23,7 +23,7 @@ internal class KeyEndPontTest {
 
     @BeforeEach
     internal fun setUp() {
-        mokMvc = standaloneSetup(KeyEndPont("https://vauthenticator.com","A_MASTER_KEY",keyRepository)).build()
+        mokMvc = standaloneSetup(KeyEndPoint("https://vauthenticator.com", "A_MASTER_KEY", keyRepository)).build()
     }
 
     @Test
@@ -31,8 +31,8 @@ internal class KeyEndPontTest {
         every { keyRepository.createKeyFrom("A_MASTER_KEY") } returns "123"
 
         mokMvc.perform(post("/keys"))
-                .andExpect(status().isCreated)
-                .andExpect(header().string("Location", "https://vauthenticator.com/keys/123"))
+            .andExpect(status().isCreated)
+            .andExpect(header().string("Location", "https://vauthenticator.com/keys/123"))
 
     }
 }

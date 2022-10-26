@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.net.URI
 
 @RestController
-class KeyEndPont(
+class KeyEndPoint(
         @Value("\${vauthenticator.host}")  private val baseUrl: String,
         @Value("\${key.master-key}") private val masterKey: MasterKid,
         private val keyRepository: KeyRepository
