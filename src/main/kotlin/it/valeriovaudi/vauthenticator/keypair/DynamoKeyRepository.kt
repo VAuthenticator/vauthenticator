@@ -5,6 +5,7 @@ import it.valeriovaudi.vauthenticator.keypair.KeyPairFactory.keyPairFor
 import software.amazon.awssdk.core.SdkBytes.fromByteArray
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
+import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
 import software.amazon.awssdk.services.dynamodb.model.ScanRequest
 import software.amazon.awssdk.services.kms.KmsClient
@@ -19,47 +20,54 @@ import java.security.spec.PKCS8EncodedKeySpec
 import java.security.spec.X509EncodedKeySpec
 
 open class DynamoKeyRepository(
-        private val kidGenerator: () -> String,
-        private val table: String,
-        private val kmsKeyRepository: KmsKeyRepository,
-        private val kmsClient: KmsClient,
-        private val dynamoDbClient: DynamoDbClient
+    private val kidGenerator: () -> String,
+    private val table: String,
+    private val kmsKeyRepository: KmsKeyRepository,
+    private val kmsClient: KmsClient,
+    private val dynamoDbClient: DynamoDbClient
 ) : KeyRepository {
 
-    /*table.put_item(Item={
-        "master_key_id": key_pair["KeyId"],
-        "key_id": str(uuid.uuid4()),
-        "private_key_ciphertext_blob": base64.b64encode(key_pair["PrivateKeyCiphertextBlob"]).decode(),
-        "public_key": base64.b64encode(key_pair["PublicKey"]).decode(),
-        "enabled": True
-    })*/
     override fun createKeyFrom(masterKid: MasterKid): Kid {
         val dataKeyPair = kmsClient.generateDataKeyPair(
-                GenerateDataKeyPairRequest.builder()
-                        .keyId(masterKid)
-                        .keyPairSpec(DataKeyPairSpec.RSA_2048)
-                        .build()
+            GenerateDataKeyPairRequest.builder()
+                .keyId(masterKid)
+                .keyPairSpec(DataKeyPairSpec.RSA_2048)
+                .build()
         )
         val kid = kidGenerator.invoke()
         dynamoDbClient.putItem(
-                PutItemRequest.builder()
-                        .tableName(table)
-                        .item(
-                                mapOf(
-                                        "master_key_id" to masterKid.asDynamoAttribute(),
-                                        "key_id" to kid.asDynamoAttribute(),
-                                        "private_key_ciphertext_blob" to encoder.encode(dataKeyPair.privateKeyCiphertextBlob().asByteArray()).decodeToString().asDynamoAttribute(),
-                                        "public_key" to encoder.encode(dataKeyPair.publicKey().asByteArray()).decodeToString().asDynamoAttribute(),
-                                        "enabled" to true.asDynamoAttribute()),
-                        )
-                        .build()
+            PutItemRequest.builder()
+                .tableName(table)
+                .item(
+                    mapOf(
+                        "master_key_id" to masterKid.asDynamoAttribute(),
+                        "key_id" to kid.asDynamoAttribute(),
+                        "private_key_ciphertext_blob" to encoder.encode(
+                            dataKeyPair.privateKeyCiphertextBlob().asByteArray()
+                        ).decodeToString().asDynamoAttribute(),
+                        "public_key" to encoder.encode(dataKeyPair.publicKey().asByteArray()).decodeToString()
+                            .asDynamoAttribute(),
+                        "enabled" to true.asDynamoAttribute()
+                    )
+                )
+                .build()
         )
 
         return kid
     }
 
-    override fun deleteKeyFor(kid: Kid) {
-        TODO("Not yet implemented")
+    override fun deleteKeyFor(masterKid: MasterKid, kid: Kid) {
+        dynamoDbClient.deleteItem(
+            DeleteItemRequest.builder()
+                .tableName(table)
+                .key(
+                    mapOf(
+                        "master_key_id" to masterKid.asDynamoAttribute(),
+                        "key_id" to kid.asDynamoAttribute(),
+                    )
+                )
+                .build()
+        )
     }
 
     override fun keys(): Keys {
@@ -70,32 +78,35 @@ open class DynamoKeyRepository(
     }
 
     private fun findAllFrom(table: String) = dynamoDbClient.scan(
-            ScanRequest.builder()
-                    .tableName(table)
-                    .build()
+        ScanRequest.builder()
+            .tableName(table)
+            .build()
     )
 
     private fun keysListFrom(items: MutableList<MutableMap<String, AttributeValue>>) =
-            items.map {
-                Key(
-                        kmsKeyRepository.getKeyPairFor(it.valueAsStringFor("private_key_ciphertext_blob"), it.valueAsStringFor("public_key")),
-                        it.valueAsStringFor("master_key_id"),
-                        it.valueAsStringFor("key_id"),
-                        it.valueAsBoolFor("enabled")
-                )
-            }
+        items.map {
+            Key(
+                kmsKeyRepository.getKeyPairFor(
+                    it.valueAsStringFor("private_key_ciphertext_blob"),
+                    it.valueAsStringFor("public_key")
+                ),
+                it.valueAsStringFor("master_key_id"),
+                it.valueAsStringFor("key_id"),
+                it.valueAsBoolFor("enabled")
+            )
+        }
 
 }
 
 class KmsKeyRepository(
-        private val kmsClient: KmsClient
+    private val kmsClient: KmsClient
 ) {
 
     fun getKeyPairFor(privateKey: String, pubKey: String): KeyPair {
         val generateDataKeyPair = kmsClient.decrypt(
-                DecryptRequest.builder()
-                        .ciphertextBlob(fromByteArray(decoder.decode(privateKey)))
-                        .build()
+            DecryptRequest.builder()
+                .ciphertextBlob(fromByteArray(decoder.decode(privateKey)))
+                .build()
         )
 
         return keyPairFor(encoder.encode(generateDataKeyPair.plaintext().asByteArray()).decodeToString(), pubKey)
