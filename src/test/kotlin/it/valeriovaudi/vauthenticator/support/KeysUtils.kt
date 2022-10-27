@@ -15,7 +15,7 @@ import java.util.*
 object KeysUtils {
 
 
-    val policy = """
+    private val policy = """
         {
                 "Id": "key-policy",
                 "Version": "2012-10-17",
@@ -35,27 +35,31 @@ object KeysUtils {
     """.trimIndent()
 
     val kmsClient: KmsClient = KmsClient.builder()
-            .credentialsProvider(
-                    StaticCredentialsProvider.create(
-                            AwsBasicCredentials.create("ACCESS_KEY_ID", "SECRET_ACCESS_KEY"))
-            ).region(Region.US_EAST_1)
-            .endpointOverride(URI.create("http://localhost:4566"))
-            .build()
+        .credentialsProvider(
+            StaticCredentialsProvider.create(
+                AwsBasicCredentials.create("ACCESS_KEY_ID", "SECRET_ACCESS_KEY")
+            )
+        ).region(Region.US_EAST_1)
+        .endpointOverride(URI.create("http://localhost:4566"))
+        .build()
 
-    fun aNewMasterKey(): String =kmsClient.createKey(
-            CreateKeyRequest.builder()
-                    .keySpec("SYMMETRIC_DEFAULT")
-                    .description("A_KEY_DESCRIPTION")
-                    .keyUsage(KeyUsageType.ENCRYPT_DECRYPT)
-                    .policy(policy)
-                    .build()
+    fun aNewMasterKey(): String = kmsClient.createKey(
+        CreateKeyRequest.builder()
+            .keySpec("SYMMETRIC_DEFAULT")
+            .description("A_KEY_DESCRIPTION")
+            .keyUsage(KeyUsageType.ENCRYPT_DECRYPT)
+            .policy(policy)
+            .build()
     ).keyMetadata().keyId()
 
 }
 
-class KmsClientWrapper(private val kmsClient: KmsClient, var generateDataKeyPairRecorder : Optional<GenerateDataKeyPairResponse>  = Optional.empty()) : KmsClient by kmsClient {
+class KmsClientWrapper(
+    private val kmsClient: KmsClient,
+    var generateDataKeyPairRecorder: Optional<GenerateDataKeyPairResponse> = Optional.empty()
+) : KmsClient by kmsClient {
 
-    override fun generateDataKeyPair(request:  GenerateDataKeyPairRequest): GenerateDataKeyPairResponse {
+    override fun generateDataKeyPair(request: GenerateDataKeyPairRequest): GenerateDataKeyPairResponse {
         val generateDataKeyPair = kmsClient.generateDataKeyPair(request)
         generateDataKeyPairRecorder = Optional.of(generateDataKeyPair)
         return generateDataKeyPair

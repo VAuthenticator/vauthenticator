@@ -8,6 +8,7 @@ import it.valeriovaudi.vauthenticator.security.userdetails.AccountUserDetailsSer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -72,6 +73,19 @@ class WebSecurityConfig(
                 .authorizeRequests()
                 .mvcMatchers("/api/reset-password/{ticket}")
                 .permitAll()
+                .and()
+
+                .authorizeRequests()
+                .mvcMatchers(HttpMethod.GET, "/api/keys")
+                .hasAnyAuthority(Scope.KEY_READER.content)
+                .and()
+                .authorizeRequests()
+                .mvcMatchers(HttpMethod.POST, "/api/keys")
+                .hasAnyAuthority(Scope.KEY_EDITOR.content)
+                .and()
+                .authorizeRequests()
+                .mvcMatchers(HttpMethod.DELETE, "/api/keys")
+                .hasAnyAuthority(Scope.KEY_EDITOR.content)
                 .and()
 
                 .authorizeRequests()
