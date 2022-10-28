@@ -1,9 +1,7 @@
 package it.valeriovaudi.vauthenticator.keypair
 
-import java.security.KeyPair
-
 interface KeyRepository {
-    fun getKeyPair(): KeyPair
-
-    fun keys(): Keys = TODO()
+    fun  createKeyFrom(masterKid: MasterKid) : Kid
+    fun deleteKeyFor(masterKid: MasterKid, kid: Kid)
+    fun keys(): Keys
 }

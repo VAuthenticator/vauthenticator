@@ -1,12 +1,10 @@
 package it.valeriovaudi.vauthenticator.config
 
-import com.nimbusds.jose.jwk.JWKSelector
-import com.nimbusds.jose.jwk.JWKSet
-import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jose.jwk.source.JWKSource
 import com.nimbusds.jose.proc.SecurityContext
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import it.valeriovaudi.vauthenticator.keypair.KeyRepository
+import it.valeriovaudi.vauthenticator.keypair.KeysJWKSource
 import it.valeriovaudi.vauthenticator.oauth2.authorizationservice.RedisOAuth2AuthorizationService
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
 import it.valeriovaudi.vauthenticator.oauth2.token.OAuth2TokenEnhancer
@@ -39,8 +37,6 @@ import org.springframework.security.oauth2.server.authorization.token.JwtEncodin
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer
 import org.springframework.security.web.DefaultRedirectStrategy
 import org.springframework.security.web.SecurityFilterChain
-import java.security.interfaces.RSAPrivateKey
-import java.security.interfaces.RSAPublicKey
 
 @Configuration(proxyBeanMethods = false)
 class AuthorizationServerConfig {
@@ -54,27 +50,9 @@ class AuthorizationServerConfig {
     @Autowired
     lateinit var accountRepository: AccountRepository
 
-    fun generateRsas(): List<RSAKey> {
-        return this.keyRepository.keys()
-                .keys
-                .map {
-                    RSAKey.Builder(it.keyPair.public as RSAPublicKey)
-                            .privateKey(it.keyPair.private as RSAPrivateKey)
-                            .keyID(it.kid)
-                            .build()
-                }
-    }
-
     @Bean
-    fun jwkSource(): JWKSource<SecurityContext?> {
-        val rsaKey = generateRsas()
-        val jwkSet = JWKSet(rsaKey)
-        return JWKSource { jwkSelector: JWKSelector, _: SecurityContext? ->
-            jwkSelector.select(
-                    jwkSet
-            )
-        }
-    }
+    fun jwkSource(keyRepository: KeyRepository): JWKSource<SecurityContext?> =
+        KeysJWKSource(keyRepository)
 
     @Bean
     fun nimbusJwsEncoder(jwkSource: JWKSource<SecurityContext?>?): JwtEncoder {
@@ -106,9 +84,11 @@ class AuthorizationServerConfig {
 
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
-    fun authorizationServerSecurityFilterChain(providerSettings: ProviderSettings,
-                                               redisTemplate: RedisTemplate<String, String?>,
-                                               http: HttpSecurity): SecurityFilterChain {
+    fun authorizationServerSecurityFilterChain(
+        providerSettings: ProviderSettings,
+        redisTemplate: RedisTemplate<String, String?>,
+        http: HttpSecurity
+    ): SecurityFilterChain {
         val userInfoEnhancer = UserInfoEnhancer(accountRepository)
         val authorizationServerConfigurer = OAuth2AuthorizationServerConfigurer<HttpSecurity>()
         authorizationServerConfigurer.oidc { configurer ->
@@ -117,19 +97,27 @@ class AuthorizationServerConfig {
                     userInfoEnhancer.oidcUserInfoFrom(context)
                 }
             }
-        }.authorizationEndpoint { it.authorizationResponseHandler(sendAuthorizationResponse(redisTemplate, SessionManagementFactory(providerSettings), DefaultRedirectStrategy())) }
+        }.authorizationEndpoint {
+            it.authorizationResponseHandler(
+                sendAuthorizationResponse(
+                    redisTemplate,
+                    SessionManagementFactory(providerSettings),
+                    DefaultRedirectStrategy()
+                )
+            )
+        }
         val endpointsMatcher = authorizationServerConfigurer.endpointsMatcher
 
         http
-                .requestMatcher(endpointsMatcher)
-                .authorizeRequests { authorizeRequests -> authorizeRequests.anyRequest().authenticated() }
-                .csrf { csrf: CsrfConfigurer<HttpSecurity?> -> csrf.ignoringRequestMatchers(endpointsMatcher) }
-                .apply(authorizationServerConfigurer)
+            .requestMatcher(endpointsMatcher)
+            .authorizeRequests { authorizeRequests -> authorizeRequests.anyRequest().authenticated() }
+            .csrf { csrf: CsrfConfigurer<HttpSecurity?> -> csrf.ignoringRequestMatchers(endpointsMatcher) }
+            .apply(authorizationServerConfigurer)
 
         return http.formLogin(Customizer.withDefaults())
-                .oauth2ResourceServer().jwt()
-                .and().and()
-                .build()
+            .oauth2ResourceServer().jwt()
+            .and().and()
+            .build()
     }
 
 
@@ -140,6 +128,6 @@ class AuthorizationServerConfig {
 
     @Bean
     fun bcryptAccountPasswordEncoder(passwordEncoder: PasswordEncoder) =
-            BcryptVAuthenticatorPasswordEncoder(passwordEncoder)
+        BcryptVAuthenticatorPasswordEncoder(passwordEncoder)
 }
 
