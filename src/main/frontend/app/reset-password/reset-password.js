@@ -1,14 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Grid, withStyles} from "@material-ui/core";
 import vauthenticatorStyles from "../component/styles";
 import Template from "../component/Template";
-import Typography from "@material-ui/core/Typography";
-import {Person, VpnKey} from "@material-ui/icons";
-import Divider from "@material-ui/core/Divider";
 import FormInputTextField from "../component/FormInputTextField";
 import Separator from "../component/Separator";
 import FormButton from "../component/FormButton";
+import {Divider, Grid, Typography} from "@mui/material";
+import {Person, VpnKey} from "@mui/icons-material";
 
 
 const ResetPasswordPage = withStyles(vauthenticatorStyles)((props) => {

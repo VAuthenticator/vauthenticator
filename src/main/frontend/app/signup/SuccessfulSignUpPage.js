@@ -1,10 +1,8 @@
-import {Grid, withStyles} from "@material-ui/core";
 import React from "react";
 import Template from "../component/Template";
-import Typography from "@material-ui/core/Typography";
-import {VpnKey} from "@material-ui/icons";
-import Divider from "@material-ui/core/Divider";
 import vauthenticatorStyles from "../component/styles";
+import {Divider, Grid, Typography, withStyles} from "@mui/material";
+import {VpnKey} from "@mui/icons-material";
 
 const SuccessfulSignUpPage = withStyles(vauthenticatorStyles)((props) => {
     const {classes} = props;

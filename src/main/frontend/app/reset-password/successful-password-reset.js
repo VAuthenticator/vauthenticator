@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {withStyles} from "@material-ui/core";
 import vauthenticatorStyles from "../component/styles";
+import {withStyles} from "@mui/material";
 
 const ResetPasswordMainPage = withStyles(vauthenticatorStyles)((props) => {
     return (<div>It Works!!!</div>)

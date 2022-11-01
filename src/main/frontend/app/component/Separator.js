@@ -1,5 +1,4 @@
-import {Grid} from "@material-ui/core";
-import Divider from "@material-ui/core/Divider";
+import {Divider, Grid} from "@mui/material";
 import React from "react";
 
 export default function Separator() {

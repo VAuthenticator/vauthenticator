@@ -1,15 +1,15 @@
-import {Grid, withStyles} from "@material-ui/core";
 import React from "react";
 import Template from "../component/Template";
-import Typography from "@material-ui/core/Typography";
-import {GroupAdd, VpnKey} from "@material-ui/icons";
-import Divider from "@material-ui/core/Divider";
 import vauthenticatorStyles from "../component/styles";
 import FormInputTextField from "../component/FormInputTextField";
 import FormButton from "../component/FormButton";
 
 import {signUp} from "./SignUpRepository";
 import {useNavigate} from "react-router";
+import FormDatePicker, {DateFormatPattern} from "../component/FormDatePicker";
+import {Divider, Grid, Typography, withStyles} from "@mui/material";
+import {VpnKey} from "@mui/icons-material";
+import moment from "moment/moment";
 
 const SignUpPage = withStyles(vauthenticatorStyles)((props) => {
     const {classes} = props;
@@ -66,13 +66,18 @@ const SignUpPage = withStyles(vauthenticatorStyles)((props) => {
                                 }}
                                 value={lastName || ""}/>
 
-            <FormInputTextField id="birthDate"
-                                label="Birth Date"
-                                required={true}
-                                handler={(value) => {
-                                    setBirthDate(value.target.value)
-                                }}
-                                value={birthDate || ""}/>
+            <FormDatePicker
+                value={moment(birthDate, DateFormatPattern)}
+                onClickHandler={(value) => {
+                    let date = "";
+                    try {
+                        date = value.format(DateFormatPattern);
+                    } catch (e) {
+                    }
+                    setBirthDate(date)
+                }}
+                label="Birth Date"/>
+
 
             <FormInputTextField id="phone"
                                 label="Phone"
@@ -96,8 +101,8 @@ const SignUpPage = withStyles(vauthenticatorStyles)((props) => {
                                 "birthDate": birthDate
                             })
                                 .then(r => {
-                                    if(r.status === 201){
-                                        navigate("/succeeded", { replace: true });
+                                    if (r.status === 201) {
+                                        navigate("/succeeded", {replace: true});
                                     }
                                 })
                         }}

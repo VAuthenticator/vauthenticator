@@ -1,9 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Grid, withStyles} from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
-import {Fingerprint, Person, VpnKey} from "@material-ui/icons";
-import Divider from "@material-ui/core/Divider";
 import vauthenticatorStyles from "../component/styles";
 import Template from "../component/Template";
 import FormInputTextField from "../component/FormInputTextField";
@@ -11,6 +7,8 @@ import Separator from "../component/Separator";
 import FormButton from "../component/FormButton";
 import {HashRouter, Link} from "react-router-dom";
 import {Route, Routes, useNavigate} from "react-router";
+import {Divider, Grid, Typography, withStyles} from "@mui/material";
+import {Fingerprint, Person, VpnKey} from "@mui/icons-material";
 
 const LoginMainPage = withStyles(vauthenticatorStyles)((props) => {
     return (
