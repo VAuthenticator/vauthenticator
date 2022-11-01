@@ -7,6 +7,7 @@ import it.valeriovaudi.vauthenticator.keypair.KeyRepository
 import it.valeriovaudi.vauthenticator.keypair.KeysJWKSource
 import it.valeriovaudi.vauthenticator.oauth2.authorizationservice.RedisOAuth2AuthorizationService
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
+import it.valeriovaudi.vauthenticator.oauth2.clientapp.StoreClientApplication
 import it.valeriovaudi.vauthenticator.oauth2.token.OAuth2TokenEnhancer
 import it.valeriovaudi.vauthenticator.openid.connect.sessionmanagement.SessionManagementFactory
 import it.valeriovaudi.vauthenticator.openid.connect.sessionmanagement.sendAuthorizationResponse
@@ -68,8 +69,11 @@ class AuthorizationServerConfig {
     }
 
     @Bean
-    fun registeredClientRepository(clientRepository: ClientApplicationRepository): RegisteredClientRepository {
-        return ClientAppRegisteredClientRepository(clientRepository)
+    fun registeredClientRepository(
+        storeClientApplication: StoreClientApplication,
+        clientRepository: ClientApplicationRepository
+    ): RegisteredClientRepository {
+        return ClientAppRegisteredClientRepository(storeClientApplication, clientRepository)
     }
 
     @Bean

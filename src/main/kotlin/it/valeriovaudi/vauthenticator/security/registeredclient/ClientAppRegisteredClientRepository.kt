@@ -10,13 +10,16 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.security.oauth2.server.authorization.config.TokenSettings
 import java.time.Duration
 
-class ClientAppRegisteredClientRepository(private val clientApplicationRepository: ClientApplicationRepository) :
+class ClientAppRegisteredClientRepository(
+    private val storeClientApplication: StoreClientApplication,
+    private val clientApplicationRepository: ClientApplicationRepository
+) :
     RegisteredClientRepository {
 
     private val logger: Logger = LoggerFactory.getLogger(ClientAppRegisteredClientRepository::class.java)
 
     override fun save(registeredClient: RegisteredClient) {
-        clientApplicationRepository.save(
+        storeClientApplication.store(
             ClientApplication(
                 clientAppId = ClientAppId(registeredClient.clientId),
                 authorities = Authorities.empty(),
@@ -34,7 +37,7 @@ class ClientAppRegisteredClientRepository(private val clientApplicationRepositor
                 secret = Secret(registeredClient.clientSecret!!),
                 webServerRedirectUri = CallbackUri(registeredClient.redirectUris.first()),
                 autoApprove = AutoApprove(registeredClient.clientSettings.isRequireAuthorizationConsent.not())
-            )
+            ), true
         )
     }
 

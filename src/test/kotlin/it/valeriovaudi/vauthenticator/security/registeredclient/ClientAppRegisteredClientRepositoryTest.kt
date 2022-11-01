@@ -20,6 +20,9 @@ import java.util.*
 internal class ClientAppRegisteredClientRepositoryTest {
 
     @MockK
+    lateinit var storeClientApplication: StoreClientApplication
+
+    @MockK
     lateinit var clientApplicationRepository: ClientApplicationRepository
 
     lateinit var clientAppRegisteredClientRepository: ClientAppRegisteredClientRepository
@@ -27,7 +30,7 @@ internal class ClientAppRegisteredClientRepositoryTest {
     @BeforeEach
     fun setup() {
         clientAppRegisteredClientRepository =
-            ClientAppRegisteredClientRepository(clientApplicationRepository)
+            ClientAppRegisteredClientRepository(storeClientApplication, clientApplicationRepository)
     }
 
     @Test
@@ -71,14 +74,14 @@ internal class ClientAppRegisteredClientRepositoryTest {
     @Test
     internal fun `when a new client app is registered`() {
         every {
-            clientApplicationRepository.save(
+            storeClientApplication.store(
                 aClientApplication().get()
                     .copy(
                         postLogoutRedirectUri = PostLogoutRedirectUri(""),
                         logoutUri = LogoutUri(""),
                         authorities = Authorities.empty(),
-                        scopes = Scopes(setOf(Scope("A_SCOPE"),Scope("ANOTHER_SCOPE")))
-                    )
+                        scopes = Scopes(setOf(Scope("A_SCOPE"), Scope("ANOTHER_SCOPE")))
+                    ), true
             )
         } just runs
 
