@@ -1,7 +1,6 @@
 package it.valeriovaudi.vauthenticator.security.registeredclient
 
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
+import it.valeriovaudi.vauthenticator.oauth2.clientapp.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.security.oauth2.core.AuthorizationGrantType
@@ -11,48 +10,72 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.security.oauth2.server.authorization.config.TokenSettings
 import java.time.Duration
 
-class ClientAppRegisteredClientRepository(private val clientApplicationRepository: ClientApplicationRepository) :
-        RegisteredClientRepository {
+class ClientAppRegisteredClientRepository(
+    private val storeClientApplication: StoreClientApplication,
+    private val clientApplicationRepository: ClientApplicationRepository
+) :
+    RegisteredClientRepository {
 
-    val logger: Logger = LoggerFactory.getLogger(ClientAppRegisteredClientRepository::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(ClientAppRegisteredClientRepository::class.java)
 
     override fun save(registeredClient: RegisteredClient) {
-        throw UnsupportedActionException("store client application from ClientAppRegisteredClientRepository is not currently allowed");
+        storeClientApplication.store(
+            ClientApplication(
+                clientAppId = ClientAppId(registeredClient.clientId),
+                authorities = Authorities.empty(),
+                logoutUri = LogoutUri(""),
+                postLogoutRedirectUri = PostLogoutRedirectUri(""),
+                scopes = Scopes(registeredClient.scopes.map { Scope(it) }.toSet()),
+                accessTokenValidity = TokenTimeToLive(registeredClient.tokenSettings.accessTokenTimeToLive.toSeconds()),
+                refreshTokenValidity = TokenTimeToLive(registeredClient.tokenSettings.refreshTokenTimeToLive.toSeconds()),
+                additionalInformation = emptyMap(),
+                authorizedGrantTypes = AuthorizedGrantTypes(registeredClient.authorizationGrantTypes.map {
+                    AuthorizedGrantType.valueOf(
+                        it.value.uppercase()
+                    )
+                }),
+                secret = Secret(registeredClient.clientSecret!!),
+                webServerRedirectUri = CallbackUri(registeredClient.redirectUris.first()),
+                autoApprove = AutoApprove(registeredClient.clientSettings.isRequireAuthorizationConsent.not())
+            ), true
+        )
     }
 
     override fun findById(id: String): RegisteredClient =
-            registeredClient(id)
+        registeredClient(id)
 
     override fun findByClientId(clientId: String): RegisteredClient =
-            registeredClient(clientId)
+        registeredClient(clientId)
 
 
     private fun registeredClient(id: String) = clientApplicationRepository.findOne(ClientAppId(id))
-            .map { clientApp ->
-                RegisteredClient.withId(id)
-                        .clientId(id)
-                        .clientSecret(clientApp.secret.content)
-                        .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-                        .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
-                        .authorizationGrantTypes { authorizationGrantTypes ->
-                            authorizationGrantTypes.addAll(clientApp.authorizedGrantTypes.content.map {
-                                AuthorizationGrantType(
-                                        it.name.lowercase()
-                                )
-                            })
-                        }
-                        .scopes { scopes -> scopes.addAll(clientApp.scopes.content.map { it.content }) }
-                        .redirectUri(clientApp.webServerRedirectUri.content)
-                        .tokenSettings(TokenSettings.builder()
-                                .accessTokenTimeToLive(Duration.ofSeconds(clientApp.accessTokenValidity.content.toLong()))
-                                .refreshTokenTimeToLive(Duration.ofSeconds(clientApp.refreshTokenValidity.content.toLong()))
-                                .reuseRefreshTokens(true)
-                                .build())
+        .map { clientApp ->
+            RegisteredClient.withId(id)
+                .clientId(id)
+                .clientSecret(clientApp.secret.content)
+                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
+                .authorizationGrantTypes { authorizationGrantTypes ->
+                    authorizationGrantTypes.addAll(clientApp.authorizedGrantTypes.content.map {
+                        AuthorizationGrantType(
+                            it.name.lowercase()
+                        )
+                    })
+                }
+                .scopes { scopes -> scopes.addAll(clientApp.scopes.content.map { it.content }) }
+                .redirectUri(clientApp.webServerRedirectUri.content)
+                .tokenSettings(
+                    TokenSettings.builder()
+                        .accessTokenTimeToLive(Duration.ofSeconds(clientApp.accessTokenValidity.content.toLong()))
+                        .refreshTokenTimeToLive(Duration.ofSeconds(clientApp.refreshTokenValidity.content.toLong()))
+                        .reuseRefreshTokens(true)
                         .build()
-            }.orElseThrow {
-                logger.error("Application with id or client_id: $id not found")
-                RegisteredClientAppNotFound("Application with id or client_id: $id not found")
-            }
+                )
+                .build()
+        }.orElseThrow {
+            logger.error("Application with id or client_id: $id not found")
+            RegisteredClientAppNotFound("Application with id or client_id: $id not found")
+        }
 
 
 }

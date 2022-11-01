@@ -17,9 +17,7 @@ object ClientAppFixture {
             emptyMap(),
             AutoApprove.approve,
             PostLogoutRedirectUri("http://an_uri"),
-            logoutUri,
-            ResourceIds.from(ResourceId("oauth2-resource"))
-    )
+            logoutUri)
 
     fun aClientAppId(): ClientAppId = ClientAppId("A_CLIENT_APP_ID")
 

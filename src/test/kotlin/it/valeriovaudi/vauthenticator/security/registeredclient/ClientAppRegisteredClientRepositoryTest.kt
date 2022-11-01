@@ -3,8 +3,9 @@ package it.valeriovaudi.vauthenticator.security.registeredclient
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
+import io.mockk.just
+import io.mockk.runs
+import it.valeriovaudi.vauthenticator.oauth2.clientapp.*
 import it.valeriovaudi.vauthenticator.security.registeredclient.RegisteredClientRepositoryFixture.aClientApplication
 import it.valeriovaudi.vauthenticator.security.registeredclient.RegisteredClientRepositoryFixture.aRegisteredClient
 import org.junit.jupiter.api.Assertions
@@ -12,10 +13,14 @@ import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClient
 import java.util.*
 
 @ExtendWith(MockKExtension::class)
 internal class ClientAppRegisteredClientRepositoryTest {
+
+    @MockK
+    lateinit var storeClientApplication: StoreClientApplication
 
     @MockK
     lateinit var clientApplicationRepository: ClientApplicationRepository
@@ -25,7 +30,7 @@ internal class ClientAppRegisteredClientRepositoryTest {
     @BeforeEach
     fun setup() {
         clientAppRegisteredClientRepository =
-            ClientAppRegisteredClientRepository(clientApplicationRepository)
+            ClientAppRegisteredClientRepository(storeClientApplication, clientApplicationRepository)
     }
 
     @Test
@@ -64,5 +69,25 @@ internal class ClientAppRegisteredClientRepositoryTest {
             { clientAppRegisteredClientRepository.findById("A_CLIENT_APP_ID") },
             "Application with id or client_id: A_CLIENT_APP_ID not found"
         )
+    }
+
+    @Test
+    internal fun `when a new client app is registered`() {
+        every {
+            storeClientApplication.store(
+                aClientApplication().get()
+                    .copy(
+                        postLogoutRedirectUri = PostLogoutRedirectUri(""),
+                        logoutUri = LogoutUri(""),
+                        authorities = Authorities.empty(),
+                        scopes = Scopes(setOf(Scope("A_SCOPE"), Scope("ANOTHER_SCOPE")))
+                    ), true
+            )
+        } just runs
+
+        clientAppRegisteredClientRepository.save(
+            RegisteredClient.from(aRegisteredClient()).build()
+        )
+
     }
 }
