@@ -1,33 +1,21 @@
 package it.valeriovaudi.vauthenticator.oauth2.clientapp
 
-import com.nimbusds.jose.JWSObject
-import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames
 import java.util.*
 
 data class ClientApplication(
-        val clientAppId: ClientAppId,
-        val secret: Secret,
-        val scopes: Scopes,
-        val authorizedGrantTypes: AuthorizedGrantTypes,
-        val webServerRedirectUri: CallbackUri,
-        val authorities: Authorities,
-        val accessTokenValidity: TokenTimeToLive,
-        val refreshTokenValidity: TokenTimeToLive,
-        val additionalInformation: Map<String, Objects> = emptyMap(),
-        val autoApprove: AutoApprove = AutoApprove.approve,
-        val postLogoutRedirectUri: PostLogoutRedirectUri,
-        val logoutUri: LogoutUri,
-        val resourceIds: ResourceIds
-) {
-    companion object {
-        fun clientAppIdFrom(jwtToken: String) =
-                ClientAppId(JWSObject.parse(jwtToken).payload.toJSONObject().get(IdTokenClaimNames.AZP) as String)
-
-        fun userNameFrom(jwtToken: String): String =
-                Optional.ofNullable(JWSObject.parse(jwtToken).payload.toJSONObject().get("user_name") as String?)
-                        .orElse("")
-    }
-}
+    val clientAppId: ClientAppId,
+    val secret: Secret,
+    val scopes: Scopes,
+    val authorizedGrantTypes: AuthorizedGrantTypes,
+    val webServerRedirectUri: CallbackUri,
+    val authorities: Authorities,
+    val accessTokenValidity: TokenTimeToLive,
+    val refreshTokenValidity: TokenTimeToLive,
+    val additionalInformation: Map<String, Objects> = emptyMap(),
+    val autoApprove: AutoApprove = AutoApprove.approve,
+    val postLogoutRedirectUri: PostLogoutRedirectUri,
+    val logoutUri: LogoutUri,
+)
 
 data class AutoApprove(val content: Boolean) {
     companion object {
@@ -43,12 +31,6 @@ data class AuthorizedGrantTypes(val content: List<AuthorizedGrantType>) {
 }
 
 enum class AuthorizedGrantType { CLIENT_CREDENTIALS, PASSWORD, AUTHORIZATION_CODE, IMPLICIT, REFRESH_TOKEN }
-
-data class ResourceIds(val content: List<ResourceId>) {
-    companion object {
-        fun from(vararg resourceId: ResourceId) = ResourceIds(listOf(*resourceId))
-    }
-}
 
 data class Secret(val content: String)
 
@@ -92,7 +74,7 @@ data class Authorities(val content: List<Authority>) {
 }
 
 data class Authority(val content: String)
-data class TokenTimeToLive(val content: Int)
+data class TokenTimeToLive(val content: Long)
 
 enum class ClientApplicationFeatures(val value: String) {
     SIGNUP("signup"),
