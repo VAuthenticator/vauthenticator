@@ -1,20 +1,19 @@
 import React from "react";
-import {Grid, TextField, useTheme} from "@mui/material";
+import {Grid, TextField} from "@mui/material";
 import {DesktopDatePicker} from "@mui/x-date-pickers"
 import {AdapterMoment} from '@mui/x-date-pickers/AdapterMoment';
 import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
 
 export default function FormDatePicker({label, value, onClickHandler}) {
-    const theme = useTheme()
-    return <Grid container alignItems="flex-end" style={theme.formDatePicker}>
+    return <Grid container alignItems="flex-end">
         <Grid item md={true} sm={true} xs={true} justify="flex-end">
             <LocalizationProvider dateAdapter={AdapterMoment}>
                 <DesktopDatePicker
                     label={label}
-                    inputFormat={DateFormatPattern}
+                    inputFormat={FormDateFormatPattern}
                     value={value}
                     onChange={onClickHandler || {}}
-                    renderInput={(params) => <TextField {...params} fullWidth />}
+                    renderInput={(params) => <TextField {...params} fullWidth/>}
                 />
             </LocalizationProvider>
         </Grid>
@@ -22,4 +21,5 @@ export default function FormDatePicker({label, value, onClickHandler}) {
 
 }
 
-export const DateFormatPattern = 'DD/MM/YYYY'
+export const FormDateFormatPattern = 'DD/MM/YYYY'
+export const ApiDateFormatPattern = 'YYYY-MM-DD'

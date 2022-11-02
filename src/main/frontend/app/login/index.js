@@ -1,13 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import vauthenticatorStyles from "../component/styles";
+import theme from "../component/styles";
 import Template from "../component/Template";
 import FormInputTextField from "../component/FormInputTextField";
 import Separator from "../component/Separator";
 import FormButton from "../component/FormButton";
 import {HashRouter, Link} from "react-router-dom";
 import {Route, Routes, useNavigate} from "react-router";
-import {Box, createTheme, Divider, Grid, ThemeProvider, Typography} from "@mui/material";
+import {Box, Divider, Grid, ThemeProvider, Typography} from "@mui/material";
 import {Fingerprint, Person, VpnKey} from "@mui/icons-material";
 
 const LoginMainPage = (props) => {
@@ -26,25 +26,6 @@ const LoginMainPage = (props) => {
 
 
 const Login = (props) => {
-    const theme = createTheme({
-        components: {
-            MuiGrid: {
-                styleOverrides: {
-                    root: {
-                        paddingTop: "8px"
-                    }
-                }
-            },
-            MuiPaper: {
-                styleOverrides: {
-                    root: {
-                        margin: "10px",
-                        padding: "10px"
-                    }
-                }
-            }
-        }
-    });
     const {rawFeatures} = props;
     let signUpLink = <div>
         <h3>are you not registered? if you want you can register <a href="/sign-up">here</a></h3>
@@ -104,7 +85,6 @@ const Login = (props) => {
 
 
 const ResetPasswordChallengeSender = (props) => {
-    const classes = vauthenticatorStyles()
     const [email, setEmail] = React.useState("")
     let navigate = useNavigate();
 
@@ -120,51 +100,56 @@ const ResetPasswordChallengeSender = (props) => {
     }
 
     return (
-        <Template maxWidth="sm" classes={classes}>
-            <Typography variant="h3" component="h3">
-                <VpnKey fontSize="large"/> Reset your password
-            </Typography>
+        <ThemeProvider theme={theme}>
+            <Template maxWidth="sm">
+                <Typography variant="h3" component="h3">
+                    <VpnKey fontSize="large"/> Reset your password
+                </Typography>
 
-            <Grid style={{marginTop: '10px'}}>
-                <Divider/>
-            </Grid>
+                <Grid style={{marginTop: '10px'}}>
+                    <Divider/>
+                </Grid>
 
-            <div className={classes.margin}>
-                <FormInputTextField id="email"
-                                    label="Email"
+                <Box>
+                    <FormInputTextField id="email"
+                                        label="Email"
 
-                                    required={true}
-                                    handler={(value) => {
-                                        setEmail(value.target.value)
-                                    }}
-                                    value={email || ""}
-                                    suffix={<Person fontSize="large"/>}/>
+                                        required={true}
+                                        handler={(value) => {
+                                            setEmail(value.target.value)
+                                        }}
+                                        value={email || ""}
+                                        suffix={<Person fontSize="large"/>}/>
 
-                <Separator/>
+                    <Separator/>
 
-                <FormButton type="button" label="Reset passwrd" onClickHandler={sentResetPasswordChallenge(email)}/>
-            </div>
-        </Template>
+                    <FormButton type="button" label="Reset passwrd" onClickHandler={sentResetPasswordChallenge(email)}/>
+
+                </Box>
+
+            </Template>
+        </ThemeProvider>
     )
 }
 
-const SuccessfulResetPasswordMailChallenge = (props) => {
-    const classes = vauthenticatorStyles()
+const SuccessfulResetPasswordMailChallenge = () => {
     return (
-        <Template maxWidth="lg" classes={classes}>
-            <Typography variant="h3" component="h3">
-                <VpnKey fontSize="large"/> Reset Password
-            </Typography>
+        <ThemeProvider theme={theme}>
+            <Template maxWidth="lg">
+                <Typography variant="h3" component="h3">
+                    <VpnKey fontSize="large"/> Reset Password
+                </Typography>
 
-            <Grid style={{marginTop: '10px'}}>
-                <Divider/>
-            </Grid>
+                <Grid style={{marginTop: '10px'}}>
+                    <Divider/>
+                </Grid>
 
-            <Typography variant="h3" component="h3">
-                We are sent an email on your account inbox please follow the instruction on the mail to reset yout
-                password
-            </Typography>
-        </Template>
+                <Typography variant="h3" component="h3">
+                    We are sent an email on your account inbox please follow the instruction on the mail to reset yout
+                    password
+                </Typography>
+            </Template>
+        </ThemeProvider>
     )
 }
 

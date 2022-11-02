@@ -1,23 +1,26 @@
-const spacing = (factor) => `${0.25 * factor}rem`
+import {createTheme} from "@mui/material";
 
-const vauthenticatorStyles = () => {
-    return {
-        margin: {
-            margin: spacing(2)
+
+const theme = createTheme({
+    components: {
+        MuiGrid: {
+            styleOverrides: {
+                root: {
+                    paddingTop: "15px"
+                }
+            }
         },
+        MuiPaper: {
+            styleOverrides: {
+                root: {
+                    flexGrow: 1,
 
-        padding: {
-            padding: spacing(1)
-        },
-
-        root: {
-            flexGrow: 1,
-        },
-
-        title: {
-            flexGrow: 1,
+                    margin: "10px",
+                    padding: "10px"
+                }
+            }
         }
     }
-}
+});
 
-export default vauthenticatorStyles
+export default theme

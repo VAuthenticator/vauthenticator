@@ -1,13 +1,11 @@
 import React from 'react';
-import vauthenticatorStyles from "../component/styles";
 import {HashRouter} from 'react-router-dom';
 import SignUpPage from "./SignUpPage";
 import SuccessfulSignUpPage from "./SuccessfulSignUpPage";
 import {Route, Routes} from "react-router";
 import {createRoot} from "react-dom/client";
-import {withStyles} from "@mui/material";
 
-const SignUpFlow = withStyles(vauthenticatorStyles)((props) => {
+const SignUpFlow = (props) => {
     return (
         <HashRouter>
             <Routes>
@@ -18,7 +16,7 @@ const SignUpFlow = withStyles(vauthenticatorStyles)((props) => {
             </Routes>
         </HashRouter>)
 
-})
+}
 
 if (document.getElementById('app')) {
     let features = document.getElementById('features').innerHTML
