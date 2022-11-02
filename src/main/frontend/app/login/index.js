@@ -7,10 +7,10 @@ import Separator from "../component/Separator";
 import FormButton from "../component/FormButton";
 import {HashRouter, Link} from "react-router-dom";
 import {Route, Routes, useNavigate} from "react-router";
-import {Divider, Grid, Typography, withStyles} from "@mui/material";
+import {Box, createTheme, Divider, Grid, ThemeProvider, Typography} from "@mui/material";
 import {Fingerprint, Person, VpnKey} from "@mui/icons-material";
 
-const LoginMainPage = withStyles(vauthenticatorStyles)((props) => {
+const LoginMainPage = (props) => {
     return (
         <HashRouter>
             <Routes>
@@ -22,12 +22,30 @@ const LoginMainPage = withStyles(vauthenticatorStyles)((props) => {
                        element={<SuccessfulResetPasswordMailChallenge {...props} />}/>
             </Routes>
         </HashRouter>)
-})
+}
 
 
-const Login = withStyles(vauthenticatorStyles)((props) => {
-    const {classes, rawFeatures} = props;
-
+const Login = (props) => {
+    const theme = createTheme({
+        components: {
+            MuiGrid: {
+                styleOverrides: {
+                    root: {
+                        paddingTop: "8px"
+                    }
+                }
+            },
+            MuiPaper: {
+                styleOverrides: {
+                    root: {
+                        margin: "10px",
+                        padding: "10px"
+                    }
+                }
+            }
+        }
+    });
+    const {rawFeatures} = props;
     let signUpLink = <div>
         <h3>are you not registered? if you want you can register <a href="/sign-up">here</a></h3>
     </div>
@@ -39,49 +57,54 @@ const Login = withStyles(vauthenticatorStyles)((props) => {
     let features = JSON.parse(rawFeatures);
 
     return (
-        <Template maxWidth="sm" classes={classes}>
-            <Typography variant="h3" component="h3">
-                <VpnKey fontSize="large"/> VAuthenticator
-            </Typography>
+        <ThemeProvider theme={theme}>
 
-            <Grid style={{marginTop: '10px'}}>
-                <Divider/>
-            </Grid>
-
-            {<form action="login" method="post">
-                <div className={classes.margin}>
-                    <FormInputTextField id="username"
-                                        label="Username"
-                                        type="email"
-                                        suffix={<Person fontSize="large"/>}/>
-
-                    <FormInputTextField id="password"
-                                        label="password"
-                                        type="password"
-                                        suffix={<Fingerprint fontSize="large"/>}/>
-
-                    <Separator/>
-
-                    <FormButton type="submit" label="Login"/>
-                </div>
-
+            <Template maxWidth="sm">
+                <Typography variant="h3" component="h3">
+                    <VpnKey fontSize="large"/> VAuthenticator
+                </Typography>
 
                 <Grid style={{marginTop: '10px'}}>
                     <Divider/>
                 </Grid>
 
+                {<form action="login" method="post">
+                    <Box>
+                        <FormInputTextField id="username"
+                                            label="Username"
+                                            type="email"
+                                            suffix={<Person fontSize="large"/>}/>
 
-                <Grid style={{marginTop: '10px'}}>
-                    {features.signup === true ? signUpLink : ""}
-                    {features["reset-password"] === true ? resetPasswordLink : ""}
-                </Grid>
-            </form>}
-        </Template>
+                        <FormInputTextField id="password"
+                                            label="password"
+                                            type="password"
+                                            suffix={<Fingerprint fontSize="large"/>}/>
+
+                        <Separator/>
+
+                        <FormButton type="submit" label="Login"/>
+                    </Box>
+
+
+                    <Grid style={{marginTop: '10px'}}>
+                        <Divider/>
+                    </Grid>
+
+
+                    <Grid style={{marginTop: '10px'}}>
+                        {features.signup === true ? signUpLink : ""}
+                        {features["reset-password"] === true ? resetPasswordLink : ""}
+                    </Grid>
+                </form>}
+            </Template>
+        </ThemeProvider>
+
     )
-})
+}
 
-const ResetPasswordChallengeSender = withStyles(vauthenticatorStyles)((props) => {
-    const {classes} = props;
+
+const ResetPasswordChallengeSender = (props) => {
+    const classes = vauthenticatorStyles()
     const [email, setEmail] = React.useState("")
     let navigate = useNavigate();
 
@@ -123,10 +146,10 @@ const ResetPasswordChallengeSender = withStyles(vauthenticatorStyles)((props) =>
             </div>
         </Template>
     )
-})
+}
 
-const SuccessfulResetPasswordMailChallenge = withStyles(vauthenticatorStyles)((props) => {
-    const {classes} = props;
+const SuccessfulResetPasswordMailChallenge = (props) => {
+    const classes = vauthenticatorStyles()
     return (
         <Template maxWidth="lg" classes={classes}>
             <Typography variant="h3" component="h3">
@@ -143,7 +166,7 @@ const SuccessfulResetPasswordMailChallenge = withStyles(vauthenticatorStyles)((p
             </Typography>
         </Template>
     )
-})
+}
 
 
 if (document.getElementById('app')) {
