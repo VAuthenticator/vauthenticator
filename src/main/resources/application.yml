@@ -1,3 +1,5 @@
 spring:
   application:
     name: vauthenticator
+server:
+  port: 9090

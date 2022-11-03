@@ -1,12 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {withStyles} from "@material-ui/core";
-import vauthenticatorStyles from "../component/styles";
 
-const ResetPasswordMainPage = withStyles(vauthenticatorStyles)((props) => {
+const ResetPasswordMainPage = () => {
     return (<div>It Works!!!</div>)
-})
-
+}
 
 if (document.getElementById('app')) {
     let features = document.getElementById('features').innerHTML

@@ -1,18 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Grid, withStyles} from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
-import {Fingerprint, Person, VpnKey} from "@material-ui/icons";
-import Divider from "@material-ui/core/Divider";
-import vauthenticatorStyles from "../component/styles";
+import theme from "../component/styles";
 import Template from "../component/Template";
 import FormInputTextField from "../component/FormInputTextField";
 import Separator from "../component/Separator";
 import FormButton from "../component/FormButton";
 import {HashRouter, Link} from "react-router-dom";
 import {Route, Routes, useNavigate} from "react-router";
+import {Box, Divider, Grid, ThemeProvider, Typography} from "@mui/material";
+import {Fingerprint, Person, VpnKey} from "@mui/icons-material";
 
-const LoginMainPage = withStyles(vauthenticatorStyles)((props) => {
+const LoginMainPage = (props) => {
     return (
         <HashRouter>
             <Routes>
@@ -24,12 +22,11 @@ const LoginMainPage = withStyles(vauthenticatorStyles)((props) => {
                        element={<SuccessfulResetPasswordMailChallenge {...props} />}/>
             </Routes>
         </HashRouter>)
-})
+}
 
 
-const Login = withStyles(vauthenticatorStyles)((props) => {
-    const {classes, rawFeatures} = props;
-
+const Login = (props) => {
+    const {rawFeatures} = props;
     let signUpLink = <div>
         <h3>are you not registered? if you want you can register <a href="/sign-up">here</a></h3>
     </div>
@@ -41,49 +38,53 @@ const Login = withStyles(vauthenticatorStyles)((props) => {
     let features = JSON.parse(rawFeatures);
 
     return (
-        <Template maxWidth="sm" classes={classes}>
-            <Typography variant="h3" component="h3">
-                <VpnKey fontSize="large"/> VAuthenticator
-            </Typography>
+        <ThemeProvider theme={theme}>
 
-            <Grid style={{marginTop: '10px'}}>
-                <Divider/>
-            </Grid>
-
-            {<form action="login" method="post">
-                <div className={classes.margin}>
-                    <FormInputTextField id="username"
-                                        label="Username"
-                                        type="email"
-                                        suffix={<Person fontSize="large"/>}/>
-
-                    <FormInputTextField id="password"
-                                        label="password"
-                                        type="password"
-                                        suffix={<Fingerprint fontSize="large"/>}/>
-
-                    <Separator/>
-
-                    <FormButton type="submit" label="Login"/>
-                </div>
-
+            <Template maxWidth="sm">
+                <Typography variant="h3" component="h3">
+                    <VpnKey fontSize="large"/> VAuthenticator
+                </Typography>
 
                 <Grid style={{marginTop: '10px'}}>
                     <Divider/>
                 </Grid>
 
+                {<form action="login" method="post">
+                    <Box>
+                        <FormInputTextField id="username"
+                                            label="Username"
+                                            type="email"
+                                            suffix={<Person fontSize="large"/>}/>
 
-                <Grid style={{marginTop: '10px'}}>
-                    {features.signup === true ? signUpLink : ""}
-                    {features["reset-password"] === true ? resetPasswordLink : ""}
-                </Grid>
-            </form>}
-        </Template>
+                        <FormInputTextField id="password"
+                                            label="password"
+                                            type="password"
+                                            suffix={<Fingerprint fontSize="large"/>}/>
+
+                        <Separator/>
+
+                        <FormButton type="submit" label="Login"/>
+                    </Box>
+
+
+                    <Grid style={{marginTop: '10px'}}>
+                        <Divider/>
+                    </Grid>
+
+
+                    <Grid style={{marginTop: '10px'}}>
+                        {features.signup === true ? signUpLink : ""}
+                        {features["reset-password"] === true ? resetPasswordLink : ""}
+                    </Grid>
+                </form>}
+            </Template>
+        </ThemeProvider>
+
     )
-})
+}
 
-const ResetPasswordChallengeSender = withStyles(vauthenticatorStyles)((props) => {
-    const {classes} = props;
+
+const ResetPasswordChallengeSender = (props) => {
     const [email, setEmail] = React.useState("")
     let navigate = useNavigate();
 
@@ -99,53 +100,58 @@ const ResetPasswordChallengeSender = withStyles(vauthenticatorStyles)((props) =>
     }
 
     return (
-        <Template maxWidth="sm" classes={classes}>
-            <Typography variant="h3" component="h3">
-                <VpnKey fontSize="large"/> Reset your password
-            </Typography>
+        <ThemeProvider theme={theme}>
+            <Template maxWidth="sm">
+                <Typography variant="h3" component="h3">
+                    <VpnKey fontSize="large"/> Reset your password
+                </Typography>
 
-            <Grid style={{marginTop: '10px'}}>
-                <Divider/>
-            </Grid>
+                <Grid style={{marginTop: '10px'}}>
+                    <Divider/>
+                </Grid>
 
-            <div className={classes.margin}>
-                <FormInputTextField id="email"
-                                    label="Email"
+                <Box>
+                    <FormInputTextField id="email"
+                                        label="Email"
 
-                                    required={true}
-                                    handler={(value) => {
-                                        setEmail(value.target.value)
-                                    }}
-                                    value={email || ""}
-                                    suffix={<Person fontSize="large"/>}/>
+                                        required={true}
+                                        handler={(value) => {
+                                            setEmail(value.target.value)
+                                        }}
+                                        value={email || ""}
+                                        suffix={<Person fontSize="large"/>}/>
 
-                <Separator/>
+                    <Separator/>
 
-                <FormButton type="button" label="Reset passwrd" onClickHandler={sentResetPasswordChallenge(email)}/>
-            </div>
-        </Template>
+                    <FormButton type="button" label="Reset passwrd" onClickHandler={sentResetPasswordChallenge(email)}/>
+
+                </Box>
+
+            </Template>
+        </ThemeProvider>
     )
-})
+}
 
-const SuccessfulResetPasswordMailChallenge = withStyles(vauthenticatorStyles)((props) => {
-    const {classes} = props;
+const SuccessfulResetPasswordMailChallenge = () => {
     return (
-        <Template maxWidth="lg" classes={classes}>
-            <Typography variant="h3" component="h3">
-                <VpnKey fontSize="large"/> Reset Password
-            </Typography>
+        <ThemeProvider theme={theme}>
+            <Template maxWidth="lg">
+                <Typography variant="h3" component="h3">
+                    <VpnKey fontSize="large"/> Reset Password
+                </Typography>
 
-            <Grid style={{marginTop: '10px'}}>
-                <Divider/>
-            </Grid>
+                <Grid style={{marginTop: '10px'}}>
+                    <Divider/>
+                </Grid>
 
-            <Typography variant="h3" component="h3">
-                We are sent an email on your account inbox please follow the instruction on the mail to reset yout
-                password
-            </Typography>
-        </Template>
+                <Typography variant="h3" component="h3">
+                    We are sent an email on your account inbox please follow the instruction on the mail to reset yout
+                    password
+                </Typography>
+            </Template>
+        </ThemeProvider>
     )
-})
+}
 
 
 if (document.getElementById('app')) {
