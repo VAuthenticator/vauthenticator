@@ -10,6 +10,7 @@ import {Divider, Grid, ThemeProvider, Typography} from "@mui/material";
 import {GroupAdd, VpnKey} from "@mui/icons-material";
 import moment from "moment/moment";
 import theme from "../component/styles";
+import FormInputMask from "../component/FormInputMask";
 
 const SignUpPage = () => {
     const [email, setEmail] = React.useState("")
@@ -78,7 +79,7 @@ const SignUpPage = () => {
                     label="Birth Date"/>
 
 
-                <FormInputTextField id="phone"
+                <FormInputMask id="phone"
                                     label="Phone"
                                     required={true}
                                     handler={(value) => {
@@ -89,6 +90,7 @@ const SignUpPage = () => {
                 <Grid style={{marginTop: '10px'}}>
                     <Divider/>
                 </Grid>
+
                 <FormButton type="button"
                             onClickHandler={() => {
                                 signUp({
