@@ -11,7 +11,7 @@ import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import it.valeriovaudi.vauthenticator.mail.MailSenderService
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.*
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.Scope.Companion.SIGN_UP
-import it.valeriovaudi.vauthenticator.security.VAuthenticatorPasswordEncoder
+import it.valeriovaudi.vauthenticator.password.VAuthenticatorPasswordEncoder
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

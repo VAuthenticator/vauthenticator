@@ -13,7 +13,7 @@ import it.valeriovaudi.vauthenticator.openid.connect.sessionmanagement.SessionMa
 import it.valeriovaudi.vauthenticator.openid.connect.sessionmanagement.sendAuthorizationResponse
 import it.valeriovaudi.vauthenticator.openid.connect.token.IdTokenEnhancer
 import it.valeriovaudi.vauthenticator.openid.connect.userinfo.UserInfoEnhancer
-import it.valeriovaudi.vauthenticator.security.BcryptVAuthenticatorPasswordEncoder
+import it.valeriovaudi.vauthenticator.password.BcryptVAuthenticatorPasswordEncoder
 import it.valeriovaudi.vauthenticator.security.registeredclient.ClientAppRegisteredClientRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value

@@ -4,7 +4,7 @@ import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationReposito
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.DynamoDbClientApplicationRepository
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ReadClientApplication
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.StoreClientApplication
-import it.valeriovaudi.vauthenticator.security.VAuthenticatorPasswordEncoder
+import it.valeriovaudi.vauthenticator.password.VAuthenticatorPasswordEncoder
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -26,7 +26,8 @@ class ClientApplicationConfig {
 
     @Bean
     fun storeClientApplication(clientApplicationRepository: ClientApplicationRepository,
-                               passwordEncoder: VAuthenticatorPasswordEncoder) =
+                               passwordEncoder: VAuthenticatorPasswordEncoder
+    ) =
             StoreClientApplication(clientApplicationRepository, passwordEncoder)
 
 

@@ -8,7 +8,7 @@ import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.InsufficientClientApplicationScopeException
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.Scope
-import it.valeriovaudi.vauthenticator.security.VAuthenticatorPasswordEncoder
+import it.valeriovaudi.vauthenticator.password.VAuthenticatorPasswordEncoder
 
 open class SignUpUseCase(
         private val clientAccountRepository: ClientApplicationRepository,

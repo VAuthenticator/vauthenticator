@@ -5,7 +5,7 @@ import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import it.valeriovaudi.vauthenticator.account.signup.SignUpUseCase
 import it.valeriovaudi.vauthenticator.mail.MailSenderService
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
-import it.valeriovaudi.vauthenticator.security.VAuthenticatorPasswordEncoder
+import it.valeriovaudi.vauthenticator.password.VAuthenticatorPasswordEncoder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -17,7 +17,8 @@ class SingUpConfiguration {
                       accountRepository: AccountRepository,
                       welcomeMailSender: MailSenderService,
                       sendVerifyMailChallenge: SendVerifyMailChallenge,
-                      vAuthenticatorPasswordEncoder: VAuthenticatorPasswordEncoder): SignUpUseCase =
+                      vAuthenticatorPasswordEncoder: VAuthenticatorPasswordEncoder
+    ): SignUpUseCase =
             SignUpUseCase(clientAccountRepository, accountRepository, welcomeMailSender, sendVerifyMailChallenge, vAuthenticatorPasswordEncoder)
 
 }
