@@ -7,10 +7,9 @@ import io.mockk.just
 import io.mockk.runs
 import it.valeriovaudi.vauthenticator.account.AccountTestFixture.anAccount
 import it.valeriovaudi.vauthenticator.password.PasswordPolicy
-import org.junit.jupiter.api.Test
-
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
@@ -44,7 +43,7 @@ internal class EnrichedAccountRepositoryTest {
 
     @Test
     fun save() {
-        every { accountRepository.create(account) } just runs
+        every { accountRepository.save(account) } just runs
         every { passwordPolicy.accept(account.password) } just runs
         underTest.save(account)
     }
