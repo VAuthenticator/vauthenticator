@@ -24,16 +24,16 @@ import org.springframework.core.annotation.Order
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer
-import org.springframework.security.config.annotation.web.configurers.oauth2.server.authorization.OAuth2AuthorizationServerConfigurer
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.oauth2.jwt.JwtEncoder
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository
-import org.springframework.security.oauth2.server.authorization.config.ProviderSettings
+import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration
+import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer
+import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer
 import org.springframework.security.web.DefaultRedirectStrategy
@@ -44,9 +44,6 @@ class AuthorizationServerConfig {
 
     @Value("\${auth.oidcIss:}")
     lateinit var oidcIss: String
-
-    @Autowired
-    lateinit var keyRepository: KeyRepository
 
     @Autowired
     lateinit var accountRepository: AccountRepository
@@ -82,19 +79,19 @@ class AuthorizationServerConfig {
     }
 
     @Bean
-    fun providerSettings(): ProviderSettings {
-        return ProviderSettings.builder().issuer(oidcIss).build()
+    fun providerSettings(): AuthorizationServerSettings {
+        return AuthorizationServerSettings.builder().issuer(oidcIss).build()
     }
 
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     fun authorizationServerSecurityFilterChain(
-        providerSettings: ProviderSettings,
+        providerSettings: AuthorizationServerSettings,
         redisTemplate: RedisTemplate<String, String?>,
         http: HttpSecurity
     ): SecurityFilterChain {
         val userInfoEnhancer = UserInfoEnhancer(accountRepository)
-        val authorizationServerConfigurer = OAuth2AuthorizationServerConfigurer<HttpSecurity>()
+        val authorizationServerConfigurer = OAuth2AuthorizationServerConfigurer()
         authorizationServerConfigurer.oidc { configurer ->
             configurer.userInfoEndpoint { customizer ->
                 customizer.userInfoMapper { context ->
@@ -112,9 +109,7 @@ class AuthorizationServerConfig {
         }
         val endpointsMatcher = authorizationServerConfigurer.endpointsMatcher
 
-        http
-            .requestMatcher(endpointsMatcher)
-            .authorizeRequests { authorizeRequests -> authorizeRequests.anyRequest().authenticated() }
+        http.authorizeHttpRequests { it.anyRequest().authenticated() }
             .csrf { csrf: CsrfConfigurer<HttpSecurity?> -> csrf.ignoringRequestMatchers(endpointsMatcher) }
             .apply(authorizationServerConfigurer)
 

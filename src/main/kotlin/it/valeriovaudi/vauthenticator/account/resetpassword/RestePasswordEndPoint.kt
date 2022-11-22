@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import it.valeriovaudi.vauthenticator.account.tiket.VerificationTicket
 import it.valeriovaudi.vauthenticator.extentions.clientAppId
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
+import jakarta.servlet.http.HttpSession
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.*
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
 import java.util.*
-import javax.servlet.http.HttpSession
 
 @RestController
 @SessionAttributes("clientId")

@@ -1,13 +1,15 @@
 package it.valeriovaudi.vauthenticator.openid.connect.sessionmanagement
 
 import it.valeriovaudi.vauthenticator.extentions.toSha256
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2AuthorizationCodeRequestAuthenticationToken
-import org.springframework.security.oauth2.server.authorization.config.ProviderSettings
+import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings
 import org.springframework.security.web.RedirectStrategy
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -17,8 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 import java.util.*
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 
 fun sendAuthorizationResponse(
         redisTemplate: RedisTemplate<String, String?>,
@@ -46,7 +46,7 @@ fun sendAuthorizationResponse(
     redirectStrategy.sendRedirect(request, response, uriBuilder.toUriString())
 }
 
-class SessionManagementFactory(private val providerSettings: ProviderSettings) {
+class SessionManagementFactory(private val providerSettings: AuthorizationServerSettings) {
 
     fun sessionIdFor(request: HttpServletRequest) =
             Arrays.stream(request.cookies)
@@ -83,7 +83,7 @@ class SessionManagementFactory(private val providerSettings: ProviderSettings) {
 @Controller
 class SessionManagementIFrameController(
         @Value("\${consoleDebug:false}")  private val consoleDebug : Boolean,
-        private val providerSettings: ProviderSettings) {
+        private val providerSettings: AuthorizationServerSettings) {
 
     @GetMapping("/session/management")
     fun sessionManagerIframe(model: Model) : String {

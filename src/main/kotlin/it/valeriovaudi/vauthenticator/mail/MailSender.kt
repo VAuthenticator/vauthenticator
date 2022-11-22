@@ -2,9 +2,9 @@ package it.valeriovaudi.vauthenticator.mail
 
 import it.valeriovaudi.vauthenticator.account.Account
 import it.valeriovaudi.vauthenticator.document.DocumentRepository
+import jakarta.mail.internet.MimeMessage
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
-import javax.mail.internet.MimeMessage
 
 private const val MAIL_DOCUMENT_TYPE = "mail"
 
