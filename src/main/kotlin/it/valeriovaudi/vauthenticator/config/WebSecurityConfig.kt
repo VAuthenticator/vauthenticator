@@ -4,12 +4,14 @@ import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.Scope
 import it.valeriovaudi.vauthenticator.openid.connect.logout.ClearSessionStateLogoutHandler
 import it.valeriovaudi.vauthenticator.openid.connect.sessionmanagement.SessionManagementFactory
+import it.valeriovaudi.vauthenticator.password.BcryptVAuthenticatorPasswordEncoder
 import it.valeriovaudi.vauthenticator.security.userdetails.AccountUserDetailsService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -27,9 +29,10 @@ private val WHITE_LIST = arrayOf(
     "/oidc/logout",
     "/login",
     "/webjars/**",
+    "/asset/**",
     "/api/**"
 )
-
+@EnableWebSecurity
 @Configuration(proxyBeanMethods = false)
 class WebSecurityConfig(
     private val providerSettings: AuthorizationServerSettings,
@@ -43,7 +46,7 @@ class WebSecurityConfig(
     ): SecurityFilterChain {
         http.csrf().disable()
             .formLogin()
-            .loginProcessingUrl("/login")
+            .loginProcessingUrl(LOG_IN_URL_PAGE)
             .loginPage(LOG_IN_URL_PAGE)
             .permitAll()
 
@@ -52,7 +55,6 @@ class WebSecurityConfig(
             .invalidateHttpSession(true)
 
         http.authorizeHttpRequests { authz ->
-
             authz
                 .requestMatchers(*WHITE_LIST).permitAll()
                 .requestMatchers("/api/accounts").permitAll()
@@ -93,6 +95,10 @@ class WebSecurityConfig(
         jwtAuthenticationConverter.setPrincipalClaimName("user_name")
         return jwtAuthenticationConverter
     }
+
+    @Bean
+    fun bcryptAccountPasswordEncoder(passwordEncoder: PasswordEncoder) =
+        BcryptVAuthenticatorPasswordEncoder(passwordEncoder)
 
     @Bean
     fun passwordEncoder(): PasswordEncoder {

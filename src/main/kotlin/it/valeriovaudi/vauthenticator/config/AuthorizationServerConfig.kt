@@ -13,7 +13,6 @@ import it.valeriovaudi.vauthenticator.openid.connect.sessionmanagement.SessionMa
 import it.valeriovaudi.vauthenticator.openid.connect.sessionmanagement.sendAuthorizationResponse
 import it.valeriovaudi.vauthenticator.openid.connect.token.IdTokenEnhancer
 import it.valeriovaudi.vauthenticator.openid.connect.userinfo.UserInfoEnhancer
-import it.valeriovaudi.vauthenticator.password.BcryptVAuthenticatorPasswordEncoder
 import it.valeriovaudi.vauthenticator.security.registeredclient.ClientAppRegisteredClientRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -22,10 +21,8 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import org.springframework.data.redis.core.RedisTemplate
-import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer
-import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.oauth2.jwt.JwtEncoder
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder
@@ -38,6 +35,7 @@ import org.springframework.security.oauth2.server.authorization.token.JwtEncodin
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer
 import org.springframework.security.web.DefaultRedirectStrategy
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint
 
 @Configuration(proxyBeanMethods = false)
 class AuthorizationServerConfig {
@@ -90,8 +88,11 @@ class AuthorizationServerConfig {
         redisTemplate: RedisTemplate<String, String?>,
         http: HttpSecurity
     ): SecurityFilterChain {
+        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http)
         val userInfoEnhancer = UserInfoEnhancer(accountRepository)
-        val authorizationServerConfigurer = OAuth2AuthorizationServerConfigurer()
+
+        val authorizationServerConfigurer = http.getConfigurer(OAuth2AuthorizationServerConfigurer::class.java)
+
         authorizationServerConfigurer.oidc { configurer ->
             configurer.userInfoEndpoint { customizer ->
                 customizer.userInfoMapper { context ->
@@ -109,11 +110,9 @@ class AuthorizationServerConfig {
         }
         val endpointsMatcher = authorizationServerConfigurer.endpointsMatcher
 
-        http.authorizeHttpRequests { it.anyRequest().authenticated() }
-            .csrf { csrf: CsrfConfigurer<HttpSecurity?> -> csrf.ignoringRequestMatchers(endpointsMatcher) }
-            .apply(authorizationServerConfigurer)
+        http.csrf { csrf: CsrfConfigurer<HttpSecurity?> -> csrf.ignoringRequestMatchers(endpointsMatcher) }
 
-        return http.formLogin(Customizer.withDefaults())
+        return http.exceptionHandling { it.authenticationEntryPoint(LoginUrlAuthenticationEntryPoint("/login")) }
             .oauth2ResourceServer().jwt()
             .and().and()
             .build()
@@ -125,8 +124,5 @@ class AuthorizationServerConfig {
         return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource)
     }
 
-    @Bean
-    fun bcryptAccountPasswordEncoder(passwordEncoder: PasswordEncoder) =
-        BcryptVAuthenticatorPasswordEncoder(passwordEncoder)
 }
 

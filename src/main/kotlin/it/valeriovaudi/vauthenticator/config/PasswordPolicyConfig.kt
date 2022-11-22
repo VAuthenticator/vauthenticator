@@ -1,9 +1,6 @@
 package it.valeriovaudi.vauthenticator.config
 
-import it.valeriovaudi.vauthenticator.password.CompositePasswordPolicy
-import it.valeriovaudi.vauthenticator.password.MinimumCharacterPasswordPolicy
-import it.valeriovaudi.vauthenticator.password.PasswordPolicyConfigProp
-import it.valeriovaudi.vauthenticator.password.SpecialCharacterPasswordPolicy
+import it.valeriovaudi.vauthenticator.password.*
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
