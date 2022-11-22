@@ -20,8 +20,13 @@ internal class PasswordPolicyTest {
 
     @Test
     internal fun `when a password has no special character`() {
-        val underTest = SpecialCharacterPasswordPolicy()
+        val underTest = SpecialCharacterPasswordPolicy(2)
         assertThrows(PasswordPolicyViolation::class.java) { underTest.accept("aPassword") }
+    }
+   @Test
+    internal fun `when a password has enoguht special  character`() {
+        val underTest = SpecialCharacterPasswordPolicy(2)
+        underTest.accept("aPa!%ssword")
     }
 
     @Test
