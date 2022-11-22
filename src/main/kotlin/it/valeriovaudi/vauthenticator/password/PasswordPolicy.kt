@@ -45,6 +45,6 @@ class CompositePasswordPolicy(private val passwordPolicies: Set<PasswordPolicy>)
 @ConstructorBinding
 @ConfigurationProperties(prefix = "password.policy")
 data class PasswordPolicyConfigProp(
-    val passwordMinSize: Int = 8,
-    val passwordMinSpecialSymbol: Int = 5
+    val passwordMinSize: Int = 0,
+    val passwordMinSpecialSymbol: Int = 0
 )
