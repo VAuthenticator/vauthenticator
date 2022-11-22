@@ -1,10 +1,11 @@
 package it.valeriovaudi.vauthenticator.oauth2.clientapp
 
-import it.valeriovaudi.vauthenticator.security.VAuthenticatorPasswordEncoder
+import it.valeriovaudi.vauthenticator.password.VAuthenticatorPasswordEncoder
 import java.util.*
 
 class StoreClientApplication(private val clientApplicationRepository: ClientApplicationRepository,
-                             private val passwordEncoder: VAuthenticatorPasswordEncoder) {
+                             private val passwordEncoder: VAuthenticatorPasswordEncoder
+) {
     fun store(aClientApp: ClientApplication, storeWithPassword: Boolean) {
         clientApplicationRepository.save(clientApplication(storeWithPassword, aClientApp))
     }

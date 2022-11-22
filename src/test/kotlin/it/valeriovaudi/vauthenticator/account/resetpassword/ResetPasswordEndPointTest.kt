@@ -31,11 +31,11 @@ internal class ResetPasswordEndPointTest {
     lateinit var sendResetPasswordMailChallenge: SendResetPasswordMailChallenge
 
     @MockK
-    lateinit var resetPasswordChallengeSent: ResetPasswordChallengeSent
+    lateinit var resetAccountPassword: ResetAccountPassword
 
     @BeforeEach
     internal fun setUp() {
-        mokMvc = MockMvcBuilders.standaloneSetup(ResetPasswordEndPoint(sendResetPasswordMailChallenge, resetPasswordChallengeSent))
+        mokMvc = MockMvcBuilders.standaloneSetup(ResetPasswordEndPoint(sendResetPasswordMailChallenge, resetAccountPassword))
                 .build()
     }
 
@@ -62,7 +62,7 @@ internal class ResetPasswordEndPointTest {
         val request = ResetPasswordRequest("A_NEW_PSWD")
         val ticket = "A_TICKET"
 
-        every { resetPasswordChallengeSent.resetPassword(VerificationTicket(ticket) , request) } just runs
+        every { resetAccountPassword.resetPasswordFromMailChallenge(VerificationTicket(ticket) , request) } just runs
         mokMvc.perform(put("/api/reset-password/{ticket}", ticket)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsBytes(request))

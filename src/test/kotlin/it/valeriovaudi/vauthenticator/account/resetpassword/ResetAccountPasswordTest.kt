@@ -10,6 +10,7 @@ import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import it.valeriovaudi.vauthenticator.account.tiket.InvalidTicketException
 import it.valeriovaudi.vauthenticator.account.tiket.TicketRepository
 import it.valeriovaudi.vauthenticator.account.tiket.VerificationTicket
+import it.valeriovaudi.vauthenticator.password.VAuthenticatorPasswordEncoder
 import it.valeriovaudi.vauthenticator.support.TicketFixture
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -18,9 +19,9 @@ import org.junit.jupiter.api.extension.ExtendWith
 import java.util.*
 
 @ExtendWith(MockKExtension::class)
-internal class ResetPasswordChallengeSentTest {
+internal class ResetAccountPasswordTest {
 
-    lateinit var underTest: ResetPasswordChallengeSent
+    lateinit var underTest: ResetAccountPassword
 
     @MockK
     lateinit var accountRepository: AccountRepository
@@ -28,9 +29,12 @@ internal class ResetPasswordChallengeSentTest {
     @MockK
     lateinit var ticketRepository: TicketRepository
 
+    @MockK
+    lateinit var vAuthenticatorPasswordEncoder: VAuthenticatorPasswordEncoder
+
     @BeforeEach
     internal fun setUp() {
-        underTest = ResetPasswordChallengeSent(accountRepository, ticketRepository)
+        underTest = ResetAccountPassword(accountRepository, vAuthenticatorPasswordEncoder, ticketRepository)
     }
 
     @Test
@@ -45,8 +49,9 @@ internal class ResetPasswordChallengeSentTest {
         every { ticketRepository.delete(verificationTicket) } just runs
         every { accountRepository.accountFor(email) } returns Optional.of(anAccount)
         every { accountRepository.save(anAccount.copy(password = "NEW_PSWD")) } just runs
+        every { vAuthenticatorPasswordEncoder.encode("NEW_PSWD") } returns "NEW_PSWD"
 
-        underTest.resetPassword(verificationTicket, ResetPasswordRequest("NEW_PSWD"))
+        underTest.resetPasswordFromMailChallenge(verificationTicket, ResetPasswordRequest("NEW_PSWD"))
     }
 
     @Test
@@ -55,6 +60,11 @@ internal class ResetPasswordChallengeSentTest {
 
         every { ticketRepository.loadFor(verificationTicket) } returns Optional.empty()
 
-        assertThrows(InvalidTicketException::class.java) { underTest.resetPassword(verificationTicket, ResetPasswordRequest("NEW_PSWD")) }
+        assertThrows(InvalidTicketException::class.java) {
+            underTest.resetPasswordFromMailChallenge(
+                verificationTicket,
+                ResetPasswordRequest("NEW_PSWD")
+            )
+        }
     }
 }

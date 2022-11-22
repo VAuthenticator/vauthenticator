@@ -26,7 +26,7 @@ class ClientApplicationEndPoint(
         @PathVariable("clientAppId") clientAppId: String,
         @RequestBody body: Map<String, String>
     ): ResponseEntity<Unit> {
-        storeClientApplication.resetPassword(ClientAppId(clientAppId), Secret(body.get("secret")!!))
+        storeClientApplication.resetPassword(ClientAppId(clientAppId), Secret(body["secret"]!!))
         return ResponseEntity.noContent().build()
     }
 

@@ -16,7 +16,7 @@ import javax.servlet.http.HttpSession
 @RestController
 @SessionAttributes("clientId")
 class ResetPasswordEndPoint(private val sendResetPasswordMailChallenge: SendResetPasswordMailChallenge,
-                            private val resetPasswordChallengeSent: ResetPasswordChallengeSent) {
+                            private val resetAccountPassword: ResetAccountPassword) {
 
     @PutMapping("/api/mail/{mail}/rest-password-challenge")
     fun sendVerifyMail(@PathVariable mail: String, session: HttpSession, principal: JwtAuthenticationToken?) =
@@ -32,7 +32,7 @@ class ResetPasswordEndPoint(private val sendResetPasswordMailChallenge: SendRese
 
     @PutMapping("/api/reset-password/{ticket}")
     fun resetPassword(@PathVariable ticket: String, @RequestBody request: ResetPasswordRequest): ResponseEntity<Unit> {
-        resetPasswordChallengeSent.resetPassword(VerificationTicket(ticket), request)
+        resetAccountPassword.resetPasswordFromMailChallenge(VerificationTicket(ticket), request)
         return noContent().build()
     }
 }
