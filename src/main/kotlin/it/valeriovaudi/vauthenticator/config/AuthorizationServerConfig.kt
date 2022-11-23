@@ -88,6 +88,8 @@ class AuthorizationServerConfig {
         http: HttpSecurity
     ): SecurityFilterChain {
         http.authorizeHttpRequests().requestMatchers("/actuator/**").permitAll()
+        http.csrf().disable().headers().frameOptions().sameOrigin()
+
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http)
         val userInfoEnhancer = UserInfoEnhancer(accountRepository)
 

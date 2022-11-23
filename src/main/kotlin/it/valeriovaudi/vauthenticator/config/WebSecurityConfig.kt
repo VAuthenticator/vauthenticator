@@ -26,6 +26,8 @@ const val adminRole = "VAUTHENTICATOR_ADMIN"
 private const val LOG_IN_URL_PAGE = "/login"
 private val WHITE_LIST = arrayOf(
     "/actuator/**",
+    "/sign-up",
+    "/reset-password/**",
     "/logout",
     "/oidc/logout",
     "/login",
