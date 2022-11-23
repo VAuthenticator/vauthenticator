@@ -7,6 +7,7 @@ import com.icegreen.greenmail.util.ServerSetupTest
 import it.valeriovaudi.vauthenticator.account.AccountTestFixture.anAccount
 import it.valeriovaudi.vauthenticator.document.DocumentRepository
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.BDDMockito.given
@@ -38,6 +39,7 @@ internal class JavaMailSenderServiceTest {
     private fun simpleMailMessageFactoryFor(mailType: MailType) = SimpleMailMessageFactory(mail, subject, mailType)
 
     @Test
+    @Disabled
     internal fun `when a welcome mail is sent`() {
         val account = anAccount().copy(firstName = "Jhon", lastName = "Miller")
         val mailTemplateContent = "hi {{ firstName }} {{ lastName }} your signup to vauthenticator succeeded".toByteArray()
@@ -58,6 +60,7 @@ internal class JavaMailSenderServiceTest {
 
 
     @Test
+    @Disabled
     internal fun `when a mail verification mail is sent`() {
         val account = anAccount().copy(firstName = "Jhon", lastName = "Miller")
         val mailTemplateContent = "hi {{ firstName }} {{ lastName }} in order to verify your mail click <a href='{{ mailVerificationTicket }}'>here</a>".toByteArray()
@@ -76,6 +79,7 @@ internal class JavaMailSenderServiceTest {
     }
 
     @Test
+    @Disabled
     internal fun `when a reset password mail is sent`() {
         val account = anAccount().copy(firstName = "Jhon", lastName = "Miller")
         val mailTemplateContent = "hi {{ firstName }} {{ lastName }} in order to reset your password click <a href='{{ resetPasswordLink }}'>here</a>".toByteArray()

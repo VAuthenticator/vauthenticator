@@ -12,7 +12,7 @@ import java.net.URI
 
 
 object DocumentUtils {
-    private const val documentBucket: String = "bucket"
+    private const val documentBucket: String = "document-bucket"
 
     val s3Client: S3Client = S3Client.builder()
             .credentialsProvider(

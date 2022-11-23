@@ -24,7 +24,7 @@
         <snakeyaml.version>1.32</snakeyaml.version>
 
         <io.mockk.version>1.13.2</io.mockk.version>
-        <aws.sdk.version>2.18.16</aws.sdk.version>
+        <aws.sdk.version>2.17.292</aws.sdk.version>
         <greenmail.version>1.6.11</greenmail.version>
         <oauth2-authorization-server.version>1.0.0</oauth2-authorization-server.version>
         <wiremock.version>2.27.2</wiremock.version>
@@ -58,6 +58,13 @@
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.icegreen/greenmail -->
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>1.4.7</version>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>com.icegreen</groupId>
             <artifactId>greenmail</artifactId>
