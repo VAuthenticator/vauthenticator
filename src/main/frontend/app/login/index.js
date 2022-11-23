@@ -123,7 +123,9 @@ const ResetPasswordChallengeSender = (props) => {
 
                     <Separator/>
 
-                    <FormButton type="button" label="Reset passwrd" onClickHandler={sentResetPasswordChallenge(email)}/>
+                    <FormButton type="button" label="Reset passwrd" onClickHandler={() => {
+                        sentResetPasswordChallenge(email)
+                    }}/>
 
                 </Box>
 
