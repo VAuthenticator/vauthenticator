@@ -53,6 +53,12 @@ jobs:
           npm install --legacy-peer-deps
           npm run-script build
 
+      - name: load test scenario
+        run: |
+          cd src/test/resources
+          aws s3api create-bucket --bucket bucket --endpoint http://localhost:4566 --region us-east-1
+          aws s3 cp  index.html s3://bucket/mail/templates/welcome.html --endpoint http://localhost:4566 --region us-east-1
+
       - name: Build
         run: |
           mvn install -q
