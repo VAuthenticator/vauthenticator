@@ -22,7 +22,6 @@ import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.oauth2.jwt.JwtEncoder
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder
@@ -88,6 +87,7 @@ class AuthorizationServerConfig {
         redisTemplate: RedisTemplate<String, String?>,
         http: HttpSecurity
     ): SecurityFilterChain {
+        http.authorizeHttpRequests().requestMatchers("/actuator/**").permitAll()
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http)
         val userInfoEnhancer = UserInfoEnhancer(accountRepository)
 
@@ -108,9 +108,6 @@ class AuthorizationServerConfig {
                 )
             )
         }
-        val endpointsMatcher = authorizationServerConfigurer.endpointsMatcher
-
-        http.csrf { csrf: CsrfConfigurer<HttpSecurity?> -> csrf.ignoringRequestMatchers(endpointsMatcher) }
 
         return http.exceptionHandling { it.authenticationEntryPoint(LoginUrlAuthenticationEntryPoint("/login")) }
             .oauth2ResourceServer().jwt()
