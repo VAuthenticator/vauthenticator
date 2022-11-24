@@ -87,7 +87,7 @@ class AuthorizationServerConfig {
         redisTemplate: RedisTemplate<String, String?>,
         http: HttpSecurity
     ): SecurityFilterChain {
-        http.authorizeHttpRequests().requestMatchers("/actuator/**", "/session/**", "check_session").permitAll()
+        http.authorizeHttpRequests().requestMatchers("/actuator/**", "/session/**", "/check_session").permitAll()
 
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http)
         http.csrf().disable().headers().frameOptions().disable()

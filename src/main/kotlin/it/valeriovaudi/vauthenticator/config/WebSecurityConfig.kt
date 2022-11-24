@@ -34,8 +34,7 @@ private val WHITE_LIST = arrayOf(
     "/oidc/logout",
     "/login",
     "/webjars/**",
-    "/asset/**",
-    "/api/**"
+    "/asset/**"
 )
 @EnableWebSecurity
 @Configuration(proxyBeanMethods = false)
