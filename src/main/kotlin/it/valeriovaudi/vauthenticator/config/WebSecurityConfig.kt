@@ -27,6 +27,18 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector
 const val adminRole = "VAUTHENTICATOR_ADMIN"
 
 private const val LOG_IN_URL_PAGE = "/login"
+private val WHITE_LIST = arrayOf(
+    "/check_session",
+    "/session/**",
+    "/actuator/**",
+    "/sign-up",
+    "/reset-password/**",
+    "/logout",
+    "/oidc/logout",
+    "/login",
+    "/webjars/**",
+    "/asset/**"
+)
 
 @EnableWebSecurity
 @Configuration(proxyBeanMethods = false)
@@ -54,10 +66,11 @@ class WebSecurityConfig(
 
         http.userDetailsService(accountUserDetailsService)
         http.oauth2ResourceServer().jwt()
-        http.securityMatcher("/login","/api/**")
+        http.securityMatcher(*WHITE_LIST, "/api/**")
             .authorizeHttpRequests { authz ->
             authz
-                .requestMatchers(MvcRequestMatcher(introspector, "/api/accounts")).permitAll()
+                .requestMatchers( *WHITE_LIST).permitAll()
+                .requestMatchers( "/api/accounts").permitAll()
                 .requestMatchers("/api/sign-up/mail/{mail}/welcome").hasAnyAuthority(Scope.WELCOME.content)
                 .requestMatchers("/api/mail/{mail}/verify-challenge").hasAnyAuthority(Scope.MAIL_VERIFY.content)
                 .requestMatchers("/api/mail/{mail}/rest-password-challenge").permitAll()
