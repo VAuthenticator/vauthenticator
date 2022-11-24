@@ -19,9 +19,6 @@ import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter
 import org.springframework.security.web.SecurityFilterChain
-import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher
-import org.springframework.security.web.util.matcher.RequestMatcher
-import org.springframework.web.servlet.handler.HandlerMappingIntrospector
 
 
 const val adminRole = "VAUTHENTICATOR_ADMIN"

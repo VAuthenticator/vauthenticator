@@ -7,7 +7,6 @@ import it.valeriovaudi.vauthenticator.keypair.KeyRepository
 import it.valeriovaudi.vauthenticator.keypair.KeysJWKSource
 import it.valeriovaudi.vauthenticator.oauth2.authorizationservice.RedisOAuth2AuthorizationService
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.Scope
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.StoreClientApplication
 import it.valeriovaudi.vauthenticator.oauth2.token.OAuth2TokenEnhancer
 import it.valeriovaudi.vauthenticator.openid.connect.sessionmanagement.SessionManagementFactory
@@ -23,8 +22,6 @@ import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.oauth2.jwt.JwtEncoder
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder
@@ -35,12 +32,9 @@ import org.springframework.security.oauth2.server.authorization.config.annotatio
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter
 import org.springframework.security.web.DefaultRedirectStrategy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint
-import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher
-import org.springframework.web.servlet.handler.HandlerMappingIntrospector
 
 @Configuration(proxyBeanMethods = false)
 class AuthorizationServerConfig {
