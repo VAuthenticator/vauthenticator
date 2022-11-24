@@ -15,12 +15,8 @@ internal class DynamoDbRoleRepositoryTest {
     @BeforeEach
     fun setUp() {
         roleRepository = DynamoDbRoleRepository(dynamoDbClient, dynamoRoleTableName)
-        initRoleTests(dynamoDbClient)
-    }
-
-    @AfterEach
-    fun tearDown() {
         resetDatabase()
+        initRoleTests(dynamoDbClient)
     }
 
     @Test

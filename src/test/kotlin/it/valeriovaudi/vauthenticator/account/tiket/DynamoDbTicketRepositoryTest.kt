@@ -3,7 +3,7 @@ package it.valeriovaudi.vauthenticator.account.tiket
 import io.mockk.junit5.MockKExtension
 import it.valeriovaudi.vauthenticator.extentions.asDynamoAttribute
 import it.valeriovaudi.vauthenticator.support.DatabaseUtils
-import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoMailVerificationTicketTableName
+import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoTicketTableName
 import it.valeriovaudi.vauthenticator.support.DatabaseUtils.resetDatabase
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -24,7 +24,7 @@ internal class DynamoDbTicketRepositoryTest {
 
     @BeforeEach
     internal fun setUp() {
-        underTest = DynamoDbTicketRepository(DatabaseUtils.dynamoDbClient, dynamoMailVerificationTicketTableName)
+        underTest = DynamoDbTicketRepository(DatabaseUtils.dynamoDbClient, dynamoTicketTableName)
         resetDatabase()
     }
 
@@ -40,7 +40,7 @@ internal class DynamoDbTicketRepositoryTest {
 
         val item = DatabaseUtils.dynamoDbClient.getItem(
                 GetItemRequest.builder()
-                        .tableName(dynamoMailVerificationTicketTableName)
+                        .tableName(dynamoTicketTableName)
                         .key(mapOf(
                                 "ticket" to ticketGenerator.invoke().asDynamoAttribute()
                         ))

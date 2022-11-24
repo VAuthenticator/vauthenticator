@@ -1,7 +1,6 @@
 package it.valeriovaudi.vauthenticator.password
 
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.boot.context.properties.ConstructorBinding
 
 interface PasswordPolicy {
 
@@ -42,7 +41,6 @@ class CompositePasswordPolicy(private val passwordPolicies: Set<PasswordPolicy>)
     }
 }
 
-@ConstructorBinding
 @ConfigurationProperties(prefix = "password.policy")
 data class PasswordPolicyConfigProp(
     val passwordMinSize: Int = 0,

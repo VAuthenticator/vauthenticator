@@ -67,25 +67,30 @@ const SignUpPage = () => {
                                     value={lastName || ""}/>
 
                 <FormDatePicker
-                    value={moment(birthDate, FormDateFormatPattern)}
+                    value={birthDate}
+                    pattern={ApiDateFormatPattern}
                     onClickHandler={(value) => {
+                        console.log(value)
                         let date = "";
                         try {
                             date = value.format(ApiDateFormatPattern);
+                            console.log("date: " + date)
+
+                            setBirthDate(date)
                         } catch (e) {
+                            console.error(e)
                         }
-                        setBirthDate(date)
                     }}
                     label="Birth Date"/>
 
 
                 <FormInputMask id="phone"
-                                    label="Phone"
-                                    required={true}
-                                    handler={(value) => {
-                                        setPhone(value.target.value)
-                                    }}
-                                    value={phone || ""}/>
+                               label="Phone"
+                               required={true}
+                               handler={(value) => {
+                                   setPhone(value.target.value)
+                               }}
+                               value={phone || ""}/>
 
                 <Grid style={{marginTop: '10px'}}>
                     <Divider/>

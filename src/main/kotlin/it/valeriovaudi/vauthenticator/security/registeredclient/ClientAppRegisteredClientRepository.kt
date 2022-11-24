@@ -7,7 +7,7 @@ import org.springframework.security.oauth2.core.AuthorizationGrantType
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository
-import org.springframework.security.oauth2.server.authorization.config.TokenSettings
+import org.springframework.security.oauth2.server.authorization.settings.TokenSettings
 import java.time.Duration
 
 class ClientAppRegisteredClientRepository(
@@ -66,8 +66,8 @@ class ClientAppRegisteredClientRepository(
                 .redirectUri(clientApp.webServerRedirectUri.content)
                 .tokenSettings(
                     TokenSettings.builder()
-                        .accessTokenTimeToLive(Duration.ofSeconds(clientApp.accessTokenValidity.content.toLong()))
-                        .refreshTokenTimeToLive(Duration.ofSeconds(clientApp.refreshTokenValidity.content.toLong()))
+                        .accessTokenTimeToLive(Duration.ofSeconds(clientApp.accessTokenValidity.content))
+                        .refreshTokenTimeToLive(Duration.ofSeconds(clientApp.refreshTokenValidity.content))
                         .reuseRefreshTokens(true)
                         .build()
                 )
