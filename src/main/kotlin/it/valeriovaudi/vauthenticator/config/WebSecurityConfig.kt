@@ -19,6 +19,9 @@ import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher
+import org.springframework.security.web.util.matcher.RequestMatcher
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector
 
 
 const val adminRole = "VAUTHENTICATOR_ADMIN"
@@ -34,8 +37,10 @@ private val WHITE_LIST = arrayOf(
     "/oidc/logout",
     "/login",
     "/webjars/**",
-    "/asset/**"
+    "/asset/**",
+    "/api/**"
 )
+
 @EnableWebSecurity
 @Configuration(proxyBeanMethods = false)
 class WebSecurityConfig(
@@ -45,6 +50,7 @@ class WebSecurityConfig(
 
     @Bean
     fun defaultSecurityFilterChain(
+        introspector: HandlerMappingIntrospector,
         http: HttpSecurity,
         accountUserDetailsService: AccountUserDetailsService
     ): SecurityFilterChain {
@@ -62,9 +68,10 @@ class WebSecurityConfig(
         http.authorizeHttpRequests { authz ->
             authz
                 .requestMatchers(*WHITE_LIST).permitAll()
-                .requestMatchers("/api/accounts").permitAll()
-                .requestMatchers("/api/sign-up/mail/{mail}/welcome")
-                .hasAnyAuthority(Scope.WELCOME.content)
+                .requestMatchers(MvcRequestMatcher(introspector, "/api/accounts")).permitAll()
+                .requestMatchers(
+                    MvcRequestMatcher.Builder(introspector).servletPath("/").pattern("/api/sign-up/mail/{mail}/welcome")
+                ).hasAnyAuthority(Scope.WELCOME.content)
                 .requestMatchers("/api/mail/{mail}/verify-challenge").hasAnyAuthority(Scope.MAIL_VERIFY.content)
                 .requestMatchers("/api/mail/{mail}/rest-password-challenge").permitAll()
                 .requestMatchers("/api/reset-password/{ticket}").permitAll()
@@ -76,12 +83,13 @@ class WebSecurityConfig(
         }
 
         http.userDetailsService(accountUserDetailsService)
-        http.oauth2ResourceServer().jwt().jwtAuthenticationConverter(jwtAuthenticationConverter())
+        http.oauth2ResourceServer().jwt()
 
         return http.build()
     }
 
-    fun jwtAuthenticationConverter(): JwtAuthenticationConverter? {
+    @Bean
+    fun jwtAuthenticationConverter(): JwtAuthenticationConverter {
         val jwtAuthenticationConverter = JwtAuthenticationConverter()
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter { jwt: Jwt ->
             val scope = jwt.getClaim<List<String>>("scope")

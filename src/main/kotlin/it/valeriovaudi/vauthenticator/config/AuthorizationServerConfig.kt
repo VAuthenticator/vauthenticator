@@ -7,6 +7,7 @@ import it.valeriovaudi.vauthenticator.keypair.KeyRepository
 import it.valeriovaudi.vauthenticator.keypair.KeysJWKSource
 import it.valeriovaudi.vauthenticator.oauth2.authorizationservice.RedisOAuth2AuthorizationService
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
+import it.valeriovaudi.vauthenticator.oauth2.clientapp.Scope
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.StoreClientApplication
 import it.valeriovaudi.vauthenticator.oauth2.token.OAuth2TokenEnhancer
 import it.valeriovaudi.vauthenticator.openid.connect.sessionmanagement.SessionManagementFactory
@@ -22,6 +23,8 @@ import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.oauth2.jwt.JwtEncoder
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder
@@ -32,9 +35,12 @@ import org.springframework.security.oauth2.server.authorization.config.annotatio
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter
 import org.springframework.security.web.DefaultRedirectStrategy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector
 
 @Configuration(proxyBeanMethods = false)
 class AuthorizationServerConfig {
@@ -83,11 +89,16 @@ class AuthorizationServerConfig {
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     fun authorizationServerSecurityFilterChain(
+        introspector: HandlerMappingIntrospector,
         providerSettings: AuthorizationServerSettings,
         redisTemplate: RedisTemplate<String, String?>,
         http: HttpSecurity
     ): SecurityFilterChain {
         http.authorizeHttpRequests().requestMatchers("/actuator/**", "/session/**", "/check_session").permitAll()
+        http.authorizeHttpRequests().requestMatchers(
+            MvcRequestMatcher.Builder(introspector).servletPath("/").pattern("/api/sign-up/mail/{mail}/welcome")
+        ).hasAnyAuthority(Scope.WELCOME.content)
+
 
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http)
         http.csrf().disable().headers().frameOptions().disable()
@@ -111,11 +122,10 @@ class AuthorizationServerConfig {
                 )
             )
         }
-
-        return http.exceptionHandling { it.authenticationEntryPoint(LoginUrlAuthenticationEntryPoint("/login")) }
+        http.exceptionHandling { it.authenticationEntryPoint(LoginUrlAuthenticationEntryPoint("/login")) }
             .oauth2ResourceServer().jwt()
-            .and().and()
-            .build()
+
+        return http.build()
     }
 
 
