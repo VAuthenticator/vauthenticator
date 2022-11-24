@@ -47,8 +47,9 @@ class WebSecurityConfig(
         http: HttpSecurity,
         accountUserDetailsService: AccountUserDetailsService
     ): SecurityFilterChain {
-        http.csrf().disable()
-            .formLogin()
+        http.csrf().disable().headers().frameOptions().sameOrigin()
+
+        http.formLogin()
             .loginProcessingUrl(LOG_IN_URL_PAGE)
             .loginPage(LOG_IN_URL_PAGE)
             .permitAll()
@@ -76,7 +77,6 @@ class WebSecurityConfig(
         http.userDetailsService(accountUserDetailsService)
         http.oauth2ResourceServer().jwt().jwtAuthenticationConverter(jwtAuthenticationConverter())
 
-        http.csrf().disable().headers().frameOptions().sameOrigin()
         return http.build()
     }
 
