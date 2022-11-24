@@ -54,7 +54,7 @@ class WebSecurityConfig(
 
         http.userDetailsService(accountUserDetailsService)
         http.oauth2ResourceServer().jwt()
-        http.securityMatcher("/api/**")
+        http.securityMatcher("/login","/api/**")
             .authorizeHttpRequests { authz ->
             authz
                 .requestMatchers(MvcRequestMatcher(introspector, "/api/accounts")).permitAll()
