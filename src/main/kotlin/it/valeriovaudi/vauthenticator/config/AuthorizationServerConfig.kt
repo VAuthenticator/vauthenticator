@@ -88,6 +88,7 @@ class AuthorizationServerConfig {
         http: HttpSecurity
     ): SecurityFilterChain {
         http.authorizeHttpRequests().requestMatchers("/actuator/**").permitAll()
+        http.authorizeHttpRequests().requestMatchers("/session/**").permitAll()
 
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http)
         http.csrf().disable().headers().frameOptions().disable()
