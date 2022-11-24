@@ -88,9 +88,10 @@ class AuthorizationServerConfig {
         http: HttpSecurity
     ): SecurityFilterChain {
         http.authorizeHttpRequests().requestMatchers("/actuator/**").permitAll()
-        http.csrf().disable().headers().frameOptions().sameOrigin()
 
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http)
+        http.csrf().disable().headers().frameOptions().sameOrigin()
+
         val userInfoEnhancer = UserInfoEnhancer(accountRepository)
 
         val authorizationServerConfigurer = http.getConfigurer(OAuth2AuthorizationServerConfigurer::class.java)
