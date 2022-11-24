@@ -42,7 +42,6 @@ class WebSecurityConfig(
 
     @Bean
     fun defaultSecurityFilterChain(
-        introspector: HandlerMappingIntrospector,
         http: HttpSecurity,
         accountUserDetailsService: AccountUserDetailsService
     ): SecurityFilterChain {

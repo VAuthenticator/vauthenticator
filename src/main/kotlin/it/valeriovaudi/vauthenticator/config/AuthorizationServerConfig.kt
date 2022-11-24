@@ -89,7 +89,6 @@ class AuthorizationServerConfig {
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     fun authorizationServerSecurityFilterChain(
-        introspector: HandlerMappingIntrospector,
         providerSettings: AuthorizationServerSettings,
         redisTemplate: RedisTemplate<String, String?>,
         http: HttpSecurity
