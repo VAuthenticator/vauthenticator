@@ -47,7 +47,7 @@ class WebSecurityConfig(
         http: HttpSecurity,
         accountUserDetailsService: AccountUserDetailsService
     ): SecurityFilterChain {
-        http.csrf().disable().headers().frameOptions().sameOrigin()
+        http.csrf().disable().headers().frameOptions().disable()
 
         http.formLogin()
             .loginProcessingUrl(LOG_IN_URL_PAGE)
