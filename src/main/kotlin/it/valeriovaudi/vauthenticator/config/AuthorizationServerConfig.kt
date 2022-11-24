@@ -94,12 +94,6 @@ class AuthorizationServerConfig {
         redisTemplate: RedisTemplate<String, String?>,
         http: HttpSecurity
     ): SecurityFilterChain {
-        http.authorizeHttpRequests().requestMatchers("/actuator/**", "/session/**", "/check_session").permitAll()
-        http.authorizeHttpRequests().requestMatchers(
-            MvcRequestMatcher.Builder(introspector).servletPath("/").pattern("/api/sign-up/mail/{mail}/welcome")
-        ).hasAnyAuthority(Scope.WELCOME.content)
-
-
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http)
         http.csrf().disable().headers().frameOptions().disable()
 

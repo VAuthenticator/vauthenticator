@@ -27,19 +27,6 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector
 const val adminRole = "VAUTHENTICATOR_ADMIN"
 
 private const val LOG_IN_URL_PAGE = "/login"
-private val WHITE_LIST = arrayOf(
-    "/check_session",
-    "/session/**",
-    "/actuator/**",
-    "/sign-up",
-    "/reset-password/**",
-    "/logout",
-    "/oidc/logout",
-    "/login",
-    "/webjars/**",
-    "/asset/**",
-    "/api/**"
-)
 
 @EnableWebSecurity
 @Configuration(proxyBeanMethods = false)
@@ -65,13 +52,13 @@ class WebSecurityConfig(
             .addLogoutHandler(ClearSessionStateLogoutHandler(SessionManagementFactory(providerSettings), redisTemplate))
             .invalidateHttpSession(true)
 
-        http.authorizeHttpRequests { authz ->
+        http.userDetailsService(accountUserDetailsService)
+        http.oauth2ResourceServer().jwt()
+        http.securityMatcher("/api/**")
+            .authorizeHttpRequests { authz ->
             authz
-                .requestMatchers(*WHITE_LIST).permitAll()
                 .requestMatchers(MvcRequestMatcher(introspector, "/api/accounts")).permitAll()
-                .requestMatchers(
-                    MvcRequestMatcher.Builder(introspector).servletPath("/").pattern("/api/sign-up/mail/{mail}/welcome")
-                ).hasAnyAuthority(Scope.WELCOME.content)
+                .requestMatchers("/api/sign-up/mail/{mail}/welcome").hasAnyAuthority(Scope.WELCOME.content)
                 .requestMatchers("/api/mail/{mail}/verify-challenge").hasAnyAuthority(Scope.MAIL_VERIFY.content)
                 .requestMatchers("/api/mail/{mail}/rest-password-challenge").permitAll()
                 .requestMatchers("/api/reset-password/{ticket}").permitAll()
@@ -81,9 +68,6 @@ class WebSecurityConfig(
                 .requestMatchers(HttpMethod.DELETE, "/api/keys").hasAnyAuthority(Scope.KEY_EDITOR.content)
                 .requestMatchers("/api/**").hasAnyAuthority(adminRole)
         }
-
-        http.userDetailsService(accountUserDetailsService)
-        http.oauth2ResourceServer().jwt()
 
         return http.build()
     }
