@@ -89,7 +89,6 @@ class AuthorizationServerConfig {
     ): SecurityFilterChain {
         http.authorizeHttpRequests().requestMatchers("/actuator/**").permitAll()
 
-        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http)
         http.csrf().disable().headers().frameOptions().sameOrigin()
 
         val userInfoEnhancer = UserInfoEnhancer(accountRepository)
@@ -112,10 +111,12 @@ class AuthorizationServerConfig {
             )
         }
 
-        return http.exceptionHandling { it.authenticationEntryPoint(LoginUrlAuthenticationEntryPoint("/login")) }
+        http.exceptionHandling { it.authenticationEntryPoint(LoginUrlAuthenticationEntryPoint("/login")) }
             .oauth2ResourceServer().jwt()
-            .and().and()
-            .build()
+
+        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http)
+
+        return http.build()
     }
 
 
