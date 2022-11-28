@@ -7,6 +7,8 @@ import it.valeriovaudi.vauthenticator.keypair.KeyRepository
 import it.valeriovaudi.vauthenticator.keypair.KeysJWKSource
 import it.valeriovaudi.vauthenticator.oauth2.authorizationservice.RedisOAuth2AuthorizationService
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
+import it.valeriovaudi.vauthenticator.oauth2.clientapp.Scope.Companion.AVAILABLE_SCOPES
+import it.valeriovaudi.vauthenticator.oauth2.clientapp.Scope.Companion.OPEN_ID
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.StoreClientApplication
 import it.valeriovaudi.vauthenticator.oauth2.token.OAuth2TokenEnhancer
 import it.valeriovaudi.vauthenticator.openid.connect.sessionmanagement.SessionManagementFactory
@@ -98,6 +100,12 @@ class AuthorizationServerConfig {
             configurer.userInfoEndpoint { customizer ->
                 customizer.userInfoMapper { context ->
                     userInfoEnhancer.oidcUserInfoFrom(context)
+                }
+            }.providerConfigurationEndpoint { customizer ->
+                customizer.providerConfigurationCustomizer { providerConfiguration ->
+                    AVAILABLE_SCOPES
+                        .filter { it != OPEN_ID }
+                        .forEach { providerConfiguration.scope(it.content) }
                 }
             }
         }.authorizationEndpoint {
