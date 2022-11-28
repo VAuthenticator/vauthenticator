@@ -64,6 +64,19 @@ data class Scope(val content: String) {
 
         val KEY_READER = Scope("admin:key-reader")
         val KEY_EDITOR = Scope("admin:key-editor")
+
+        val AVAILABLE_SCOPES = listOf(
+            Scope("openid"),
+            Scope("profile"),
+            Scope("email"),
+            Scope("admin:signup"),
+            Scope("admin:welcome"),
+            Scope("admin:mail-verify"),
+            Scope("admin:reset-password"),
+            Scope("admin:key-reader"),
+            Scope("admin:key-editor")
+        )
+
     }
 }
 
