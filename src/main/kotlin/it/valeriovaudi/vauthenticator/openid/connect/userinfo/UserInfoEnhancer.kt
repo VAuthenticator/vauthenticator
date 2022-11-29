@@ -11,19 +11,19 @@ import java.time.ZoneOffset
 open class UserInfoEnhancer(private val accountRepository: AccountRepository) {
 
     open fun oidcUserInfoFrom(principal: OidcUserInfoAuthenticationContext): OidcUserInfo =
-            accountRepository.accountFor(userName(principal))
-                    .map { account ->
-                        val claims = mutableMapOf<String, Any>()
+        accountRepository.accountFor(userName(principal))
+            .map { account ->
+                val claims = mutableMapOf<String, Any>()
 
-                        claims["username"] = userName(principal)
-                        claims["authorities"] = authorities(principal)
+                claims["username"] = userName(principal)
+                claims["authorities"] = authorities(principal)
 
-                        OpenIdClaimsProvider(account, claims)
-                        EmailClaimsProvider(account, claims)
-                        ProfileClaimsProvider(account, claims)
-                        OidcUserInfo(claims)
-                    }
-                    .orElseThrow()
+                OpenIdClaimsProvider(account, claims)
+                EmailClaimsProvider(account, claims)
+                ProfileClaimsProvider(account, claims)
+                OidcUserInfo(claims)
+            }
+            .orElseThrow()
 
 }
 
@@ -47,9 +47,14 @@ object ProfileClaimsProvider : ClaimsProvider {
         claims["family_name"] = account.lastName
         claims["middle_name"] = ""
         claims["updated_at"] = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
-        claims["phone_number"] = account.phone.formattedPhone()
-        claims["phone_number_verified"] = true
-        claims["birthdate"] = account.birthDate.iso8601FormattedDate()
+
+        account.phone.ifPresent {
+            claims["phone_number"] = it.formattedPhone()
+            claims["phone_number_verified"] = true
+        }
+        account.birthDate.ifPresent {
+            claims["birthdate"] = it.iso8601FormattedDate()
+        }
         return claims
     }
 
@@ -65,7 +70,7 @@ object OpenIdClaimsProvider : ClaimsProvider {
 
 
 fun authorities(principal: OidcUserInfoAuthenticationContext) =
-        principal.authorization.accessToken.claims!!["authorities"] as List<String>
+    principal.authorization.accessToken.claims!!["authorities"] as List<String>
 
 fun userName(principal: OidcUserInfoAuthenticationContext) =
-        principal.authorization.accessToken.claims!!["user_name"] as String
+    principal.authorization.accessToken.claims!!["user_name"] as String

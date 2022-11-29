@@ -12,8 +12,8 @@ object AccountTestFixture {
             email = "email@domain.com",
             firstName = "A First Name",
             lastName = "A Last Name",
-            birthDate = Date.nullValue(),
-            phone = Phone.nullValue()
+            birthDate = Date.empty(),
+            phone = Phone.empty()
     )
 
     fun anAccount(roles:List<Role>) = Account(
@@ -24,7 +24,7 @@ object AccountTestFixture {
             email = "email@domain.com",
             firstName = "A First Name",
             lastName = "A Last Name",
-            birthDate = Date.nullValue(),
-            phone = Phone.nullValue()
+            birthDate = Date.empty(),
+            phone = Phone.empty()
     )
 }

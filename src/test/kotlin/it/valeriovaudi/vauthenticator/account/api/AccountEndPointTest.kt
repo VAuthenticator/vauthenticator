@@ -2,7 +2,6 @@ package it.valeriovaudi.vauthenticator.account.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import it.valeriovaudi.vauthenticator.account.AccountTestFixture
-import it.valeriovaudi.vauthenticator.account.Date
 import it.valeriovaudi.vauthenticator.account.Phone
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import it.valeriovaudi.vauthenticator.account.signup.SignUpUseCase
@@ -44,7 +43,7 @@ internal class AccountEndPointTest {
 
     @Test
     internal fun `sign up a new account`() {
-        val representation = FinalAccountRepresentation(email = "email@domain.com", password = "secret", firstName = "A First Name", lastName = "A Last Name", authorities = emptyList(), birthDate = Date.nullValue().formattedDate(), phone = Phone.nullValue().formattedPhone())
+        val representation = FinalAccountRepresentation(email = "email@domain.com", password = "secret", firstName = "A First Name", lastName = "A Last Name", authorities = emptyList(), birthDate = "", phone = Phone.nullValue().formattedPhone())
         val masterAccount = AccountTestFixture.anAccount().copy(accountNonExpired = true, emailVerified = false, accountNonLocked = false, credentialsNonExpired = true, enabled = false,)
 
         val clientAppId = "A_CLIENT_APP_ID"
@@ -64,7 +63,7 @@ internal class AccountEndPointTest {
     }
     @Test
     internal fun `sign up a new account like form ui with client app id in the session`() {
-        val representation = FinalAccountRepresentation(email = "email@domain.com", password = "secret", firstName = "A First Name", lastName = "A Last Name", authorities = emptyList(), birthDate = Date.nullValue().formattedDate(), phone = Phone.nullValue().formattedPhone())
+        val representation = FinalAccountRepresentation(email = "email@domain.com", password = "secret", firstName = "A First Name", lastName = "A Last Name", authorities = emptyList(), birthDate = "", phone = Phone.nullValue().formattedPhone())
         val masterAccount = AccountTestFixture.anAccount().copy(accountNonExpired = true, emailVerified = false, accountNonLocked = false, credentialsNonExpired = true, enabled = false,)
 
         val clientAppId = "A_CLIENT_APP_ID"
@@ -85,7 +84,7 @@ internal class AccountEndPointTest {
 
     @Test
     internal fun `update account details`() {
-        val representation = FinalAccountRepresentation(email = "email@domain.com", password = "secret", firstName = "A First Name", lastName = "A Last Name", authorities = emptyList(), birthDate = Date.nullValue().formattedDate(), phone = Phone.nullValue().formattedPhone())
+        val representation = FinalAccountRepresentation(email = "email@domain.com", password = "secret", firstName = "A First Name", lastName = "A Last Name", authorities = emptyList(), birthDate = "", phone = Phone.nullValue().formattedPhone())
         val masterAccount = AccountTestFixture.anAccount().copy(accountNonExpired = true, emailVerified = true, accountNonLocked = true, credentialsNonExpired = true, enabled = true,)
         val clientAppId = "A_CLIENT_APP_ID"
 
