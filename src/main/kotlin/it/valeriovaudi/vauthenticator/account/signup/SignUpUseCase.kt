@@ -13,7 +13,7 @@ import it.valeriovaudi.vauthenticator.password.VAuthenticatorPasswordEncoder
 open class SignUpUseCase(
         private val clientAccountRepository: ClientApplicationRepository,
         private val accountRepository: AccountRepository,
-        private val welcomeMailSender: MailSenderService,
+        private val welcomeMailSender: MailSenderService, //todo maybe replaced by say welcome usecase
         private val sendVerifyMailChallenge: SendVerifyMailChallenge,
         private val vAuthenticatorPasswordEncoder: VAuthenticatorPasswordEncoder
 ) {
