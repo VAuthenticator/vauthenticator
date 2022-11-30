@@ -22,8 +22,8 @@ internal class SimpleMailMessageFactoryTest {
                         "email" to account.email,
                         "firstName" to account.firstName,
                         "lastName" to account.lastName,
-                        "birthDate" to account.birthDate.iso8601FormattedDate(),
-                        "phone" to account.phone.formattedPhone(),
+                        "birthDate" to "",
+                        "phone" to "",
                         "key" to "value"
                 )
         )

@@ -40,7 +40,7 @@ object DynamoAccountConverter {
             "emailVerified" to account.emailVerified.asDynamoAttribute(),
             "firstName" to account.firstName.asDynamoAttribute(),
             "lastName" to account.lastName.asDynamoAttribute(),
-            "birthDate" to account.birthDate.asDynamoAttribute(),
-            "phone" to account.phone.asDynamoAttribute()
+            "birthDate" to account.birthDate.map { it.asDynamoAttribute() }.orElse("".asDynamoAttribute()),
+            "phone" to account.phone.map {it.asDynamoAttribute()}.orElse("".asDynamoAttribute())
         )
 }

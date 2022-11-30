@@ -20,24 +20,26 @@ class SimpleMailMessageFactory(val from: String, val subject: String, val mailTy
 
     override fun makeMailMessageFor(account: Account, requestContext: MailContext): MailMessage {
         val context = mapOf(
-                "enabled" to account.enabled,
-                "username" to account.username,
-                "authorities" to account.authorities,
-                "email" to account.email,
-                "firstName" to account.firstName,
-                "lastName" to account.lastName,
-                "birthDate" to account.birthDate.iso8601FormattedDate(),
-                "phone" to account.phone.formattedPhone(),
+            "enabled" to account.enabled,
+            "username" to account.username,
+            "authorities" to account.authorities,
+            "email" to account.email,
+            "firstName" to account.firstName,
+            "lastName" to account.lastName,
+            "birthDate" to account.birthDate.map { it.iso8601FormattedDate() }.orElse(""),
+            "phone" to account.phone.map { it.formattedPhone() }.orElse("")
         ) + requestContext
         return MailMessage(account.email, from, subject, mailType, context)
     }
 
 }
 
-class JavaMailSenderService(private val documentRepository: DocumentRepository,
-                            private val mailSender: JavaMailSender,
-                            private val templateResolver: MailTemplateResolver,
-                            private val mailMessageFactory: MailMessageFactory) : MailSenderService {
+class JavaMailSenderService(
+    private val documentRepository: DocumentRepository,
+    private val mailSender: JavaMailSender,
+    private val templateResolver: MailTemplateResolver,
+    private val mailMessageFactory: MailMessageFactory
+) : MailSenderService {
 
     override fun sendFor(account: Account, mailContext: MailContext) {
         val mailMessage = mailMessageFactory.makeMailMessageFor(account, mailContext)

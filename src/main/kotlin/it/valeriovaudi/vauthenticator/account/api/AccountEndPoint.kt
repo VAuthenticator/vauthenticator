@@ -80,7 +80,7 @@ class AccountEndPoint(
 }
 
 
-data class FinalAccountRepresentation(
+data class   FinalAccountRepresentation(
         var email: String = "",
         var password: String = "",
         var firstName: String,

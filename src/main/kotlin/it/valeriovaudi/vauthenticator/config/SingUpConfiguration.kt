@@ -3,6 +3,7 @@ package it.valeriovaudi.vauthenticator.config
 import it.valeriovaudi.vauthenticator.account.mailverification.SendVerifyMailChallenge
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import it.valeriovaudi.vauthenticator.account.signup.SignUpUseCase
+import it.valeriovaudi.vauthenticator.account.welcome.SayWelcome
 import it.valeriovaudi.vauthenticator.mail.MailSenderService
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
 import it.valeriovaudi.vauthenticator.password.VAuthenticatorPasswordEncoder
@@ -13,12 +14,20 @@ import org.springframework.context.annotation.Configuration
 class SingUpConfiguration {
 
     @Bean
-    fun signUpUseCase(clientAccountRepository: ClientApplicationRepository,
-                      accountRepository: AccountRepository,
-                      welcomeMailSender: MailSenderService,
-                      sendVerifyMailChallenge: SendVerifyMailChallenge,
-                      vAuthenticatorPasswordEncoder: VAuthenticatorPasswordEncoder
+    fun signUpUseCase(
+        clientAccountRepository: ClientApplicationRepository,
+        accountRepository: AccountRepository,
+        welcomeMailSender: MailSenderService,
+        sendVerifyMailChallenge: SendVerifyMailChallenge,
+        vAuthenticatorPasswordEncoder: VAuthenticatorPasswordEncoder,
+        sayWelcome: SayWelcome,
     ): SignUpUseCase =
-            SignUpUseCase(clientAccountRepository, accountRepository, welcomeMailSender, sendVerifyMailChallenge, vAuthenticatorPasswordEncoder)
+        SignUpUseCase(
+            clientAccountRepository,
+            accountRepository,
+            sendVerifyMailChallenge,
+            vAuthenticatorPasswordEncoder,
+            sayWelcome
+        )
 
 }

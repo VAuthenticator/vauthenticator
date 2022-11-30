@@ -5,10 +5,9 @@ import FormButton from "../component/FormButton";
 
 import {signUp} from "./SignUpRepository";
 import {useNavigate} from "react-router";
-import FormDatePicker, {ApiDateFormatPattern, FormDateFormatPattern} from "../component/FormDatePicker";
+import FormDatePicker, {ApiDateFormatPattern} from "../component/FormDatePicker";
 import {Divider, Grid, ThemeProvider, Typography} from "@mui/material";
 import {GroupAdd, VpnKey} from "@mui/icons-material";
-import moment from "moment/moment";
 import theme from "../component/styles";
 import FormInputMask from "../component/FormInputMask";
 
@@ -68,14 +67,12 @@ const SignUpPage = () => {
 
                 <FormDatePicker
                     value={birthDate}
+                    required ={false}
                     pattern={ApiDateFormatPattern}
                     onClickHandler={(value) => {
-                        console.log(value)
                         let date = "";
                         try {
                             date = value.format(ApiDateFormatPattern);
-                            console.log("date: " + date)
-
                             setBirthDate(date)
                         } catch (e) {
                             console.error(e)
@@ -86,7 +83,7 @@ const SignUpPage = () => {
 
                 <FormInputMask id="phone"
                                label="Phone"
-                               required={true}
+                               required={false}
                                handler={(value) => {
                                    setPhone(value.target.value)
                                }}
