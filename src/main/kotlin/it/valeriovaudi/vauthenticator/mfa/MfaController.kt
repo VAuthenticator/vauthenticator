@@ -1,7 +1,5 @@
 package it.valeriovaudi.vauthenticator.mfa
 
-import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
-import it.valeriovaudi.vauthenticator.mail.MailSenderService
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
@@ -48,15 +46,10 @@ class MfaController(
 
 @RestController
 class MfaApi(
-    private val otp: OtpMfa,
-    private val accountRepository: AccountRepository,
-    private val mfaMailSender: MailSenderService,
+    private val otp: OtpMfaSender,
 ) {
     @PutMapping("/mfa-challenge/send")
     fun sendAgain(authentication: Authentication) {
-        val account = accountRepository.accountFor(authentication.name).get()
-        val mfaSecret = otp.generateSecretKeyFor(account)
-        val mfaCode = otp.getTOTPCode(mfaSecret).content()
-        mfaMailSender.sendFor(account, mapOf("mfaCode" to mfaCode))
+        otp.sendMfaChallenge(authentication.name)
     }
 }

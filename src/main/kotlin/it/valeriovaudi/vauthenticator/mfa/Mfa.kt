@@ -20,11 +20,6 @@ interface OtpMfaSender {
     fun sendMfaChallenge(mail: String)
 }
 
-interface OtpMfaVerifier {
-    fun verifyMfaChallengeFor(mail: String, challenge: MfaChallenge)
-}
-
-
 class OtpMfaEmailSender(
     private val accountRepository: AccountRepository,
     private val otpMfa: OtpMfa,
@@ -35,6 +30,21 @@ class OtpMfaEmailSender(
         val mfaSecret = otpMfa.generateSecretKeyFor(account)
         val mfaCode = otpMfa.getTOTPCode(mfaSecret).content()
         mfaMailSender.sendFor(account, mapOf("mfaCode" to mfaCode))
+    }
+
+}
+
+interface OtpMfaVerifier {
+    fun verifyMfaChallengeFor(mail: String, challenge: MfaChallenge)
+}
+
+class AccountAwareOtpMfaVerifier(
+    private val accountRepository: AccountRepository,
+    private val otpMfa: OtpMfa
+) : OtpMfaVerifier {
+    override fun verifyMfaChallengeFor(mail: String, challenge: MfaChallenge) {
+        val account = accountRepository.accountFor(mail).get()
+        otpMfa.verify(account, challenge)
     }
 
 }
