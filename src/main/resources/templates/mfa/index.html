@@ -9,7 +9,18 @@
 
     <input name="mfa-code" type="text"/>
     <button type="submit" value="OK">OK</button>
+    <button id="mfa-send-again" type="button">send again</button>
 
 </form>
+<script>
+    document.getElementById("mfa-send-again").addEventListener("click", sendAgainMfaCode, false);
+
+    function sendAgainMfaCode() {
+        fetch("/mfa-challenge/send", {
+            method: 'PUT', // *GET, POST, PUT, DELETE, etc.
+            credentials: 'same-origin', // include, *same-origin, omit
+        });
+    }
+</script>
 </body>
 </html>

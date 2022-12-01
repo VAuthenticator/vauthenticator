@@ -5,15 +5,11 @@ import it.valeriovaudi.vauthenticator.mail.MailSenderService
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
-import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.web.authentication.AuthenticationFailureHandler
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
 import org.springframework.stereotype.Controller
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.*
 
 @Controller
 class MfaController(
@@ -22,7 +18,6 @@ class MfaController(
     private val mfaMailSender: MailSenderService,
 
     private val successHandler: AuthenticationSuccessHandler,
-    private val failureHandler: AuthenticationFailureHandler
 ) {
 
     private val logger = LoggerFactory.getLogger(MfaController::class.java)
@@ -52,7 +47,22 @@ class MfaController(
             successHandler.onAuthenticationSuccess(request, response, authentication.delegate)
         } catch (e: Exception) {
             logger.error(e.message, e)
-            failureHandler.onAuthenticationFailure(request, response, BadCredentialsException("bad credentials"))
+            response.sendRedirect("/mfa-challenge?error")
         }
+    }
+}
+
+@RestController
+class MfaApi(
+    private val otp: OtpMfa,
+    private val accountRepository: AccountRepository,
+    private val mfaMailSender: MailSenderService,
+) {
+    @PutMapping("/mfa-challenge/send")
+    fun sendAgain(authentication: Authentication) {
+        val account = accountRepository.accountFor(authentication.name).get()
+        val mfaSecret = otp.generateSecretKeyFor(account)
+        val mfaCode = otp.getTOTPCode(mfaSecret).content()
+        mfaMailSender.sendFor(account, mapOf("mfaCode" to mfaCode))
     }
 }

@@ -4,13 +4,12 @@ import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import it.valeriovaudi.vauthenticator.mfa.MfaAuthentication
 import it.valeriovaudi.vauthenticator.mfa.MfaAuthenticationHandler
 import it.valeriovaudi.vauthenticator.mfa.MfaTrustResolver
+import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.Scope
 import it.valeriovaudi.vauthenticator.openid.connect.logout.ClearSessionStateLogoutHandler
 import it.valeriovaudi.vauthenticator.openid.connect.sessionmanagement.SessionManagementFactory
 import it.valeriovaudi.vauthenticator.password.BcryptVAuthenticatorPasswordEncoder
 import it.valeriovaudi.vauthenticator.security.userdetails.AccountUserDetailsService
-import jakarta.servlet.http.HttpServletRequest
-import jakarta.servlet.http.HttpServletResponse
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.redis.core.RedisTemplate
@@ -56,14 +55,14 @@ class WebSecurityConfig(
     @Bean
     fun defaultSecurityFilterChain(
         http: HttpSecurity,
+        clientApplicationRepository: ClientApplicationRepository,
         mfaAuthorizationManager: AuthorizationManager<RequestAuthorizationContext>,
         accountUserDetailsService: AccountUserDetailsService
     ): SecurityFilterChain {
         http.csrf().disable().headers().frameOptions().disable()
-        val mfaAuthenticationHandler = MfaAuthenticationHandler("/mfa-challenge")
 
         http.formLogin()
-            .successHandler(mfaAuthenticationHandler)
+            .successHandler(MfaAuthenticationHandler(clientApplicationRepository, "/mfa-challenge"))
             .loginProcessingUrl(LOG_IN_URL_PAGE)
             .loginPage(LOG_IN_URL_PAGE)
             .permitAll()
@@ -84,9 +83,10 @@ class WebSecurityConfig(
 
         http.userDetailsService(accountUserDetailsService)
         http.oauth2ResourceServer().jwt()
-        http.securityMatcher(*WHITE_LIST, "/api/**", "/mfa-challenge")
+        http.securityMatcher(*WHITE_LIST, "/api/**", "/mfa-challenge/**")
             .authorizeHttpRequests { authz ->
                 authz
+                    .requestMatchers("/mfa-challenge/send").permitAll()
                     .requestMatchers("/mfa-challenge").access(mfaAuthorizationManager)
                     .requestMatchers(*WHITE_LIST).permitAll()
                     .requestMatchers("/api/accounts").permitAll()
@@ -149,21 +149,11 @@ class WebSecurityConfig(
 
     @Bean
     fun successHandler(): AuthenticationSuccessHandler {
-        return MfaSavedRequestAwareAuthenticationSuccessHandler()
+        return SavedRequestAwareAuthenticationSuccessHandler()
     }
 
     @Bean
     fun failureHandler(): AuthenticationFailureHandler {
         return SimpleUrlAuthenticationFailureHandler("/login?error")
-    }
-}
-
-class MfaSavedRequestAwareAuthenticationSuccessHandler : SavedRequestAwareAuthenticationSuccessHandler(){
-    override fun onAuthenticationSuccess(
-        request: HttpServletRequest,
-        response: HttpServletResponse,
-        authentication: Authentication
-    ) {
-        super.onAuthenticationSuccess(request, response, authentication)
     }
 }
