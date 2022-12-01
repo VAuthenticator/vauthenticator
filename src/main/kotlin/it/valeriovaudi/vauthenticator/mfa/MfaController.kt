@@ -46,10 +46,10 @@ class MfaController(
 
 @RestController
 class MfaApi(
-    private val otp: OtpMfaSender,
+    private val otpMfaSender: OtpMfaSender,
 ) {
     @PutMapping("/mfa-challenge/send")
     fun sendAgain(authentication: Authentication) {
-        otp.sendMfaChallenge(authentication.name)
+        otpMfaSender.sendMfaChallenge(authentication.name)
     }
 }

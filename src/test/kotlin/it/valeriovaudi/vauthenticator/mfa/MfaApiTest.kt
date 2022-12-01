@@ -2,17 +2,20 @@ package it.valeriovaudi.vauthenticator.mfa
 
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
 import it.valeriovaudi.vauthenticator.account.AccountTestFixture
 import it.valeriovaudi.vauthenticator.support.TestingFixture
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
+@ExtendWith(MockKExtension::class)
 internal class MfaApiTest {
     lateinit var mokMvc: MockMvc
 
@@ -34,8 +37,9 @@ internal class MfaApiTest {
         every { otpMfaSender.sendMfaChallenge(account.email) } just runs
 
         mokMvc.perform(
-            MockMvcRequestBuilders.get("/mfa-challenge")
+            MockMvcRequestBuilders.put("/mfa-challenge/send")
                 .principal(TestingFixture.principalFor(account.email))
-        ).andExpect(MockMvcResultMatchers.view().name("mfa/index"))
+        ).andExpect(status().isOk)
+
     }
 }
