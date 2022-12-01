@@ -4,6 +4,7 @@ import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import it.valeriovaudi.vauthenticator.mail.MailSenderService
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
@@ -24,10 +25,13 @@ class MfaController(
     private val failureHandler: AuthenticationFailureHandler
 ) {
 
+    private val logger = LoggerFactory.getLogger(MfaController::class.java)
+
     @GetMapping("/mfa-challenge")
     fun view(authentication: Authentication): String {
         val account = accountRepository.accountFor(authentication.name).get()
-        val mfaCode = otp.generateSecretKeyFor(account)
+        val mfaSecret = otp.generateSecretKeyFor(account)
+        val mfaCode = otp.getTOTPCode(mfaSecret).content()
         mfaMailSender.sendFor(account, mapOf("mfaCode" to mfaCode))
         return "mfa/index"
     }
@@ -47,6 +51,7 @@ class MfaController(
             SecurityContextHolder.getContext().authentication = authentication.delegate
             successHandler.onAuthenticationSuccess(request, response, authentication.delegate)
         } catch (e: Exception) {
+            logger.error(e.message, e)
             failureHandler.onAuthenticationFailure(request, response, BadCredentialsException("bad credentials"))
         }
     }

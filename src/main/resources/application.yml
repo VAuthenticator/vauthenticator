@@ -1,6 +1,6 @@
 spring:
   application:
     name: vauthenticator
-logging:
-  level:
-    org.springframework.security.**: DEBUG
+#logging:
+#  level:
+#    org.springframework.security.**: DEBUG
