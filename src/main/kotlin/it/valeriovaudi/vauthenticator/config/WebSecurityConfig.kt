@@ -9,6 +9,8 @@ import it.valeriovaudi.vauthenticator.openid.connect.logout.ClearSessionStateLog
 import it.valeriovaudi.vauthenticator.openid.connect.sessionmanagement.SessionManagementFactory
 import it.valeriovaudi.vauthenticator.password.BcryptVAuthenticatorPasswordEncoder
 import it.valeriovaudi.vauthenticator.security.userdetails.AccountUserDetailsService
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.redis.core.RedisTemplate
@@ -104,7 +106,7 @@ class WebSecurityConfig(
 
     @Bean
     fun mfaAuthorizationManager(): AuthorizationManager<RequestAuthorizationContext> {
-        return AuthorizationManager { authentication: Supplier<Authentication>, context: RequestAuthorizationContext ->
+        return AuthorizationManager { authentication: Supplier<Authentication>, _: RequestAuthorizationContext ->
             AuthorizationDecision(
                 authentication.get() is MfaAuthentication
             )
@@ -146,12 +148,22 @@ class WebSecurityConfig(
         AccountUserDetailsService(userRepository)
 
     @Bean
-    fun successHandler(): AuthenticationSuccessHandler? {
-        return SavedRequestAwareAuthenticationSuccessHandler()
+    fun successHandler(): AuthenticationSuccessHandler {
+        return MfaSavedRequestAwareAuthenticationSuccessHandler()
     }
 
     @Bean
-    fun failureHandler(): AuthenticationFailureHandler? {
+    fun failureHandler(): AuthenticationFailureHandler {
         return SimpleUrlAuthenticationFailureHandler("/login?error")
+    }
+}
+
+class MfaSavedRequestAwareAuthenticationSuccessHandler : SavedRequestAwareAuthenticationSuccessHandler(){
+    override fun onAuthenticationSuccess(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        authentication: Authentication
+    ) {
+        super.onAuthenticationSuccess(request, response, authentication)
     }
 }

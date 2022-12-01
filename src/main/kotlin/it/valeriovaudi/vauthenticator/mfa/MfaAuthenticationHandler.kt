@@ -1,6 +1,5 @@
 package it.valeriovaudi.vauthenticator.mfa
 
-import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.authentication.AnonymousAuthenticationToken
@@ -11,10 +10,8 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.AuthenticationFailureHandler
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler
-import java.io.IOException
 
-class MfaAuthenticationHandler(url: String?) : AuthenticationSuccessHandler,
-    AuthenticationFailureHandler {
+class MfaAuthenticationHandler(url: String) : AuthenticationSuccessHandler, AuthenticationFailureHandler {
     private val successHandler: AuthenticationSuccessHandler
 
     init {
@@ -23,7 +20,6 @@ class MfaAuthenticationHandler(url: String?) : AuthenticationSuccessHandler,
         this.successHandler = successHandler
     }
 
-    @Throws(IOException::class, ServletException::class)
     override fun onAuthenticationFailure(
         request: HttpServletRequest, response: HttpServletResponse,
         exception: AuthenticationException
@@ -35,7 +31,6 @@ class MfaAuthenticationHandler(url: String?) : AuthenticationSuccessHandler,
         saveMfaAuthentication(request, response, MfaAuthentication(anonymous))
     }
 
-    @Throws(IOException::class, ServletException::class)
     override fun onAuthenticationSuccess(
         request: HttpServletRequest, response: HttpServletResponse,
         authentication: Authentication
@@ -43,11 +38,15 @@ class MfaAuthenticationHandler(url: String?) : AuthenticationSuccessHandler,
         saveMfaAuthentication(request, response, authentication)
     }
 
-    @Throws(IOException::class, ServletException::class)
     private fun saveMfaAuthentication(
         request: HttpServletRequest, response: HttpServletResponse,
         authentication: Authentication
     ) {
+        println("SecurityContextHolder.getContext().authentication")
+        println(SecurityContextHolder.getContext().authentication)
+
+        println("request.requestURI")
+        println(request.requestURI)
         SecurityContextHolder.getContext().authentication = MfaAuthentication(authentication)
         successHandler.onAuthenticationSuccess(request, response, authentication)
     }

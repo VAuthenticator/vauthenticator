@@ -117,8 +117,7 @@ class AuthorizationServerConfig {
                 )
             )
         }
-        http.exceptionHandling { it.authenticationEntryPoint(LoginUrlAuthenticationEntryPoint("/login")) }
-            .oauth2ResourceServer().jwt()
+        http.exceptionHandling { it.authenticationEntryPoint(LoginUrlAuthenticationEntryPoint("/login")) }.oauth2ResourceServer().jwt()
 
         return http.build()
     }
