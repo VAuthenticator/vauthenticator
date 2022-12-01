@@ -6,8 +6,6 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
 import it.valeriovaudi.vauthenticator.account.AccountTestFixture.anAccount
-import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
-import it.valeriovaudi.vauthenticator.mail.MailSenderService
 import it.valeriovaudi.vauthenticator.support.TestingFixture.mfaPrincipalFor
 import it.valeriovaudi.vauthenticator.support.TestingFixture.principalFor
 import org.junit.jupiter.api.BeforeEach
@@ -24,15 +22,6 @@ internal class MfaControllerTest {
     lateinit var mokMvc: MockMvc
 
     @MockK
-    private lateinit var otp: OtpMfa
-
-    @MockK
-    private lateinit var accountRepository: AccountRepository
-
-    @MockK
-    private lateinit var mfaMailSender: MailSenderService
-
-    @MockK
     private lateinit var successHandler: AuthenticationSuccessHandler
 
     @MockK
@@ -45,14 +34,7 @@ internal class MfaControllerTest {
     @BeforeEach
     internal fun setUp() {
         mokMvc = MockMvcBuilders.standaloneSetup(
-            MfaController(
-                otp,
-                accountRepository,
-                mfaMailSender,
-                successHandler,
-                otpMfaSender,
-                otpMfaVerifier
-            )
+            MfaController(successHandler, otpMfaSender, otpMfaVerifier)
         )
             .build()
     }
@@ -73,7 +55,7 @@ internal class MfaControllerTest {
 
         val mfaAuthentication = mfaPrincipalFor(account.email)
         val authentication = mfaAuthentication.delegate
-        every { successHandler.onAuthenticationSuccess(any(), any(), authentication)} just runs
+        every { successHandler.onAuthenticationSuccess(any(), any(), authentication) } just runs
 
         mokMvc.perform(
             post("/mfa-challenge")

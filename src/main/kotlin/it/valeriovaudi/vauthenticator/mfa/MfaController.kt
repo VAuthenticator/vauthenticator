@@ -13,10 +13,6 @@ import org.springframework.web.bind.annotation.*
 
 @Controller
 class MfaController(
-    private val otp: OtpMfa,
-    private val accountRepository: AccountRepository,
-    private val mfaMailSender: MailSenderService,
-
     private val successHandler: AuthenticationSuccessHandler,
     private val otpMfaSender: OtpMfaSender,
     private val otpMfaVerifier: OtpMfaVerifier
@@ -27,10 +23,6 @@ class MfaController(
     @GetMapping("/mfa-challenge")
     fun view(authentication: Authentication): String {
         otpMfaSender.sendMfaChallenge(authentication.name)
-//        val account = accountRepository.accountFor(authentication.name).get()
-//        val mfaSecret = otp.generateSecretKeyFor(account)
-//        val mfaCode = otp.getTOTPCode(mfaSecret).content()
-//        mfaMailSender.sendFor(account, mapOf("mfaCode" to mfaCode))
         return "mfa/index"
     }
 
