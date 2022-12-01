@@ -62,7 +62,6 @@ class WebSecurityConfig(
 
         http.formLogin()
             .successHandler(mfaAuthenticationHandler)
-            .failureHandler(mfaAuthenticationHandler)
             .loginProcessingUrl(LOG_IN_URL_PAGE)
             .loginPage(LOG_IN_URL_PAGE)
             .permitAll()
