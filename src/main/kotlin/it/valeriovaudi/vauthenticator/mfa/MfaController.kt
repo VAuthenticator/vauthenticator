@@ -43,7 +43,7 @@ class MfaController(
         val account = accountRepository.accountFor(authentication.name).get()
 
         try {
-            otp.verify(account, MfaChallenge(mfaCode)))
+            otp.verify(account, MfaChallenge(mfaCode))
             SecurityContextHolder.getContext().authentication = authentication.delegate
             successHandler.onAuthenticationSuccess(request, response, authentication.delegate)
         } catch (e: Exception) {
