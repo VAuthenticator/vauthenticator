@@ -1,7 +1,5 @@
 package it.valeriovaudi.vauthenticator.mfa
 
-import it.valeriovaudi.vauthenticator.account.Account
-
 
 class MfaException(message:String) : RuntimeException(message)
 
@@ -16,11 +14,11 @@ value class MfaChallenge(private val content : String) {
 }
 
 interface OtpMfaSender {
-    fun sendMfaChallenge(account : Account): MfaSecret
+    fun sendMfaChallenge(mail: String)
 }
 
 interface OtpMfaVerifier {
-    fun verifyMfaChallengeFor(account : Account, challenge: MfaChallenge)
+    fun verifyMfaChallengeFor(mail: String, challenge: MfaChallenge)
 }
 
 

@@ -18,16 +18,19 @@ class MfaController(
     private val mfaMailSender: MailSenderService,
 
     private val successHandler: AuthenticationSuccessHandler,
+    private val otpMfaSender: OtpMfaSender,
+    private val otpMfaVerifier: OtpMfaVerifier
 ) {
 
     private val logger = LoggerFactory.getLogger(MfaController::class.java)
 
     @GetMapping("/mfa-challenge")
     fun view(authentication: Authentication): String {
-        val account = accountRepository.accountFor(authentication.name).get()
-        val mfaSecret = otp.generateSecretKeyFor(account)
-        val mfaCode = otp.getTOTPCode(mfaSecret).content()
-        mfaMailSender.sendFor(account, mapOf("mfaCode" to mfaCode))
+        otpMfaSender.sendMfaChallenge(authentication.name)
+//        val account = accountRepository.accountFor(authentication.name).get()
+//        val mfaSecret = otp.generateSecretKeyFor(account)
+//        val mfaCode = otp.getTOTPCode(mfaSecret).content()
+//        mfaMailSender.sendFor(account, mapOf("mfaCode" to mfaCode))
         return "mfa/index"
     }
 
@@ -39,10 +42,9 @@ class MfaController(
         request: HttpServletRequest,
         response: HttpServletResponse
     ) {
-        val account = accountRepository.accountFor(authentication.name).get()
-
         try {
-            otp.verify(account, MfaChallenge(mfaCode))
+            otpMfaVerifier.verifyMfaChallengeFor(authentication.name, MfaChallenge(mfaCode))
+
             SecurityContextHolder.getContext().authentication = authentication.delegate
             successHandler.onAuthenticationSuccess(request, response, authentication.delegate)
         } catch (e: Exception) {
