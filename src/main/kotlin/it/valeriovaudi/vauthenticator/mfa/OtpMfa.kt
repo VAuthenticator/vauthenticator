@@ -62,4 +62,4 @@ class TaimosOtpMfa(private val properties: OtpConfigurationProperties) : OtpMfa 
 
 }
 
-data class OtpConfigurationProperties(val otpLength: Int = 6, val otpTimeToLiveInSeconds: Int = 30)
+data class OtpConfigurationProperties(val otpLength: Int, val otpTimeToLiveInSeconds: Int)
