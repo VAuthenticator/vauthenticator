@@ -1,7 +1,6 @@
 package it.valeriovaudi.vauthenticator.mfa
 
 import com.j256.twofactorauth.TimeBasedOneTimePasswordUtil
-import com.j256.twofactorauth.TimeBasedOneTimePasswordUtil.DEFAULT_OTP_LENGTH
 import it.valeriovaudi.vauthenticator.account.Account
 import org.apache.commons.codec.binary.Base32
 import org.apache.commons.codec.binary.Hex
@@ -13,8 +12,8 @@ interface OtpMfa {
     fun verify(account: Account, optCode: MfaChallenge)
 }
 
-class TaimosOtpMfa : OtpMfa {
-    private val tokenTimeWindow: Int = 60 * 10
+class TaimosOtpMfa(val properties: OtpConfigurationProperties) : OtpMfa {
+    private val tokenTimeWindow: Int = 60 * properties.otpTimeToLiveInSeconds
     private val tokenTimeWindowMillis: Long = (tokenTimeWindow * 1000).toLong()
 
     override fun generateSecretKeyFor(account: Account): MfaSecret {
@@ -31,7 +30,7 @@ class TaimosOtpMfa : OtpMfa {
                 hexKey,
                 System.currentTimeMillis(),
                 tokenTimeWindow,
-                DEFAULT_OTP_LENGTH
+                properties.otpLength
             )
         )
     }
@@ -49,7 +48,7 @@ class TaimosOtpMfa : OtpMfa {
                     tokenTimeWindowMillis,
                     System.currentTimeMillis(),
                     tokenTimeWindow,
-                    DEFAULT_OTP_LENGTH
+                    properties.otpLength
                 );
             if (!validated) {
                 throw MfaException("Customer Code does not match with system code")
@@ -60,3 +59,5 @@ class TaimosOtpMfa : OtpMfa {
     }
 
 }
+
+data class OtpConfigurationProperties(val otpLength: Int = 6, val otpTimeToLiveInSeconds: Int = 1)
