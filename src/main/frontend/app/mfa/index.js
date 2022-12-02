@@ -1,8 +1,7 @@
-import {Link} from "react-router-dom";
 import {Box, Divider, Grid, ThemeProvider, Typography} from "@mui/material";
 import theme from "../component/styles";
 import Template from "../component/Template";
-import {Fingerprint, Person, VpnKey} from "@mui/icons-material";
+import {Person, VpnKey} from "@mui/icons-material";
 import FormInputTextField from "../component/FormInputTextField";
 import Separator from "../component/Separator";
 import FormButton from "../component/FormButton";
@@ -28,7 +27,7 @@ const MfaChallengePage = (props) => {
                     <Divider/>
                 </Grid>
 
-                {<form action="login" method="post">
+                {<form action="mfa-challenge" method="post">
                     <Box>
                         <FormInputTextField id="mfa-code"
                                             label="mfa-code"
