@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup
 
+//todo to migrate to mockk
 @ExtendWith(MockitoExtension::class)
 internal class RoleEndPointTest {
 

@@ -9,6 +9,8 @@ import com.nimbusds.jose.jwk.ECKey
 import com.nimbusds.jose.jwk.gen.ECKeyGenerator
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
+import it.valeriovaudi.vauthenticator.mfa.MfaAuthentication
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames
 import org.springframework.security.oauth2.jwt.Jwt
@@ -18,8 +20,8 @@ import java.time.Instant
 object TestingFixture {
 
     private val key: ECKey = ECKeyGenerator(Curve.P_256)
-            .keyID("123")
-            .generate()
+        .keyID("123")
+        .generate()
 
     fun simpleJwtFor(clientAppId: String, email: String = ""): String {
         val signedJWT = signedJWTFor(clientAppId, email)
@@ -28,14 +30,14 @@ object TestingFixture {
 
     fun signedJWTFor(clientAppId: String, email: String): SignedJWT {
         val header = JWSHeader.Builder(JWSAlgorithm.ES256)
-                .type(JOSEObjectType.JWT)
-                .keyID("123")
-                .build();
+            .type(JOSEObjectType.JWT)
+            .keyID("123")
+            .build();
 
 
         var claim = JWTClaimsSet.Builder()
-                .claim(IdTokenClaimNames.AZP, clientAppId)
-                .claim(IdTokenClaimNames.AUD, clientAppId)
+            .claim(IdTokenClaimNames.AZP, clientAppId)
+            .claim(IdTokenClaimNames.AUD, clientAppId)
 
         if (email.isNotBlank()) {
             claim = claim.claim("user_name", email)
@@ -52,17 +54,25 @@ object TestingFixture {
     fun loadFileFor(path: String) = String(ClassLoader.getSystemResourceAsStream(path).readAllBytes())
 
     fun principalFor(clientAppId: String, mail: String, authorities: List<String> = emptyList()) =
-            signedJWTFor(clientAppId, mail).let { signedJWT ->
-                JwtAuthenticationToken(
-                        Jwt(
-                                simpleJwtFor(clientAppId),
-                                Instant.now(),
-                                Instant.now().plusSeconds(100),
-                                signedJWT.header.toJSONObject(),
-                                signedJWT.payload.toJSONObject()
-                        ),
-                        authorities.map(::SimpleGrantedAuthority),
-                        mail
-                )
-            }
+        signedJWTFor(clientAppId, mail).let { signedJWT ->
+            JwtAuthenticationToken(
+                Jwt(
+                    simpleJwtFor(clientAppId),
+                    Instant.now(),
+                    Instant.now().plusSeconds(100),
+                    signedJWT.header.toJSONObject(),
+                    signedJWT.payload.toJSONObject()
+                ),
+                authorities.map(::SimpleGrantedAuthority),
+                mail
+            )
+        }
+
+    fun principalFor(mail: String, authorities: List<String> = emptyList()) =
+        UsernamePasswordAuthenticationToken.authenticated(mail, "", authorities.map(::SimpleGrantedAuthority))
+
+    fun mfaPrincipalFor(mail: String, authorities: List<String> = emptyList()) =
+        MfaAuthentication(
+            UsernamePasswordAuthenticationToken.authenticated(mail, "", authorities.map(::SimpleGrantedAuthority))
+        )
 }
