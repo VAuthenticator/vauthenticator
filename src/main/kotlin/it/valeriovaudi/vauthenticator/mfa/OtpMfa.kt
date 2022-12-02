@@ -12,8 +12,8 @@ interface OtpMfa {
     fun verify(account: Account, optCode: MfaChallenge)
 }
 
-class TaimosOtpMfa(val properties: OtpConfigurationProperties) : OtpMfa {
-    private val tokenTimeWindow: Int = 60 * properties.otpTimeToLiveInSeconds
+class TaimosOtpMfa(private val properties: OtpConfigurationProperties) : OtpMfa {
+    private val tokenTimeWindow: Int = properties.otpTimeToLiveInSeconds
     private val tokenTimeWindowMillis: Long = (tokenTimeWindow * 1000).toLong()
 
     override fun generateSecretKeyFor(account: Account): MfaSecret {
