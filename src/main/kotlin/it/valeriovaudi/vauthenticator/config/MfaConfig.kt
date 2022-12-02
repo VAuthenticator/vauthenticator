@@ -14,10 +14,6 @@ import org.springframework.mail.javamail.JavaMailSender
 class MfaConfig {
 
     @Bean
-    @ConfigurationProperties("mfa.otp")
-    fun otpConfigurationProperties() = OtpConfigurationProperties()
-
-    @Bean
     fun otpMfa(otpConfigurationProperties: OtpConfigurationProperties) = TaimosOtpMfa(otpConfigurationProperties)
 
     @Bean

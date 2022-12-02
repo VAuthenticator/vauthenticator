@@ -2,5 +2,9 @@ spring:
   application:
     name: vauthenticator
 
+mfa:
+  otp:
+    otpLength: 6
+    otpTimeToLiveInSeconds: 30
 
 iamUserAwsCredentialsProvider: true

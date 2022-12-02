@@ -4,6 +4,7 @@ import com.j256.twofactorauth.TimeBasedOneTimePasswordUtil
 import it.valeriovaudi.vauthenticator.account.Account
 import org.apache.commons.codec.binary.Base32
 import org.apache.commons.codec.binary.Hex
+import org.springframework.boot.context.properties.ConfigurationProperties
 
 
 interface OtpMfa {
@@ -62,4 +63,5 @@ class TaimosOtpMfa(private val properties: OtpConfigurationProperties) : OtpMfa 
 
 }
 
+@ConfigurationProperties("mfa.otp")
 data class OtpConfigurationProperties(val otpLength: Int, val otpTimeToLiveInSeconds: Int)
