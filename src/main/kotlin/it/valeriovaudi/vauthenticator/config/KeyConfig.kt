@@ -21,7 +21,6 @@ class KeyConfig {
                     {UUID.randomUUID().toString()},
                     tableName,
                     KmsKeyRepository(kmsClient),
-                    kmsClient,
                     dynamoDbClient
             )
 }

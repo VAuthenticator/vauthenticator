@@ -12,6 +12,7 @@ import software.amazon.awssdk.services.kms.KmsClient
 import software.amazon.awssdk.services.kms.model.DataKeyPairSpec
 import software.amazon.awssdk.services.kms.model.DecryptRequest
 import software.amazon.awssdk.services.kms.model.GenerateDataKeyPairRequest
+import software.amazon.awssdk.services.kms.model.GenerateDataKeyPairResponse
 import java.security.KeyFactory
 import java.security.KeyPair
 import java.security.PrivateKey
@@ -23,18 +24,13 @@ open class DynamoKeyRepository(
     private val kidGenerator: () -> String,
     private val table: String,
     private val kmsKeyRepository: KmsKeyRepository,
-    private val kmsClient: KmsClient,
     private val dynamoDbClient: DynamoDbClient
 ) : KeyRepository {
 
     override fun createKeyFrom(masterKid: MasterKid): Kid {
-        val dataKeyPair = kmsClient.generateDataKeyPair(
-            GenerateDataKeyPairRequest.builder()
-                .keyId(masterKid)
-                .keyPairSpec(DataKeyPairSpec.RSA_2048)
-                .build()
-        )
+        val dataKeyPair = kmsKeyRepository.dataKeyPairFor(masterKid)
         val kid = kidGenerator.invoke()
+
         dynamoDbClient.putItem(
             PutItemRequest.builder()
                 .tableName(table)
@@ -111,6 +107,14 @@ class KmsKeyRepository(
 
         return keyPairFor(encoder.encode(generateDataKeyPair.plaintext().asByteArray()).decodeToString(), pubKey)
     }
+
+    fun dataKeyPairFor(masterKid: MasterKid): GenerateDataKeyPairResponse =
+        kmsClient.generateDataKeyPair(
+            GenerateDataKeyPairRequest.builder()
+                .keyId(masterKid)
+                .keyPairSpec(DataKeyPairSpec.RSA_2048)
+                .build()
+        )
 
 }
 
