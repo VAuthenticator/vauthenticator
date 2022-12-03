@@ -35,3 +35,8 @@ Right now it is based, as said before to the latest version on spring oauth2/ope
 **General Feature:**
 
 VAuthenticator implements front_channel single logout openid connect specification session management
+
+### Useful command
+In order to install local-web-server use the following command `npm install -g local-web-server`. 
+To run the ui server locally build the ui artifacts with the command `npm run-script build` under `src/main/frontend` path.
+Then under `src/main/frontend/dist` folder run the command  `ws --port 3000 ` 

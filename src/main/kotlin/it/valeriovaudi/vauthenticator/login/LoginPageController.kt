@@ -36,8 +36,8 @@ class LoginPageController(
         }
 
         model.addAttribute("features", objectMapper.writeValueAsString(features))
-
-        return "login"
+        model.addAttribute("assetBundle", "login_bundle.js")
+        return "template"
     }
 
     private fun defaultFeature() =
