@@ -43,7 +43,7 @@ internal class DynamoKeyRepositoryTest {
                 .build()
         ).item()
         assertEquals(kid, actual.valueAsStringFor("key_id"))
-        assertEquals(masterKid, actual.valueAsStringFor("master_key_id"))
+        assertEquals(masterKid.content(), actual.valueAsStringFor("master_key_id"))
         assertEquals(
             encoder.encode(wrapper.generateDataKeyPairRecorder.get().privateKeyCiphertextBlob().asByteArray())
                 .decodeToString(), actual.valueAsStringFor("private_key_ciphertext_blob")
