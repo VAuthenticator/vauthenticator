@@ -6,7 +6,6 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -32,7 +31,7 @@ internal class KeyEndPointTest {
 
     @BeforeEach
     internal fun setUp() {
-        mokMvc = standaloneSetup(KeyEndPoint("https://vauthenticator.com", MasterKid("A_MASTER_KEY"), keyRepository)).build()
+        mokMvc = standaloneSetup(KeyEndPoint(MasterKid("A_MASTER_KEY"), keyRepository)).build()
     }
 
     @Test
