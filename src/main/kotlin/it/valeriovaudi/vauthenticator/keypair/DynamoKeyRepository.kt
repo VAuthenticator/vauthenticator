@@ -22,7 +22,7 @@ import java.security.spec.X509EncodedKeySpec
 open class DynamoKeyRepository(
     private val kidGenerator: () -> String,
     private val table: String,
-//    private val kmsKeyRepository: KmsKeyRepository,
+    private val kmsKeyRepository: KmsKeyRepository,
     private val kmsClient: KmsClient,
     private val dynamoDbClient: DynamoDbClient
 ) : KeyRepository {
@@ -86,7 +86,7 @@ open class DynamoKeyRepository(
     private fun keysListFrom(items: MutableList<MutableMap<String, AttributeValue>>) =
         items.map {
             Key(
-                getKeyPairFor(
+                kmsKeyRepository.getKeyPairFor(
                     it.valueAsStringFor("private_key_ciphertext_blob"),
                     it.valueAsStringFor("public_key")
                 ),
@@ -96,17 +96,8 @@ open class DynamoKeyRepository(
             )
         }
 
-    private  fun getKeyPairFor(privateKey: String, pubKey: String): KeyPair {
-        val generateDataKeyPair = kmsClient.decrypt(
-            DecryptRequest.builder()
-                .ciphertextBlob(fromByteArray(decoder.decode(privateKey)))
-                .build()
-        )
-
-        return keyPairFor(encoder.encode(generateDataKeyPair.plaintext().asByteArray()).decodeToString(), pubKey)
-    }
 }
-/*
+
 class KmsKeyRepository(
     private val kmsClient: KmsClient
 ) {
@@ -121,7 +112,7 @@ class KmsKeyRepository(
         return keyPairFor(encoder.encode(generateDataKeyPair.plaintext().asByteArray()).decodeToString(), pubKey)
     }
 
-}*/
+}
 
 object KeyPairFactory {
     fun keyPairFor(privateKey: String, pubKey: String): KeyPair {
