@@ -29,15 +29,15 @@ open class DynamoKeyRepository(
 
     override fun createKeyFrom(masterKid: MasterKid): Kid {
         val dataKeyPair = kmsKeyRepository.dataKeyPairFor(masterKid)
-        val kid = kidGenerator.invoke()
+        val kidContent = kidGenerator.invoke()
 
         dynamoDbClient.putItem(
             PutItemRequest.builder()
                 .tableName(table)
                 .item(
                     mapOf(
-                        "master_key_id" to masterKid.asDynamoAttribute(),
-                        "key_id" to kid.asDynamoAttribute(),
+                        "master_key_id" to masterKid.content().asDynamoAttribute(),
+                        "key_id" to kidContent.asDynamoAttribute(),
                         "private_key_ciphertext_blob" to encoder.encode(
                             dataKeyPair.privateKeyCiphertextBlob().asByteArray()
                         ).decodeToString().asDynamoAttribute(),
@@ -49,7 +49,7 @@ open class DynamoKeyRepository(
                 .build()
         )
 
-        return kid
+        return Kid(kidContent)
     }
 
     override fun deleteKeyFor(masterKid: MasterKid, kid: Kid) {
@@ -58,8 +58,8 @@ open class DynamoKeyRepository(
                 .tableName(table)
                 .key(
                     mapOf(
-                        "master_key_id" to masterKid.asDynamoAttribute(),
-                        "key_id" to kid.asDynamoAttribute(),
+                        "master_key_id" to masterKid.content().asDynamoAttribute(),
+                        "key_id" to kid.content().asDynamoAttribute(),
                     )
                 )
                 .build()
@@ -86,8 +86,8 @@ open class DynamoKeyRepository(
                     it.valueAsStringFor("private_key_ciphertext_blob"),
                     it.valueAsStringFor("public_key")
                 ),
-                it.valueAsStringFor("master_key_id"),
-                it.valueAsStringFor("key_id"),
+                MasterKid(it.valueAsStringFor("master_key_id")),
+                Kid(it.valueAsStringFor("key_id")),
                 it.valueAsBoolFor("enabled")
             )
         }
@@ -111,7 +111,7 @@ class KmsKeyRepository(
     fun dataKeyPairFor(masterKid: MasterKid): GenerateDataKeyPairResponse =
         kmsClient.generateDataKeyPair(
             GenerateDataKeyPairRequest.builder()
-                .keyId(masterKid)
+                .keyId(masterKid.content())
                 .keyPairSpec(DataKeyPairSpec.RSA_2048)
                 .build()
         )

@@ -5,8 +5,16 @@ import java.security.KeyPair
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 
-typealias Kid = String
-typealias MasterKid = String
+@JvmInline
+value class Kid(private val content: String) {
+    fun content() = content
+}
+
+@JvmInline
+value class MasterKid(private val content: String) {
+    fun content() = content
+}
+
 
 data class Keys(val keys: List<Key>)
 
@@ -16,6 +24,6 @@ fun Keys.generateRsas() = this.keys
     .map {
         RSAKey.Builder(it.keyPair.public as RSAPublicKey)
             .privateKey(it.keyPair.private as RSAPrivateKey)
-            .keyID(it.kid)
+            .keyID(it.kid.content())
             .build()
     }

@@ -32,7 +32,7 @@ internal class KeyEndPointTest {
 
     @BeforeEach
     internal fun setUp() {
-        mokMvc = standaloneSetup(KeyEndPoint("https://vauthenticator.com", "A_MASTER_KEY", keyRepository)).build()
+        mokMvc = standaloneSetup(KeyEndPoint("https://vauthenticator.com", MasterKid("A_MASTER_KEY"), keyRepository)).build()
     }
 
     @Test
@@ -41,7 +41,7 @@ internal class KeyEndPointTest {
         kpg.initialize(2048)
         val keyPair = kpg.generateKeyPair()
 
-        every { keyRepository.keys() } returns Keys(listOf(Key(keyPair, "A_MASTER_KEY", "A_KID", true)))
+        every { keyRepository.keys() } returns Keys(listOf(Key(keyPair, MasterKid("A_MASTER_KEY"), Kid("A_KID"), true)))
 
         mokMvc.perform(get("/api/keys"))
             .andExpect(status().isOk)
@@ -50,7 +50,7 @@ internal class KeyEndPointTest {
 
     @Test
     internal fun `when we are able to create a new key`() {
-        every { keyRepository.createKeyFrom("A_MASTER_KEY") } returns "123"
+        every { keyRepository.createKeyFrom(MasterKid("A_MASTER_KEY")) } returns Kid("123")
 
         mokMvc.perform(post("/api/keys"))
             .andExpect(status().isCreated)
@@ -59,7 +59,7 @@ internal class KeyEndPointTest {
 
     @Test
     internal fun `when we are able to delete a new key`() {
-        every { keyRepository.deleteKeyFor("A_MASTER_KEY", "A_KID") } just runs
+        every { keyRepository.deleteKeyFor( MasterKid("A_MASTER_KEY"), Kid("A_KID")) } just runs
 
         mokMvc.perform(
             delete("/api/keys")

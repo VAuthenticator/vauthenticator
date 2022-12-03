@@ -39,7 +39,7 @@ internal class DynamoKeyRepositoryTest {
 
         val actual = dynamoDbClient.getItem(
             GetItemRequest.builder().tableName(dynamoKeysTableName)
-                .key(mapOf("master_key_id" to masterKid.asDynamoAttribute(), "key_id" to kid.asDynamoAttribute()))
+                .key(mapOf("master_key_id" to masterKid.content().asDynamoAttribute(), "key_id" to kid.asDynamoAttribute()))
                 .build()
         ).item()
         assertEquals(kid, actual.valueAsStringFor("key_id"))
@@ -57,7 +57,7 @@ internal class DynamoKeyRepositoryTest {
     @Test
     internal fun `when a key is deleted`() {
         val masterKid = aNewMasterKey()
-        val kid = kidGenerator.invoke()
+        val kid = Kid(kidGenerator.invoke())
         val wrapper = KmsClientWrapper(kmsClient)
         keyRepository =
             DynamoKeyRepository(kidGenerator, dynamoKeysTableName, KmsKeyRepository(wrapper), dynamoDbClient)
@@ -67,7 +67,7 @@ internal class DynamoKeyRepositoryTest {
 
         val actual = dynamoDbClient.getItem(
             GetItemRequest.builder().tableName(dynamoKeysTableName)
-                .key(mapOf("master_key_id" to masterKid.asDynamoAttribute(), "key_id" to kid.asDynamoAttribute()))
+                .key(mapOf("master_key_id" to masterKid.content().asDynamoAttribute(), "key_id" to kid.content().asDynamoAttribute()))
                 .build()
         ).item()
         assertEquals(emptyMap<String, AttributeValue>(), actual)
@@ -76,7 +76,7 @@ internal class DynamoKeyRepositoryTest {
     @Test
     internal fun `when a key is deleted after a brand new insert`() {
         val masterKid = aNewMasterKey()
-        val kid = kidGenerator.invoke()
+        val kid = Kid(kidGenerator.invoke())
         val wrapper = KmsClientWrapper(kmsClient)
         keyRepository =
             DynamoKeyRepository(kidGenerator, dynamoKeysTableName, KmsKeyRepository(wrapper), dynamoDbClient)
@@ -88,7 +88,7 @@ internal class DynamoKeyRepositoryTest {
 
         val actual = dynamoDbClient.getItem(
             GetItemRequest.builder().tableName(dynamoKeysTableName)
-                .key(mapOf("master_key_id" to masterKid.asDynamoAttribute(), "key_id" to kid.asDynamoAttribute()))
+                .key(mapOf("master_key_id" to masterKid.content().asDynamoAttribute(), "key_id" to kid.content().asDynamoAttribute()))
                 .build()
         ).item()
         assertEquals(emptyMap<String, AttributeValue>(), actual)

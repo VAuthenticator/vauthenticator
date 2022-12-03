@@ -26,7 +26,7 @@ class KeyEndPoint(
 
     @DeleteMapping("/api/keys")
     fun deleteKey(@RequestBody body: Map<String, String>) =
-        keyRepository.deleteKeyFor(body["masterKey"]!!, body["kid"]!!)
+        keyRepository.deleteKeyFor(MasterKid(body["masterKey"]!!), Kid(body["kid"]!!))
             .let { ResponseEntity.noContent().build<Unit>() }
 
 }

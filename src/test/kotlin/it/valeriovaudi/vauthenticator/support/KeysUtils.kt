@@ -1,5 +1,6 @@
 package it.valeriovaudi.vauthenticator.support
 
+import it.valeriovaudi.vauthenticator.keypair.MasterKid
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
 import software.amazon.awssdk.regions.Region
@@ -43,15 +44,16 @@ object KeysUtils {
         .endpointOverride(URI.create("http://localhost:4566"))
         .build()
 
-    fun aNewMasterKey(): String = kmsClient.createKey(
-        CreateKeyRequest.builder()
-            .keySpec("SYMMETRIC_DEFAULT")
-            .description("A_KEY_DESCRIPTION")
-            .keyUsage(KeyUsageType.ENCRYPT_DECRYPT)
-            .policy(policy)
-            .build()
-    ).keyMetadata().keyId()
-
+    fun aNewMasterKey(): MasterKid = MasterKid(
+        kmsClient.createKey(
+            CreateKeyRequest.builder()
+                .keySpec("SYMMETRIC_DEFAULT")
+                .description("A_KEY_DESCRIPTION")
+                .keyUsage(KeyUsageType.ENCRYPT_DECRYPT)
+                .policy(policy)
+                .build()
+        ).keyMetadata().keyId()
+    )
 }
 
 class KmsClientWrapper(
