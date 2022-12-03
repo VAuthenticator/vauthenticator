@@ -32,7 +32,7 @@ internal class DynamoKeyRepositoryTest {
         val kid = kidGenerator.invoke()
         val wrapper = KmsClientWrapper(kmsClient)
         keyRepository =
-            DynamoKeyRepository(kidGenerator, dynamoKeysTableName, KmsKeyRepository(kmsClient), wrapper, dynamoDbClient)
+            DynamoKeyRepository(kidGenerator, dynamoKeysTableName, wrapper, dynamoDbClient)
 
         keyRepository.createKeyFrom(masterKid)
 
@@ -60,7 +60,7 @@ internal class DynamoKeyRepositoryTest {
         val kid = kidGenerator.invoke()
         val wrapper = KmsClientWrapper(kmsClient)
         keyRepository =
-            DynamoKeyRepository(kidGenerator, dynamoKeysTableName, KmsKeyRepository(kmsClient), wrapper, dynamoDbClient)
+            DynamoKeyRepository(kidGenerator, dynamoKeysTableName, wrapper, dynamoDbClient)
 
         keyRepository.deleteKeyFor(masterKid, kid)
 
@@ -79,7 +79,7 @@ internal class DynamoKeyRepositoryTest {
         val kid = kidGenerator.invoke()
         val wrapper = KmsClientWrapper(kmsClient)
         keyRepository =
-            DynamoKeyRepository(kidGenerator, dynamoKeysTableName, KmsKeyRepository(kmsClient), wrapper, dynamoDbClient)
+            DynamoKeyRepository(kidGenerator, dynamoKeysTableName, wrapper, dynamoDbClient)
 
         keyRepository.createKeyFrom(masterKid)
 
