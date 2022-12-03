@@ -1,3 +1,3 @@
-package it.valeriovaudi.vauthenticator.security.registeredclient
+package it.valeriovaudi.vauthenticator.oauth2.registeredclient
 
 class RegisteredClientAppNotFound(message: String) : RuntimeException(message)

@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator.security.login
+package it.valeriovaudi.vauthenticator.login
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import it.valeriovaudi.vauthenticator.extentions.oauth2ClientId

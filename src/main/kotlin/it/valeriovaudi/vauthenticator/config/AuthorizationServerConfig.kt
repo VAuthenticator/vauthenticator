@@ -11,11 +11,11 @@ import it.valeriovaudi.vauthenticator.oauth2.clientapp.Scope.Companion.AVAILABLE
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.Scope.Companion.OPEN_ID
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.StoreClientApplication
 import it.valeriovaudi.vauthenticator.oauth2.token.OAuth2TokenEnhancer
-import it.valeriovaudi.vauthenticator.openid.connect.sessionmanagement.SessionManagementFactory
-import it.valeriovaudi.vauthenticator.openid.connect.sessionmanagement.sendAuthorizationResponse
-import it.valeriovaudi.vauthenticator.openid.connect.token.IdTokenEnhancer
-import it.valeriovaudi.vauthenticator.openid.connect.userinfo.UserInfoEnhancer
-import it.valeriovaudi.vauthenticator.security.registeredclient.ClientAppRegisteredClientRepository
+import it.valeriovaudi.vauthenticator.oidc.sessionmanagement.SessionManagementFactory
+import it.valeriovaudi.vauthenticator.oidc.sessionmanagement.sendAuthorizationResponse
+import it.valeriovaudi.vauthenticator.oidc.token.IdTokenEnhancer
+import it.valeriovaudi.vauthenticator.oidc.userinfo.UserInfoEnhancer
+import it.valeriovaudi.vauthenticator.oauth2.registeredclient.ClientAppRegisteredClientRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
