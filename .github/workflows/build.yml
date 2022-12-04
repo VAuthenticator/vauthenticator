@@ -11,6 +11,8 @@ on:
 
 jobs:
   tag-artifact:
+    if: github.event.inputs.version != '' || github.event.inputs.version != ' '
+
     runs-on: ubuntu-20.04
     steps:
       - name: checkout
