@@ -23,8 +23,6 @@ jobs:
           echo version ${{github.event.inputs.version}}
 
       - name: Create tag
-        if: github.event.inputs.version != '' || github.event.inputs.version != ' '
-
         uses: ncipollo/release-action@v1
         with:
           tag: ${{github.event.inputs.version}}
