@@ -36,7 +36,6 @@ Right now it is based, as said before to the latest version on spring oauth2/ope
 
 VAuthenticator implements front_channel single logout openid connect specification session management
 
-### Useful command
-In order to install local-web-server use the following command `npm install -g local-web-server`. 
-To run the ui server locally build the ui artifacts with the command `npm run-script build` under `src/main/frontend` path.
-Then under `src/main/frontend/dist` folder run the command  `ws --port 3000 ` 
+### ui local environment
+In order to install ui assets for local development as first think go under `src/main/frontend` path and use the command `npm run-script build`.
+Then run the command  `docker-compose up` and you will have a local nginx with all the needed assets on http://localhost:3000/assets url

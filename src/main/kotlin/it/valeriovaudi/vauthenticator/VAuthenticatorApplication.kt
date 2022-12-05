@@ -19,7 +19,7 @@ fun main(args: Array<String>) {
 }
 
 @ControllerAdvice
-class BaseUiModelInjector(@Value("\${assetServer.baseUrl:http://localhost:3000}") private val assetServerBaseUrl: String) {
+class BaseUiModelInjector(@Value("\${assetServer.baseUrl:http://localhost:3000/asset}") private val assetServerBaseUrl: String) {
 
     @ModelAttribute("assetServerBaseUrl")
     fun assetServerBaseUrl() = assetServerBaseUrl
