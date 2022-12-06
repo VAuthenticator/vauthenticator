@@ -35,3 +35,7 @@ Right now it is based, as said before to the latest version on spring oauth2/ope
 **General Feature:**
 
 VAuthenticator implements front_channel single logout openid connect specification session management
+
+### ui local environment
+In order to install ui assets for local development as first think go under `src/main/frontend` path and use the command `npm run-script build`.
+Then run the command  `docker-compose up` and you will have a local nginx with all the needed assets on http://localhost:3000/assets url

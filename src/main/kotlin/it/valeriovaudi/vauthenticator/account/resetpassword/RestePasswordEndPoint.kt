@@ -15,19 +15,22 @@ import java.util.*
 
 @RestController
 @SessionAttributes("clientId")
-class ResetPasswordEndPoint(private val sendResetPasswordMailChallenge: SendResetPasswordMailChallenge,
-                            private val resetAccountPassword: ResetAccountPassword) {
+class ResetPasswordEndPoint(
+    private val sendResetPasswordMailChallenge: SendResetPasswordMailChallenge,
+    private val resetAccountPassword: ResetAccountPassword
+) {
 
     @PutMapping("/api/mail/{mail}/rest-password-challenge")
     fun sendVerifyMail(@PathVariable mail: String, session: HttpSession, principal: JwtAuthenticationToken?) =
-            clientIdFrom(session, principal).let {
-                sendResetPasswordMailChallenge.sendResetPasswordMail(mail, it)
-                        .let { noContent().build<Unit>() }
+        clientIdFrom(session, principal).let {
+            sendResetPasswordMailChallenge.sendResetPasswordMail(mail, it)
+                .let { noContent().build<Unit>() }
 
-            }
+        }
 
     private fun clientIdFrom(session: HttpSession, principal: JwtAuthenticationToken?): ClientAppId =
-            Optional.ofNullable(principal).map { it.clientAppId() }.orElseGet { ClientAppId(session.getAttribute("clientId") as String) }
+        Optional.ofNullable(principal).map { it.clientAppId() }
+            .orElseGet { ClientAppId(session.getAttribute("clientId") as String) }
 
 
     @PutMapping("/api/reset-password/{ticket}")
@@ -38,18 +41,20 @@ class ResetPasswordEndPoint(private val sendResetPasswordMailChallenge: SendRese
 }
 
 @Controller
-class ResetPasswordController(val objectMapper: ObjectMapper) {
+class ResetPasswordController(private val objectMapper: ObjectMapper) {
 
     @GetMapping("/reset-password/{ticket}")
     fun resetPasswordPage(@PathVariable ticket: String, model: Model): String {
         val metadata = mapOf("ticket" to ticket)
         model.addAttribute("metadata", objectMapper.writeValueAsString(metadata))
-        return "account/reset-password/reset-password"
+        model.addAttribute("assetBundle", "resetPassword_bundle.js")
+        return "template"
     }
 
     @GetMapping("/reset-password/successful-password-reset")
-    fun successfulResetPasswordPage(): String {
-        return "account/reset-password/successful-password-reset"
+    fun successfulResetPasswordPage(model: Model): String {
+        model.addAttribute("assetBundle", "successfulPasswordReset_bundle.js")
+        return "template"
     }
 }
 

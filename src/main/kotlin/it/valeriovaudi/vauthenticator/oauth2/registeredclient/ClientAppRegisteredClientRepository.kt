@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator.security.registeredclient
+package it.valeriovaudi.vauthenticator.oauth2.registeredclient
 
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.*
 import org.slf4j.Logger

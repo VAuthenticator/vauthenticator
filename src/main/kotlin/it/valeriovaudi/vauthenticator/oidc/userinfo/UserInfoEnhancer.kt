@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator.openid.connect.userinfo
+package it.valeriovaudi.vauthenticator.oidc.userinfo
 
 import it.valeriovaudi.vauthenticator.account.Account
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository

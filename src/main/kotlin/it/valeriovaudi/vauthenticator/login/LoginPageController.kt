@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator.security.login
+package it.valeriovaudi.vauthenticator.login
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import it.valeriovaudi.vauthenticator.extentions.oauth2ClientId
@@ -36,8 +36,8 @@ class LoginPageController(
         }
 
         model.addAttribute("features", objectMapper.writeValueAsString(features))
-
-        return "login"
+        model.addAttribute("assetBundle", "login_bundle.js")
+        return "template"
     }
 
     private fun defaultFeature() =

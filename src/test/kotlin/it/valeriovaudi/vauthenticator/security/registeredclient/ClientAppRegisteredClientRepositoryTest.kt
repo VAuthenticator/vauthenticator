@@ -6,6 +6,8 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.*
+import it.valeriovaudi.vauthenticator.oauth2.registeredclient.ClientAppRegisteredClientRepository
+import it.valeriovaudi.vauthenticator.oauth2.registeredclient.RegisteredClientAppNotFound
 import it.valeriovaudi.vauthenticator.security.registeredclient.RegisteredClientRepositoryFixture.aClientApplication
 import it.valeriovaudi.vauthenticator.security.registeredclient.RegisteredClientRepositoryFixture.aRegisteredClient
 import org.junit.jupiter.api.Assertions

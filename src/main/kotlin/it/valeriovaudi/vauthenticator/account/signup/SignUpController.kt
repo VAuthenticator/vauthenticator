@@ -12,6 +12,7 @@ class SignUpController {
 
     @GetMapping("/sign-up")
     fun view(@ModelAttribute("features") features: List<String>, model: Model): String {
-        return "signup"
+        model.addAttribute("assetBundle", "signup_bundle.js")
+        return "template"
     }
 }
