@@ -5,6 +5,7 @@ const BUID_DIR = path.resolve(__dirname + "/dist");
 module.exports = {
     mode: 'development',
     entry: {
+        healthz: path.resolve(__dirname, './app/healthz/healthz.js'),
         login: path.resolve(__dirname, './app/login/index.js'),
         mfa: path.resolve(__dirname, './app/mfa/index.js'),
         signup: path.resolve(__dirname, './app/signup/index.js'),
