@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator.security.userdetails
+package it.valeriovaudi.vauthenticator.login.userdetails
 
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import org.slf4j.Logger

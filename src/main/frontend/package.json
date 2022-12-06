@@ -1,7 +1,7 @@
 {
-  "name": "family-budget-ui",
+  "name": "vautehenticator-asset",
   "version": "1.1.0",
-  "description": "Family Budget UI library",
+  "description": "VAuthenticator UI Asset library",
   "babel": {
     "presets": [
       "@babel/react",

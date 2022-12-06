@@ -1,0 +1,9 @@
+version: "3.1"
+
+services:
+  vauthenticator-asset-server:
+    image: "nginx:1.23.1-alpine"
+    volumes:
+      - "./dist:/usr/share/nginx/html"
+    ports:
+      - 3000:80

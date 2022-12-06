@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
 import org.springframework.stereotype.Controller
+import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
 
 @Controller
@@ -19,9 +20,13 @@ class MfaController(
     private val logger = LoggerFactory.getLogger(MfaController::class.java)
 
     @GetMapping("/mfa-challenge")
-    fun view(authentication: Authentication): String {
+    fun view(
+        authentication: Authentication,
+        model: Model
+    ): String {
         otpMfaSender.sendMfaChallenge(authentication.name)
-        return "mfa/index"
+        model.addAttribute("assetBundle", "mfa_bundle.js")
+        return "template"
     }
 
 

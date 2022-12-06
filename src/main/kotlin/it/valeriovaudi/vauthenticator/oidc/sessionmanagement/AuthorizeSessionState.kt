@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator.openid.connect.sessionmanagement
+package it.valeriovaudi.vauthenticator.oidc.sessionmanagement
 
 import it.valeriovaudi.vauthenticator.extentions.toSha256
 import jakarta.servlet.http.HttpServletRequest
@@ -21,9 +21,9 @@ import org.springframework.web.util.UriComponentsBuilder
 import java.util.*
 
 fun sendAuthorizationResponse(
-        redisTemplate: RedisTemplate<String, String?>,
-        factory: SessionManagementFactory,
-        redirectStrategy: RedirectStrategy
+    redisTemplate: RedisTemplate<String, String?>,
+    factory: SessionManagementFactory,
+    redirectStrategy: RedirectStrategy
 ) = { request: HttpServletRequest,
       response: HttpServletResponse,
       authentication: Authentication ->

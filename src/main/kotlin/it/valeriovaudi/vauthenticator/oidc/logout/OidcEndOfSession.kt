@@ -1,7 +1,7 @@
-package it.valeriovaudi.vauthenticator.openid.connect.logout
+package it.valeriovaudi.vauthenticator.oidc.logout
 
 import it.valeriovaudi.vauthenticator.extentions.toSha256
-import it.valeriovaudi.vauthenticator.openid.connect.sessionmanagement.SessionManagementFactory
+import it.valeriovaudi.vauthenticator.oidc.sessionmanagement.SessionManagementFactory
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.beans.factory.annotation.Value
@@ -30,8 +30,8 @@ class FrontChannelLogoutController(@Value("\${auth.oidcIss:}") private val  auth
 
 //todo
 class ClearSessionStateLogoutHandler(
-        private val sessionFactory: SessionManagementFactory,
-        private val redisTemplate: RedisTemplate<String, String?>
+    private val sessionFactory: SessionManagementFactory,
+    private val redisTemplate: RedisTemplate<String, String?>
 
 ) : LogoutHandler {
 

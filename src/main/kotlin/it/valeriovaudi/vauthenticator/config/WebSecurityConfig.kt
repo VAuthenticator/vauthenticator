@@ -6,10 +6,10 @@ import it.valeriovaudi.vauthenticator.mfa.MfaAuthenticationHandler
 import it.valeriovaudi.vauthenticator.mfa.MfaTrustResolver
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.Scope
-import it.valeriovaudi.vauthenticator.openid.connect.logout.ClearSessionStateLogoutHandler
-import it.valeriovaudi.vauthenticator.openid.connect.sessionmanagement.SessionManagementFactory
+import it.valeriovaudi.vauthenticator.oidc.logout.ClearSessionStateLogoutHandler
+import it.valeriovaudi.vauthenticator.oidc.sessionmanagement.SessionManagementFactory
 import it.valeriovaudi.vauthenticator.password.BcryptVAuthenticatorPasswordEncoder
-import it.valeriovaudi.vauthenticator.security.userdetails.AccountUserDetailsService
+import it.valeriovaudi.vauthenticator.login.userdetails.AccountUserDetailsService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.redis.core.RedisTemplate

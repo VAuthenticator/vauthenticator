@@ -46,7 +46,7 @@ internal class MfaControllerTest {
         mokMvc.perform(
             get("/mfa-challenge")
                 .principal(principalFor(account.email))
-        ).andExpect(view().name("mfa/index"))
+        ).andExpect(view().name("template"))
     }
 
     @Test
