@@ -36,8 +36,8 @@ open class DynamoKeyRepository(
                     mapOf(
                         "master_key_id" to masterKid.content().asDynamoAttribute(),
                         "key_id" to kidContent.asDynamoAttribute(),
-                        "private_key" to encoder.encode(dataKeyPair.privateKey).decodeToString().asDynamoAttribute(),
-                        "public_key" to encoder.encode(dataKeyPair.publicKey.get()).decodeToString().asDynamoAttribute(),
+                        "private_key" to dataKeyPair.privateKeyAsString().asDynamoAttribute(),
+                        "public_key" to dataKeyPair.publicKeyAsString().asDynamoAttribute(),
                         "enabled" to true.asDynamoAttribute()
                     )
                 )
@@ -161,6 +161,9 @@ object KeyPairFactory {
 }
 
 data class AwsKmsDataKey(val privateKey: ByteArray, val publicKey: Optional<ByteArray>) {
+
+    fun privateKeyAsString() = encoder.encode(privateKey).decodeToString()
+    fun publicKeyAsString() = publicKey.map { encoder.encode(privateKey).decodeToString() }.orElseGet { "" }
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
