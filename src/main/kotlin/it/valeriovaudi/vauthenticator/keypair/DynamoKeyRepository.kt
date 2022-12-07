@@ -163,7 +163,7 @@ object KeyPairFactory {
 data class AwsKmsDataKey(val privateKey: ByteArray, val publicKey: Optional<ByteArray>) {
 
     fun privateKeyAsString() = encoder.encode(privateKey).decodeToString()
-    fun publicKeyAsString() = publicKey.map { encoder.encode(privateKey).decodeToString() }.orElseGet { "" }
+    fun publicKeyAsString() = publicKey.map { encoder.encode(it).decodeToString() }.orElseGet { "" }
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
