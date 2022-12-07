@@ -1,6 +1,6 @@
 package it.valeriovaudi.vauthenticator.config
 
-import it.valeriovaudi.vauthenticator.keypair.DynamoKeyRepository
+import it.valeriovaudi.vauthenticator.keypair.AwsKeyRepository
 import it.valeriovaudi.vauthenticator.keypair.KeyRepository
 import it.valeriovaudi.vauthenticator.keypair.KmsKeyRepository
 import org.springframework.beans.factory.annotation.Value
@@ -17,7 +17,7 @@ class KeyConfig {
     fun keyRepository(kmsClient: KmsClient,
                       dynamoDbClient: DynamoDbClient,
                       @Value("\${vauthenticator.dynamo-db.keys.table-name}") tableName: String): KeyRepository =
-            DynamoKeyRepository(
+            AwsKeyRepository(
                     {UUID.randomUUID().toString()},
                     tableName,
                     KmsKeyRepository(kmsClient),

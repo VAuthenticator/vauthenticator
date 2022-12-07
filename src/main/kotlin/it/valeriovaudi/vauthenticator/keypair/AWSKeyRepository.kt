@@ -18,7 +18,7 @@ import java.security.spec.PKCS8EncodedKeySpec
 import java.security.spec.X509EncodedKeySpec
 import java.util.*
 
-open class DynamoKeyRepository(
+open class AwsKeyRepository(
     private val kidGenerator: () -> String,
     private val table: String,
     private val kmsKeyRepository: KmsKeyRepository,
@@ -26,7 +26,7 @@ open class DynamoKeyRepository(
 ) : KeyRepository {
 
     override fun createKeyFrom(masterKid: MasterKid, keyType: KeyType): Kid {
-        val dataKeyPair = keyPairFor(masterKid, keyType)
+        val dataKey = keyPairFor(masterKid, keyType)
         val kidContent = kidGenerator.invoke()
 
         dynamoDbClient.putItem(
@@ -36,8 +36,8 @@ open class DynamoKeyRepository(
                     mapOf(
                         "master_key_id" to masterKid.content().asDynamoAttribute(),
                         "key_id" to kidContent.asDynamoAttribute(),
-                        "private_key" to dataKeyPair.privateKeyAsString().asDynamoAttribute(),
-                        "public_key" to dataKeyPair.publicKeyAsString().asDynamoAttribute(),
+                        "private_key" to dataKey.privateKeyAsString().asDynamoAttribute(),
+                        "public_key" to dataKey.publicKeyAsString().asDynamoAttribute(),
                         "enabled" to true.asDynamoAttribute()
                     )
                 )
@@ -51,7 +51,7 @@ open class DynamoKeyRepository(
         if (keyType == KeyType.ASYMMETRIC) {
             kmsKeyRepository.dataKeyPairFor(masterKid)
         } else {
-            TODO()
+            kmsKeyRepository.dataKeyFor(masterKid)
         }
 
     override fun deleteKeyFor(masterKid: MasterKid, kid: Kid) {
@@ -162,8 +162,8 @@ object KeyPairFactory {
 
 data class AwsKmsDataKey(val privateKey: ByteArray, val publicKey: Optional<ByteArray>) {
 
-    fun privateKeyAsString() = encoder.encode(privateKey).decodeToString()
-    fun publicKeyAsString() = publicKey.map { encoder.encode(it).decodeToString() }.orElseGet { "" }
+    fun privateKeyAsString(): String = encoder.encode(privateKey).decodeToString()
+    fun publicKeyAsString(): String = publicKey.map { encoder.encode(it).decodeToString() }.orElseGet { "" }
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

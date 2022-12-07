@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
 
-internal class DynamoKeyRepositoryTest {
+internal class AwsKeyRepositoryTest {
 
     private lateinit var keyRepository: KeyRepository
 
@@ -27,14 +27,14 @@ internal class DynamoKeyRepositoryTest {
     }
 
     @Test
-    internal fun `when create a new key`() {
+    internal fun `when create a new data key pair`() {
         val masterKid = aNewMasterKey()
         val kid = kidGenerator.invoke()
         val wrapper = KmsClientWrapper(kmsClient)
         keyRepository =
-            DynamoKeyRepository(kidGenerator, dynamoKeysTableName, KmsKeyRepository(wrapper), dynamoDbClient)
+            AwsKeyRepository(kidGenerator, dynamoKeysTableName, KmsKeyRepository(wrapper), dynamoDbClient)
 
-        keyRepository.createKeyFrom(masterKid)
+        keyRepository.createKeyFrom(masterKid, KeyType.ASYMMETRIC)
 
 
         val actual = dynamoDbClient.getItem(
@@ -53,6 +53,29 @@ internal class DynamoKeyRepositoryTest {
             actual.valueAsStringFor("public_key")
         )
     }
+    @Test
+    internal fun `when create a new data key`() {
+        val masterKid = aNewMasterKey()
+        val kid = kidGenerator.invoke()
+        val wrapper = KmsClientWrapper(kmsClient)
+        keyRepository =
+            AwsKeyRepository(kidGenerator, dynamoKeysTableName, KmsKeyRepository(wrapper), dynamoDbClient)
+
+        keyRepository.createKeyFrom(masterKid, KeyType.SYMMETRIC)
+
+
+        val actual = dynamoDbClient.getItem(
+            GetItemRequest.builder().tableName(dynamoKeysTableName)
+                .key(mapOf("master_key_id" to masterKid.content().asDynamoAttribute(), "key_id" to kid.asDynamoAttribute()))
+                .build()
+        ).item()
+        assertEquals(kid, actual.valueAsStringFor("key_id"))
+        assertEquals(masterKid.content(), actual.valueAsStringFor("master_key_id"))
+        assertEquals(
+            encoder.encode(wrapper.generateDataKeyRecorder.get().ciphertextBlob().asByteArray())
+                .decodeToString(), actual.valueAsStringFor("private_key")
+        )
+    }
 
     @Test
     internal fun `when a key is deleted`() {
@@ -60,7 +83,7 @@ internal class DynamoKeyRepositoryTest {
         val kid = Kid(kidGenerator.invoke())
         val wrapper = KmsClientWrapper(kmsClient)
         keyRepository =
-            DynamoKeyRepository(kidGenerator, dynamoKeysTableName, KmsKeyRepository(wrapper), dynamoDbClient)
+            AwsKeyRepository(kidGenerator, dynamoKeysTableName, KmsKeyRepository(wrapper), dynamoDbClient)
 
         keyRepository.deleteKeyFor(masterKid, kid)
 
@@ -79,7 +102,7 @@ internal class DynamoKeyRepositoryTest {
         val kid = Kid(kidGenerator.invoke())
         val wrapper = KmsClientWrapper(kmsClient)
         keyRepository =
-            DynamoKeyRepository(kidGenerator, dynamoKeysTableName, KmsKeyRepository(wrapper), dynamoDbClient)
+            AwsKeyRepository(kidGenerator, dynamoKeysTableName, KmsKeyRepository(wrapper), dynamoDbClient)
 
         keyRepository.createKeyFrom(masterKid)
 

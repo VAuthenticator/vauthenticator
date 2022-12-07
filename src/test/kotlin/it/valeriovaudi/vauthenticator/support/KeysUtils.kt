@@ -5,10 +5,7 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.kms.KmsClient
-import software.amazon.awssdk.services.kms.model.CreateKeyRequest
-import software.amazon.awssdk.services.kms.model.GenerateDataKeyPairRequest
-import software.amazon.awssdk.services.kms.model.GenerateDataKeyPairResponse
-import software.amazon.awssdk.services.kms.model.KeyUsageType
+import software.amazon.awssdk.services.kms.model.*
 import java.net.URI
 import java.util.*
 
@@ -58,7 +55,8 @@ object KeysUtils {
 
 class KmsClientWrapper(
     private val kmsClient: KmsClient,
-    var generateDataKeyPairRecorder: Optional<GenerateDataKeyPairResponse> = Optional.empty()
+    var generateDataKeyPairRecorder: Optional<GenerateDataKeyPairResponse> = Optional.empty(),
+    var generateDataKeyRecorder: Optional<GenerateDataKeyResponse> = Optional.empty()
 ) : KmsClient by kmsClient {
 
     override fun generateDataKeyPair(request: GenerateDataKeyPairRequest): GenerateDataKeyPairResponse {
@@ -66,4 +64,11 @@ class KmsClientWrapper(
         generateDataKeyPairRecorder = Optional.of(generateDataKeyPair)
         return generateDataKeyPair
     }
+    override fun generateDataKey(request: GenerateDataKeyRequest): GenerateDataKeyResponse {
+        val generateDataKey = kmsClient.generateDataKey(request)
+        generateDataKeyRecorder = Optional.of(generateDataKey)
+        return generateDataKey
+    }
+
+
 }
