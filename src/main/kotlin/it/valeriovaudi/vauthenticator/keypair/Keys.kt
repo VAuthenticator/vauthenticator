@@ -16,6 +16,7 @@ value class MasterKid(private val content: String) {
 }
 
 
+enum class KeyType { SYMMETRIC, ASYMMETRIC }
 data class Keys(val keys: List<Key>)
 
 data class Key(val keyPair: KeyPair, val masterKid: MasterKid, val kid: Kid, val enabled: Boolean)

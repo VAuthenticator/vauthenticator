@@ -27,8 +27,8 @@ open class DynamoKeyRepository(
     private val dynamoDbClient: DynamoDbClient
 ) : KeyRepository {
 
-    override fun createKeyFrom(masterKid: MasterKid): Kid {
-        val dataKeyPair = kmsKeyRepository.dataKeyPairFor(masterKid)
+    override fun createKeyFrom(masterKid: MasterKid, keyType: KeyType): Kid {
+        val dataKeyPair = keyPairFor(masterKid, keyType)
         val kidContent = kidGenerator.invoke()
 
         dynamoDbClient.putItem(
@@ -51,6 +51,13 @@ open class DynamoKeyRepository(
 
         return Kid(kidContent)
     }
+
+    private fun keyPairFor(masterKid: MasterKid, keyType: KeyType) =
+        if (keyType == KeyType.ASYMMETRIC) {
+            kmsKeyRepository.dataKeyPairFor(masterKid)
+        } else {
+            TODO()
+        }
 
     override fun deleteKeyFor(masterKid: MasterKid, kid: Kid) {
         dynamoDbClient.deleteItem(

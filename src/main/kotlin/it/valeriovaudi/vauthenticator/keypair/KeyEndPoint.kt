@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 class KeyEndPoint(
-    @Value("\${key.master-key}") private val masterKey: MasterKid,
+    @Value("\${key.master-key}") private val masterKey: String,
     private val keyRepository: KeyRepository
 ) {
 
@@ -20,7 +20,7 @@ class KeyEndPoint(
 
     @PostMapping("/api/keys")
     fun createKey() =
-        keyRepository.createKeyFrom(masterKey)
+        keyRepository.createKeyFrom(MasterKid(masterKey))
             .let { ResponseEntity.status(HttpStatus.CREATED).build<Unit>() }
 
     @DeleteMapping("/api/keys")
