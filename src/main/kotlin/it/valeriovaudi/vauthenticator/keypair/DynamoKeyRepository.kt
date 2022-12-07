@@ -9,16 +9,14 @@ import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
 import software.amazon.awssdk.services.dynamodb.model.ScanRequest
 import software.amazon.awssdk.services.kms.KmsClient
-import software.amazon.awssdk.services.kms.model.DataKeyPairSpec
-import software.amazon.awssdk.services.kms.model.DecryptRequest
-import software.amazon.awssdk.services.kms.model.GenerateDataKeyPairRequest
-import software.amazon.awssdk.services.kms.model.GenerateDataKeyPairResponse
+import software.amazon.awssdk.services.kms.model.*
 import java.security.KeyFactory
 import java.security.KeyPair
 import java.security.PrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.security.spec.PKCS8EncodedKeySpec
 import java.security.spec.X509EncodedKeySpec
+import java.util.*
 
 open class DynamoKeyRepository(
     private val kidGenerator: () -> String,
@@ -38,11 +36,8 @@ open class DynamoKeyRepository(
                     mapOf(
                         "master_key_id" to masterKid.content().asDynamoAttribute(),
                         "key_id" to kidContent.asDynamoAttribute(),
-                        "private_key_ciphertext_blob" to encoder.encode(
-                            dataKeyPair.privateKeyCiphertextBlob().asByteArray()
-                        ).decodeToString().asDynamoAttribute(),
-                        "public_key" to encoder.encode(dataKeyPair.publicKey().asByteArray()).decodeToString()
-                            .asDynamoAttribute(),
+                        "private_key" to encoder.encode(dataKeyPair.privateKey).decodeToString().asDynamoAttribute(),
+                        "public_key" to encoder.encode(dataKeyPair.publicKey.get()).decodeToString().asDynamoAttribute(),
                         "enabled" to true.asDynamoAttribute()
                     )
                 )
@@ -90,7 +85,7 @@ open class DynamoKeyRepository(
         items.map {
             Key(
                 kmsKeyRepository.getKeyPairFor(
-                    it.valueAsStringFor("private_key_ciphertext_blob"),
+                    it.valueAsStringFor("private_key"),
                     it.valueAsStringFor("public_key")
                 ),
                 MasterKid(it.valueAsStringFor("master_key_id")),
@@ -115,13 +110,32 @@ class KmsKeyRepository(
         return keyPairFor(encoder.encode(generateDataKeyPair.plaintext().asByteArray()).decodeToString(), pubKey)
     }
 
-    fun dataKeyPairFor(masterKid: MasterKid): GenerateDataKeyPairResponse =
+    fun dataKeyPairFor(masterKid: MasterKid) =
         kmsClient.generateDataKeyPair(
             GenerateDataKeyPairRequest.builder()
                 .keyId(masterKid.content())
                 .keyPairSpec(DataKeyPairSpec.RSA_2048)
                 .build()
-        )
+        ).let {
+            AwsKmsDataKey(
+                privateKey = it.privateKeyCiphertextBlob().asByteArray(),
+                publicKey = Optional.of(it.publicKey().asByteArray())
+            )
+        }
+
+    fun dataKeyFor(masterKid: MasterKid): AwsKmsDataKey =
+        kmsClient.generateDataKey(
+            GenerateDataKeyRequest.builder()
+                .keyId(masterKid.content())
+                .keySpec(DataKeySpec.AES_256)
+                .build()
+        ).let {
+            AwsKmsDataKey(
+                privateKey = it.ciphertextBlob().asByteArray(),
+                publicKey = Optional.empty<ByteArray>()
+            )
+        }
+
 
 }
 
@@ -143,5 +157,25 @@ object KeyPairFactory {
     private fun privateKey(kf: KeyFactory, privateKey: String): PrivateKey {
         val keySpecPKCS8 = PKCS8EncodedKeySpec(decoder.decode(privateKey))
         return kf.generatePrivate(keySpecPKCS8)
+    }
+}
+
+data class AwsKmsDataKey(val privateKey: ByteArray, val publicKey: Optional<ByteArray>) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as AwsKmsDataKey
+
+        if (!privateKey.contentEquals(other.privateKey)) return false
+        if (publicKey != other.publicKey) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = privateKey.contentHashCode()
+        result = 31 * result + publicKey.hashCode()
+        return result
     }
 }
