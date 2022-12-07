@@ -31,7 +31,7 @@ internal class KeyEndPointTest {
 
     @BeforeEach
     internal fun setUp() {
-        mokMvc = standaloneSetup(KeyEndPoint(MasterKid("A_MASTER_KEY"), keyRepository)).build()
+        mokMvc = standaloneSetup(KeyEndPoint("A_MASTER_KEY", keyRepository)).build()
     }
 
     @Test
