@@ -1,8 +1,8 @@
 package it.valeriovaudi.vauthenticator.mfa
 
-interface MfaMethodsRepository {
+interface MfaAccountMethodsRepository {
 
     fun findAll(email: String): List<MfaAccountMethod>
-    fun store(email: String, mfaMfaMethod: MfaAccountMethod)
+    fun save(email: String, mfaMfaMethod: MfaMethod) : MfaAccountMethod
     fun delete(email: String)
 }

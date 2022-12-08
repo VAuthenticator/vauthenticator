@@ -63,14 +63,14 @@ internal class VerifyMailChallengeSentTest {
                 clientAppId.content
             )
         )
-        every { mfaMethodsEnrolmentAssociation.execute(enabledAccount, MfaMethod.EMAIL_MFA_METHOD) } just runs
+        every { mfaMethodsEnrolmentAssociation.associate(enabledAccount, MfaMethod.EMAIL_MFA_METHOD) } just runs
         every { clientAccountRepository.findOne(clientAppId) } returns Optional.of(clientApplication)
         every { accountRepository.accountFor(account.email) } returns Optional.of(account)
         every { accountRepository.save(enabledAccount) } just runs
         every { ticketRepository.delete(verificationTicket) } just runs
 
         underTest.verifyMail("A_TICKET")
-        verify(exactly = 1) { mfaMethodsEnrolmentAssociation.execute(enabledAccount, MfaMethod.EMAIL_MFA_METHOD) }
+        verify(exactly = 1) { mfaMethodsEnrolmentAssociation.associate(enabledAccount, MfaMethod.EMAIL_MFA_METHOD) }
     }
 
     @Test

@@ -36,7 +36,7 @@ class VerifyMailChallengeSent(
             .map { clientApplication ->
                 if (clientApplication.scopes.content.contains(Scope.MAIL_VERIFY)) {
                     val account = enableAccountFrom(ticket)
-                    mfaMethodsEnrolmentAssociation.execute(account, MfaMethod.EMAIL_MFA_METHOD)
+                    mfaMethodsEnrolmentAssociation.associate(account, MfaMethod.EMAIL_MFA_METHOD)
                 } else {
                     throw InsufficientClientApplicationScopeException("The client app ${ticket.clientAppId} does not support signup use case........ consider to add ${Scope.MAIL_VERIFY.content} as scope")
                 }

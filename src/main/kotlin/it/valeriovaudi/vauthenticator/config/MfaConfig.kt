@@ -11,9 +11,13 @@ import org.springframework.mail.javamail.JavaMailSender
 
 @Configuration(proxyBeanMethods = false)
 class MfaConfig {
+//
+//    @Bean
+//    fun mfaAccountMethodsRepository(): MfaAccountMethodsRepository = TODO()
 
     @Bean
-    fun mfaMethodsEnrolmentAssociation() = MfaMethodsEnrolmentAssociation()
+    fun mfaMethodsEnrolmentAssociation(mfaAccountMethodsRepository: MfaAccountMethodsRepository) =
+        MfaMethodsEnrolmentAssociation(mfaAccountMethodsRepository)
 
     @Bean
     fun otpMfa(otpConfigurationProperties: OtpConfigurationProperties) = TaimosOtpMfa(otpConfigurationProperties)
@@ -26,7 +30,7 @@ class MfaConfig {
     ) = OtpMfaEmailSender(accountRepository, otpMfa, mfaMailSender)
 
     @Bean
-    fun aotpMfaVerifier(
+    fun otpMfaVerifier(
         accountRepository: AccountRepository,
         otpMfa: OtpMfa
     ) = AccountAwareOtpMfaVerifier(accountRepository, otpMfa)
