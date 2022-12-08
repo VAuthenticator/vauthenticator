@@ -15,6 +15,7 @@ object DatabaseUtils {
     const val dynamoAccountRoleTableName: String = "TESTING_VAuthenticator_Account_Role"
     const val dynamoKeysTableName: String = "TESTING_VAuthenticator_Keys"
     const val dynamoTicketTableName: String = "TESTING_VAuthenticator_ticket"
+    const val dynamoMfaAccountMethodsTableName: String = "TESTING_VAuthenticator_Mfa_Account_Methods"
 
     val dynamoDbClient: DynamoDbClient = DynamoDbClient.builder()
             .credentialsProvider(
@@ -59,6 +60,9 @@ object DatabaseUtils {
             dynamoDbClient.deleteTable(DeleteTableRequest.builder()
                     .tableName(dynamoTicketTableName)
                     .build())
+            dynamoDbClient.deleteTable(DeleteTableRequest.builder()
+                    .tableName(dynamoMfaAccountMethodsTableName)
+                    .build())
         } catch (e: java.lang.Exception) {
         }
         try {
@@ -68,9 +72,33 @@ object DatabaseUtils {
             createDynamoAccountRoleTable()
             createDynamoKeysTable()
             createDynamoTicketTable()
+            createDynamoMfaAccountMethodsTable()
         } catch (e: java.lang.Exception) {
         }
 
+    }
+
+    private fun createDynamoMfaAccountMethodsTable() {
+        dynamoDbClient.createTable(CreateTableRequest.builder()
+            .tableName(dynamoMfaAccountMethodsTableName)
+            .keySchema(KeySchemaElement.builder()
+                .attributeName("user_name")
+                .keyType(KeyType.HASH)
+                .build(),
+                KeySchemaElement.builder()
+                    .attributeName("mfa_method")
+                    .keyType(KeyType.RANGE)
+                    .build())
+            .attributeDefinitions(AttributeDefinition.builder()
+                .attributeName("user_name")
+                .attributeType(ScalarAttributeType.S)
+                .build(),
+                AttributeDefinition.builder()
+                    .attributeName("mfa_method")
+                    .attributeType(ScalarAttributeType.S)
+                    .build())
+            .billingMode(BillingMode.PAY_PER_REQUEST)
+            .build());
     }
 
     private fun createDynamoAccountRoleTable() {
