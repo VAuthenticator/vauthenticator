@@ -23,8 +23,6 @@ class TaimosOtpMfa(private val properties: OtpConfigurationProperties) : OtpMfa 
     }
 
     override fun getTOTPCode(secretKey: MfaSecret): MfaChallenge {
-        println("properties")
-        println(properties)
         val base32 = Base32()
         val bytes = base32.decode(secretKey.content())
         val hexKey: String = Hex.encodeHexString(bytes)

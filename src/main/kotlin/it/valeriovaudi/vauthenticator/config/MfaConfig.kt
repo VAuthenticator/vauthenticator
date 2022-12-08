@@ -5,13 +5,15 @@ import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import it.valeriovaudi.vauthenticator.document.DocumentRepository
 import it.valeriovaudi.vauthenticator.mail.*
 import it.valeriovaudi.vauthenticator.mfa.*
-import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.mail.javamail.JavaMailSender
 
 @Configuration(proxyBeanMethods = false)
 class MfaConfig {
+
+    @Bean
+    fun mfaMethodsEnrolmentAssociation() = MfaMethodsEnrolmentAssociation()
 
     @Bean
     fun otpMfa(otpConfigurationProperties: OtpConfigurationProperties) = TaimosOtpMfa(otpConfigurationProperties)
