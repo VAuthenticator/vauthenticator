@@ -2,6 +2,7 @@ package it.valeriovaudi.vauthenticator.mfa
 
 import com.j256.twofactorauth.TimeBasedOneTimePasswordUtil
 import it.valeriovaudi.vauthenticator.account.Account
+import it.valeriovaudi.vauthenticator.keys.KeyRepository
 import org.apache.commons.codec.binary.Base32
 import org.apache.commons.codec.binary.Hex
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -13,7 +14,11 @@ interface OtpMfa {
     fun verify(account: Account, optCode: MfaChallenge)
 }
 
-class TaimosOtpMfa(private val properties: OtpConfigurationProperties) : OtpMfa {
+class TaimosOtpMfa(
+    private val keyRepository: KeyRepository,
+    private val mfaAccountMethodsRepository: MfaAccountMethodsRepository,
+    private val properties: OtpConfigurationProperties
+) : OtpMfa {
     private val tokenTimeWindow: Int = properties.otpTimeToLiveInSeconds
     private val tokenTimeWindowMillis: Long = (tokenTimeWindow * 1000).toLong()
 

@@ -46,7 +46,7 @@ internal class AwsKeyRepositoryTest {
         assertEquals(masterKid.content(), actual.valueAsStringFor("master_key_id"))
         assertEquals(
             encoder.encode(wrapper.generateDataKeyPairRecorder.get().privateKeyCiphertextBlob().asByteArray())
-                .decodeToString(), actual.valueAsStringFor("private_key")
+                .decodeToString(), actual.valueAsStringFor("encrypted_private_key")
         )
         assertEquals(
             encoder.encode(wrapper.generateDataKeyPairRecorder.get().publicKey().asByteArray()).decodeToString(),
@@ -73,7 +73,7 @@ internal class AwsKeyRepositoryTest {
         assertEquals(masterKid.content(), actual.valueAsStringFor("master_key_id"))
         assertEquals(
             encoder.encode(wrapper.generateDataKeyRecorder.get().ciphertextBlob().asByteArray())
-                .decodeToString(), actual.valueAsStringFor("private_key")
+                .decodeToString(), actual.valueAsStringFor("encrypted_private_key")
         )
     }
 

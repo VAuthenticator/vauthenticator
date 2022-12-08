@@ -29,6 +29,12 @@ open class AwsKeyRepository(
         val dataKey = keyPairFor(masterKid, keyType)
         val kidContent = kidGenerator.invoke()
 
+        storeKeyOnDynamo(masterKid, kidContent, dataKey)
+
+        return Kid(kidContent)
+    }
+
+    private fun storeKeyOnDynamo(masterKid: MasterKid, kidContent: String, dataKey: DataKey) {
         dynamoDbClient.putItem(
             PutItemRequest.builder()
                 .tableName(table)
@@ -36,15 +42,13 @@ open class AwsKeyRepository(
                     mapOf(
                         "master_key_id" to masterKid.content().asDynamoAttribute(),
                         "key_id" to kidContent.asDynamoAttribute(),
-                        "private_key" to dataKey.privateKeyAsString().asDynamoAttribute(),
+                        "encrypted_private_key" to dataKey.privateKeyAsString().asDynamoAttribute(),
                         "public_key" to dataKey.publicKeyAsString().asDynamoAttribute(),
                         "enabled" to true.asDynamoAttribute()
                     )
                 )
                 .build()
         )
-
-        return Kid(kidContent)
     }
 
     private fun keyPairFor(masterKid: MasterKid, keyType: KeyType) =
@@ -75,6 +79,10 @@ open class AwsKeyRepository(
         return Keys(keys)
     }
 
+    override fun keyFor(kid: Kid): Key {
+        TODO("Not yet implemented")
+    }
+
     private fun findAllFrom(table: String) = dynamoDbClient.scan(
         ScanRequest.builder()
             .tableName(table)
@@ -85,7 +93,7 @@ open class AwsKeyRepository(
         items.map {
             Key(
                 kmsKeyRepository.getKeyPairFor(
-                    it.valueAsStringFor("private_key"),
+                    it.valueAsStringFor("encrypted_private_key"),
                     it.valueAsStringFor("public_key")
                 ),
                 MasterKid(it.valueAsStringFor("master_key_id")),
@@ -101,14 +109,16 @@ class KmsKeyRepository(
 ) {
 
     fun getKeyPairFor(privateKey: String, pubKey: String): KeyPair {
-        val generateDataKeyPair = kmsClient.decrypt(
+        val generateDataKeyPair = decryptKey(privateKey)
+        return keyPairFor(encoder.encode(generateDataKeyPair.plaintext().asByteArray()).decodeToString(), pubKey)
+    }
+
+    fun decryptKey(privateKey: String): DecryptResponse =
+        kmsClient.decrypt(
             DecryptRequest.builder()
                 .ciphertextBlob(fromByteArray(decoder.decode(privateKey)))
                 .build()
         )
-
-        return keyPairFor(encoder.encode(generateDataKeyPair.plaintext().asByteArray()).decodeToString(), pubKey)
-    }
 
     fun dataKeyPairFor(masterKid: MasterKid) =
         kmsClient.generateDataKeyPair(
@@ -117,27 +127,27 @@ class KmsKeyRepository(
                 .keyPairSpec(DataKeyPairSpec.RSA_2048)
                 .build()
         ).let {
-            AwsKmsDataKey(
-                privateKey = it.privateKeyCiphertextBlob().asByteArray(),
+            DataKey(
+                encryptedPrivateKey = it.privateKeyCiphertextBlob().asByteArray(),
                 publicKey = Optional.of(it.publicKey().asByteArray())
             )
         }
 
-    fun dataKeyFor(masterKid: MasterKid): AwsKmsDataKey =
+    fun dataKeyFor(masterKid: MasterKid): DataKey =
         kmsClient.generateDataKey(
             GenerateDataKeyRequest.builder()
                 .keyId(masterKid.content())
                 .keySpec(DataKeySpec.AES_256)
                 .build()
         ).let {
-            AwsKmsDataKey(
-                privateKey = it.ciphertextBlob().asByteArray(),
+            DataKey(
+                encryptedPrivateKey = it.ciphertextBlob().asByteArray(),
                 publicKey = Optional.empty<ByteArray>()
             )
         }
 
-
 }
+
 
 object KeyPairFactory {
     fun keyPairFor(privateKey: String, pubKey: String): KeyPair {
@@ -157,28 +167,5 @@ object KeyPairFactory {
     private fun privateKey(kf: KeyFactory, privateKey: String): PrivateKey {
         val keySpecPKCS8 = PKCS8EncodedKeySpec(decoder.decode(privateKey))
         return kf.generatePrivate(keySpecPKCS8)
-    }
-}
-
-data class AwsKmsDataKey(val privateKey: ByteArray, val publicKey: Optional<ByteArray>) {
-
-    fun privateKeyAsString(): String = encoder.encode(privateKey).decodeToString()
-    fun publicKeyAsString(): String = publicKey.map { encoder.encode(it).decodeToString() }.orElseGet { "" }
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as AwsKmsDataKey
-
-        if (!privateKey.contentEquals(other.privateKey)) return false
-        if (publicKey != other.publicKey) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = privateKey.contentHashCode()
-        result = 31 * result + publicKey.hashCode()
-        return result
     }
 }
