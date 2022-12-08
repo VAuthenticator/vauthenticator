@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator.keypair
+package it.valeriovaudi.vauthenticator.keys
 
 import com.nimbusds.jose.jwk.JWKMatcher
 import com.nimbusds.jose.jwk.JWKSelector

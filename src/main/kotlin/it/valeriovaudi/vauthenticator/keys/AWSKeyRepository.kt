@@ -1,7 +1,7 @@
-package it.valeriovaudi.vauthenticator.keypair
+package it.valeriovaudi.vauthenticator.keys
 
 import it.valeriovaudi.vauthenticator.extentions.*
-import it.valeriovaudi.vauthenticator.keypair.KeyPairFactory.keyPairFor
+import it.valeriovaudi.vauthenticator.keys.KeyPairFactory.keyPairFor
 import software.amazon.awssdk.core.SdkBytes.fromByteArray
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue

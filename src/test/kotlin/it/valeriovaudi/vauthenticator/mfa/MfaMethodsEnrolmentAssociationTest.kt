@@ -5,7 +5,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.verify
 import it.valeriovaudi.vauthenticator.account.AccountTestFixture.anAccount
-import it.valeriovaudi.vauthenticator.keypair.Kid
+import it.valeriovaudi.vauthenticator.keys.Kid
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -35,7 +35,7 @@ class MfaMethodsEnrolmentAssociationTest {
 
     @Test
     fun `when an email association goes fine`() {
-        every { mfaAccountMethodsRepository.findAll(email) } returns emptyList()
+        every { mfaAccountMethodsRepository.findAll(email) } returns emptyMap()
         every { mfaAccountMethodsRepository.save(email, MfaMethod.EMAIL_MFA_METHOD) } returns mfaAccountMethod
 
         underTest.associate(account, MfaMethod.EMAIL_MFA_METHOD)
@@ -46,7 +46,7 @@ class MfaMethodsEnrolmentAssociationTest {
 
     @Test
     fun `when an email association is already done`() {
-        every { mfaAccountMethodsRepository.findAll(email) } returns listOf(mfaAccountMethod)
+        every { mfaAccountMethodsRepository.findAll(email) } returns mapOf(MfaMethod.EMAIL_MFA_METHOD to mfaAccountMethod)
 
         underTest.associate(account, MfaMethod.EMAIL_MFA_METHOD)
 

@@ -1,6 +1,6 @@
 package it.valeriovaudi.vauthenticator.mfa
 
-import it.valeriovaudi.vauthenticator.keypair.Kid
+import it.valeriovaudi.vauthenticator.keys.Kid
 
 
 class MfaException(message: String) : RuntimeException(message)

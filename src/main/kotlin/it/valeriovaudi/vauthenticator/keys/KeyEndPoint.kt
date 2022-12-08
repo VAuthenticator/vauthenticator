@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator.keypair
+package it.valeriovaudi.vauthenticator.keys
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus

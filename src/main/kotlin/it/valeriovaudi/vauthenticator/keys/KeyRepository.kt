@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator.keypair
+package it.valeriovaudi.vauthenticator.keys
 
 interface KeyRepository {
     fun createKeyFrom(masterKid: MasterKid, keyType: KeyType = KeyType.ASYMMETRIC): Kid

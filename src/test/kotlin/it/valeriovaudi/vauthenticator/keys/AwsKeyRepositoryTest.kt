@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator.keypair
+package it.valeriovaudi.vauthenticator.keys
 
 import it.valeriovaudi.vauthenticator.extentions.asDynamoAttribute
 import it.valeriovaudi.vauthenticator.extentions.encoder

@@ -6,8 +6,9 @@ class MfaMethodsEnrolmentAssociation(private val mfaAccountMethodsRepository: Mf
 
     fun associate(account: Account, emailMfaMethod: MfaMethod) {
         val email = account.email
-        mfaAccountMethodsRepository.findAll(email)
-            .filter { it.method == emailMfaMethod }
-            .ifEmpty { mfaAccountMethodsRepository.save(email, emailMfaMethod) }
+        val mfaAccountMethods = mfaAccountMethodsRepository.findAll(email)
+        if (!mfaAccountMethods.containsKey(emailMfaMethod)) {
+            mfaAccountMethodsRepository.save(email, emailMfaMethod)
+        }
     }
 }
