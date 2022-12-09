@@ -22,11 +22,13 @@ class KeyConfig {
         keyGenerator: KeyGenerator,
         keyDecrypter: KeyDecrypter,
         dynamoDbClient: DynamoDbClient,
-        @Value("\${vauthenticator.dynamo-db.keys.table-name}") tableName: String
+        @Value("\${vauthenticator.dynamo-db.keys.signature.table-name}") signatureTableName: String,
+        @Value("\${vauthenticator.dynamo-db.keys.mfa.table-name}") mfaTableName: String
     ): KeyRepository =
         AwsKeyRepository(
             { UUID.randomUUID().toString() },
-            tableName,
+            signatureTableName,
+            mfaTableName,
             keyGenerator,
             dynamoDbClient
         )

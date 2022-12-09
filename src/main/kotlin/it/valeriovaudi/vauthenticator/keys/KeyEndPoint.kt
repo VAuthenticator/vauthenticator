@@ -13,7 +13,7 @@ class KeyEndPoint(
 
     @GetMapping("/api/keys")
     fun loadAllKeys() =
-        keyRepository.keys()
+        keyRepository.tokenSignatureKeys()
             .keys.map { mapOf("masterKey" to it.masterKid, "kid" to it.kid) }
             .let { ResponseEntity.ok(it) }
 

@@ -24,9 +24,10 @@ value class MasterKid(private val content: String) {
 
 
 enum class KeyType { SYMMETRIC, ASYMMETRIC }
+enum class KeyPurpose { TOKEN_SIGNATURE, USER_MFA }
 data class Keys(val keys: List<Key>)
 
-data class Key(val dataKey: DataKey, val masterKid: MasterKid, val kid: Kid, val enabled: Boolean)
+data class Key(val dataKey: DataKey, val masterKid: MasterKid, val kid: Kid, val enabled: Boolean, val type: KeyType, val keyPurpose : KeyPurpose)
 
 data class DataKey(val encryptedPrivateKey: ByteArray, val publicKey: Optional<ByteArray>) {
 
@@ -37,7 +38,10 @@ data class DataKey(val encryptedPrivateKey: ByteArray, val publicKey: Optional<B
     }
 
     fun keyPairWith(keyDecrypter: KeyDecrypter): KeyPair {
-        return KeyPairFactory.keyPairFor(keyDecrypter.decryptKey(this.encryptedPrivateKeyAsString()), this.publicKeyAsString());
+        return KeyPairFactory.keyPairFor(
+            keyDecrypter.decryptKey(this.encryptedPrivateKeyAsString()),
+            this.publicKeyAsString()
+        );
     }
 
     fun encryptedPrivateKeyAsString(): String = encoder.encode(encryptedPrivateKey).decodeToString()

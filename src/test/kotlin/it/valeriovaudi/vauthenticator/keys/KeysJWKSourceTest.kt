@@ -21,7 +21,7 @@ internal class KeysJWKSourceTest {
     internal fun `when the context is loaded`() {
         val underTest = KeysJWKSource(keyDecrypter, keyRepository)
 
-        every { keyRepository.keys() } returns Keys(emptyList())
+        every { keyRepository.tokenSignatureKeys() } returns Keys(emptyList())
 
         underTest.get(JWKSelector(JWKMatcher.Builder().build()), null)
     }

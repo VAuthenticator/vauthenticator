@@ -14,20 +14,27 @@ import java.util.*
 open class AwsKeyRepository(
     private val kidGenerator: () -> String,
     private val table: String,
+    mfaTableName: String,
     private val keyGenerator: KeyGenerator,
     private val dynamoDbClient: DynamoDbClient
 ) : KeyRepository {
 
-    override fun createKeyFrom(masterKid: MasterKid, keyType: KeyType): Kid {
+    override fun createKeyFrom(masterKid: MasterKid, keyType: KeyType, keyPurpose: KeyPurpose): Kid {
         val dataKey = keyPairFor(masterKid, keyType)
         val kidContent = kidGenerator.invoke()
 
-        storeKeyOnDynamo(masterKid, kidContent, dataKey)
+        storeKeyOnDynamo(masterKid, kidContent, dataKey, keyType, keyPurpose)
 
         return Kid(kidContent)
     }
 
-    private fun storeKeyOnDynamo(masterKid: MasterKid, kidContent: String, dataKey: DataKey) {
+    private fun storeKeyOnDynamo(
+        masterKid: MasterKid,
+        kidContent: String,
+        dataKey: DataKey,
+        keyType: KeyType,
+        keyPurpose: KeyPurpose
+    ) {
         dynamoDbClient.putItem(
             PutItemRequest.builder()
                 .tableName(table)
@@ -37,6 +44,8 @@ open class AwsKeyRepository(
                         "key_id" to kidContent.asDynamoAttribute(),
                         "encrypted_private_key" to dataKey.encryptedPrivateKeyAsString().asDynamoAttribute(),
                         "public_key" to dataKey.publicKeyAsString().asDynamoAttribute(),
+                        "key_purpose" to keyPurpose.name.asDynamoAttribute(),
+                        "key_type" to keyType.name.asDynamoAttribute(),
                         "enabled" to true.asDynamoAttribute()
                     )
                 )
@@ -65,7 +74,7 @@ open class AwsKeyRepository(
         )
     }
 
-    override fun keys(): Keys {
+    override fun tokenSignatureKeys(): Keys {
         val keysOnDynamo = findAllFrom(table)
         val items = keysOnDynamo.items()
         val keys = keysListFrom(items)
@@ -91,7 +100,9 @@ open class AwsKeyRepository(
                 ),
                 MasterKid(it.valueAsStringFor("master_key_id")),
                 Kid(it.valueAsStringFor("key_id")),
-                it.valueAsBoolFor("enabled")
+                it.valueAsBoolFor("enabled"),
+                KeyType.valueOf(it.valueAsStringFor("key_type")),
+                KeyPurpose.valueOf(it.valueAsStringFor("key_purpose"))
             )
         }
 

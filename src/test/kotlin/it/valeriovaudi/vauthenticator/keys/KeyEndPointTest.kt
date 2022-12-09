@@ -40,7 +40,7 @@ internal class KeyEndPointTest {
         kpg.initialize(2048)
         val keyPair = kpg.generateKeyPair()
 
-        every { keyRepository.keys() } returns Keys(
+        every { keyRepository.tokenSignatureKeys() } returns Keys(
             listOf(
                 Key(
                     DataKey.from("", ""),
