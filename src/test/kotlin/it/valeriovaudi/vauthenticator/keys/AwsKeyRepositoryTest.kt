@@ -4,7 +4,8 @@ import it.valeriovaudi.vauthenticator.extentions.asDynamoAttribute
 import it.valeriovaudi.vauthenticator.extentions.encoder
 import it.valeriovaudi.vauthenticator.extentions.valueAsStringFor
 import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoDbClient
-import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoKeysTableName
+import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoMfaKeysTableName
+import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoSignatureKeysTableName
 import it.valeriovaudi.vauthenticator.support.DatabaseUtils.resetDatabase
 import it.valeriovaudi.vauthenticator.support.KeysUtils.aNewMasterKey
 import it.valeriovaudi.vauthenticator.support.KeysUtils.kmsClient
@@ -18,37 +19,36 @@ import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
 internal class AwsKeyRepositoryTest {
 
     private lateinit var keyRepository: KeyRepository
-
+    private lateinit var wrapper: KmsClientWrapper
 
     private val kidGenerator = { "KID" }
 
     @BeforeEach
     internal fun setUp() {
         resetDatabase()
+        wrapper = KmsClientWrapper(kmsClient)
+        keyRepository =
+            AwsKeyRepository(
+                kidGenerator,
+                dynamoSignatureKeysTableName,
+                dynamoMfaKeysTableName,
+                KmsKeyRepository(wrapper),
+                dynamoDbClient
+            )
     }
 
     @Test
     internal fun `when create a new data key pair`() {
         val masterKid = aNewMasterKey()
         val kid = kidGenerator.invoke()
-        val wrapper = KmsClientWrapper(kmsClient)
-        keyRepository =
-            AwsKeyRepository(
-                kidGenerator,
-                dynamoKeysTableName,
-                mfaTableName,
-                KmsKeyRepository(wrapper),
-                dynamoDbClient
-            )
 
         keyRepository.createKeyFrom(masterKid, KeyType.ASYMMETRIC)
 
 
         val actual = dynamoDbClient.getItem(
-            GetItemRequest.builder().tableName(dynamoKeysTableName)
+            GetItemRequest.builder().tableName(dynamoSignatureKeysTableName)
                 .key(
                     mapOf(
-                        "master_key_id" to masterKid.content().asDynamoAttribute(),
                         "key_id" to kid.asDynamoAttribute()
                     )
                 )
@@ -70,24 +70,14 @@ internal class AwsKeyRepositoryTest {
     internal fun `when create a new data key`() {
         val masterKid = aNewMasterKey()
         val kid = kidGenerator.invoke()
-        val wrapper = KmsClientWrapper(kmsClient)
-        keyRepository =
-            AwsKeyRepository(
-                kidGenerator,
-                dynamoKeysTableName,
-                mfaTableName,
-                KmsKeyRepository(wrapper),
-                dynamoDbClient
-            )
 
         keyRepository.createKeyFrom(masterKid, KeyType.SYMMETRIC)
 
 
         val actual = dynamoDbClient.getItem(
-            GetItemRequest.builder().tableName(dynamoKeysTableName)
+            GetItemRequest.builder().tableName(dynamoSignatureKeysTableName)
                 .key(
                     mapOf(
-                        "master_key_id" to masterKid.content().asDynamoAttribute(),
                         "key_id" to kid.asDynamoAttribute()
                     )
                 )
@@ -103,26 +93,14 @@ internal class AwsKeyRepositoryTest {
 
     @Test
     internal fun `when a key is deleted`() {
-        val masterKid = aNewMasterKey()
         val kid = Kid(kidGenerator.invoke())
-        val wrapper = KmsClientWrapper(kmsClient)
-        keyRepository =
-            AwsKeyRepository(
-                kidGenerator,
-                dynamoKeysTableName,
-                mfaTableName,
-                KmsKeyRepository(wrapper),
-                dynamoDbClient
-            )
-
-        keyRepository.deleteKeyFor(masterKid, kid)
+        keyRepository.deleteKeyFor(kid)
 
 
         val actual = dynamoDbClient.getItem(
-            GetItemRequest.builder().tableName(dynamoKeysTableName)
+            GetItemRequest.builder().tableName(dynamoSignatureKeysTableName)
                 .key(
                     mapOf(
-                        "master_key_id" to masterKid.content().asDynamoAttribute(),
                         "key_id" to kid.content().asDynamoAttribute()
                     )
                 )
@@ -135,26 +113,15 @@ internal class AwsKeyRepositoryTest {
     internal fun `when a key is deleted after a brand new insert`() {
         val masterKid = aNewMasterKey()
         val kid = Kid(kidGenerator.invoke())
-        val wrapper = KmsClientWrapper(kmsClient)
-        keyRepository =
-            AwsKeyRepository(
-                kidGenerator,
-                dynamoKeysTableName,
-                mfaTableName,
-                KmsKeyRepository(wrapper),
-                dynamoDbClient
-            )
 
         keyRepository.createKeyFrom(masterKid)
-
-        keyRepository.deleteKeyFor(masterKid, kid)
+        keyRepository.deleteKeyFor(kid)
 
 
         val actual = dynamoDbClient.getItem(
-            GetItemRequest.builder().tableName(dynamoKeysTableName)
+            GetItemRequest.builder().tableName(dynamoSignatureKeysTableName)
                 .key(
                     mapOf(
-                        "master_key_id" to masterKid.content().asDynamoAttribute(),
                         "key_id" to kid.content().asDynamoAttribute()
                     )
                 )

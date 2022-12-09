@@ -17,7 +17,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders.*
 import java.security.KeyPairGenerator
 
-
 @ExtendWith(MockKExtension::class)
 internal class KeyEndPointTest {
 
@@ -38,15 +37,16 @@ internal class KeyEndPointTest {
     internal fun `when we are able to load master key, kid of all  keys`() {
         val kpg = KeyPairGenerator.getInstance("RSA")
         kpg.initialize(2048)
-        val keyPair = kpg.generateKeyPair()
 
-        every { keyRepository.tokenSignatureKeys() } returns Keys(
+        every { keyRepository.signatureKeys() } returns Keys(
             listOf(
                 Key(
                     DataKey.from("", ""),
                     MasterKid("A_MASTER_KEY"),
                     Kid("A_KID"),
-                    true
+                    true,
+                    KeyType.ASYMMETRIC,
+                    KeyPurpose.TOKEN_SIGNATURE
                 )
             )
         )
@@ -67,12 +67,11 @@ internal class KeyEndPointTest {
 
     @Test
     internal fun `when we are able to delete a new key`() {
-        every { keyRepository.deleteKeyFor(MasterKid("A_MASTER_KEY"), Kid("A_KID")) } just runs
+        every { keyRepository.deleteKeyFor(Kid("A_KID")) } just runs
 
         mokMvc.perform(
-            delete("/api/keys")
+            delete("/api/keys/A_KID")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(payload))
         )
             .andExpect(status().isNoContent)
     }

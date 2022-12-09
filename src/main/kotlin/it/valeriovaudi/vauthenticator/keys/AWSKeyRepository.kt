@@ -13,8 +13,8 @@ import java.util.*
 
 open class AwsKeyRepository(
     private val kidGenerator: () -> String,
-    private val table: String,
-    mfaTableName: String,
+    private val signatureTableName: String,
+    private val mfaTableName: String,
     private val keyGenerator: KeyGenerator,
     private val dynamoDbClient: DynamoDbClient
 ) : KeyRepository {
@@ -37,7 +37,7 @@ open class AwsKeyRepository(
     ) {
         dynamoDbClient.putItem(
             PutItemRequest.builder()
-                .tableName(table)
+                .tableName(signatureTableName)
                 .item(
                     mapOf(
                         "master_key_id" to masterKid.content().asDynamoAttribute(),
@@ -60,13 +60,12 @@ open class AwsKeyRepository(
             keyGenerator.dataKeyFor(masterKid)
         }
 
-    override fun deleteKeyFor(masterKid: MasterKid, kid: Kid) {
+    override fun deleteKeyFor(kid: Kid) {
         dynamoDbClient.deleteItem(
             DeleteItemRequest.builder()
-                .tableName(table)
+                .tableName(signatureTableName)
                 .key(
                     mapOf(
-                        "master_key_id" to masterKid.content().asDynamoAttribute(),
                         "key_id" to kid.content().asDynamoAttribute(),
                     )
                 )
@@ -74,8 +73,8 @@ open class AwsKeyRepository(
         )
     }
 
-    override fun tokenSignatureKeys(): Keys {
-        val keysOnDynamo = findAllFrom(table)
+    override fun signatureKeys(): Keys {
+        val keysOnDynamo = findAllFrom(signatureTableName)
         val items = keysOnDynamo.items()
         val keys = keysListFrom(items)
         return Keys(keys)

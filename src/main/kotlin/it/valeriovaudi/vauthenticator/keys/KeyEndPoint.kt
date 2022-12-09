@@ -13,7 +13,7 @@ class KeyEndPoint(
 
     @GetMapping("/api/keys")
     fun loadAllKeys() =
-        keyRepository.tokenSignatureKeys()
+        keyRepository.signatureKeys()
             .keys.map { mapOf("masterKey" to it.masterKid, "kid" to it.kid) }
             .let { ResponseEntity.ok(it) }
 
@@ -23,9 +23,9 @@ class KeyEndPoint(
         keyRepository.createKeyFrom(MasterKid(masterKey))
             .let { ResponseEntity.status(HttpStatus.CREATED).build<Unit>() }
 
-    @DeleteMapping("/api/keys")
-    fun deleteKey(@RequestBody body: Map<String, String>) =
-        keyRepository.deleteKeyFor(MasterKid(body["masterKey"]!!), Kid(body["kid"]!!))
+    @DeleteMapping("/api/keys/{kid}")
+    fun deleteKey(@PathVariable kid: String) =
+        keyRepository.deleteKeyFor(Kid(kid))
             .let { ResponseEntity.noContent().build<Unit>() }
 
 }
