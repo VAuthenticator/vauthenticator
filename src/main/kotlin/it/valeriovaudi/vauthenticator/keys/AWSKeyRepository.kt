@@ -1,7 +1,6 @@
 package it.valeriovaudi.vauthenticator.keys
 
 import it.valeriovaudi.vauthenticator.extentions.*
-import it.valeriovaudi.vauthenticator.keys.KeyPairFactory.keyPairFor
 import software.amazon.awssdk.core.SdkBytes.fromByteArray
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
@@ -21,7 +20,8 @@ import java.util.*
 open class AwsKeyRepository(
     private val kidGenerator: () -> String,
     private val table: String,
-    private val kmsKeyRepository: KmsKeyRepository,
+    private val keyGenerator: KeyGenerator,
+    private val keyDecrypter: KeyDecrypter,
     private val dynamoDbClient: DynamoDbClient
 ) : KeyRepository {
 
@@ -53,9 +53,9 @@ open class AwsKeyRepository(
 
     private fun keyPairFor(masterKid: MasterKid, keyType: KeyType) =
         if (keyType == KeyType.ASYMMETRIC) {
-            kmsKeyRepository.dataKeyPairFor(masterKid)
+            keyGenerator.dataKeyPairFor(masterKid)
         } else {
-            kmsKeyRepository.dataKeyFor(masterKid)
+            keyGenerator.dataKeyFor(masterKid)
         }
 
     override fun deleteKeyFor(masterKid: MasterKid, kid: Kid) {
@@ -92,10 +92,10 @@ open class AwsKeyRepository(
     private fun keysListFrom(items: MutableList<MutableMap<String, AttributeValue>>) =
         items.map {
             Key(
-                kmsKeyRepository.getKeyPairFor(
+                DataKey.from(
                     it.valueAsStringFor("encrypted_private_key"),
                     it.valueAsStringFor("public_key")
-                ),
+                ).keyPairWith(keyDecrypter),
                 DataKey.from(
                     it.valueAsStringFor("encrypted_private_key"),
                     it.valueAsStringFor("public_key")
@@ -110,21 +110,18 @@ open class AwsKeyRepository(
 
 class KmsKeyRepository(
     private val kmsClient: KmsClient
-) {
+) : KeyDecrypter, KeyGenerator {
 
-    fun getKeyPairFor(privateKey: String, pubKey: String): KeyPair {
-        val generateDataKeyPair = decryptKey(privateKey)
-        return keyPairFor(encoder.encode(generateDataKeyPair.plaintext().asByteArray()).decodeToString(), pubKey)
-    }
-
-    fun decryptKey(privateKey: String): DecryptResponse =
+    override fun decryptKey(privateKey: String): String =
         kmsClient.decrypt(
             DecryptRequest.builder()
                 .ciphertextBlob(fromByteArray(decoder.decode(privateKey)))
                 .build()
-        )
+        ).let {
+            encoder.encode(it.plaintext().asByteArray()).decodeToString()
+        }
 
-    fun dataKeyPairFor(masterKid: MasterKid) =
+    override fun dataKeyPairFor(masterKid: MasterKid) =
         kmsClient.generateDataKeyPair(
             GenerateDataKeyPairRequest.builder()
                 .keyId(masterKid.content())
@@ -137,7 +134,7 @@ class KmsKeyRepository(
             )
         }
 
-    fun dataKeyFor(masterKid: MasterKid): DataKey =
+    override fun dataKeyFor(masterKid: MasterKid): DataKey =
         kmsClient.generateDataKey(
             GenerateDataKeyRequest.builder()
                 .keyId(masterKid.content())

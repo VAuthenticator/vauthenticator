@@ -31,6 +31,10 @@ data class DataKey(val encryptedPrivateKey: ByteArray, val publicKey: Optional<B
             DataKey(decoder.decode(encryptedPrivateKey), Optional.of(pubKey.toByteArray()))
     }
 
+    fun keyPairWith(keyDecrypter: KeyDecrypter): KeyPair {
+        return KeyPairFactory.keyPairFor(keyDecrypter.decryptKey(this.privateKeyAsString()), this.publicKeyAsString());
+    }
+
     fun privateKeyAsString(): String = encoder.encode(encryptedPrivateKey).decodeToString()
     fun publicKeyAsString(): String = publicKey.map { encoder.encode(it).decodeToString() }.orElseGet { "" }
     override fun equals(other: Any?): Boolean {

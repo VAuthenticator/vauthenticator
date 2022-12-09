@@ -19,6 +19,7 @@ internal class AwsKeyRepositoryTest {
 
     private lateinit var keyRepository: KeyRepository
 
+
     private val kidGenerator = { "KID" }
 
     @BeforeEach
@@ -32,14 +33,25 @@ internal class AwsKeyRepositoryTest {
         val kid = kidGenerator.invoke()
         val wrapper = KmsClientWrapper(kmsClient)
         keyRepository =
-            AwsKeyRepository(kidGenerator, dynamoKeysTableName, KmsKeyRepository(wrapper), dynamoDbClient)
+            AwsKeyRepository(
+                kidGenerator,
+                dynamoKeysTableName,
+                KmsKeyRepository(wrapper),
+                KmsKeyRepository(wrapper),
+                dynamoDbClient
+            )
 
         keyRepository.createKeyFrom(masterKid, KeyType.ASYMMETRIC)
 
 
         val actual = dynamoDbClient.getItem(
             GetItemRequest.builder().tableName(dynamoKeysTableName)
-                .key(mapOf("master_key_id" to masterKid.content().asDynamoAttribute(), "key_id" to kid.asDynamoAttribute()))
+                .key(
+                    mapOf(
+                        "master_key_id" to masterKid.content().asDynamoAttribute(),
+                        "key_id" to kid.asDynamoAttribute()
+                    )
+                )
                 .build()
         ).item()
         assertEquals(kid, actual.valueAsStringFor("key_id"))
@@ -53,20 +65,32 @@ internal class AwsKeyRepositoryTest {
             actual.valueAsStringFor("public_key")
         )
     }
+
     @Test
     internal fun `when create a new data key`() {
         val masterKid = aNewMasterKey()
         val kid = kidGenerator.invoke()
         val wrapper = KmsClientWrapper(kmsClient)
         keyRepository =
-            AwsKeyRepository(kidGenerator, dynamoKeysTableName, KmsKeyRepository(wrapper), dynamoDbClient)
+            AwsKeyRepository(
+                kidGenerator,
+                dynamoKeysTableName,
+                KmsKeyRepository(wrapper),
+                KmsKeyRepository(wrapper),
+                dynamoDbClient
+            )
 
         keyRepository.createKeyFrom(masterKid, KeyType.SYMMETRIC)
 
 
         val actual = dynamoDbClient.getItem(
             GetItemRequest.builder().tableName(dynamoKeysTableName)
-                .key(mapOf("master_key_id" to masterKid.content().asDynamoAttribute(), "key_id" to kid.asDynamoAttribute()))
+                .key(
+                    mapOf(
+                        "master_key_id" to masterKid.content().asDynamoAttribute(),
+                        "key_id" to kid.asDynamoAttribute()
+                    )
+                )
                 .build()
         ).item()
         assertEquals(kid, actual.valueAsStringFor("key_id"))
@@ -83,14 +107,25 @@ internal class AwsKeyRepositoryTest {
         val kid = Kid(kidGenerator.invoke())
         val wrapper = KmsClientWrapper(kmsClient)
         keyRepository =
-            AwsKeyRepository(kidGenerator, dynamoKeysTableName, KmsKeyRepository(wrapper), dynamoDbClient)
+            AwsKeyRepository(
+                kidGenerator,
+                dynamoKeysTableName,
+                KmsKeyRepository(wrapper),
+                KmsKeyRepository(wrapper),
+                dynamoDbClient
+            )
 
         keyRepository.deleteKeyFor(masterKid, kid)
 
 
         val actual = dynamoDbClient.getItem(
             GetItemRequest.builder().tableName(dynamoKeysTableName)
-                .key(mapOf("master_key_id" to masterKid.content().asDynamoAttribute(), "key_id" to kid.content().asDynamoAttribute()))
+                .key(
+                    mapOf(
+                        "master_key_id" to masterKid.content().asDynamoAttribute(),
+                        "key_id" to kid.content().asDynamoAttribute()
+                    )
+                )
                 .build()
         ).item()
         assertEquals(emptyMap<String, AttributeValue>(), actual)
@@ -102,7 +137,13 @@ internal class AwsKeyRepositoryTest {
         val kid = Kid(kidGenerator.invoke())
         val wrapper = KmsClientWrapper(kmsClient)
         keyRepository =
-            AwsKeyRepository(kidGenerator, dynamoKeysTableName, KmsKeyRepository(wrapper), dynamoDbClient)
+            AwsKeyRepository(
+                kidGenerator,
+                dynamoKeysTableName,
+                KmsKeyRepository(wrapper),
+                KmsKeyRepository(wrapper),
+                dynamoDbClient
+            )
 
         keyRepository.createKeyFrom(masterKid)
 
@@ -111,7 +152,12 @@ internal class AwsKeyRepositoryTest {
 
         val actual = dynamoDbClient.getItem(
             GetItemRequest.builder().tableName(dynamoKeysTableName)
-                .key(mapOf("master_key_id" to masterKid.content().asDynamoAttribute(), "key_id" to kid.content().asDynamoAttribute()))
+                .key(
+                    mapOf(
+                        "master_key_id" to masterKid.content().asDynamoAttribute(),
+                        "key_id" to kid.content().asDynamoAttribute()
+                    )
+                )
                 .build()
         ).item()
         assertEquals(emptyMap<String, AttributeValue>(), actual)

@@ -6,3 +6,13 @@ interface KeyRepository {
     fun keys(): Keys
     fun keyFor(kid: Kid): Key
 }
+
+interface KeyDecrypter {
+    fun decryptKey(encrypted: String): String
+
+}
+
+interface KeyGenerator {
+    fun dataKeyPairFor(masterKid: MasterKid) : DataKey
+    fun dataKeyFor(masterKid: MasterKid): DataKey
+}
