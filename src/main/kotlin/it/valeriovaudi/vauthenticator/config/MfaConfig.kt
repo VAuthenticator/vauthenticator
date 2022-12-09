@@ -21,7 +21,7 @@ class MfaConfig {
         keyRepository: KeyRepository,
         dynamoDbClient: DynamoDbClient,
         @Value("\${key.master-key}") masterKey: String,
-        @Value("\${vauthenticator.dynamo-db.mfa.table-name}") tableName: String
+        @Value("\${vauthenticator.dynamo-db.mfa_account_methods.table-name}") tableName: String
     ): MfaAccountMethodsRepository =
         DynamoMfaAccountMethodsRepository(
             tableName,
