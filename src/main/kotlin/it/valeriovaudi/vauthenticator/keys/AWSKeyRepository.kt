@@ -35,7 +35,7 @@ open class AwsKeyRepository(
                     mapOf(
                         "master_key_id" to masterKid.content().asDynamoAttribute(),
                         "key_id" to kidContent.asDynamoAttribute(),
-                        "encrypted_private_key" to dataKey.privateKeyAsString().asDynamoAttribute(),
+                        "encrypted_private_key" to dataKey.encryptedPrivateKeyAsString().asDynamoAttribute(),
                         "public_key" to dataKey.publicKeyAsString().asDynamoAttribute(),
                         "enabled" to true.asDynamoAttribute()
                     )

@@ -31,15 +31,19 @@ data class Key(val dataKey: DataKey, val masterKid: MasterKid, val kid: Kid, val
 data class DataKey(val encryptedPrivateKey: ByteArray, val publicKey: Optional<ByteArray>) {
 
     companion object {
-        fun from(encryptedPrivateKey: String, pubKey: String) =
-            DataKey(decoder.decode(encryptedPrivateKey), Optional.of(pubKey.toByteArray()))
+        fun from(encryptedPrivateKey: String, pubKey: String): DataKey {
+            println("DataKey.from database encryptedPrivateKey: $encryptedPrivateKey")
+            println("DataKey.from database pubKey $pubKey")
+            return DataKey(decoder.decode(encryptedPrivateKey), Optional.of(pubKey.toByteArray()))
+
+        }
     }
 
     fun keyPairWith(keyDecrypter: KeyDecrypter): KeyPair {
-        return KeyPairFactory.keyPairFor(keyDecrypter.decryptKey(this.privateKeyAsString()), this.publicKeyAsString());
+        return KeyPairFactory.keyPairFor(keyDecrypter.decryptKey(this.encryptedPrivateKeyAsString()), this.publicKeyAsString());
     }
 
-    fun privateKeyAsString(): String = encoder.encode(encryptedPrivateKey).decodeToString()
+    fun encryptedPrivateKeyAsString(): String = encoder.encode(encryptedPrivateKey).decodeToString()
     fun publicKeyAsString(): String = publicKey.map { encoder.encode(it).decodeToString() }.orElseGet { "" }
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
