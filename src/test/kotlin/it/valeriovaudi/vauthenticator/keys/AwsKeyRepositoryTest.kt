@@ -4,6 +4,7 @@ import it.valeriovaudi.vauthenticator.extentions.asDynamoAttribute
 import it.valeriovaudi.vauthenticator.extentions.encoder
 import it.valeriovaudi.vauthenticator.extentions.valueAsStringFor
 import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoDbClient
+import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoMfaAccountMethodsTableName
 import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoMfaKeysTableName
 import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoSignatureKeysTableName
 import it.valeriovaudi.vauthenticator.support.DatabaseUtils.resetDatabase
@@ -47,6 +48,34 @@ internal class AwsKeyRepositoryTest {
 
         val actual = dynamoDbClient.getItem(
             GetItemRequest.builder().tableName(dynamoSignatureKeysTableName)
+                .key(
+                    mapOf(
+                        "key_id" to kid.asDynamoAttribute()
+                    )
+                )
+                .build()
+        ).item()
+        assertEquals(kid, actual.valueAsStringFor("key_id"))
+        assertEquals(masterKid.content(), actual.valueAsStringFor("master_key_id"))
+        assertEquals(
+            encoder.encode(wrapper.generateDataKeyPairRecorder.get().privateKeyCiphertextBlob().asByteArray())
+                .decodeToString(), actual.valueAsStringFor("encrypted_private_key")
+        )
+        assertEquals(
+            encoder.encode(wrapper.generateDataKeyPairRecorder.get().publicKey().asByteArray()).decodeToString(),
+            actual.valueAsStringFor("public_key")
+        )
+    }
+    @Test
+    internal fun `when create a new data key for mfa`() {
+        val masterKid = aNewMasterKey()
+        val kid = kidGenerator.invoke()
+
+        keyRepository.createKeyFrom(masterKid, KeyType.SYMMETRIC, KeyPurpose.USER_MFA)
+
+
+        val actual = dynamoDbClient.getItem(
+            GetItemRequest.builder().tableName(dynamoMfaAccountMethodsTableName)
                 .key(
                     mapOf(
                         "key_id" to kid.asDynamoAttribute()
