@@ -15,7 +15,6 @@ open class AwsKeyRepository(
     private val kidGenerator: () -> String,
     private val table: String,
     private val keyGenerator: KeyGenerator,
-    private val keyDecrypter: KeyDecrypter,
     private val dynamoDbClient: DynamoDbClient
 ) : KeyRepository {
 
@@ -86,10 +85,6 @@ open class AwsKeyRepository(
     private fun keysListFrom(items: MutableList<MutableMap<String, AttributeValue>>) =
         items.map {
             Key(
-                DataKey.from(
-                    it.valueAsStringFor("encrypted_private_key"),
-                    it.valueAsStringFor("public_key")
-                ).keyPairWith(keyDecrypter),
                 DataKey.from(
                     it.valueAsStringFor("encrypted_private_key"),
                     it.valueAsStringFor("public_key")

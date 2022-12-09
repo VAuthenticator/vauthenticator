@@ -26,7 +26,7 @@ value class MasterKid(private val content: String) {
 enum class KeyType { SYMMETRIC, ASYMMETRIC }
 data class Keys(val keys: List<Key>)
 
-data class Key(val keyPair: KeyPair, val dataKey: DataKey, val masterKid: MasterKid, val kid: Kid, val enabled: Boolean)
+data class Key(val dataKey: DataKey, val masterKid: MasterKid, val kid: Kid, val enabled: Boolean)
 
 data class DataKey(val encryptedPrivateKey: ByteArray, val publicKey: Optional<ByteArray>) {
 

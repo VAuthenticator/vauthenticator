@@ -43,7 +43,6 @@ internal class KeyEndPointTest {
         every { keyRepository.keys() } returns Keys(
             listOf(
                 Key(
-                    keyPair,
                     DataKey.from("", ""),
                     MasterKid("A_MASTER_KEY"),
                     Kid("A_KID"),

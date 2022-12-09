@@ -37,7 +37,6 @@ internal class AwsKeyRepositoryTest {
                 kidGenerator,
                 dynamoKeysTableName,
                 KmsKeyRepository(wrapper),
-                KmsKeyRepository(wrapper),
                 dynamoDbClient
             )
 
@@ -76,7 +75,6 @@ internal class AwsKeyRepositoryTest {
                 kidGenerator,
                 dynamoKeysTableName,
                 KmsKeyRepository(wrapper),
-                KmsKeyRepository(wrapper),
                 dynamoDbClient
             )
 
@@ -111,7 +109,6 @@ internal class AwsKeyRepositoryTest {
                 kidGenerator,
                 dynamoKeysTableName,
                 KmsKeyRepository(wrapper),
-                KmsKeyRepository(wrapper),
                 dynamoDbClient
             )
 
@@ -140,7 +137,6 @@ internal class AwsKeyRepositoryTest {
             AwsKeyRepository(
                 kidGenerator,
                 dynamoKeysTableName,
-                KmsKeyRepository(wrapper),
                 KmsKeyRepository(wrapper),
                 dynamoDbClient
             )

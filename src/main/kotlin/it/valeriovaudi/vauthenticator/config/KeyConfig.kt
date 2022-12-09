@@ -28,7 +28,6 @@ class KeyConfig {
             { UUID.randomUUID().toString() },
             tableName,
             keyGenerator,
-            keyDecrypter,
             dynamoDbClient
         )
 }
