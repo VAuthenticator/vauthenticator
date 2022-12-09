@@ -32,10 +32,7 @@ data class DataKey(val encryptedPrivateKey: ByteArray, val publicKey: Optional<B
 
     companion object {
         fun from(encryptedPrivateKey: String, pubKey: String): DataKey {
-            println("DataKey.from database encryptedPrivateKey: $encryptedPrivateKey")
-            println("DataKey.from database pubKey $pubKey")
-            return DataKey(decoder.decode(encryptedPrivateKey), Optional.of(pubKey.toByteArray()))
-
+            return DataKey(decoder.decode(encryptedPrivateKey), Optional.of(decoder.decode(pubKey)))
         }
     }
 
