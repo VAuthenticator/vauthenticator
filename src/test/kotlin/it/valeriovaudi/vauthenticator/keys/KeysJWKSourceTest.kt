@@ -14,10 +14,12 @@ internal class KeysJWKSourceTest {
 
     @MockK
     private lateinit var keyRepository : KeyRepository
+    @MockK
+    private lateinit var keyDecrypter: KeyDecrypter
 
     @Test
     internal fun `when the context is loaded`() {
-        val underTest = KeysJWKSource(keyRepository)
+        val underTest = KeysJWKSource(keyDecrypter, keyRepository)
 
         every { keyRepository.keys() } returns Keys(emptyList())
 

@@ -3,6 +3,7 @@ package it.valeriovaudi.vauthenticator.config
 import com.nimbusds.jose.jwk.source.JWKSource
 import com.nimbusds.jose.proc.SecurityContext
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
+import it.valeriovaudi.vauthenticator.keys.KeyDecrypter
 import it.valeriovaudi.vauthenticator.keys.KeyRepository
 import it.valeriovaudi.vauthenticator.keys.KeysJWKSource
 import it.valeriovaudi.vauthenticator.oauth2.authorizationservice.RedisOAuth2AuthorizationService
@@ -48,8 +49,8 @@ class AuthorizationServerConfig {
     lateinit var accountRepository: AccountRepository
 
     @Bean
-    fun jwkSource(keyRepository: KeyRepository): JWKSource<SecurityContext?> =
-        KeysJWKSource(keyRepository)
+    fun jwkSource(keyRepository: KeyRepository, keyDecrypter: KeyDecrypter): JWKSource<SecurityContext?> =
+        KeysJWKSource(keyDecrypter, keyRepository)
 
     @Bean
     fun nimbusJwsEncoder(jwkSource: JWKSource<SecurityContext?>?): JwtEncoder {
@@ -117,7 +118,8 @@ class AuthorizationServerConfig {
                 )
             )
         }
-        http.exceptionHandling { it.authenticationEntryPoint(LoginUrlAuthenticationEntryPoint("/login")) }.oauth2ResourceServer().jwt()
+        http.exceptionHandling { it.authenticationEntryPoint(LoginUrlAuthenticationEntryPoint("/login")) }
+            .oauth2ResourceServer().jwt()
 
         return http.build()
     }

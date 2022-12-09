@@ -9,12 +9,6 @@ import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
 import software.amazon.awssdk.services.dynamodb.model.ScanRequest
 import software.amazon.awssdk.services.kms.KmsClient
 import software.amazon.awssdk.services.kms.model.*
-import java.security.KeyFactory
-import java.security.KeyPair
-import java.security.PrivateKey
-import java.security.interfaces.RSAPublicKey
-import java.security.spec.PKCS8EncodedKeySpec
-import java.security.spec.X509EncodedKeySpec
 import java.util.*
 
 open class AwsKeyRepository(
@@ -147,26 +141,4 @@ class KmsKeyRepository(
             )
         }
 
-}
-
-
-object KeyPairFactory {
-    fun keyPairFor(privateKey: String, pubKey: String): KeyPair {
-        val kf: KeyFactory = keyFactory()
-        val pubKey: RSAPublicKey = rsaPublicKey(kf, pubKey)
-        val privateKey: PrivateKey = privateKey(kf, privateKey)
-        return KeyPair(pubKey, privateKey)
-    }
-
-    private fun keyFactory() = KeyFactory.getInstance("RSA")
-
-    private fun rsaPublicKey(kf: KeyFactory, pubKey: String): RSAPublicKey {
-        val keySpecX509 = X509EncodedKeySpec(decoder.decode(pubKey))
-        return kf.generatePublic(keySpecX509) as RSAPublicKey
-    }
-
-    private fun privateKey(kf: KeyFactory, privateKey: String): PrivateKey {
-        val keySpecPKCS8 = PKCS8EncodedKeySpec(decoder.decode(privateKey))
-        return kf.generatePrivate(keySpecPKCS8)
-    }
 }

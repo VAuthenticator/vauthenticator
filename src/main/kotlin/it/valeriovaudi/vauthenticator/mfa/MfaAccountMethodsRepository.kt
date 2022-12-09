@@ -15,7 +15,6 @@ interface MfaAccountMethodsRepository {
 
     fun findAll(email: String): Map<MfaMethod, MfaAccountMethod>
     fun save(email: String, mfaMfaMethod: MfaMethod): MfaAccountMethod
-    fun delete(email: String): Nothing = TODO()
 }
 
 class DynamoMfaAccountMethodsRepository(
