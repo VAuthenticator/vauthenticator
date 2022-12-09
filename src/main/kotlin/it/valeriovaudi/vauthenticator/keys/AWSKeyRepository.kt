@@ -96,6 +96,10 @@ open class AwsKeyRepository(
                     it.valueAsStringFor("encrypted_private_key"),
                     it.valueAsStringFor("public_key")
                 ),
+                DataKey.from(
+                    it.valueAsStringFor("encrypted_private_key"),
+                    it.valueAsStringFor("public_key")
+                ),
                 MasterKid(it.valueAsStringFor("master_key_id")),
                 Kid(it.valueAsStringFor("key_id")),
                 it.valueAsBoolFor("enabled")

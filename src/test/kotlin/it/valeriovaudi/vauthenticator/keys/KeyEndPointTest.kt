@@ -40,7 +40,17 @@ internal class KeyEndPointTest {
         kpg.initialize(2048)
         val keyPair = kpg.generateKeyPair()
 
-        every { keyRepository.keys() } returns Keys(listOf(Key(keyPair, MasterKid("A_MASTER_KEY"), Kid("A_KID"), true)))
+        every { keyRepository.keys() } returns Keys(
+            listOf(
+                Key(
+                    keyPair,
+                    DataKey.from("", ""),
+                    MasterKid("A_MASTER_KEY"),
+                    Kid("A_KID"),
+                    true
+                )
+            )
+        )
 
         mokMvc.perform(get("/api/keys"))
             .andExpect(status().isOk)
@@ -58,7 +68,7 @@ internal class KeyEndPointTest {
 
     @Test
     internal fun `when we are able to delete a new key`() {
-        every { keyRepository.deleteKeyFor( MasterKid("A_MASTER_KEY"), Kid("A_KID")) } just runs
+        every { keyRepository.deleteKeyFor(MasterKid("A_MASTER_KEY"), Kid("A_KID")) } just runs
 
         mokMvc.perform(
             delete("/api/keys")

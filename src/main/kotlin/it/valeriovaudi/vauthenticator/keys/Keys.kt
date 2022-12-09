@@ -1,6 +1,7 @@
 package it.valeriovaudi.vauthenticator.keys
 
 import com.nimbusds.jose.jwk.RSAKey
+import it.valeriovaudi.vauthenticator.extentions.decoder
 import it.valeriovaudi.vauthenticator.extentions.encoder
 import java.security.KeyPair
 import java.security.interfaces.RSAPrivateKey
@@ -21,9 +22,14 @@ value class MasterKid(private val content: String) {
 enum class KeyType { SYMMETRIC, ASYMMETRIC }
 data class Keys(val keys: List<Key>)
 
-data class Key(val keyPair: KeyPair, val masterKid: MasterKid, val kid: Kid, val enabled: Boolean)
+data class Key(val keyPair: KeyPair, val dataKey: DataKey, val masterKid: MasterKid, val kid: Kid, val enabled: Boolean)
 
 data class DataKey(val encryptedPrivateKey: ByteArray, val publicKey: Optional<ByteArray>) {
+
+    companion object {
+        fun from(encryptedPrivateKey: String, pubKey: String) =
+            DataKey(decoder.decode(encryptedPrivateKey), Optional.of(pubKey.toByteArray()))
+    }
 
     fun privateKeyAsString(): String = encoder.encode(encryptedPrivateKey).decodeToString()
     fun publicKeyAsString(): String = publicKey.map { encoder.encode(it).decodeToString() }.orElseGet { "" }
