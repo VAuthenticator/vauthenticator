@@ -23,7 +23,9 @@ open class AwsKeyRepository(
         val dataKey = keyPairFor(masterKid, keyType)
         val kidContent = kidGenerator.invoke()
 
-        storeKeyOnDynamo(masterKid, kidContent, dataKey, keyType, keyPurpose)
+        val tableName = tableNameBasedOn(keyPurpose)
+
+        storeKeyOnDynamo(masterKid, kidContent, dataKey, keyType, keyPurpose, tableName)
 
         return Kid(kidContent)
     }
@@ -33,11 +35,12 @@ open class AwsKeyRepository(
         kidContent: String,
         dataKey: DataKey,
         keyType: KeyType,
-        keyPurpose: KeyPurpose
+        keyPurpose: KeyPurpose,
+        tableName: String
     ) {
         dynamoDbClient.putItem(
             PutItemRequest.builder()
-                .tableName(signatureTableName)
+                .tableName(tableName)
                 .item(
                     mapOf(
                         "master_key_id" to masterKid.content().asDynamoAttribute(),
@@ -60,10 +63,11 @@ open class AwsKeyRepository(
             keyGenerator.dataKeyFor(masterKid)
         }
 
-    override fun deleteKeyFor(kid: Kid) {
+    override fun deleteKeyFor(kid: Kid, keyPurpose: KeyPurpose) {
+        val tableName = tableNameBasedOn(keyPurpose)
         dynamoDbClient.deleteItem(
             DeleteItemRequest.builder()
-                .tableName(signatureTableName)
+                .tableName(tableName)
                 .key(
                     mapOf(
                         "key_id" to kid.content().asDynamoAttribute(),
@@ -71,6 +75,11 @@ open class AwsKeyRepository(
                 )
                 .build()
         )
+    }
+
+    private fun tableNameBasedOn(keyPurpose: KeyPurpose) = when (keyPurpose) {
+        KeyPurpose.MFA -> mfaTableName
+        KeyPurpose.SIGNATURE -> signatureTableName
     }
 
     override fun signatureKeys(): Keys {

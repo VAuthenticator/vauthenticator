@@ -23,9 +23,9 @@ class KeyEndPoint(
         keyRepository.createKeyFrom(MasterKid(masterKey))
             .let { ResponseEntity.status(HttpStatus.CREATED).build<Unit>() }
 
-    @DeleteMapping("/api/keys/{kid}")
-    fun deleteKey(@PathVariable kid: String) =
-        keyRepository.deleteKeyFor(Kid(kid))
+    @DeleteMapping("/api/keys")
+    fun deleteKey(@RequestBody body: Map<String, String>) =
+        keyRepository.deleteKeyFor(Kid(body["kid"]!!), KeyPurpose.valueOf(body["key_purpose"]!!))
             .let { ResponseEntity.noContent().build<Unit>() }
 
 }

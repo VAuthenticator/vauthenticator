@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders.*
 import java.security.KeyPairGenerator
 
+
 @ExtendWith(MockKExtension::class)
 internal class KeyEndPointTest {
 
@@ -27,6 +28,7 @@ internal class KeyEndPointTest {
 
     private val mapper = ObjectMapper()
     private val payload = mapOf("masterKey" to "A_MASTER_KEY", "kid" to "A_KID")
+    private val deletePayload = mapOf( "kid" to "A_KID", "key_purpose" to "SIGNATURE")
 
     @BeforeEach
     internal fun setUp() {
@@ -46,7 +48,7 @@ internal class KeyEndPointTest {
                     Kid("A_KID"),
                     true,
                     KeyType.ASYMMETRIC,
-                    KeyPurpose.TOKEN_SIGNATURE
+                    KeyPurpose.SIGNATURE
                 )
             )
         )
@@ -67,11 +69,12 @@ internal class KeyEndPointTest {
 
     @Test
     internal fun `when we are able to delete a new key`() {
-        every { keyRepository.deleteKeyFor(Kid("A_KID")) } just runs
+        every { keyRepository.deleteKeyFor( Kid("A_KID"), KeyPurpose.SIGNATURE) } just runs
 
         mokMvc.perform(
-            delete("/api/keys/A_KID")
+            delete("/api/keys")
                 .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(deletePayload))
         )
             .andExpect(status().isNoContent)
     }

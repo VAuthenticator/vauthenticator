@@ -24,7 +24,7 @@ value class MasterKid(private val content: String) {
 
 
 enum class KeyType { SYMMETRIC, ASYMMETRIC }
-enum class KeyPurpose { TOKEN_SIGNATURE, USER_MFA }
+enum class KeyPurpose { SIGNATURE, MFA }
 data class Keys(val keys: List<Key>)
 
 data class Key(val dataKey: DataKey, val masterKid: MasterKid, val kid: Kid, val enabled: Boolean, val type: KeyType, val keyPurpose : KeyPurpose)
