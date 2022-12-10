@@ -27,7 +27,14 @@ enum class KeyType { SYMMETRIC, ASYMMETRIC }
 enum class KeyPurpose { SIGNATURE, MFA }
 data class Keys(val keys: List<Key>)
 
-data class Key(val dataKey: DataKey, val masterKid: MasterKid, val kid: Kid, val enabled: Boolean, val type: KeyType, val keyPurpose : KeyPurpose)
+data class Key(
+    val dataKey: DataKey,
+    val masterKid: MasterKid,
+    val kid: Kid,
+    val enabled: Boolean,
+    val type: KeyType,
+    val keyPurpose: KeyPurpose
+)
 
 data class DataKey(val encryptedPrivateKey: ByteArray, val publicKey: Optional<ByteArray>) {
 
@@ -53,7 +60,12 @@ data class DataKey(val encryptedPrivateKey: ByteArray, val publicKey: Optional<B
         other as DataKey
 
         if (!encryptedPrivateKey.contentEquals(other.encryptedPrivateKey)) return false
-        if (publicKey != other.publicKey) return false
+
+        if (!(publicKey.isEmpty && other.publicKey.isEmpty)) {
+            if (!publicKey.get().contentEquals(other.publicKey.get())) return false
+        } else {
+            return false
+        }
 
         return true
     }

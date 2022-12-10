@@ -3,6 +3,9 @@ package it.valeriovaudi.vauthenticator.keys
 import it.valeriovaudi.vauthenticator.extentions.asDynamoAttribute
 import it.valeriovaudi.vauthenticator.extentions.encoder
 import it.valeriovaudi.vauthenticator.extentions.valueAsStringFor
+import it.valeriovaudi.vauthenticator.keys.KeyPurpose.MFA
+import it.valeriovaudi.vauthenticator.keys.KeyType.ASYMMETRIC
+import it.valeriovaudi.vauthenticator.keys.KeyType.SYMMETRIC
 import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoDbClient
 import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoMfaKeysTableName
 import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoSignatureKeysTableName
@@ -42,7 +45,7 @@ internal class AwsKeyRepositoryTest {
         val masterKid = aNewMasterKey()
         val kid = kidGenerator.invoke()
 
-        keyRepository.createKeyFrom(masterKid, KeyType.ASYMMETRIC)
+        keyRepository.createKeyFrom(masterKid, ASYMMETRIC)
 
 
         val actual = dynamoDbClient.getItem(
@@ -65,12 +68,13 @@ internal class AwsKeyRepositoryTest {
             actual.valueAsStringFor("public_key")
         )
     }
+
     @Test
     internal fun `when create a new data key`() {
         val masterKid = aNewMasterKey()
         val kid = kidGenerator.invoke()
 
-        keyRepository.createKeyFrom(masterKid, KeyType.SYMMETRIC)
+        keyRepository.createKeyFrom(masterKid, SYMMETRIC)
 
 
         val actual = dynamoDbClient.getItem(
@@ -95,7 +99,7 @@ internal class AwsKeyRepositoryTest {
         val masterKid = aNewMasterKey()
         val kid = kidGenerator.invoke()
 
-        keyRepository.createKeyFrom(masterKid, KeyType.SYMMETRIC, KeyPurpose.MFA)
+        keyRepository.createKeyFrom(masterKid, SYMMETRIC, MFA)
 
 
         val actual = dynamoDbClient.getItem(
@@ -136,7 +140,7 @@ internal class AwsKeyRepositoryTest {
     @Test
     internal fun `when a mfa key is deleted`() {
         val kid = Kid(kidGenerator.invoke())
-        keyRepository.deleteKeyFor(kid, KeyPurpose.MFA)
+        keyRepository.deleteKeyFor(kid, MFA)
 
 
         val actual = dynamoDbClient.getItem(
@@ -170,6 +174,30 @@ internal class AwsKeyRepositoryTest {
                 .build()
         ).item()
         assertEquals(emptyMap<String, AttributeValue>(), actual)
+    }
+
+    @Test
+    internal fun `when a key is found by id and purpose`() {
+        val masterKid = aNewMasterKey()
+        val kid = Kid(kidGenerator.invoke())
+
+        keyRepository.createKeyFrom(masterKid, SYMMETRIC, MFA)
+
+        val actual = keyRepository.keyFor(kid, MFA)
+        val expected = Key(
+            DataKey.from(
+                encoder.encode(wrapper.generateDataKeyRecorder.get().ciphertextBlob().asByteArray())
+                    .decodeToString(),
+                ""
+            ),
+            masterKid,
+            kid,
+            true,
+            SYMMETRIC,
+            MFA
+        )
+
+        assertEquals(expected, actual)
     }
 
 }

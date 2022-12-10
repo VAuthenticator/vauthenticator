@@ -3,10 +3,7 @@ package it.valeriovaudi.vauthenticator.keys
 import it.valeriovaudi.vauthenticator.extentions.*
 import software.amazon.awssdk.core.SdkBytes.fromByteArray
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue
-import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
-import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
-import software.amazon.awssdk.services.dynamodb.model.ScanRequest
+import software.amazon.awssdk.services.dynamodb.model.*
 import software.amazon.awssdk.services.kms.KmsClient
 import software.amazon.awssdk.services.kms.model.*
 import java.util.*
@@ -89,8 +86,20 @@ open class AwsKeyRepository(
         return Keys(keys)
     }
 
-    override fun keyFor(kid: Kid, mfa: KeyPurpose): Key {
-        TODO("Not yet implemented")
+    override fun keyFor(kid: Kid, keyPurpose: KeyPurpose): Key {
+        val tableName = tableNameBasedOn(keyPurpose)
+        return dynamoDbClient.getItem(
+            GetItemRequest.builder()
+                .tableName(tableName)
+                .key(
+                    mapOf(
+                        "key_id" to kid.content().asDynamoAttribute()
+                    )
+                )
+                .build()
+        )
+            .item()
+            .let { keyFromDynamoFor(it) }
     }
 
     private fun findAllFrom(table: String) = dynamoDbClient.scan(
@@ -100,19 +109,20 @@ open class AwsKeyRepository(
     )
 
     private fun keysListFrom(items: MutableList<MutableMap<String, AttributeValue>>) =
-        items.map {
-            Key(
-                DataKey.from(
-                    it.valueAsStringFor("encrypted_private_key"),
-                    it.valueAsStringFor("public_key")
-                ),
-                MasterKid(it.valueAsStringFor("master_key_id")),
-                Kid(it.valueAsStringFor("key_id")),
-                it.valueAsBoolFor("enabled"),
-                KeyType.valueOf(it.valueAsStringFor("key_type")),
-                KeyPurpose.valueOf(it.valueAsStringFor("key_purpose"))
-            )
-        }
+        items.map { keyFromDynamoFor(it) }
+
+    private fun keyFromDynamoFor(it: MutableMap<String, AttributeValue>) =
+        Key(
+            DataKey.from(
+                it.valueAsStringFor("encrypted_private_key"),
+                it.valueAsStringFor("public_key")
+            ),
+            MasterKid(it.valueAsStringFor("master_key_id")),
+            Kid(it.valueAsStringFor("key_id")),
+            it.valueAsBoolFor("enabled"),
+            KeyType.valueOf(it.valueAsStringFor("key_type")),
+            KeyPurpose.valueOf(it.valueAsStringFor("key_purpose"))
+        )
 
 }
 
