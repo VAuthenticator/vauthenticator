@@ -35,7 +35,7 @@ internal class AwsKeyRepositoryTest {
                 kidGenerator,
                 dynamoSignatureKeysTableName,
                 dynamoMfaKeysTableName,
-                KmsKeyRepository(wrapper),
+                KmsKeyGenerator(wrapper),
                 dynamoDbClient
             )
     }
@@ -47,16 +47,7 @@ internal class AwsKeyRepositoryTest {
 
         keyRepository.createKeyFrom(masterKid, ASYMMETRIC)
 
-
-        val actual = dynamoDbClient.getItem(
-            GetItemRequest.builder().tableName(dynamoSignatureKeysTableName)
-                .key(
-                    mapOf(
-                        "key_id" to kid.asDynamoAttribute()
-                    )
-                )
-                .build()
-        ).item()
+        val actual = getActual(Kid(kid), dynamoSignatureKeysTableName)
         assertEquals(kid, actual.valueAsStringFor("key_id"))
         assertEquals(masterKid.content(), actual.valueAsStringFor("master_key_id"))
         assertEquals(
@@ -76,16 +67,7 @@ internal class AwsKeyRepositoryTest {
 
         keyRepository.createKeyFrom(masterKid, SYMMETRIC)
 
-
-        val actual = dynamoDbClient.getItem(
-            GetItemRequest.builder().tableName(dynamoSignatureKeysTableName)
-                .key(
-                    mapOf(
-                        "key_id" to kid.asDynamoAttribute()
-                    )
-                )
-                .build()
-        ).item()
+        val actual = getActual(Kid(kid), dynamoSignatureKeysTableName)
         assertEquals(kid, actual.valueAsStringFor("key_id"))
         assertEquals(masterKid.content(), actual.valueAsStringFor("master_key_id"))
         assertEquals(
@@ -101,16 +83,7 @@ internal class AwsKeyRepositoryTest {
 
         keyRepository.createKeyFrom(masterKid, SYMMETRIC, MFA)
 
-
-        val actual = dynamoDbClient.getItem(
-            GetItemRequest.builder().tableName(dynamoMfaKeysTableName)
-                .key(
-                    mapOf(
-                        "key_id" to kid.asDynamoAttribute()
-                    )
-                )
-                .build()
-        ).item()
+        val actual = getActual(Kid(kid), dynamoMfaKeysTableName)
         assertEquals(kid, actual.valueAsStringFor("key_id"))
         assertEquals(masterKid.content(), actual.valueAsStringFor("master_key_id"))
         assertEquals(
@@ -124,16 +97,7 @@ internal class AwsKeyRepositoryTest {
         val kid = Kid(kidGenerator.invoke())
         keyRepository.deleteKeyFor(kid, KeyPurpose.SIGNATURE)
 
-
-        val actual = dynamoDbClient.getItem(
-            GetItemRequest.builder().tableName(dynamoSignatureKeysTableName)
-                .key(
-                    mapOf(
-                        "key_id" to kid.content().asDynamoAttribute()
-                    )
-                )
-                .build()
-        ).item()
+        val actual = getActual(kid, dynamoSignatureKeysTableName)
         assertEquals(emptyMap<String, AttributeValue>(), actual)
     }
 
@@ -142,16 +106,7 @@ internal class AwsKeyRepositoryTest {
         val kid = Kid(kidGenerator.invoke())
         keyRepository.deleteKeyFor(kid, MFA)
 
-
-        val actual = dynamoDbClient.getItem(
-            GetItemRequest.builder().tableName(dynamoMfaKeysTableName)
-                .key(
-                    mapOf(
-                        "key_id" to kid.content().asDynamoAttribute()
-                    )
-                )
-                .build()
-        ).item()
+        val actual = getActual(kid, dynamoMfaKeysTableName)
         assertEquals(emptyMap<String, AttributeValue>(), actual)
     }
 
@@ -163,9 +118,13 @@ internal class AwsKeyRepositoryTest {
         keyRepository.createKeyFrom(masterKid)
         keyRepository.deleteKeyFor(kid, KeyPurpose.SIGNATURE)
 
+        val actual = getActual(kid, dynamoSignatureKeysTableName)
+        assertEquals(emptyMap<String, AttributeValue>(), actual)
+    }
 
-        val actual = dynamoDbClient.getItem(
-            GetItemRequest.builder().tableName(dynamoSignatureKeysTableName)
+    private fun getActual(kid: Kid, tableName: String): MutableMap<String, AttributeValue> =
+        dynamoDbClient.getItem(
+            GetItemRequest.builder().tableName(tableName)
                 .key(
                     mapOf(
                         "key_id" to kid.content().asDynamoAttribute()
@@ -173,8 +132,6 @@ internal class AwsKeyRepositoryTest {
                 )
                 .build()
         ).item()
-        assertEquals(emptyMap<String, AttributeValue>(), actual)
-    }
 
     @Test
     internal fun `when a key is found by id and purpose`() {

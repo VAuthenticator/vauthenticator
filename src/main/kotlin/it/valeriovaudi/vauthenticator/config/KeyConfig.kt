@@ -12,10 +12,10 @@ import java.util.*
 class KeyConfig {
 
     @Bean
-    fun keyGenerator(kmsClient: KmsClient): KeyGenerator = KmsKeyRepository(kmsClient)
+    fun keyGenerator(kmsClient: KmsClient): KeyGenerator = KmsKeyGenerator(kmsClient)
 
     @Bean
-    fun keyDecrypter(kmsClient: KmsClient): KeyDecrypter = KmsKeyRepository(kmsClient)
+    fun keyDecrypter(kmsClient: KmsClient): KeyDecrypter = KmsKeyDecrypter(kmsClient)
 
     @Bean
     fun keyRepository(
