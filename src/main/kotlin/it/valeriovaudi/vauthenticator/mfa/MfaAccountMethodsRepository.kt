@@ -5,7 +5,6 @@ import it.valeriovaudi.vauthenticator.extentions.valueAsStringFor
 import it.valeriovaudi.vauthenticator.keys.*
 import it.valeriovaudi.vauthenticator.mfa.MfaMethod.valueOf
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
-import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest
 

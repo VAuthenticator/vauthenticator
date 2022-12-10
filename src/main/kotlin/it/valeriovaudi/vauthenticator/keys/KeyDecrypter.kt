@@ -2,8 +2,7 @@ package it.valeriovaudi.vauthenticator.keys
 
 import it.valeriovaudi.vauthenticator.extentions.decoder
 import it.valeriovaudi.vauthenticator.extentions.encoder
-import software.amazon.awssdk.core.SdkBytes
-import software.amazon.awssdk.core.SdkBytes.*
+import software.amazon.awssdk.core.SdkBytes.fromByteArray
 import software.amazon.awssdk.services.kms.KmsClient
 import software.amazon.awssdk.services.kms.model.DecryptRequest
 
