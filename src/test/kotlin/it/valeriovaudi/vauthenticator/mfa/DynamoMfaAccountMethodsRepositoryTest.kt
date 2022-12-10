@@ -44,4 +44,20 @@ class DynamoMfaAccountMethodsRepositoryTest {
             mfaAccountMethods[MfaMethod.EMAIL_MFA_METHOD]
         )
     }
+
+    @Test
+    fun `when a mfa account do not have method stored`() {
+        val masterKid = MasterKid("")
+        val email = anAccount().email
+
+        val underTest = DynamoMfaAccountMethodsRepository(
+            dynamoMfaAccountMethodsTableName,
+            dynamoDbClient,
+            keyRepository,
+            masterKid
+        )
+
+        val mfaAccountMethods = underTest.findAll(email)
+        Assertions.assertEquals(emptyMap<MfaMethod, MfaAccountMethod>(), mfaAccountMethods)
+    }
 }

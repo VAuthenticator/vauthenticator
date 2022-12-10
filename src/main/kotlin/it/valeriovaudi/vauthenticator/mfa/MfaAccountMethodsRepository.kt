@@ -5,6 +5,7 @@ import it.valeriovaudi.vauthenticator.extentions.valueAsStringFor
 import it.valeriovaudi.vauthenticator.keys.*
 import it.valeriovaudi.vauthenticator.mfa.MfaMethod.valueOf
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest
 
@@ -25,7 +26,7 @@ class DynamoMfaAccountMethodsRepository(
         return fromDynamo.associate {
             val mfaMethod = valueOf(it.valueAsStringFor("mfa_method"))
             mfaMethod to MfaAccountMethod(
-                email, Kid(it.valueAsStringFor("kid")), mfaMethod
+                email, Kid(it.valueAsStringFor("key_id")), mfaMethod
             )
         }
     }
@@ -57,7 +58,7 @@ class DynamoMfaAccountMethodsRepository(
                     mapOf(
                         "user_name" to email.asDynamoAttribute(),
                         "mfa_method" to mfaMfaMethod.name.asDynamoAttribute(),
-                        "kid" to kid.content().asDynamoAttribute()
+                        "key_id" to kid.content().asDynamoAttribute()
                     )
                 )
                 .build()
