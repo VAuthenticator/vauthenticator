@@ -4,10 +4,8 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import it.valeriovaudi.vauthenticator.account.AccountTestFixture.anAccount
-import it.valeriovaudi.vauthenticator.keys.KeyRepository
-import it.valeriovaudi.vauthenticator.keys.Kid
+import it.valeriovaudi.vauthenticator.keys.*
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -23,18 +21,27 @@ class TaimosOtpMfaTest {
     @MockK
     lateinit var keyRepository: KeyRepository
 
-    @Test
-    @Disabled
-    fun `when generate a secret from account secret key`() {
-        val underTest = TaimosOtpMfa(keyRepository, mfaAccountMethodsRepository, OtpConfigurationProperties(6, 60))
+    @MockK
+    lateinit var keyDecrypter: KeyDecrypter
 
+    @Test
+    fun `when generate a secret from account secret key`() {
+        val underTest = TaimosOtpMfa(keyDecrypter,keyRepository, mfaAccountMethodsRepository, OtpConfigurationProperties(6, 60))
+
+        val key = Key(
+            DataKey.from("QV9FTkNSWVBURURfS0VZ", ""),
+            MasterKid(""),
+            Kid("A_KID"),
+            true,
+            KeyType.SYMMETRIC,
+            KeyPurpose.MFA
+        )
         every { mfaAccountMethodsRepository.findAll(email) } returns mapOf(
             MfaMethod.EMAIL_MFA_METHOD to MfaAccountMethod(email, Kid("A_KID"), MfaMethod.EMAIL_MFA_METHOD)
         )
-
-//        every { keyRepository.keyFor(Kid("A_KID")) } returns Key()
-
+        every { keyRepository.keyFor(Kid("A_KID"), KeyPurpose.MFA) } returns key
+        every { keyDecrypter.decryptKey("QV9FTkNSWVBURURfS0VZ") } returns "QV9ERUNSWVBURURfU1lNTUVUUklDX0tFWQ=="
         val actual = underTest.generateSecretKeyFor(account)
-        assertEquals(MfaSecret("A_SECRET"), actual)
+        assertEquals(MfaSecret("QV9ERUNSWVBURURfU1lNTUVUUklDX0tFWQ=="), actual)
     }
 }

@@ -3,6 +3,7 @@ package it.valeriovaudi.vauthenticator.config
 import com.hubspot.jinjava.Jinjava
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
 import it.valeriovaudi.vauthenticator.document.DocumentRepository
+import it.valeriovaudi.vauthenticator.keys.KeyDecrypter
 import it.valeriovaudi.vauthenticator.keys.KeyRepository
 import it.valeriovaudi.vauthenticator.keys.MasterKid
 import it.valeriovaudi.vauthenticator.mail.*
@@ -37,9 +38,11 @@ class MfaConfig {
     @Bean
     fun otpMfa(
         keyRepository: KeyRepository,
+        keyDecrypter: KeyDecrypter,
         mfaAccountMethodsRepository: MfaAccountMethodsRepository,
         otpConfigurationProperties: OtpConfigurationProperties
     ) = TaimosOtpMfa(
+        keyDecrypter,
         keyRepository,
         mfaAccountMethodsRepository,
         otpConfigurationProperties

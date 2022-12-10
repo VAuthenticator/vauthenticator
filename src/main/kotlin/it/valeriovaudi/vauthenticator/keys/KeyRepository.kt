@@ -4,7 +4,7 @@ interface KeyRepository {
     fun createKeyFrom(masterKid: MasterKid, keyType: KeyType = KeyType.ASYMMETRIC, keyPurpose: KeyPurpose = KeyPurpose.SIGNATURE): Kid
     fun deleteKeyFor(kid: Kid, keyPurpose: KeyPurpose)
     fun signatureKeys(): Keys
-    fun keyFor(kid: Kid): Key
+    fun keyFor(kid: Kid, mfa: KeyPurpose): Key
 }
 
 interface KeyDecrypter {

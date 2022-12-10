@@ -2,10 +2,7 @@ package it.valeriovaudi.vauthenticator.mfa
 
 import it.valeriovaudi.vauthenticator.extentions.asDynamoAttribute
 import it.valeriovaudi.vauthenticator.extentions.valueAsStringFor
-import it.valeriovaudi.vauthenticator.keys.KeyRepository
-import it.valeriovaudi.vauthenticator.keys.KeyType
-import it.valeriovaudi.vauthenticator.keys.Kid
-import it.valeriovaudi.vauthenticator.keys.MasterKid
+import it.valeriovaudi.vauthenticator.keys.*
 import it.valeriovaudi.vauthenticator.mfa.MfaMethod.valueOf
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
@@ -43,7 +40,7 @@ class DynamoMfaAccountMethodsRepository(
         ).items()
 
     override fun save(email: String, mfaMfaMethod: MfaMethod): MfaAccountMethod {
-        val kid = keyRepository.createKeyFrom(masterKid, KeyType.SYMMETRIC)
+        val kid = keyRepository.createKeyFrom(masterKid, KeyType.SYMMETRIC, KeyPurpose.MFA)
         storeOnDynamo(email, mfaMfaMethod, kid)
         return MfaAccountMethod(email, kid, mfaMfaMethod)
     }

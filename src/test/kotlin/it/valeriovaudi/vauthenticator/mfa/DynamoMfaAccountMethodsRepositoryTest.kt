@@ -4,10 +4,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import it.valeriovaudi.vauthenticator.account.AccountTestFixture.anAccount
-import it.valeriovaudi.vauthenticator.keys.KeyRepository
-import it.valeriovaudi.vauthenticator.keys.KeyType
-import it.valeriovaudi.vauthenticator.keys.Kid
-import it.valeriovaudi.vauthenticator.keys.MasterKid
+import it.valeriovaudi.vauthenticator.keys.*
 import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoDbClient
 import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoMfaAccountMethodsTableName
 import it.valeriovaudi.vauthenticator.support.DatabaseUtils.resetDatabase
@@ -38,7 +35,7 @@ class DynamoMfaAccountMethodsRepositoryTest {
             keyRepository,
             masterKid
         )
-        every { keyRepository.createKeyFrom(masterKid, KeyType.SYMMETRIC) } returns Kid("")
+        every { keyRepository.createKeyFrom(masterKid, KeyType.SYMMETRIC, KeyPurpose.MFA) } returns Kid("")
 
         underTest.save(email, MfaMethod.EMAIL_MFA_METHOD)
         val mfaAccountMethods = underTest.findAll(email)

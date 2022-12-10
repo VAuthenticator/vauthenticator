@@ -89,7 +89,7 @@ open class AwsKeyRepository(
         return Keys(keys)
     }
 
-    override fun keyFor(kid: Kid): Key {
+    override fun keyFor(kid: Kid, mfa: KeyPurpose): Key {
         TODO("Not yet implemented")
     }
 
