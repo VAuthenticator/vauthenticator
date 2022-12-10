@@ -130,17 +130,13 @@ class KmsKeyRepository(
     private val kmsClient: KmsClient
 ) : KeyDecrypter, KeyGenerator {
 
-    override fun decryptKeyAsByteArray(privateKey: String): ByteArray = kmsClient.decrypt(
-        DecryptRequest.builder()
-            .ciphertextBlob(fromByteArray(decoder.decode(privateKey)))
-            .build()
-    )
-        .plaintext().asByteArray()
-
-
     override fun decryptKey(privateKey: String): String =
-        decryptKeyAsByteArray(privateKey).let {
-            encoder.encode(it).decodeToString()
+        kmsClient.decrypt(
+            DecryptRequest.builder()
+                .ciphertextBlob(fromByteArray(decoder.decode(privateKey)))
+                .build()
+        ).let {
+            encoder.encode(it.plaintext().asByteArray()).decodeToString()
         }
 
     override fun dataKeyPairFor(masterKid: MasterKid) =

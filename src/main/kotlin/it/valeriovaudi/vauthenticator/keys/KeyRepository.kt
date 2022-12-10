@@ -14,7 +14,6 @@ interface KeyRepository {
 
 interface KeyDecrypter {
     fun decryptKey(encrypted: String): String
-    fun decryptKeyAsByteArray(privateKey: String) : ByteArray
 }
 
 interface KeyGenerator {
