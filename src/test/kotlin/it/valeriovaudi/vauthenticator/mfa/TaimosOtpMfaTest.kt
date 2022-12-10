@@ -8,6 +8,7 @@ import it.valeriovaudi.vauthenticator.keys.*
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+/*
 
 @ExtendWith(MockKExtension::class)
 class TaimosOtpMfaTest {
@@ -44,4 +45,4 @@ class TaimosOtpMfaTest {
         val actual = underTest.generateSecretKeyFor(account)
         assertEquals(MfaSecret("QV9ERUNSWVBURURfU1lNTUVUUklDX0tFWQ=="), actual)
     }
-}
+}*/

@@ -2,6 +2,7 @@ package it.valeriovaudi.vauthenticator.mfa
 
 import com.j256.twofactorauth.TimeBasedOneTimePasswordUtil
 import it.valeriovaudi.vauthenticator.account.Account
+import it.valeriovaudi.vauthenticator.extentions.encoder
 import it.valeriovaudi.vauthenticator.keys.KeyDecrypter
 import it.valeriovaudi.vauthenticator.keys.KeyPurpose
 import it.valeriovaudi.vauthenticator.keys.KeyRepository
@@ -29,7 +30,8 @@ class TaimosOtpMfa(
         val associatedMfa = mfaAccountMethodsRepository.findAll(account.email)
         val mfatMethod = associatedMfa[MfaMethod.EMAIL_MFA_METHOD]!!
         val encryptedSecret = keyRepository.keyFor(mfatMethod.key, KeyPurpose.MFA)
-        val decryptedKey = keyDecrypter.decryptKey(encryptedSecret.dataKey.encryptedPrivateKeyAsString())
+        val decryptKeyAsByteArray = keyDecrypter.decryptKey(encryptedSecret.dataKey.publicKeyAsString())
+        val decryptedKey = encoder.encode(decryptKeyAsByteArray.toByteArray()).decodeToString()
         return MfaSecret(decryptedKey)
     }
 
