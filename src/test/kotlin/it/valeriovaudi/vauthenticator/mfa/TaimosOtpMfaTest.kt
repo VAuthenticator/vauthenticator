@@ -4,11 +4,12 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import it.valeriovaudi.vauthenticator.account.AccountTestFixture.anAccount
+import it.valeriovaudi.vauthenticator.extentions.decoder
 import it.valeriovaudi.vauthenticator.keys.*
+import org.apache.commons.codec.binary.Hex
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-/*
 
 @ExtendWith(MockKExtension::class)
 class TaimosOtpMfaTest {
@@ -27,7 +28,8 @@ class TaimosOtpMfaTest {
 
     @Test
     fun `when generate a secret from account secret key`() {
-        val underTest = TaimosOtpMfa(keyDecrypter,keyRepository, mfaAccountMethodsRepository, OtpConfigurationProperties(6, 60))
+        val underTest =
+            TaimosOtpMfa(keyDecrypter, keyRepository, mfaAccountMethodsRepository, OtpConfigurationProperties(6, 60))
 
         val key = Key(
             DataKey.from("QV9FTkNSWVBURURfS0VZ", ""),
@@ -43,6 +45,7 @@ class TaimosOtpMfaTest {
         every { keyRepository.keyFor(Kid("A_KID"), KeyPurpose.MFA) } returns key
         every { keyDecrypter.decryptKey("QV9FTkNSWVBURURfS0VZ") } returns "QV9ERUNSWVBURURfU1lNTUVUUklDX0tFWQ=="
         val actual = underTest.generateSecretKeyFor(account)
-        assertEquals(MfaSecret("QV9ERUNSWVBURURfU1lNTUVUUklDX0tFWQ=="), actual)
+        val expectedSecret = Hex.encodeHexString(decoder.decode("QV9ERUNSWVBURURfU1lNTUVUUklDX0tFWQ=="))
+        assertEquals(MfaSecret(expectedSecret), actual)
     }
-}*/
+}

@@ -2,14 +2,12 @@ package it.valeriovaudi.vauthenticator.mfa
 
 import com.j256.twofactorauth.TimeBasedOneTimePasswordUtil
 import it.valeriovaudi.vauthenticator.account.Account
-import it.valeriovaudi.vauthenticator.extentions.encoder
+import it.valeriovaudi.vauthenticator.extentions.decoder
 import it.valeriovaudi.vauthenticator.keys.KeyDecrypter
 import it.valeriovaudi.vauthenticator.keys.KeyPurpose
 import it.valeriovaudi.vauthenticator.keys.KeyRepository
-import org.apache.commons.codec.binary.Base32
 import org.apache.commons.codec.binary.Hex
 import org.springframework.boot.context.properties.ConfigurationProperties
-
 
 interface OtpMfa {
     fun generateSecretKeyFor(account: Account): MfaSecret
@@ -30,8 +28,8 @@ class TaimosOtpMfa(
         val associatedMfa = mfaAccountMethodsRepository.findAll(account.email)
         val mfatMethod = associatedMfa[MfaMethod.EMAIL_MFA_METHOD]!!
         val encryptedSecret = keyRepository.keyFor(mfatMethod.key, KeyPurpose.MFA)
-        val decryptKeyAsByteArray = keyDecrypter.decryptKey(encryptedSecret.dataKey.publicKeyAsString())
-        val decryptedKey = encoder.encode(decryptKeyAsByteArray.toByteArray()).decodeToString()
+        val decryptKeyAsByteArray = keyDecrypter.decryptKey(encryptedSecret.dataKey.encryptedPrivateKeyAsString())
+        val decryptedKey = Hex.encodeHexString(decoder.decode(decryptKeyAsByteArray))
         return MfaSecret(decryptedKey)
     }
 
@@ -47,14 +45,11 @@ class TaimosOtpMfa(
     }
 
     override fun verify(account: Account, optCode: MfaChallenge) {
-        val secretKey = generateSecretKeyFor(account).content()
-        val base32 = Base32()
-        val bytes = base32.decode(secretKey)
-        val hexKey: String = Hex.encodeHexString(bytes)
+        val mfaSecret = generateSecretKeyFor(account)
         try {
             val validated =
                 TimeBasedOneTimePasswordUtil.validateCurrentNumberHex(
-                    hexKey,
+                    mfaSecret.content(),
                     optCode.content().toInt(),
                     tokenTimeWindowMillis,
                     System.currentTimeMillis(),
