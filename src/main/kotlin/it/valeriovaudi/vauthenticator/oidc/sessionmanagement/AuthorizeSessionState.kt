@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 import java.util.*
+import java.util.Arrays.*
 
 fun sendAuthorizationResponse(
     redisTemplate: RedisTemplate<String, String?>,
@@ -52,7 +53,7 @@ fun sendAuthorizationResponse(
 class SessionManagementFactory(private val providerSettings: AuthorizationServerSettings) {
     private val logger: Logger = LoggerFactory.getLogger(SessionManagementFactory::class.java)
     fun sessionIdFor(request: HttpServletRequest) =
-        Arrays.stream(request.cookies)
+        stream(request.cookies)
             .filter { it.name.equals("SESSION") }
             .map { it.value }
             .findFirst()
