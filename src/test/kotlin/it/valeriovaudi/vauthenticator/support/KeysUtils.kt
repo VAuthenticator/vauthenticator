@@ -1,13 +1,11 @@
 package it.valeriovaudi.vauthenticator.support
 
+import it.valeriovaudi.vauthenticator.keys.MasterKid
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.kms.KmsClient
-import software.amazon.awssdk.services.kms.model.CreateKeyRequest
-import software.amazon.awssdk.services.kms.model.GenerateDataKeyPairRequest
-import software.amazon.awssdk.services.kms.model.GenerateDataKeyPairResponse
-import software.amazon.awssdk.services.kms.model.KeyUsageType
+import software.amazon.awssdk.services.kms.model.*
 import java.net.URI
 import java.util.*
 
@@ -43,20 +41,22 @@ object KeysUtils {
         .endpointOverride(URI.create("http://localhost:4566"))
         .build()
 
-    fun aNewMasterKey(): String = kmsClient.createKey(
-        CreateKeyRequest.builder()
-            .keySpec("SYMMETRIC_DEFAULT")
-            .description("A_KEY_DESCRIPTION")
-            .keyUsage(KeyUsageType.ENCRYPT_DECRYPT)
-            .policy(policy)
-            .build()
-    ).keyMetadata().keyId()
-
+    fun aNewMasterKey(): MasterKid = MasterKid(
+        kmsClient.createKey(
+            CreateKeyRequest.builder()
+                .keySpec("SYMMETRIC_DEFAULT")
+                .description("A_KEY_DESCRIPTION")
+                .keyUsage(KeyUsageType.ENCRYPT_DECRYPT)
+                .policy(policy)
+                .build()
+        ).keyMetadata().keyId()
+    )
 }
 
 class KmsClientWrapper(
     private val kmsClient: KmsClient,
-    var generateDataKeyPairRecorder: Optional<GenerateDataKeyPairResponse> = Optional.empty()
+    var generateDataKeyPairRecorder: Optional<GenerateDataKeyPairResponse> = Optional.empty(),
+    var generateDataKeyRecorder: Optional<GenerateDataKeyResponse> = Optional.empty()
 ) : KmsClient by kmsClient {
 
     override fun generateDataKeyPair(request: GenerateDataKeyPairRequest): GenerateDataKeyPairResponse {
@@ -64,4 +64,11 @@ class KmsClientWrapper(
         generateDataKeyPairRecorder = Optional.of(generateDataKeyPair)
         return generateDataKeyPair
     }
+    override fun generateDataKey(request: GenerateDataKeyRequest): GenerateDataKeyResponse {
+        val generateDataKey = kmsClient.generateDataKey(request)
+        generateDataKeyRecorder = Optional.of(generateDataKey)
+        return generateDataKey
+    }
+
+
 }

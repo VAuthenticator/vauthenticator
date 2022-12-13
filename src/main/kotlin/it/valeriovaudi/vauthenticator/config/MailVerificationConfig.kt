@@ -8,6 +8,7 @@ import it.valeriovaudi.vauthenticator.account.tiket.TicketRepository
 import it.valeriovaudi.vauthenticator.account.tiket.VerificationTicketFactory
 import it.valeriovaudi.vauthenticator.document.DocumentRepository
 import it.valeriovaudi.vauthenticator.mail.*
+import it.valeriovaudi.vauthenticator.mfa.MfaMethodsEnrolmentAssociation
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientApplicationRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -32,8 +33,15 @@ class MailVerificationConfig {
     @Bean
     fun verifyMailChallengeSent(clientAccountRepository: ClientApplicationRepository,
                                 accountRepository: AccountRepository,
-                                ticketRepository: TicketRepository) =
-            VerifyMailChallengeSent(clientAccountRepository, accountRepository, ticketRepository)
+                                ticketRepository: TicketRepository,
+                                mfaMethodsEnrolmentAssociation : MfaMethodsEnrolmentAssociation
+    ) =
+            VerifyMailChallengeSent(
+                clientAccountRepository,
+                accountRepository,
+                ticketRepository,
+                mfaMethodsEnrolmentAssociation
+            )
 
     @Bean
     fun verificationMailSender(javaMailSender: JavaMailSender, documentRepository: DocumentRepository, noReplyMailConfiguration: NoReplyMailConfiguration) =

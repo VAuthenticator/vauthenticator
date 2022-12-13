@@ -1,6 +1,7 @@
 package it.valeriovaudi.vauthenticator.config
 
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepository
+import it.valeriovaudi.vauthenticator.login.userdetails.AccountUserDetailsService
 import it.valeriovaudi.vauthenticator.mfa.MfaAuthentication
 import it.valeriovaudi.vauthenticator.mfa.MfaAuthenticationHandler
 import it.valeriovaudi.vauthenticator.mfa.MfaTrustResolver
@@ -9,7 +10,8 @@ import it.valeriovaudi.vauthenticator.oauth2.clientapp.Scope
 import it.valeriovaudi.vauthenticator.oidc.logout.ClearSessionStateLogoutHandler
 import it.valeriovaudi.vauthenticator.oidc.sessionmanagement.SessionManagementFactory
 import it.valeriovaudi.vauthenticator.password.BcryptVAuthenticatorPasswordEncoder
-import it.valeriovaudi.vauthenticator.login.userdetails.AccountUserDetailsService
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.redis.core.RedisTemplate
@@ -116,6 +118,8 @@ class WebSecurityConfig(
 
     @Bean
     fun jwtAuthenticationConverter(): JwtAuthenticationConverter {
+        val logger: Logger = LoggerFactory.getLogger(JwtAuthenticationConverter::class.java)
+
         val jwtAuthenticationConverter = JwtAuthenticationConverter()
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter { jwt: Jwt ->
             val scope = jwt.getClaim<List<String>>("scope")
@@ -127,7 +131,7 @@ class WebSecurityConfig(
             val authoritiesClaims = jwt.getClaim<List<String>>("authorities")
                 .map { role: String -> SimpleGrantedAuthority(role) }
 
-            println(authoritiesClaims + scope)
+            logger.debug("authorities: ${authoritiesClaims + scope}")
             authoritiesClaims + scope
         }
         jwtAuthenticationConverter.setPrincipalClaimName("user_name")

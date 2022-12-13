@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator.keypair
+package it.valeriovaudi.vauthenticator.keys
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.every
@@ -6,7 +6,6 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -29,19 +28,30 @@ internal class KeyEndPointTest {
 
     private val mapper = ObjectMapper()
     private val payload = mapOf("masterKey" to "A_MASTER_KEY", "kid" to "A_KID")
+    private val deletePayload = mapOf( "kid" to "A_KID", "key_purpose" to "SIGNATURE")
 
     @BeforeEach
     internal fun setUp() {
-        mokMvc = standaloneSetup(KeyEndPoint("https://vauthenticator.com", "A_MASTER_KEY", keyRepository)).build()
+        mokMvc = standaloneSetup(KeyEndPoint("A_MASTER_KEY", keyRepository)).build()
     }
 
     @Test
     internal fun `when we are able to load master key, kid of all  keys`() {
         val kpg = KeyPairGenerator.getInstance("RSA")
         kpg.initialize(2048)
-        val keyPair = kpg.generateKeyPair()
 
-        every { keyRepository.keys() } returns Keys(listOf(Key(keyPair, "A_MASTER_KEY", "A_KID", true)))
+        every { keyRepository.signatureKeys() } returns Keys(
+            listOf(
+                Key(
+                    DataKey.from("", ""),
+                    MasterKid("A_MASTER_KEY"),
+                    Kid("A_KID"),
+                    true,
+                    KeyType.ASYMMETRIC,
+                    KeyPurpose.SIGNATURE
+                )
+            )
+        )
 
         mokMvc.perform(get("/api/keys"))
             .andExpect(status().isOk)
@@ -50,7 +60,7 @@ internal class KeyEndPointTest {
 
     @Test
     internal fun `when we are able to create a new key`() {
-        every { keyRepository.createKeyFrom("A_MASTER_KEY") } returns "123"
+        every { keyRepository.createKeyFrom(MasterKid("A_MASTER_KEY")) } returns Kid("123")
 
         mokMvc.perform(post("/api/keys"))
             .andExpect(status().isCreated)
@@ -59,12 +69,12 @@ internal class KeyEndPointTest {
 
     @Test
     internal fun `when we are able to delete a new key`() {
-        every { keyRepository.deleteKeyFor("A_MASTER_KEY", "A_KID") } just runs
+        every { keyRepository.deleteKeyFor( Kid("A_KID"), KeyPurpose.SIGNATURE) } just runs
 
         mokMvc.perform(
             delete("/api/keys")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(payload))
+                .content(mapper.writeValueAsString(deletePayload))
         )
             .andExpect(status().isNoContent)
     }

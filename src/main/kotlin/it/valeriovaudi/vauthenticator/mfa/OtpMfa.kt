@@ -2,10 +2,12 @@ package it.valeriovaudi.vauthenticator.mfa
 
 import com.j256.twofactorauth.TimeBasedOneTimePasswordUtil
 import it.valeriovaudi.vauthenticator.account.Account
-import org.apache.commons.codec.binary.Base32
+import it.valeriovaudi.vauthenticator.extentions.decoder
+import it.valeriovaudi.vauthenticator.keys.KeyDecrypter
+import it.valeriovaudi.vauthenticator.keys.KeyPurpose
+import it.valeriovaudi.vauthenticator.keys.KeyRepository
 import org.apache.commons.codec.binary.Hex
 import org.springframework.boot.context.properties.ConfigurationProperties
-
 
 interface OtpMfa {
     fun generateSecretKeyFor(account: Account): MfaSecret
@@ -13,24 +15,28 @@ interface OtpMfa {
     fun verify(account: Account, optCode: MfaChallenge)
 }
 
-class TaimosOtpMfa(private val properties: OtpConfigurationProperties) : OtpMfa {
+class TaimosOtpMfa(
+    private val keyDecrypter: KeyDecrypter,
+    private val keyRepository: KeyRepository,
+    private val mfaAccountMethodsRepository: MfaAccountMethodsRepository,
+    private val properties: OtpConfigurationProperties
+) : OtpMfa {
     private val tokenTimeWindow: Int = properties.otpTimeToLiveInSeconds
     private val tokenTimeWindowMillis: Long = (tokenTimeWindow * 1000).toLong()
 
     override fun generateSecretKeyFor(account: Account): MfaSecret {
-        val base32 = Base32()
-        return MfaSecret(base32.encodeToString(account.email.toByteArray()))
+        val associatedMfa = mfaAccountMethodsRepository.findAll(account.email)
+        val mfatMethod = associatedMfa[MfaMethod.EMAIL_MFA_METHOD]!!
+        val encryptedSecret = keyRepository.keyFor(mfatMethod.key, KeyPurpose.MFA)
+        val decryptKeyAsByteArray = keyDecrypter.decryptKey(encryptedSecret.dataKey.encryptedPrivateKeyAsString())
+        val decryptedKey = Hex.encodeHexString(decoder.decode(decryptKeyAsByteArray))
+        return MfaSecret(decryptedKey)
     }
 
     override fun getTOTPCode(secretKey: MfaSecret): MfaChallenge {
-        println("properties")
-        println(properties)
-        val base32 = Base32()
-        val bytes = base32.decode(secretKey.content())
-        val hexKey: String = Hex.encodeHexString(bytes)
         return MfaChallenge(
             TimeBasedOneTimePasswordUtil.generateNumberStringHex(
-                hexKey,
+                secretKey.content(),
                 System.currentTimeMillis(),
                 tokenTimeWindow,
                 properties.otpLength
@@ -39,14 +45,11 @@ class TaimosOtpMfa(private val properties: OtpConfigurationProperties) : OtpMfa 
     }
 
     override fun verify(account: Account, optCode: MfaChallenge) {
-        val secretKey = generateSecretKeyFor(account).content()
-        val base32 = Base32()
-        val bytes = base32.decode(secretKey)
-        val hexKey: String = Hex.encodeHexString(bytes)
+        val mfaSecret = generateSecretKeyFor(account)
         try {
             val validated =
                 TimeBasedOneTimePasswordUtil.validateCurrentNumberHex(
-                    hexKey,
+                    mfaSecret.content(),
                     optCode.content().toInt(),
                     tokenTimeWindowMillis,
                     System.currentTimeMillis(),

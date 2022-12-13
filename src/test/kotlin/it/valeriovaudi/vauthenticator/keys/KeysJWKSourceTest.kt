@@ -1,4 +1,4 @@
-package it.valeriovaudi.vauthenticator.keypair
+package it.valeriovaudi.vauthenticator.keys
 
 import com.nimbusds.jose.jwk.JWKMatcher
 import com.nimbusds.jose.jwk.JWKSelector
@@ -14,12 +14,14 @@ internal class KeysJWKSourceTest {
 
     @MockK
     private lateinit var keyRepository : KeyRepository
+    @MockK
+    private lateinit var keyDecrypter: KeyDecrypter
 
     @Test
     internal fun `when the context is loaded`() {
-        val underTest = KeysJWKSource(keyRepository)
+        val underTest = KeysJWKSource(keyDecrypter, keyRepository)
 
-        every { keyRepository.keys() } returns Keys(emptyList())
+        every { keyRepository.signatureKeys() } returns Keys(emptyList())
 
         underTest.get(JWKSelector(JWKMatcher.Builder().build()), null)
     }
