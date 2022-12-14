@@ -25,6 +25,7 @@ jobs:
       - name: Create tag
         uses: ncipollo/release-action@v1
         with:
+          bodyFile: changelog/${{github.event.inputs.version}}.md
           tag: ${{github.event.inputs.version}}
 
   build-backend:
