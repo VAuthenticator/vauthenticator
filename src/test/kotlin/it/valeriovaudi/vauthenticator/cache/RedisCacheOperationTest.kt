@@ -45,4 +45,16 @@ class RedisCacheOperationTest {
 
         Assertions.assertEquals(Optional.of(value), actual)
     }
+
+    @Test
+    fun `when we are able to evict an object in cache`() {
+        val key = "a_key"
+        val value = "a_value"
+
+        redisTemplate.opsForHash<String, String>().put("a_cache_$key", "a_cache_$key".toSha256(), value)
+        underTest.evict(key)
+        val actual = Optional.ofNullable(redisTemplate.opsForHash<String, String>().get("a_cache_$key", "a_cache_$key".toSha256()))
+
+        Assertions.assertEquals(Optional.empty<String>(), actual)
+    }
 }

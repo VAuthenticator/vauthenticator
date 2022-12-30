@@ -23,7 +23,8 @@ class RedisCacheOperation<K, O>(
 
 
     override fun evict(key: K) {
-        TODO("Not yet implemented")
+        val keyAsString = getKeyAsStringFor(key)
+        redisTemplate.opsForHash<String, O>().delete(keyAsString, keyAsString.toSha256())
     }
 
     private fun getKeyAsStringFor(key: K) = "${cacheName}_${key.toString()}"
