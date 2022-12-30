@@ -1,7 +1,7 @@
 package it.valeriovaudi.vauthenticator.config
 
 import it.valeriovaudi.vauthenticator.account.repository.DynamoDbAccountRepository
-import it.valeriovaudi.vauthenticator.account.repository.EnrichedAccountRepository
+import it.valeriovaudi.vauthenticator.account.repository.AccountRepositoryWithPasswordPolicy
 import it.valeriovaudi.vauthenticator.password.PasswordPolicy
 import it.valeriovaudi.vauthenticator.role.DynamoDbRoleRepository
 import org.springframework.beans.factory.annotation.Value
@@ -18,7 +18,7 @@ class AccountConfig {
         dynamoDbClient: DynamoDbClient,
         @Value("\${vauthenticator.dynamo-db.account.table-name}") accountTableName: String,
         @Value("\${vauthenticator.dynamo-db.account.role.table-name}") accountRoleTableName: String
-    ) = EnrichedAccountRepository(
+    ) = AccountRepositoryWithPasswordPolicy(
         DynamoDbAccountRepository(dynamoDbClient, accountTableName, accountRoleTableName),
         passwordPolicy
     )
