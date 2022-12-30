@@ -39,13 +39,13 @@ internal class CachedAccountRepositoryTest {
         val username = account.username
         every { cacheOperation.get(account.email) } returns Optional.empty()
         every { delegate.accountFor(username) } returns Optional.of(account)
-        every { cacheOperation.put(account, ttlInSeconds) } just runs
+        every { cacheOperation.put(username, account, ttlInSeconds) } just runs
 
         underTest.accountFor(username)
 
         verify { cacheOperation.get(account.email) }
         verify { delegate.accountFor(username) }
-        verify { cacheOperation.put(account, ttlInSeconds) }
+        verify { cacheOperation.put(username, account, ttlInSeconds) }
     }
 
     @Test
@@ -58,7 +58,7 @@ internal class CachedAccountRepositoryTest {
 
         verify { cacheOperation.get(account.email) }
         verify(exactly = 0) { delegate.accountFor(username) }
-        verify(exactly = 0) { cacheOperation.put(account, ttlInSeconds) }
+        verify(exactly = 0) { cacheOperation.put(username, account, ttlInSeconds) }
     }
 
 

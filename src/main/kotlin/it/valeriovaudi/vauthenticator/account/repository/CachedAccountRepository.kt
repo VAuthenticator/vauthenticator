@@ -15,7 +15,7 @@ class CachedAccountRepository(
         return cacheOperation.get(username)
             .or {
                 val loadedAccount = delegate.accountFor(username)
-                loadedAccount.ifPresent { cacheOperation.put(it, ttlInSeconds) }
+                loadedAccount.ifPresent { cacheOperation.put(username, it, ttlInSeconds) }
                 loadedAccount
             }
     }

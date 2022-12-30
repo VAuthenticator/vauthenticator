@@ -5,6 +5,6 @@ import java.util.Optional
 
 interface CacheOperation<K, O> {
     fun get(key: K): Optional<O>
-    fun put(account: O, ttlInSeconds: Duration)
+    fun put(key: K, value: O, ttl: Duration)
     fun evict(key: K)
 }
