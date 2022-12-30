@@ -6,20 +6,23 @@ import java.time.Duration
 import java.util.*
 
 class CachedAccountRepository(
-    private val cacheOperation: CacheOperation,
+    private val cacheOperation: CacheOperation<String, Account>,
     private val ttlInSeconds: Duration,
     private val delegate: AccountRepository
 ) : AccountRepository by delegate {
 
     override fun accountFor(username: String): Optional<Account> {
-        val loadedAccount = delegate.accountFor(username)
-        loadedAccount.ifPresent { cacheOperation.put(it, ttlInSeconds) }
-        return loadedAccount
+        return cacheOperation.get(username)
+            .or {
+                val loadedAccount = delegate.accountFor(username)
+                loadedAccount.ifPresent { cacheOperation.put(it, ttlInSeconds) }
+                loadedAccount
+            }
     }
 
     override fun save(account: Account) {
-        TODO("Not yet implemented")
+        cacheOperation.evict(account.email)
+        delegate.save(account)
     }
-
 
 }
