@@ -13,11 +13,12 @@ class RedisCacheOperationTest {
     lateinit var underTest: CacheOperation<String, String>
     private lateinit var redisTemplate: RedisTemplate<String, String>
     private val a_cache = "a_cache"
+    private val ttl = Duration.ofSeconds(10)
 
     @BeforeEach
     fun setUp() {
         redisTemplate = aRedisTemplate()
-        underTest = RedisCacheOperation(a_cache, redisTemplate)
+        underTest = RedisCacheOperation(a_cache, ttl, redisTemplate)
     }
 
 
@@ -25,8 +26,7 @@ class RedisCacheOperationTest {
     fun `when we are able to put an object in cache`() {
         val key = "a_key"
         val expected = "a_value"
-        val ttl = Duration.ofSeconds(10)
-        underTest.put(key, expected, ttl)
+        underTest.put(key, expected)
 
         val actual = redisTemplate.opsForHash<String, String>().get("a_cache_$key", "a_cache_$key".toSha256())
         val actualExpire = redisTemplate.opsForHash<String, String>().operations.getExpire("a_cache_$key")
@@ -53,7 +53,9 @@ class RedisCacheOperationTest {
 
         redisTemplate.opsForHash<String, String>().put("a_cache_$key", "a_cache_$key".toSha256(), value)
         underTest.evict(key)
-        val actual = Optional.ofNullable(redisTemplate.opsForHash<String, String>().get("a_cache_$key", "a_cache_$key".toSha256()))
+        val actual = Optional.ofNullable(
+            redisTemplate.opsForHash<String, String>().get("a_cache_$key", "a_cache_$key".toSha256())
+        )
 
         Assertions.assertEquals(Optional.empty<String>(), actual)
     }
