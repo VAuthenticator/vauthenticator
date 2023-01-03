@@ -1,10 +1,9 @@
 package it.valeriovaudi.vauthenticator.cache
 
-import java.time.Duration
-import java.util.Optional
+import java.util.*
 
 interface CacheOperation<K, O> {
     fun get(key: K): Optional<O>
-    fun put(key: K, value: O, ttl: Duration)
+    fun put(key: K, value: O)
     fun evict(key: K)
 }
