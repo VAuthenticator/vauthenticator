@@ -1,6 +1,7 @@
 package it.valeriovaudi.vauthenticator.config
 
-import it.valeriovaudi.vauthenticator.account.Account
+import com.fasterxml.jackson.databind.ObjectMapper
+import it.valeriovaudi.vauthenticator.account.AccountCacheContentConverter
 import it.valeriovaudi.vauthenticator.account.repository.AccountRepositoryWithPasswordPolicy
 import it.valeriovaudi.vauthenticator.account.repository.CachedAccountRepository
 import it.valeriovaudi.vauthenticator.account.repository.DynamoDbAccountRepository
@@ -20,13 +21,15 @@ class AccountConfig {
 
     @Bean
     fun accountRepository(
+        mapper: ObjectMapper,
         passwordPolicy: PasswordPolicy,
         dynamoDbClient: DynamoDbClient,
-        accountCacheOperation: CacheOperation<String, Account>,
+        accountCacheOperation: CacheOperation<String, String>,
         @Value("\${vauthenticator.dynamo-db.account.table-name}") accountTableName: String,
         @Value("\${vauthenticator.dynamo-db.account.role.table-name}") accountRoleTableName: String
     ) =
         CachedAccountRepository(
+            AccountCacheContentConverter(mapper),
             accountCacheOperation,
             AccountRepositoryWithPasswordPolicy(
                 DynamoDbAccountRepository(dynamoDbClient, accountTableName, accountRoleTableName),
@@ -47,9 +50,9 @@ class AccountConfig {
         redisTemplate: RedisTemplate<*, *>,
         @Value("\${vauthenticator.dynamo-db.account.cache.ttl}") accountCacheTtl: Duration,
         @Value("\${vauthenticator.dynamo-db.account.cache.name}") accountCacheRegionName: String,
-    ) = RedisCacheOperation<String, Account>(
+    ) = RedisCacheOperation<String, String>(
         cacheName = accountCacheRegionName,
         ttl = accountCacheTtl,
-        redisTemplate = redisTemplate as RedisTemplate<String, Account>
+        redisTemplate = redisTemplate as RedisTemplate<String, String>
     )
 }
