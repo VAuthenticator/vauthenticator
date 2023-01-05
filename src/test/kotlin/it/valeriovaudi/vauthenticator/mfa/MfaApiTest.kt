@@ -6,7 +6,7 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
 import it.valeriovaudi.vauthenticator.account.AccountTestFixture
-import it.valeriovaudi.vauthenticator.support.SecurityFixture
+import it.valeriovaudi.vauthenticator.support.TestingFixture
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -38,7 +38,7 @@ internal class MfaApiTest {
 
         mokMvc.perform(
             MockMvcRequestBuilders.put("/mfa-challenge/send")
-                .principal(SecurityFixture.principalFor(account.email))
+                .principal(TestingFixture.principalFor(account.email))
         ).andExpect(status().isOk)
 
     }

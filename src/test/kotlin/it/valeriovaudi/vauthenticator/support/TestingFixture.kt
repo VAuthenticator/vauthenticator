@@ -17,7 +17,7 @@ import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import java.time.Instant
 
-object SecurityFixture {
+object TestingFixture {
 
     private val key: ECKey = ECKeyGenerator(Curve.P_256)
         .keyID("123")

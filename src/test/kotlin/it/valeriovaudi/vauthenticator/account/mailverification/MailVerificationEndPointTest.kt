@@ -6,8 +6,8 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
-import it.valeriovaudi.vauthenticator.support.SecurityFixture
-import it.valeriovaudi.vauthenticator.support.SecurityFixture.signedJWTFor
+import it.valeriovaudi.vauthenticator.support.TestingFixture
+import it.valeriovaudi.vauthenticator.support.TestingFixture.signedJWTFor
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -39,7 +39,7 @@ internal class MailVerificationEndPointTest {
         every { sendVerifyMailChallenge.sendVerifyMail("email@domain.com", ClientAppId("A_CLIENT_APP_ID")) } just runs
 
         val signedJWT = signedJWTFor("A_CLIENT_APP_ID", "email@domain.com")
-        val principal = JwtAuthenticationToken(Jwt(SecurityFixture.simpleJwtFor("A_CLIENT_APP_ID"), Instant.now(), Instant.now().plusSeconds(100), signedJWT.header.toJSONObject(), signedJWT.payload.toJSONObject()))
+        val principal = JwtAuthenticationToken(Jwt(TestingFixture.simpleJwtFor("A_CLIENT_APP_ID"), Instant.now(), Instant.now().plusSeconds(100), signedJWT.header.toJSONObject(), signedJWT.payload.toJSONObject()))
 
         mokMvc.perform(put("/api/mail/{mail}/verify-challenge", "email@domain.com")
                 .principal(principal))
