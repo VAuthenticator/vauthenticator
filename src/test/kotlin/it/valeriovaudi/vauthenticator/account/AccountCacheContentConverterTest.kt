@@ -60,4 +60,5 @@ class AccountCacheContentConverterTest {
     private fun testUseCaseInASingleLine(fileName: String) =
         Files.readAllLines(Paths.get("src/test/resources/accounts/$fileName"))
             .joinToString("") { it.replace(": ", ":").trim() }
+
 }
