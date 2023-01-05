@@ -1,5 +1,7 @@
 package it.valeriovaudi.vauthenticator.account
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import it.valeriovaudi.vauthenticator.cache.CacheContentConverter
 import it.valeriovaudi.vauthenticator.extentions.toSha256
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -87,3 +89,44 @@ data class Phone(private val countryPrefix: String, private val prefix: String, 
 
 
 class AccountNotFoundException(message: String) : RuntimeException(message)
+
+class AccountCacheContentConverter(private val objectMapper: ObjectMapper) : CacheContentConverter<Account> {
+    override fun getObjectFromCacheContentFor(cacheContent: String): Account =
+        objectMapper.readValue(cacheContent, Map::class.java)
+            .let {
+                Account(
+                    accountNonExpired = it["credentialsNonExpired"] as Boolean,
+                    accountNonLocked = it["credentialsNonExpired"] as Boolean,
+                    credentialsNonExpired = it["credentialsNonExpired"] as Boolean,
+                    enabled = it["enabled"] as Boolean,
+                    username = it["username"] as String,
+                    password = it["password"] as String,
+                    authorities = it["authorities"] as List<String>,
+                    email = it["email"] as String,
+                    emailVerified = it["emailVerified"] as Boolean,
+                    firstName = it["firstName"] as String,
+                    lastName = it["lastName"] as String,
+                    birthDate = (Date.isoDateFor(it["birthDate"] as String)),
+                    phone = Phone.phoneFor(it["phone"] as String)
+                )
+            }
+
+
+    override fun loadableContentIntoCacheFor(source: Account): String =
+        objectMapper.writeValueAsString(mapOf(
+            "accountNonExpired" to source.accountNonExpired,
+            "accountNonLocked" to source.accountNonLocked,
+            "credentialsNonExpired" to source.credentialsNonExpired,
+            "enabled" to source.enabled,
+            "username" to source.username,
+            "password" to source.password,
+            "authorities" to source.authorities,
+            "email" to source.email,
+            "emailVerified" to source.emailVerified,
+            "firstName" to source.firstName,
+            "lastName" to source.lastName,
+            "birthDate" to source.birthDate.map { it.iso8601FormattedDate() }.orElseGet { "" },
+            "phone" to source.phone.map { it.formattedPhone() }.orElseGet { "" }
+        ))
+
+}
