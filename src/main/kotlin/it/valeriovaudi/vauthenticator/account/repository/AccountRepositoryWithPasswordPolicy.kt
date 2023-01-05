@@ -3,7 +3,7 @@ package it.valeriovaudi.vauthenticator.account.repository
 import it.valeriovaudi.vauthenticator.account.Account
 import it.valeriovaudi.vauthenticator.password.PasswordPolicy
 
-class EnrichedAccountRepository(
+class AccountRepositoryWithPasswordPolicy(
     private val accountRepository: AccountRepository,
     private val passwordPolicy: PasswordPolicy
 ) : AccountRepository by accountRepository {
