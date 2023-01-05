@@ -8,7 +8,7 @@ import io.mockk.just
 import io.mockk.runs
 import it.valeriovaudi.vauthenticator.account.tiket.VerificationTicket
 import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppId
-import it.valeriovaudi.vauthenticator.support.TestingFixture.principalFor
+import it.valeriovaudi.vauthenticator.support.SecurityFixture.principalFor
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

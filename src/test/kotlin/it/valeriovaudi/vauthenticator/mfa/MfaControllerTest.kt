@@ -6,8 +6,8 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
 import it.valeriovaudi.vauthenticator.account.AccountTestFixture.anAccount
-import it.valeriovaudi.vauthenticator.support.TestingFixture.mfaPrincipalFor
-import it.valeriovaudi.vauthenticator.support.TestingFixture.principalFor
+import it.valeriovaudi.vauthenticator.support.SecurityFixture.mfaPrincipalFor
+import it.valeriovaudi.vauthenticator.support.SecurityFixture.principalFor
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
-internal class EnrichedAccountRepositoryTest {
+internal class AccountRepositoryWithPasswordPolicyTest {
 
     val account = anAccount()
 
@@ -27,7 +27,7 @@ internal class EnrichedAccountRepositoryTest {
 
     @BeforeEach
     internal fun setUp() {
-        underTest = EnrichedAccountRepository(
+        underTest = AccountRepositoryWithPasswordPolicy(
             accountRepository,
             passwordPolicy
         )

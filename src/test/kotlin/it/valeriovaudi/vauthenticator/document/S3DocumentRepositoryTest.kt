@@ -3,7 +3,7 @@ package it.valeriovaudi.vauthenticator.document
 import it.valeriovaudi.vauthenticator.support.DocumentUtils.documentBucket
 import it.valeriovaudi.vauthenticator.support.DocumentUtils.initDocumentTests
 import it.valeriovaudi.vauthenticator.support.DocumentUtils.s3Client
-import it.valeriovaudi.vauthenticator.support.TestingFixture.loadFileFor
+import it.valeriovaudi.vauthenticator.support.SecurityFixture.loadFileFor
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
