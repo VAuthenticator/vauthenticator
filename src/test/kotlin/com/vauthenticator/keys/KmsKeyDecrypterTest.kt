@@ -1,9 +1,9 @@
 package com.vauthenticator.keys
 
 import com.vauthenticator.extentions.encoder
-import it.valeriovaudi.vauthenticator.support.KeysUtils.aNewMasterKey
-import it.valeriovaudi.vauthenticator.support.KeysUtils.kmsClient
-import org.junit.jupiter.api.Assertions.*
+import com.vauthenticator.support.KeysUtils.aNewMasterKey
+import com.vauthenticator.support.KeysUtils.kmsClient
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import software.amazon.awssdk.services.kms.model.DataKeySpec
 import software.amazon.awssdk.services.kms.model.GenerateDataKeyRequest

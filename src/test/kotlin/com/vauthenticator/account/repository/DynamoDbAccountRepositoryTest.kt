@@ -2,10 +2,10 @@ package com.vauthenticator.account.repository
 
 import com.vauthenticator.account.Account
 import com.vauthenticator.role.Role
-import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoAccountRoleTableName
-import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoAccountTableName
-import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoDbClient
-import it.valeriovaudi.vauthenticator.support.DatabaseUtils.resetDatabase
+import com.vauthenticator.support.DatabaseUtils.dynamoAccountRoleTableName
+import com.vauthenticator.support.DatabaseUtils.dynamoAccountTableName
+import com.vauthenticator.support.DatabaseUtils.dynamoDbClient
+import com.vauthenticator.support.DatabaseUtils.resetDatabase
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach

@@ -1,11 +1,11 @@
 package com.vauthenticator.mfa
 
+import com.vauthenticator.support.SecurityFixture
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
-import it.valeriovaudi.vauthenticator.support.SecurityFixture
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

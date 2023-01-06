@@ -6,13 +6,13 @@ import com.vauthenticator.account.tiket.VerificationTicket
 import com.vauthenticator.account.tiket.VerificationTicketFactory
 import com.vauthenticator.account.tiket.VerificationTicketFeatures
 import com.vauthenticator.oauth2.clientapp.ClientAppId
+import com.vauthenticator.support.TicketFixture.ticketFor
 import com.vauthenticator.time.Clocker
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
-import it.valeriovaudi.vauthenticator.support.TicketFixture.ticketFor
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

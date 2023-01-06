@@ -5,7 +5,7 @@ import com.vauthenticator.account.Phone
 import com.vauthenticator.account.repository.AccountRepository
 import com.vauthenticator.account.signup.SignUpUseCase
 import com.vauthenticator.oauth2.clientapp.ClientAppId
-import it.valeriovaudi.vauthenticator.support.SecurityFixture.principalFor
+import com.vauthenticator.support.SecurityFixture.principalFor
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

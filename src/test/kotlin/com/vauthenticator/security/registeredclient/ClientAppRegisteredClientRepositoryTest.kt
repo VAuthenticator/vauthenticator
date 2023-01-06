@@ -3,14 +3,13 @@ package com.vauthenticator.security.registeredclient
 import com.vauthenticator.oauth2.clientapp.*
 import com.vauthenticator.oauth2.registeredclient.ClientAppRegisteredClientRepository
 import com.vauthenticator.oauth2.registeredclient.RegisteredClientAppNotFound
+import com.vauthenticator.security.registeredclient.RegisteredClientRepositoryFixture.aClientApplication
+import com.vauthenticator.security.registeredclient.RegisteredClientRepositoryFixture.aRegisteredClient
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.*
-import it.valeriovaudi.vauthenticator.security.registeredclient.RegisteredClientRepositoryFixture.aClientApplication
-import it.valeriovaudi.vauthenticator.security.registeredclient.RegisteredClientRepositoryFixture.aRegisteredClient
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach

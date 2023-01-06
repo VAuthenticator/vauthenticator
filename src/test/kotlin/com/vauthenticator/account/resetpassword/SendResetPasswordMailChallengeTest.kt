@@ -5,6 +5,8 @@ import com.vauthenticator.account.repository.AccountRepository
 import com.vauthenticator.account.tiket.VerificationTicket
 import com.vauthenticator.account.tiket.VerificationTicketFactory
 import com.vauthenticator.mail.MailSenderService
+import com.vauthenticator.oauth2.clientapp.ClientAppFixture.aClientApp
+import com.vauthenticator.oauth2.clientapp.ClientAppFixture.aClientAppId
 import com.vauthenticator.oauth2.clientapp.ClientApplicationRepository
 import com.vauthenticator.oauth2.clientapp.InsufficientClientApplicationScopeException
 import com.vauthenticator.oauth2.clientapp.Scope
@@ -14,8 +16,6 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppFixture.aClientApp
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppFixture.aClientAppId
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

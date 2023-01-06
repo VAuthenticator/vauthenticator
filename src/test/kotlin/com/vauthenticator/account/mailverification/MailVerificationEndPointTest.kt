@@ -1,13 +1,13 @@
 package com.vauthenticator.account.mailverification
 
 import com.vauthenticator.oauth2.clientapp.ClientAppId
+import com.vauthenticator.support.SecurityFixture
+import com.vauthenticator.support.SecurityFixture.signedJWTFor
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
-import it.valeriovaudi.vauthenticator.support.SecurityFixture
-import it.valeriovaudi.vauthenticator.support.SecurityFixture.signedJWTFor
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

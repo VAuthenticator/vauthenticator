@@ -3,12 +3,12 @@ package com.vauthenticator.account.resetpassword
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.account.tiket.VerificationTicket
 import com.vauthenticator.oauth2.clientapp.ClientAppId
+import com.vauthenticator.support.SecurityFixture.principalFor
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
-import it.valeriovaudi.vauthenticator.support.SecurityFixture.principalFor
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

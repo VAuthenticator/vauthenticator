@@ -7,7 +7,6 @@ import com.vauthenticator.mfa.*
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
-import it.valeriovaudi.vauthenticator.keys.*
 import org.apache.commons.codec.binary.Hex
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test

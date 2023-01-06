@@ -1,10 +1,10 @@
 package com.vauthenticator.account.tiket
 
 import com.vauthenticator.extentions.asDynamoAttribute
+import com.vauthenticator.support.DatabaseUtils
+import com.vauthenticator.support.DatabaseUtils.dynamoTicketTableName
+import com.vauthenticator.support.DatabaseUtils.resetDatabase
 import io.mockk.junit5.MockKExtension
-import it.valeriovaudi.vauthenticator.support.DatabaseUtils
-import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoTicketTableName
-import it.valeriovaudi.vauthenticator.support.DatabaseUtils.resetDatabase
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

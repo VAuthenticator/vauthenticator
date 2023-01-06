@@ -2,13 +2,13 @@ package com.vauthenticator.clientapp
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.oauth2.clientapp.*
+import com.vauthenticator.oauth2.clientapp.ClientAppFixture.aClientApp
+import com.vauthenticator.oauth2.clientapp.ClientAppFixture.aClientAppId
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppFixture.aClientApp
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.ClientAppFixture.aClientAppId
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

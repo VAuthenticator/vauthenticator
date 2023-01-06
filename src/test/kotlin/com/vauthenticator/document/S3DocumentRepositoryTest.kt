@@ -1,9 +1,9 @@
 package com.vauthenticator.document
 
-import it.valeriovaudi.vauthenticator.support.DocumentUtils.documentBucket
-import it.valeriovaudi.vauthenticator.support.DocumentUtils.initDocumentTests
-import it.valeriovaudi.vauthenticator.support.DocumentUtils.s3Client
-import it.valeriovaudi.vauthenticator.support.FileUtils
+import com.vauthenticator.support.DocumentUtils.documentBucket
+import com.vauthenticator.support.DocumentUtils.initDocumentTests
+import com.vauthenticator.support.DocumentUtils.s3Client
+import com.vauthenticator.support.FileUtils
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test

@@ -6,12 +6,12 @@ import com.vauthenticator.account.tiket.InvalidTicketException
 import com.vauthenticator.account.tiket.TicketRepository
 import com.vauthenticator.account.tiket.VerificationTicket
 import com.vauthenticator.password.VAuthenticatorPasswordEncoder
+import com.vauthenticator.support.TicketFixture
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
-import it.valeriovaudi.vauthenticator.support.TicketFixture
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

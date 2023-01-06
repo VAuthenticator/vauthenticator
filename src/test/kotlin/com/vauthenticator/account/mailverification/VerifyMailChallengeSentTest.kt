@@ -7,14 +7,13 @@ import com.vauthenticator.account.tiket.VerificationTicket
 import com.vauthenticator.mfa.MfaMethod
 import com.vauthenticator.mfa.MfaMethodsEnrolmentAssociation
 import com.vauthenticator.oauth2.clientapp.*
+import com.vauthenticator.support.TicketFixture
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
-import it.valeriovaudi.vauthenticator.oauth2.clientapp.*
-import it.valeriovaudi.vauthenticator.support.TicketFixture
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

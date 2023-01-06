@@ -4,9 +4,9 @@ import com.vauthenticator.oauth2.clientapp.Authorities
 import com.vauthenticator.oauth2.clientapp.ClientAppId
 import com.vauthenticator.oauth2.clientapp.ClientApplication
 import com.vauthenticator.oauth2.clientapp.DynamoDbClientApplicationRepository
-import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoClientApplicationTableName
-import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoDbClient
-import it.valeriovaudi.vauthenticator.support.DatabaseUtils.resetDatabase
+import com.vauthenticator.support.DatabaseUtils.dynamoClientApplicationTableName
+import com.vauthenticator.support.DatabaseUtils.dynamoDbClient
+import com.vauthenticator.support.DatabaseUtils.resetDatabase
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach

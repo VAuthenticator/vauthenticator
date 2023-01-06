@@ -1,9 +1,9 @@
 package com.vauthenticator.role
 
-import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoDbClient
-import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoRoleTableName
-import it.valeriovaudi.vauthenticator.support.DatabaseUtils.initRoleTests
-import it.valeriovaudi.vauthenticator.support.DatabaseUtils.resetDatabase
+import com.vauthenticator.support.DatabaseUtils.dynamoDbClient
+import com.vauthenticator.support.DatabaseUtils.dynamoRoleTableName
+import com.vauthenticator.support.DatabaseUtils.initRoleTests
+import com.vauthenticator.support.DatabaseUtils.resetDatabase
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

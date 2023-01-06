@@ -2,7 +2,7 @@ package com.vauthenticator.account
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.account.AccountTestFixture.anAccount
-import it.valeriovaudi.vauthenticator.support.JsonUtils.prettifyInOneLineJsonFrom
+import com.vauthenticator.support.JsonUtils.prettifyInOneLineJsonFrom
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 

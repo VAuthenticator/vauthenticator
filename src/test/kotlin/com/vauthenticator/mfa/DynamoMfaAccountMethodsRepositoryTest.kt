@@ -2,13 +2,12 @@ package com.vauthenticator.mfa
 
 import com.vauthenticator.account.AccountTestFixture.anAccount
 import com.vauthenticator.keys.*
+import com.vauthenticator.support.DatabaseUtils.dynamoDbClient
+import com.vauthenticator.support.DatabaseUtils.dynamoMfaAccountMethodsTableName
+import com.vauthenticator.support.DatabaseUtils.resetDatabase
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
-import it.valeriovaudi.vauthenticator.keys.*
-import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoDbClient
-import it.valeriovaudi.vauthenticator.support.DatabaseUtils.dynamoMfaAccountMethodsTableName
-import it.valeriovaudi.vauthenticator.support.DatabaseUtils.resetDatabase
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

@@ -1,13 +1,13 @@
 package com.vauthenticator.mfa
 
 import com.vauthenticator.account.AccountTestFixture.anAccount
+import com.vauthenticator.support.SecurityFixture.mfaPrincipalFor
+import com.vauthenticator.support.SecurityFixture.principalFor
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
-import it.valeriovaudi.vauthenticator.support.SecurityFixture.mfaPrincipalFor
-import it.valeriovaudi.vauthenticator.support.SecurityFixture.principalFor
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

@@ -8,8 +8,6 @@ import com.vauthenticator.keys.KeyRepository
 import com.vauthenticator.keys.MasterKid
 import com.vauthenticator.mail.*
 import com.vauthenticator.mfa.*
-import it.valeriovaudi.vauthenticator.mail.*
-import it.valeriovaudi.vauthenticator.mfa.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
