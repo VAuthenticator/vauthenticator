@@ -2,20 +2,17 @@ package it.valeriovaudi.vauthenticator.account
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import it.valeriovaudi.vauthenticator.account.AccountTestFixture.anAccount
+import it.valeriovaudi.vauthenticator.support.JsonUtils.prettifyInOneLineJsonFrom
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.springframework.util.FileCopyUtils
-import java.io.FileReader
-import java.nio.file.Files
-import java.nio.file.Paths
 
 class AccountCacheContentConverterTest {
     val underTest = AccountCacheContentConverter(ObjectMapper())
 
     @Test
     fun `when a complete account from cache is loaded`() {
-        val cacheContent = testUseCase("aCompleteAccount.json")
-        val actual = underTest.getObjectFromCacheContentFor(cacheContent)
+        val aCompleteAccountCacheContent = prettifyInOneLineJsonFrom(resourceTestFrom("aCompleteAccount.json"))
+        val actual = underTest.getObjectFromCacheContentFor(aCompleteAccountCacheContent)
         val expected = aCompleteAccount()
 
         Assertions.assertEquals(expected, actual)
@@ -23,7 +20,7 @@ class AccountCacheContentConverterTest {
 
     @Test
     fun `when a partial account from cache is loaded`() {
-        val cacheContent = testUseCase("aPartialAccount.json")
+        val cacheContent = prettifyInOneLineJsonFrom(resourceTestFrom("aPartialAccount.json"))
         val actual = underTest.getObjectFromCacheContentFor(cacheContent)
         val expected = aPartialAccount()
 
@@ -33,7 +30,7 @@ class AccountCacheContentConverterTest {
     @Test
     fun `when a complete account is made ready for the cache`() {
         val actual = underTest.loadableContentIntoCacheFor(aCompleteAccount())
-        val expected = testUseCaseInASingleLine("aCompleteAccount.json")
+        val expected = prettifyInOneLineJsonFrom(resourceTestFrom("aCompleteAccount.json"))
 
         Assertions.assertEquals(expected, actual)
     }
@@ -41,7 +38,7 @@ class AccountCacheContentConverterTest {
     @Test
     fun `when a partial account  is made ready for the cache`() {
         val actual = underTest.loadableContentIntoCacheFor(aPartialAccount())
-        val expected = testUseCaseInASingleLine("aPartialAccount.json")
+        val expected = prettifyInOneLineJsonFrom(resourceTestFrom("aPartialAccount.json"))
 
         Assertions.assertEquals(expected, actual)
     }
@@ -54,10 +51,6 @@ class AccountCacheContentConverterTest {
 
     private fun aPartialAccount() = anAccount()
 
-    private fun testUseCase(fileName: String) =
-        FileCopyUtils.copyToString(FileReader("src/test/resources/accounts/$fileName"))
+    private fun resourceTestFrom(fileName: String) = "accounts/$fileName"
 
-    private fun testUseCaseInASingleLine(fileName: String) =
-        Files.readAllLines(Paths.get("src/test/resources/accounts/$fileName"))
-            .joinToString("") { it.replace(": ", ":").trim() }
 }
