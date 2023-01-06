@@ -44,11 +44,11 @@ class ClientApplicationConfig {
     @Bean
     fun clientApplicationCacheOperation(
         redisTemplate: RedisTemplate<*, *>,
-        @Value("\${vauthenticator.dynamo-db.client-application.cache.ttl}") accountCacheTtl: Duration,
-        @Value("\${vauthenticator.dynamo-db.client-application.cache.name}") accountCacheRegionName: String,
+        @Value("\${vauthenticator.dynamo-db.client-application.cache.ttl}") ttl: Duration,
+        @Value("\${vauthenticator.dynamo-db.client-application.cache.name}") cacheRegionName: String,
     ) = RedisCacheOperation<String, String>(
-        cacheName = accountCacheRegionName,
-        ttl = accountCacheTtl,
+        cacheName = cacheRegionName,
+        ttl = ttl,
         redisTemplate = redisTemplate as RedisTemplate<String, String>
     )
 }
