@@ -1,3 +1,0 @@
-package com.vauthenticator.security.login
-
-internal class LoginPageControllerTest
