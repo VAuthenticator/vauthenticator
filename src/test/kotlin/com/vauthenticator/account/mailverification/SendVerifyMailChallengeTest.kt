@@ -5,6 +5,7 @@ import com.vauthenticator.account.AccountTestFixture.anAccount
 import com.vauthenticator.account.repository.AccountRepository
 import com.vauthenticator.account.tiket.VerificationTicket
 import com.vauthenticator.account.tiket.VerificationTicketFactory
+import com.vauthenticator.clientapp.ClientAppFixture.aClientApp
 import com.vauthenticator.mail.MailSenderService
 import com.vauthenticator.oauth2.clientapp.*
 import io.mockk.every
@@ -51,7 +52,7 @@ internal class SendVerifyMailChallengeTest {
     internal fun `happy path`() {
         val clientAppId = ClientAppId("A_CLIENT_APP_ID")
         val account = anAccount()
-        val clientApplication = ClientAppFixture.aClientApp(clientAppId).copy(scopes = Scopes.from(Scope.MAIL_VERIFY))
+        val clientApplication = aClientApp(clientAppId).copy(scopes = Scopes.from(Scope.MAIL_VERIFY))
         val verificationTicket = VerificationTicket("A_TICKET")
         val requestContext = mapOf("verificationMailLink" to "https://vauthenticator.com/mail-verify/A_TICKET")
 
@@ -70,7 +71,7 @@ internal class SendVerifyMailChallengeTest {
     internal fun `when client app does not have the correct scope`() {
         val clientAppId = ClientAppId("A_CLIENT_APP_ID")
         val account = anAccount()
-        val clientApplication = ClientAppFixture.aClientApp(clientAppId)
+        val clientApplication = aClientApp(clientAppId)
 
         every { clientAccountRepository.findOne(clientAppId) } returns Optional.of(clientApplication)
 
@@ -83,7 +84,7 @@ internal class SendVerifyMailChallengeTest {
     internal fun `when account does not exist`() {
         val mail = "anemail@test.com"
         val clientAppId = ClientAppId("A_CLIENT_APP_ID")
-        val clientApplication = ClientAppFixture.aClientApp(clientAppId).copy(scopes = Scopes.from(Scope.MAIL_VERIFY))
+        val clientApplication = aClientApp(clientAppId).copy(scopes = Scopes.from(Scope.MAIL_VERIFY))
 
         every { clientAccountRepository.findOne(clientAppId) } returns Optional.of(clientApplication)
         every { accountRepository.accountFor(mail) } returns Optional.empty()

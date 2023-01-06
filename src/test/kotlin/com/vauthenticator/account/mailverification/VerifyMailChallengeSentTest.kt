@@ -4,6 +4,7 @@ import com.vauthenticator.account.repository.AccountRepository
 import com.vauthenticator.account.tiket.InvalidTicketException
 import com.vauthenticator.account.tiket.TicketRepository
 import com.vauthenticator.account.tiket.VerificationTicket
+import com.vauthenticator.clientapp.ClientAppFixture.aClientApp
 import com.vauthenticator.mfa.MfaMethod
 import com.vauthenticator.mfa.MfaMethodsEnrolmentAssociation
 import com.vauthenticator.oauth2.clientapp.*
@@ -52,7 +53,7 @@ internal class VerifyMailChallengeSentTest {
         val clientAppId = ClientAppId("A_CLIENT_APP_ID")
         val account = com.vauthenticator.account.AccountTestFixture.anAccount()
         val enabledAccount = account.copy(accountNonLocked = true, enabled = true, emailVerified = true)
-        val clientApplication = ClientAppFixture.aClientApp(clientAppId).copy(scopes = Scopes.from(Scope.MAIL_VERIFY))
+        val clientApplication = aClientApp(clientAppId).copy(scopes = Scopes.from(Scope.MAIL_VERIFY))
         val verificationTicket = VerificationTicket("A_TICKET")
 
         every { ticketRepository.loadFor(verificationTicket) } returns Optional.of(
@@ -76,7 +77,7 @@ internal class VerifyMailChallengeSentTest {
     internal fun `when client application does not support mail verification`() {
         val clientAppId = ClientAppId("A_CLIENT_APP_ID")
         val account = com.vauthenticator.account.AccountTestFixture.anAccount()
-        val clientApplication = ClientAppFixture.aClientApp(clientAppId)
+        val clientApplication = aClientApp(clientAppId)
         val verificationTicket = VerificationTicket("A_TICKET")
 
         every { ticketRepository.loadFor(verificationTicket) } returns Optional.of(
@@ -113,7 +114,7 @@ internal class VerifyMailChallengeSentTest {
     internal fun `when the account does not exist`() {
         val clientAppId = ClientAppId("A_CLIENT_APP_ID")
         val account = com.vauthenticator.account.AccountTestFixture.anAccount()
-        val clientApplication = ClientAppFixture.aClientApp(clientAppId).copy(scopes = Scopes.from(Scope.MAIL_VERIFY))
+        val clientApplication = aClientApp(clientAppId).copy(scopes = Scopes.from(Scope.MAIL_VERIFY))
         val verificationTicket = VerificationTicket("A_TICKET")
 
         every { ticketRepository.loadFor(verificationTicket) } returns Optional.of(

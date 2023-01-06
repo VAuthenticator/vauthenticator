@@ -4,9 +4,9 @@ import com.vauthenticator.account.AccountTestFixture.anAccount
 import com.vauthenticator.account.repository.AccountRepository
 import com.vauthenticator.account.tiket.VerificationTicket
 import com.vauthenticator.account.tiket.VerificationTicketFactory
+import com.vauthenticator.clientapp.ClientAppFixture.aClientApp
+import com.vauthenticator.clientapp.ClientAppFixture.aClientAppId
 import com.vauthenticator.mail.MailSenderService
-import com.vauthenticator.oauth2.clientapp.ClientAppFixture.aClientApp
-import com.vauthenticator.oauth2.clientapp.ClientAppFixture.aClientAppId
 import com.vauthenticator.oauth2.clientapp.ClientApplicationRepository
 import com.vauthenticator.oauth2.clientapp.InsufficientClientApplicationScopeException
 import com.vauthenticator.oauth2.clientapp.Scope

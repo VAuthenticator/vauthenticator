@@ -4,6 +4,7 @@ import com.vauthenticator.account.AccountTestFixture.anAccount
 import com.vauthenticator.account.mailverification.SendVerifyMailChallenge
 import com.vauthenticator.account.repository.AccountRepository
 import com.vauthenticator.account.welcome.SayWelcome
+import com.vauthenticator.clientapp.ClientAppFixture.aClientApp
 import com.vauthenticator.mail.MailSenderService
 import com.vauthenticator.oauth2.clientapp.*
 import com.vauthenticator.oauth2.clientapp.Scope.Companion.SIGN_UP
@@ -56,7 +57,7 @@ internal class SignUpUseCaseTest {
     @Test
     internal fun `when a new account is created`() {
         val clientAppId = ClientAppId("an_id")
-        val aClientApp = ClientAppFixture.aClientApp(clientAppId).copy(scopes = Scopes(setOf(SIGN_UP)))
+        val aClientApp = aClientApp(clientAppId).copy(scopes = Scopes(setOf(SIGN_UP)))
         val account = anAccount().copy(authorities = listOf("AN_AUTHORITY"), password = "encrypted_secret")
 
         every { clientAccountRepository.findOne(clientAppId) } returns Optional.of(aClientApp)
@@ -74,7 +75,7 @@ internal class SignUpUseCaseTest {
     internal fun `when a new account is not created due to client app does not support sign up`() {
 
         val clientAppId = ClientAppId("an_id")
-        val aClientApp = ClientAppFixture.aClientApp(clientAppId)
+        val aClientApp = aClientApp(clientAppId)
         val account = anAccount().copy(authorities = listOf("AN_AUTHORITY"))
 
         every { clientAccountRepository.findOne(clientAppId) } returns Optional.of(aClientApp)

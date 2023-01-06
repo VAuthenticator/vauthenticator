@@ -1,9 +1,9 @@
 package com.vauthenticator.clientapp
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.vauthenticator.clientapp.ClientAppFixture.aClientApp
+import com.vauthenticator.clientapp.ClientAppFixture.aClientAppId
 import com.vauthenticator.oauth2.clientapp.*
-import com.vauthenticator.oauth2.clientapp.ClientAppFixture.aClientApp
-import com.vauthenticator.oauth2.clientapp.ClientAppFixture.aClientAppId
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension

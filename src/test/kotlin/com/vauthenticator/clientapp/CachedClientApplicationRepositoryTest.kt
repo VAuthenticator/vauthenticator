@@ -2,9 +2,9 @@ package com.vauthenticator.clientapp
 
 import com.vauthenticator.cache.CacheContentConverter
 import com.vauthenticator.cache.CacheOperation
+import com.vauthenticator.clientapp.ClientAppFixture.aClientApp
+import com.vauthenticator.clientapp.ClientAppFixture.aClientAppId
 import com.vauthenticator.oauth2.clientapp.CachedClientApplicationRepository
-import com.vauthenticator.oauth2.clientapp.ClientAppFixture.aClientApp
-import com.vauthenticator.oauth2.clientapp.ClientAppFixture.aClientAppId
 import com.vauthenticator.oauth2.clientapp.ClientApplication
 import com.vauthenticator.oauth2.clientapp.ClientApplicationRepository
 import io.mockk.every
