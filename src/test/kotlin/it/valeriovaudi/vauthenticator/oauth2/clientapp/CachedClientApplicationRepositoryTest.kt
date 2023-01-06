@@ -69,7 +69,7 @@ class CachedClientApplicationRepositoryTest {
     }
 
     @Test
-    fun `when an account is updated`() {
+    fun `when a client application is updated`() {
         every { cacheOperation.evict(clientAppId.content) } just runs
         every { delegate.save(clientApplication) } just runs
 
@@ -77,6 +77,17 @@ class CachedClientApplicationRepositoryTest {
 
         verify { cacheOperation.evict(clientAppId.content) }
         verify { delegate.save(clientApplication) }
+    }
+
+    @Test
+    fun `when a client application is deleted`() {
+        every { cacheOperation.evict(clientAppId.content) } just runs
+        every { delegate.delete(clientAppId) } just runs
+
+        underTest.delete(clientAppId)
+
+        verify { cacheOperation.evict(clientAppId.content) }
+        verify { delegate.delete(clientAppId) }
     }
 
 

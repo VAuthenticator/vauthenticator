@@ -27,4 +27,9 @@ class CachedClientApplicationRepository(
         cacheOperation.evict(clientApp.clientAppId.content)
         delegate.save(clientApp)
     }
+
+    override fun delete(clientAppId: ClientAppId) {
+        cacheOperation.evict(clientAppId.content)
+        delegate.delete(clientAppId)
+    }
 }
