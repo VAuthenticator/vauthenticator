@@ -12,7 +12,7 @@ class CachedClientApplicationRepository(
 
     override fun findOne(clientAppId: ClientAppId): Optional<ClientApplication> {
         return cacheOperation.get(clientAppId.content)
-            .flatMap { Optional.empty<ClientApplication>() }
+            .flatMap { Optional.of(cacheContentConverter.getObjectFromCacheContentFor(it)) }
             .or {
                 val clientApp = delegate.findOne(clientAppId)
                 clientApp.ifPresent {
@@ -21,5 +21,10 @@ class CachedClientApplicationRepository(
                 }
                 clientApp
             }
+    }
+
+    override fun save(clientApp: ClientApplication) {
+        cacheOperation.evict(clientApp.clientAppId.content)
+        delegate.save(clientApp)
     }
 }

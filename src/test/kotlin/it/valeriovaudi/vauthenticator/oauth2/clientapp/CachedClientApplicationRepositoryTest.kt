@@ -19,6 +19,9 @@ import java.util.*
 @ExtendWith(MockKExtension::class)
 class CachedClientApplicationRepositoryTest {
 
+    private val clientAppId = aClientAppId()
+    private val clientApplication = aClientApp(clientAppId)
+
     @MockK
     lateinit var delegate: ClientApplicationRepository
 
@@ -38,9 +41,6 @@ class CachedClientApplicationRepositoryTest {
 
     @Test
     internal fun `when a client app is not found into the cache then it is loaded from database and loaded into the cache`() {
-        val clientAppId = aClientAppId()
-        val clientApplication = aClientApp(clientAppId)
-
         every { cacheOperation.get(clientAppId.content) } returns Optional.empty()
         every { delegate.findOne(clientAppId) } returns Optional.of(clientApplication)
         every { cacheContentConverter.loadableContentIntoCacheFor(clientApplication) } returns "content"
@@ -53,36 +53,31 @@ class CachedClientApplicationRepositoryTest {
         verify { cacheContentConverter.loadableContentIntoCacheFor(clientApplication) }
         verify { cacheOperation.put(clientAppId.content, "content") }
     }
-    /*
-
-        @Test
-        internal fun `when an account is found from the cache `() {
-            val account = AccountTestFixture.anAccount()
-            val username = account.username
-
-            every { accountCacheContentConverter.getObjectFromCacheContentFor("account") } returns account
-            every { cacheOperation.get(account.email) } returns Optional.of("account")
-
-            underTest.accountFor(username)
-
-            verify { cacheOperation.get(account.email) }
-            verify(exactly = 0) { delegate.accountFor(username) }
-            verify { accountCacheContentConverter.getObjectFromCacheContentFor("account") }
-            verify(exactly = 0) { cacheOperation.put(username, "account") }
-        }
 
 
-        @Test
-        fun `when an account is updated`() {
-            val account = AccountTestFixture.anAccount()
-            every { cacheOperation.evict(account.email) } just runs
-            every { delegate.save(account) } just runs
+    @Test
+    internal fun `when a client application is found from the cache `() {
+        every { cacheOperation.get(clientAppId.content) } returns Optional.of("content")
+        every { cacheContentConverter.getObjectFromCacheContentFor("content") } returns clientApplication
 
-            underTest.save(account)
+        underTest.findOne(clientAppId)
 
-            verify { cacheOperation.evict(account.email) }
-            verify { delegate.save(account) }
-        }
-    */
+        verify { cacheOperation.get(clientAppId.content) }
+        verify(exactly = 0) { delegate.findOne(clientAppId) }
+        verify { cacheContentConverter.getObjectFromCacheContentFor("content") }
+        verify(exactly = 0) { cacheOperation.put(clientAppId.content, "content") }
+    }
+
+    @Test
+    fun `when an account is updated`() {
+        every { cacheOperation.evict(clientAppId.content) } just runs
+        every { delegate.save(clientApplication) } just runs
+
+        underTest.save(clientApplication)
+
+        verify { cacheOperation.evict(clientAppId.content) }
+        verify { delegate.save(clientApplication) }
+    }
+
 
 }
