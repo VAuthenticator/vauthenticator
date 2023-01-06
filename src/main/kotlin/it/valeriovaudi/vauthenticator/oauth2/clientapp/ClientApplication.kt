@@ -1,7 +1,5 @@
 package it.valeriovaudi.vauthenticator.oauth2.clientapp
 
-import java.util.*
-
 data class ClientApplication(
     val clientAppId: ClientAppId,
     val secret: Secret,
@@ -11,7 +9,7 @@ data class ClientApplication(
     val authorities: Authorities,
     val accessTokenValidity: TokenTimeToLive,
     val refreshTokenValidity: TokenTimeToLive,
-    val additionalInformation: Map<String, Objects> = emptyMap(),
+    val additionalInformation: Map<String, Any> = emptyMap(),
     val autoApprove: AutoApprove = AutoApprove.approve,
     val postLogoutRedirectUri: PostLogoutRedirectUri,
     val logoutUri: LogoutUri,

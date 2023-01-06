@@ -50,9 +50,6 @@ object SecurityFixture {
         return signedJWT
     }
 
-
-    fun loadFileFor(path: String) = String(ClassLoader.getSystemResourceAsStream(path).readAllBytes())
-
     fun principalFor(clientAppId: String, mail: String, authorities: List<String> = emptyList()) =
         signedJWTFor(clientAppId, mail).let { signedJWT ->
             JwtAuthenticationToken(
