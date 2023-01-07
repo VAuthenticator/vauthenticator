@@ -99,7 +99,7 @@ jobs:
         run: |
           cd src/main/frontend
           npm install --legacy-peer-deps
-          npm run-script build
+          npm run-script production-build
 
       - name: docker push
         run: |
