@@ -3,14 +3,15 @@ var path = require('path');
 const BUID_DIR = path.resolve(__dirname + "/dist");
 
 module.exports = {
-    mode: 'development',
     entry: {
         healthz: path.resolve(__dirname, './app/healthz/healthz.js'),
-        login: path.resolve(__dirname, './app/login/index.js'),
+        login: path.resolve(__dirname, './app/login/LoginPage.js'),
         mfa: path.resolve(__dirname, './app/mfa/index.js'),
         signup: path.resolve(__dirname, './app/signup/index.js'),
-        resetPassword: path.resolve(__dirname, './app/reset-password/reset-password.js'),
-        successfulPasswordReset: path.resolve(__dirname, './app/reset-password/successful-password-reset.js')
+        resetPasswordChallengeSender: path.resolve(__dirname, './app/reset-password/ResetPasswordChallengeSenderPage.js'),
+        successfulResetPasswordMailChallenge: path.resolve(__dirname, './app/reset-password/SuccessfulResetPasswordMailChallengePage.js'),
+        resetPassword: path.resolve(__dirname, './app/reset-password/ResetPasswordPage.js'),
+        successfulPasswordReset: path.resolve(__dirname, './app/reset-password/SuccessfulPasswordReset.js')
     },
     resolve: {
         extensions: [".js", ".jsx"]

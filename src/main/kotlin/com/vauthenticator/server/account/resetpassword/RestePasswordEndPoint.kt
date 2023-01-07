@@ -43,6 +43,19 @@ class ResetPasswordEndPoint(
 @Controller
 class ResetPasswordController(private val objectMapper: ObjectMapper) {
 
+
+    @GetMapping("/reset-password/reset-password-challenge-sender")
+    fun resetPasswordChallengeSenderPage(model: Model): String {
+        model.addAttribute("assetBundle", "resetPasswordChallengeSender_bundle.js")
+        return "template"
+    }
+
+    @GetMapping("/reset-password/successful-reset-password-mail-challenge")
+    fun successfulResetPasswordMailChallengePage(model: Model): String {
+        model.addAttribute("assetBundle", "successfulResetPasswordMailChallenge_bundle.js")
+        return "template"
+    }
+
     @GetMapping("/reset-password/{ticket}")
     fun resetPasswordPage(@PathVariable ticket: String, model: Model): String {
         val metadata = mapOf("ticket" to ticket)

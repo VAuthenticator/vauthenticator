@@ -9,7 +9,8 @@
     ]
   },
   "scripts": {
-    "build": "webpack --config webpack.config.js",
+    "build": "webpack --config webpack.config.js --mode=development",
+    "production-build": "webpack --config webpack.config.js --mode=production",
     "watch": "webpack --watch"
   },
   "author": "mrFlick72",
