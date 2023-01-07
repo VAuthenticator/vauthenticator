@@ -4,12 +4,12 @@ import FormInputTextField from "../component/FormInputTextField";
 import FormButton from "../component/FormButton";
 
 import {signUp} from "./SignUpRepository";
-import {useNavigate} from "react-router";
 import FormDatePicker, {ApiDateFormatPattern} from "../component/FormDatePicker";
 import {Divider, Grid, ThemeProvider, Typography} from "@mui/material";
 import {GroupAdd, VpnKey} from "@mui/icons-material";
 import theme from "../component/styles";
 import FormInputMask from "../component/FormInputMask";
+import {createRoot} from "react-dom/client";
 
 const SignUpPage = () => {
     const [email, setEmail] = React.useState("")
@@ -18,8 +18,6 @@ const SignUpPage = () => {
     const [lastName, setLastName] = React.useState("")
     const [birthDate, setBirthDate] = React.useState("")
     const [phone, setPhone] = React.useState("")
-
-    let navigate = useNavigate();
 
     return (
         <ThemeProvider theme={theme}>
@@ -105,7 +103,7 @@ const SignUpPage = () => {
                                 })
                                     .then(r => {
                                         if (r.status === 201) {
-                                            navigate("/succeeded", {replace: true});
+                                            window.location.href="/sign-up/succeeded";
                                         }
                                     })
                             }}
@@ -116,4 +114,9 @@ const SignUpPage = () => {
     )
 }
 
-export default SignUpPage
+if (document.getElementById('app')) {
+    let features = document.getElementById('features').innerHTML
+    const container = document.getElementById('app');
+    const root = createRoot(container);
+    root.render(<SignUpPage features={features}/>);
+}

@@ -11,8 +11,13 @@ import org.springframework.web.bind.annotation.SessionAttributes
 class SignUpController {
 
     @GetMapping("/sign-up")
-    fun view(@ModelAttribute("features") features: List<String>, model: Model): String {
+    fun signUp(@ModelAttribute("features") features: List<String>, model: Model): String {
         model.addAttribute("assetBundle", "signup_bundle.js")
+        return "template"
+    }
+    @GetMapping("/sign-up/succeeded")
+    fun SuccessfulSignUp(@ModelAttribute("features") features: List<String>, model: Model): String {
+        model.addAttribute("assetBundle", "SuccessfulSignUp_bundle.js")
         return "template"
     }
 }

@@ -3,6 +3,7 @@ import Template from "../component/Template";
 import {Divider, Grid, ThemeProvider, Typography} from "@mui/material";
 import {VpnKey} from "@mui/icons-material";
 import theme from "../component/styles";
+import {createRoot} from "react-dom/client";
 
 const SuccessfulSignUpPage = () => {
     return (
@@ -25,4 +26,9 @@ const SuccessfulSignUpPage = () => {
 }
 
 
-export default SuccessfulSignUpPage
+if (document.getElementById('app')) {
+    let features = document.getElementById('features').innerHTML
+    const container = document.getElementById('app');
+    const root = createRoot(container);
+    root.render(<SuccessfulSignUpPage features={features}/>);
+}
