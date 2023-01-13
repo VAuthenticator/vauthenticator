@@ -6,6 +6,7 @@ import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationFeatures
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.Scope
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpSession
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.SessionAttributes
+import java.util.*
 
 
 @Controller
@@ -24,10 +26,27 @@ class LoginPageController(
     val logger: Logger = LoggerFactory.getLogger(LoginPageController::class.java)
 
     @GetMapping("/login")
-    fun loginPage(session: HttpSession, model: Model): String {
+    fun loginPage(session: HttpSession, model: Model, httpServletRequest: HttpServletRequest): String {
         val clientId = session.oauth2ClientId()
 
         val features = defaultFeature()
+        clientAppFeaturesFor(clientId, model, features)
+
+        val errors = errorMessageFor(httpServletRequest)
+
+        Optional.ofNullable(session.getAttribute("SPRING_SECURITY_LAST_EXCEPTION")).ifPresent { println(it) }
+        model.addAttribute("errors", objectMapper.writeValueAsString(errors))
+        model.addAttribute("features", objectMapper.writeValueAsString(features))
+        model.addAttribute("assetBundle", "login_bundle.js")
+
+        return "template"
+    }
+
+    private fun clientAppFeaturesFor(
+        clientId: Optional<String>,
+        model: Model,
+        features: MutableMap<String, Boolean>
+    ) {
         clientId.ifPresent {
             model.addAttribute("clientId", it)
             clientApplicationRepository.findOne(ClientAppId(it))
@@ -38,11 +57,14 @@ class LoginPageController(
                         clientApp.scopes.content.contains(Scope.RESET_PASSWORD)
                 }
         }
-
-        model.addAttribute("features", objectMapper.writeValueAsString(features))
-        model.addAttribute("assetBundle", "login_bundle.js")
-        return "template"
     }
+
+    private fun errorMessageFor(httpServletRequest: HttpServletRequest) =
+        if (httpServletRequest.parameterMap.contains("error")) {
+            mapOf("login" to "Something goes wrong during your login request")
+        } else {
+            emptyMap()
+        }
 
     private fun defaultFeature() =
         mutableMapOf(
