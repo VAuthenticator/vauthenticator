@@ -50,8 +50,6 @@ class MfaController(
 
     private fun hasBadLoginFrom(httpServletRequest: HttpServletRequest) =
         !Optional.ofNullable(httpServletRequest.session.getAttribute("MFA_SPRING_SECURITY_LAST_EXCEPTION")).isEmpty
-                && httpServletRequest.parameterMap.contains("error")
-
 
     @PostMapping("/mfa-challenge")
     fun processSecondFactor(
