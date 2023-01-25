@@ -7,7 +7,6 @@ import com.vauthenticator.server.oauth2.clientapp.DynamoDbClientApplicationRepos
 import com.vauthenticator.server.support.DatabaseUtils.dynamoClientApplicationTableName
 import com.vauthenticator.server.support.DatabaseUtils.dynamoDbClient
 import com.vauthenticator.server.support.DatabaseUtils.resetDatabase
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -15,16 +14,12 @@ import java.util.*
 
 internal class DynamoDbClientApplicationRepositoryTest {
 
-    lateinit var dynamoDbClientApplicationRepository: DynamoDbClientApplicationRepository
+    private lateinit var dynamoDbClientApplicationRepository: DynamoDbClientApplicationRepository
 
     @BeforeEach
     fun setUp() {
         dynamoDbClientApplicationRepository =
                 DynamoDbClientApplicationRepository(dynamoDbClient, dynamoClientApplicationTableName)
-    }
-
-    @AfterEach
-    fun tearDown() {
         resetDatabase()
     }
 
