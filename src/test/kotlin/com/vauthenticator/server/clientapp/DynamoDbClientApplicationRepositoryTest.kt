@@ -7,7 +7,7 @@ import com.vauthenticator.server.oauth2.clientapp.DynamoDbClientApplicationRepos
 import com.vauthenticator.server.support.DatabaseUtils.dynamoClientApplicationTableName
 import com.vauthenticator.server.support.DatabaseUtils.dynamoDbClient
 import com.vauthenticator.server.support.DatabaseUtils.resetDatabase
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.*
@@ -19,21 +19,23 @@ internal class DynamoDbClientApplicationRepositoryTest {
     @BeforeEach
     fun setUp() {
         dynamoDbClientApplicationRepository =
-                DynamoDbClientApplicationRepository(dynamoDbClient, dynamoClientApplicationTableName)
+            DynamoDbClientApplicationRepository(dynamoDbClient, dynamoClientApplicationTableName)
         resetDatabase()
     }
 
     @Test
     fun `when find one client application by empty client id`() {
         val clientApp: Optional<ClientApplication> = dynamoDbClientApplicationRepository.findOne(ClientAppId(""))
-        Assertions.assertEquals(clientApp, Optional.empty<ClientApplication>())
+        val expected = Optional.empty<ClientApplication>()
+        assertEquals(expected, clientApp)
     }
 
     @Test
     fun `when find one client application by client id that does not exist`() {
         val clientApp: Optional<ClientApplication> =
-                dynamoDbClientApplicationRepository.findOne(ClientAppId("not-existing-one"))
-        Assertions.assertEquals(clientApp, Optional.empty<ClientApplication>())
+            dynamoDbClientApplicationRepository.findOne(ClientAppId("not-existing-one"))
+        val expected = Optional.empty<ClientApplication>()
+        assertEquals(expected, clientApp)
     }
 
     @Test
@@ -43,12 +45,12 @@ internal class DynamoDbClientApplicationRepositoryTest {
         dynamoDbClientApplicationRepository.save(expected)
         var actual = dynamoDbClientApplicationRepository.findOne(clientAppId)
 
-        Assertions.assertEquals(actual, Optional.of(expected))
+        assertEquals(Optional.of(expected), actual)
 
         dynamoDbClientApplicationRepository.delete(clientAppId)
         actual = dynamoDbClientApplicationRepository.findOne(clientAppId)
 
-        Assertions.assertEquals(actual, Optional.empty<ClientApplication>())
+        assertEquals(Optional.empty<ClientApplication>(), actual)
     }
 
     @Test
@@ -58,7 +60,7 @@ internal class DynamoDbClientApplicationRepositoryTest {
         dynamoDbClientApplicationRepository.save(expected)
         val actual = dynamoDbClientApplicationRepository.findAll()
 
-        Assertions.assertEquals(actual, listOf(expected))
+        assertEquals(listOf(expected), actual)
     }
 
     @Test
@@ -68,7 +70,7 @@ internal class DynamoDbClientApplicationRepositoryTest {
         dynamoDbClientApplicationRepository.save(expected)
         val actual = dynamoDbClientApplicationRepository.findAll()
 
-        Assertions.assertEquals(actual, listOf(expected))
+        assertEquals(listOf(expected), actual)
     }
 
 }
