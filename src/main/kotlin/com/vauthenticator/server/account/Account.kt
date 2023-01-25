@@ -24,10 +24,32 @@ data class Account(
     var lastName: String,
 
     val birthDate: Optional<Date>,
-    val phone: Optional<Phone>
+    val phone: Optional<Phone>,
+    val locale: Optional<UserLocale>
 ) {
     val sub: String
         get() = email.toSha256()
+}
+
+data class UserLocale(val locale: Locale) {
+    fun formattedLocale(): String = this.locale.toLanguageTag()
+
+    companion object {
+        fun localeFrom(lang: String) = try {
+            val locale = Locale.forLanguageTag(lang)
+            if (locale.toLanguageTag() == "und") {
+                empty()
+            } else {
+                Optional.of(UserLocale(locale))
+            }
+        } catch (e: Exception) {
+            empty()
+        }
+
+        fun empty(): Optional<UserLocale> =
+            Optional.empty()
+
+    }
 }
 
 data class Date(
@@ -80,7 +102,7 @@ data class Phone(private val countryPrefix: String, private val prefix: String, 
             }
             phone
         } catch (e: RuntimeException) {
-            Optional.empty()
+            empty()
         }
 
         fun empty(): Optional<Phone> = Optional.empty()
@@ -106,8 +128,9 @@ class AccountCacheContentConverter(private val objectMapper: ObjectMapper) : Cac
                     emailVerified = it["emailVerified"] as Boolean,
                     firstName = it["firstName"] as String,
                     lastName = it["lastName"] as String,
-                    birthDate = (Date.isoDateFor(it["birthDate"] as String)),
-                    phone = Phone.phoneFor(it["phone"] as String)
+                    birthDate = Date.isoDateFor(it["birthDate"] as String),
+                    phone = Phone.phoneFor(it["phone"] as String),
+                    locale = UserLocale.localeFrom((it["locale"] as String))
                 )
             }
 
@@ -126,7 +149,8 @@ class AccountCacheContentConverter(private val objectMapper: ObjectMapper) : Cac
             "firstName" to source.firstName,
             "lastName" to source.lastName,
             "birthDate" to source.birthDate.map { it.iso8601FormattedDate() }.orElseGet { "" },
-            "phone" to source.phone.map { it.formattedPhone() }.orElseGet { "" }
+            "phone" to source.phone.map { it.formattedPhone() }.orElseGet { "" },
+            "locale" to source.locale.map { it.formattedLocale() }.orElseGet { "" }
         ))
 
 }

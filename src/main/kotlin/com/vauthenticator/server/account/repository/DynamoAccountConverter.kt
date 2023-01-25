@@ -3,6 +3,7 @@ package com.vauthenticator.server.account.repository
 import com.vauthenticator.server.account.Account
 import com.vauthenticator.server.account.Date
 import com.vauthenticator.server.account.Phone
+import com.vauthenticator.server.account.UserLocale
 import com.vauthenticator.server.extentions.asDynamoAttribute
 import com.vauthenticator.server.extentions.valueAsBoolFor
 import com.vauthenticator.server.extentions.valueAsStringFor
@@ -25,7 +26,8 @@ object DynamoAccountConverter {
         lastName = dynamoPayload.valueAsStringFor("lastName"),
         authorities = authorities,
         birthDate = Date.isoDateFor(dynamoPayload.valueAsStringFor("birthDate")),
-        phone = Phone.phoneFor(dynamoPayload.valueAsStringFor("phone"))
+        phone = Phone.phoneFor(dynamoPayload.valueAsStringFor("phone")),
+        locale = UserLocale.localeFrom(dynamoPayload.valueAsStringFor("locale"))
     )
 
     fun fromDomainToDynamo(account: Account) =
@@ -41,6 +43,7 @@ object DynamoAccountConverter {
             "firstName" to account.firstName.asDynamoAttribute(),
             "lastName" to account.lastName.asDynamoAttribute(),
             "birthDate" to account.birthDate.map { it.asDynamoAttribute() }.orElse("".asDynamoAttribute()),
-            "phone" to account.phone.map {it.asDynamoAttribute()}.orElse("".asDynamoAttribute())
+            "phone" to account.phone.map { it.asDynamoAttribute() }.orElse("".asDynamoAttribute()),
+            "locale" to account.locale.map { it.formattedLocale().asDynamoAttribute() }.orElse("".asDynamoAttribute())
         )
 }
