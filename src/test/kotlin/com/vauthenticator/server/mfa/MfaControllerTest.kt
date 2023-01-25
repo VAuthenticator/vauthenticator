@@ -1,5 +1,6 @@
 package com.vauthenticator.server.mfa
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.account.AccountTestFixture.anAccount
 import com.vauthenticator.server.support.SecurityFixture.mfaPrincipalFor
 import com.vauthenticator.server.support.SecurityFixture.principalFor
@@ -8,6 +9,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
+import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -34,7 +36,7 @@ internal class MfaControllerTest {
     @BeforeEach
     internal fun setUp() {
         mokMvc = MockMvcBuilders.standaloneSetup(
-            MfaController(successHandler, otpMfaSender, otpMfaVerifier)
+            MfaController(ObjectMapper(), successHandler, otpMfaSender, otpMfaVerifier)
         )
             .build()
     }
@@ -43,6 +45,15 @@ internal class MfaControllerTest {
     internal fun `when an mfa challenge is sent`() {
         every { otpMfaSender.sendMfaChallenge(account.email) } just runs
 
+        mokMvc.perform(
+            get("/mfa-challenge/send")
+                .principal(principalFor(account.email))
+        ).andExpect(redirectedUrl("/mfa-challenge"))
+        verify { otpMfaSender.sendMfaChallenge(account.email) }
+    }
+
+    @Test
+    internal fun `when an mfa challenge is rendered`() {
         mokMvc.perform(
             get("/mfa-challenge")
                 .principal(principalFor(account.email))

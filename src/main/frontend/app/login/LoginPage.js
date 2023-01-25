@@ -7,6 +7,7 @@ import FormInputTextField from "../component/FormInputTextField";
 import {Fingerprint, Person} from "@mui/icons-material";
 import Separator from "../component/Separator";
 import FormButton from "../component/FormButton";
+import ErrorBanner from "../component/ErrorBanner";
 
 
 const VAuthenticatorTitle = () => {
@@ -88,17 +89,18 @@ c-111 1 -132 4 -194 28 -38 15 -96 43 -128 62 -32 19 -64 35 -70 35 -7 0 -30
     </svg>
 }
 
-const Login = (props) => {
-    const {rawFeatures} = props;
+const Login = ({rawFeatures, rawErrors}) => {
     let signUpLink = <div>
         <h3>are you not registered? if you want you can register <a href="/sign-up">here</a></h3>
     </div>
     let resetPasswordLink = <div>
-        <h3>do you have forgot your password? please click <a href='/reset-password/reset-password-challenge-sender'>here</a> to recover
-            your
-            password</h3>
+        <h3>do you have forgot your password? please click
+            <a href='/reset-password/reset-password-challenge-sender'>here</a> to recover your password
+        </h3>
     </div>
     let features = JSON.parse(rawFeatures);
+    let errorMessage = JSON.parse(rawErrors)["login"];
+    const errorsBanner = <ErrorBanner errorMessage={errorMessage}/>
 
     return (
         <ThemeProvider theme={theme}>
@@ -108,6 +110,8 @@ const Login = (props) => {
                 <Grid style={{marginTop: '10px'}}>
                     <Divider/>
                 </Grid>
+                {errorMessage ? errorsBanner : ""}
+
 
                 {<form action="login" method="post">
                     <Box>
@@ -145,5 +149,6 @@ const Login = (props) => {
 
 if (document.getElementById('app')) {
     let features = document.getElementById('features').innerHTML
-    ReactDOM.render(<Login rawFeatures={features}/>, document.getElementById('app'));
+    let errors = document.getElementById('errors').innerHTML
+    ReactDOM.render(<Login rawFeatures={features} rawErrors={errors}/>, document.getElementById('app'));
 }

@@ -7,14 +7,19 @@ import Separator from "../component/Separator";
 import FormButton from "../component/FormButton";
 import React from "react";
 import ReactDOM from "react-dom";
+import ErrorBanner from "../component/ErrorBanner";
 
-const MfaChallengePage = (props) => {
+const MfaChallengePage = ({rawErrors}) => {
     let sendAgainMfaCode = () => {
         fetch("/mfa-challenge/send", {
             method: 'PUT', // *GET, POST, PUT, DELETE, etc.
             credentials: 'same-origin', // include, *same-origin, omit
         });
     }
+
+    let errorMessage = JSON.parse(rawErrors)["mfa-challenge"];
+    const errorsBanner = <ErrorBanner errorMessage={errorMessage}/>
+
     return (
         <ThemeProvider theme={theme}>
 
@@ -26,6 +31,7 @@ const MfaChallengePage = (props) => {
                 <Grid style={{marginTop: '10px'}}>
                     <Divider/>
                 </Grid>
+                {errorMessage ? errorsBanner : ""}
 
                 {<form action="mfa-challenge" method="post">
                     <Box>
@@ -49,6 +55,7 @@ const MfaChallengePage = (props) => {
 
 
 if (document.getElementById('app')) {
+    let errors = document.getElementById('errors').innerHTML
     let features = document.getElementById('features').innerHTML
-    ReactDOM.render(<MfaChallengePage rawFeatures={features}/>, document.getElementById('app'));
+    ReactDOM.render(<MfaChallengePage rawFeatures={features} rawErrors={errors}/>, document.getElementById('app'));
 }

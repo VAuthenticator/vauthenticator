@@ -7,73 +7,69 @@ import com.vauthenticator.server.oauth2.clientapp.DynamoDbClientApplicationRepos
 import com.vauthenticator.server.support.DatabaseUtils.dynamoClientApplicationTableName
 import com.vauthenticator.server.support.DatabaseUtils.dynamoDbClient
 import com.vauthenticator.server.support.DatabaseUtils.resetDatabase
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.*
 
 internal class DynamoDbClientApplicationRepositoryTest {
 
-    lateinit var dynamoDbClientApplicationRepository: DynamoDbClientApplicationRepository
+    private lateinit var underTest: DynamoDbClientApplicationRepository
 
     @BeforeEach
     fun setUp() {
-        dynamoDbClientApplicationRepository =
-                DynamoDbClientApplicationRepository(dynamoDbClient, dynamoClientApplicationTableName)
-    }
-
-    @AfterEach
-    fun tearDown() {
+        underTest = DynamoDbClientApplicationRepository(dynamoDbClient, dynamoClientApplicationTableName)
         resetDatabase()
     }
 
     @Test
     fun `when find one client application by empty client id`() {
-        val clientApp: Optional<ClientApplication> = dynamoDbClientApplicationRepository.findOne(ClientAppId(""))
-        Assertions.assertEquals(clientApp, Optional.empty<ClientApplication>())
+        val clientApp: Optional<ClientApplication> = underTest.findOne(ClientAppId(""))
+        val expected = Optional.empty<ClientApplication>()
+        assertEquals(expected, clientApp)
     }
 
     @Test
     fun `when find one client application by client id that does not exist`() {
         val clientApp: Optional<ClientApplication> =
-                dynamoDbClientApplicationRepository.findOne(ClientAppId("not-existing-one"))
-        Assertions.assertEquals(clientApp, Optional.empty<ClientApplication>())
+            underTest.findOne(ClientAppId("not-existing-one"))
+        val expected = Optional.empty<ClientApplication>()
+        assertEquals(expected, clientApp)
     }
 
     @Test
     fun `when store, check if it exist and then delete a client application by client`() {
         val clientAppId = ClientAppId("client_id")
         val expected = ClientAppFixture.aClientApp(clientAppId)
-        dynamoDbClientApplicationRepository.save(expected)
-        var actual = dynamoDbClientApplicationRepository.findOne(clientAppId)
+        underTest.save(expected)
+        var actual = underTest.findOne(clientAppId)
 
-        Assertions.assertEquals(actual, Optional.of(expected))
+        assertEquals(Optional.of(expected), actual)
 
-        dynamoDbClientApplicationRepository.delete(clientAppId)
-        actual = dynamoDbClientApplicationRepository.findOne(clientAppId)
+        underTest.delete(clientAppId)
+        actual = underTest.findOne(clientAppId)
 
-        Assertions.assertEquals(actual, Optional.empty<ClientApplication>())
+        assertEquals(Optional.empty<ClientApplication>(), actual)
     }
 
     @Test
     fun `when find all client applications`() {
         val clientAppId = ClientAppId("client_id")
         val expected = ClientAppFixture.aClientApp(clientAppId)
-        dynamoDbClientApplicationRepository.save(expected)
-        val actual = dynamoDbClientApplicationRepository.findAll()
+        underTest.save(expected)
+        val actual = underTest.findAll()
 
-        Assertions.assertEquals(actual, listOf(expected))
+        assertEquals(listOf(expected), actual)
     }
 
     @Test
     fun `when find an client application with zero authorities`() {
         val clientAppId = ClientAppId("client_id")
         val expected = ClientAppFixture.aClientApp(clientAppId, authorities = Authorities.empty())
-        dynamoDbClientApplicationRepository.save(expected)
-        val actual = dynamoDbClientApplicationRepository.findAll()
+        underTest.save(expected)
+        val actual = underTest.findAll()
 
-        Assertions.assertEquals(actual, listOf(expected))
+        assertEquals(listOf(expected), actual)
     }
 
 }

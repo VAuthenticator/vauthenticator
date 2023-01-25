@@ -64,7 +64,7 @@ class WebSecurityConfig(
         http.csrf().disable().headers().frameOptions().disable()
 
         http.formLogin()
-            .successHandler(MfaAuthenticationHandler(clientApplicationRepository, "/mfa-challenge"))
+            .successHandler(MfaAuthenticationHandler(clientApplicationRepository, "/mfa-challenge/send"))
             .loginProcessingUrl(LOG_IN_URL_PAGE)
             .loginPage(LOG_IN_URL_PAGE)
             .permitAll()
