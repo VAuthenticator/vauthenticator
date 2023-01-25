@@ -1,12 +1,13 @@
 import ReactDOM from "react-dom";
 import React from "react";
-import {Alert, Box, Divider, Grid, ThemeProvider} from "@mui/material";
+import {Box, Divider, Grid, ThemeProvider} from "@mui/material";
 import theme from "../component/styles";
 import Template from "../component/Template";
 import FormInputTextField from "../component/FormInputTextField";
 import {Fingerprint, Person} from "@mui/icons-material";
 import Separator from "../component/Separator";
 import FormButton from "../component/FormButton";
+import ErrorBanner from "../component/ErrorBanner";
 
 
 const VAuthenticatorTitle = () => {
@@ -98,11 +99,8 @@ const Login = ({rawFeatures, rawErrors}) => {
         </h3>
     </div>
     let features = JSON.parse(rawFeatures);
-    let errors = JSON.parse(rawErrors);
-
-    const errorsBanner = <Grid style={{marginTop: '10px'}}>
-        <Alert severity="error">{errors["login"]}</Alert>
-    </Grid>
+    let errorMessage = JSON.parse(rawErrors)["login"];
+    const errorsBanner = <ErrorBanner errorMessage={errorMessage}/>
 
     return (
         <ThemeProvider theme={theme}>
@@ -112,7 +110,7 @@ const Login = ({rawFeatures, rawErrors}) => {
                 <Grid style={{marginTop: '10px'}}>
                     <Divider/>
                 </Grid>
-                {errors["login"] ? errorsBanner : ""}
+                {errorMessage ? errorsBanner : ""}
 
 
                 {<form action="login" method="post">

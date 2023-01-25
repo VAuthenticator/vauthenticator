@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 open class AccountUserDetailsService(private val userRepository: AccountRepository) : UserDetailsService {
     private val logger: Logger = LoggerFactory.getLogger(AccountUserDetailsService::class.java)
 
-    override fun loadUserByUsername(username: String) =
+    override fun loadUserByUsername(username: String): User =
             userRepository.accountFor(username)
                     .map {
                         logger.info("Account found for $username username")

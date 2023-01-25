@@ -34,7 +34,6 @@ class LoginPageController(
 
         val errors = errorMessageFor(httpServletRequest)
 
-        Optional.ofNullable(session.getAttribute("SPRING_SECURITY_LAST_EXCEPTION")).ifPresent { println(it) }
         model.addAttribute("errors", objectMapper.writeValueAsString(errors))
         model.addAttribute("features", objectMapper.writeValueAsString(features))
         model.addAttribute("assetBundle", "login_bundle.js")
@@ -60,11 +59,16 @@ class LoginPageController(
     }
 
     private fun errorMessageFor(httpServletRequest: HttpServletRequest) =
-        if (httpServletRequest.parameterMap.contains("error")) {
+        if (hasBadLoginFrom(httpServletRequest)) {
             mapOf("login" to "Something goes wrong during your login request")
         } else {
             emptyMap()
         }
+
+    private fun hasBadLoginFrom(httpServletRequest: HttpServletRequest) =
+        !Optional.ofNullable(httpServletRequest.session.getAttribute("SPRING_SECURITY_LAST_EXCEPTION")).isEmpty
+                && httpServletRequest.parameterMap.contains("error")
+
 
     private fun defaultFeature() =
         mutableMapOf(
