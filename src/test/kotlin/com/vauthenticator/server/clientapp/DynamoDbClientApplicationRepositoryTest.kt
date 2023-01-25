@@ -14,18 +14,17 @@ import java.util.*
 
 internal class DynamoDbClientApplicationRepositoryTest {
 
-    private lateinit var dynamoDbClientApplicationRepository: DynamoDbClientApplicationRepository
+    private lateinit var underTest: DynamoDbClientApplicationRepository
 
     @BeforeEach
     fun setUp() {
-        dynamoDbClientApplicationRepository =
-            DynamoDbClientApplicationRepository(dynamoDbClient, dynamoClientApplicationTableName)
+        underTest = DynamoDbClientApplicationRepository(dynamoDbClient, dynamoClientApplicationTableName)
         resetDatabase()
     }
 
     @Test
     fun `when find one client application by empty client id`() {
-        val clientApp: Optional<ClientApplication> = dynamoDbClientApplicationRepository.findOne(ClientAppId(""))
+        val clientApp: Optional<ClientApplication> = underTest.findOne(ClientAppId(""))
         val expected = Optional.empty<ClientApplication>()
         assertEquals(expected, clientApp)
     }
@@ -33,7 +32,7 @@ internal class DynamoDbClientApplicationRepositoryTest {
     @Test
     fun `when find one client application by client id that does not exist`() {
         val clientApp: Optional<ClientApplication> =
-            dynamoDbClientApplicationRepository.findOne(ClientAppId("not-existing-one"))
+            underTest.findOne(ClientAppId("not-existing-one"))
         val expected = Optional.empty<ClientApplication>()
         assertEquals(expected, clientApp)
     }
@@ -42,13 +41,13 @@ internal class DynamoDbClientApplicationRepositoryTest {
     fun `when store, check if it exist and then delete a client application by client`() {
         val clientAppId = ClientAppId("client_id")
         val expected = ClientAppFixture.aClientApp(clientAppId)
-        dynamoDbClientApplicationRepository.save(expected)
-        var actual = dynamoDbClientApplicationRepository.findOne(clientAppId)
+        underTest.save(expected)
+        var actual = underTest.findOne(clientAppId)
 
         assertEquals(Optional.of(expected), actual)
 
-        dynamoDbClientApplicationRepository.delete(clientAppId)
-        actual = dynamoDbClientApplicationRepository.findOne(clientAppId)
+        underTest.delete(clientAppId)
+        actual = underTest.findOne(clientAppId)
 
         assertEquals(Optional.empty<ClientApplication>(), actual)
     }
@@ -57,8 +56,8 @@ internal class DynamoDbClientApplicationRepositoryTest {
     fun `when find all client applications`() {
         val clientAppId = ClientAppId("client_id")
         val expected = ClientAppFixture.aClientApp(clientAppId)
-        dynamoDbClientApplicationRepository.save(expected)
-        val actual = dynamoDbClientApplicationRepository.findAll()
+        underTest.save(expected)
+        val actual = underTest.findAll()
 
         assertEquals(listOf(expected), actual)
     }
@@ -67,8 +66,8 @@ internal class DynamoDbClientApplicationRepositoryTest {
     fun `when find an client application with zero authorities`() {
         val clientAppId = ClientAppId("client_id")
         val expected = ClientAppFixture.aClientApp(clientAppId, authorities = Authorities.empty())
-        dynamoDbClientApplicationRepository.save(expected)
-        val actual = dynamoDbClientApplicationRepository.findAll()
+        underTest.save(expected)
+        val actual = underTest.findAll()
 
         assertEquals(listOf(expected), actual)
     }
