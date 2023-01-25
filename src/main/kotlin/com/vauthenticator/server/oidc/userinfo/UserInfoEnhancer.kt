@@ -55,6 +55,9 @@ object ProfileClaimsProvider : ClaimsProvider {
         account.birthDate.ifPresent {
             claims["birthdate"] = it.iso8601FormattedDate()
         }
+        account.locale.ifPresent {
+            claims["locale"] = it.formattedLocale()
+        }
         return claims
     }
 
