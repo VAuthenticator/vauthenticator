@@ -5,16 +5,18 @@ import com.vauthenticator.server.account.tiket.InvalidTicketException
 import com.vauthenticator.server.account.tiket.Ticket
 import com.vauthenticator.server.account.tiket.TicketRepository
 import com.vauthenticator.server.account.tiket.VerificationTicket
+import com.vauthenticator.server.password.PasswordPolicy
 import com.vauthenticator.server.password.VAuthenticatorPasswordEncoder
 import java.util.*
 
 class ResetAccountPassword(
     private val accountRepository: AccountRepository,
     private val vAuthenticatorPasswordEncoder: VAuthenticatorPasswordEncoder,
-
+    private val passwordPolicy: PasswordPolicy,
     private val ticketRepository: TicketRepository
 ) {
     fun resetPasswordFromMailChallenge(verificationTicket: VerificationTicket, request: ResetPasswordRequest) {
+        passwordPolicy.accept(request.newPassword)
         ticketRepository.loadFor(verificationTicket).map {
             passwordResetFor(it, request)
             ticketRepository.delete(verificationTicket)

@@ -43,6 +43,6 @@ class CompositePasswordPolicy(private val passwordPolicies: Set<PasswordPolicy>)
 
 @ConfigurationProperties(prefix = "password.policy")
 data class PasswordPolicyConfigProp(
-    val passwordMinSize: Int = 0,
-    val passwordMinSpecialSymbol: Int = 0
+    val minSize: Int,
+    val minSpecialSymbol: Int
 )
