@@ -5,6 +5,7 @@ import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.account.tiket.InvalidTicketException
 import com.vauthenticator.server.account.tiket.TicketRepository
 import com.vauthenticator.server.account.tiket.VerificationTicket
+import com.vauthenticator.server.password.PasswordPolicy
 import com.vauthenticator.server.password.VAuthenticatorPasswordEncoder
 import com.vauthenticator.server.support.TicketFixture
 import io.mockk.every
@@ -30,11 +31,15 @@ internal class ResetAccountPasswordTest {
     lateinit var ticketRepository: TicketRepository
 
     @MockK
+    lateinit var passwordPolicy: PasswordPolicy
+
+    @MockK
     lateinit var vAuthenticatorPasswordEncoder: VAuthenticatorPasswordEncoder
 
     @BeforeEach
     internal fun setUp() {
-        underTest = ResetAccountPassword(accountRepository, vAuthenticatorPasswordEncoder, ticketRepository)
+        underTest =
+            ResetAccountPassword(accountRepository, vAuthenticatorPasswordEncoder, passwordPolicy, ticketRepository)
     }
 
     @Test
@@ -42,9 +47,10 @@ internal class ResetAccountPasswordTest {
         val anAccount = anAccount()
         val email = anAccount.email
 
-        val verificationTicket = VerificationTicket("A_TIKET")
+        val verificationTicket = VerificationTicket("A_TICKET")
         val ticket = TicketFixture.ticketFor(verificationTicket.content, email, "")
 
+        every { passwordPolicy.accept("NEW_PSWD") } just runs
         every { ticketRepository.loadFor(verificationTicket) } returns Optional.of(ticket)
         every { ticketRepository.delete(verificationTicket) } just runs
         every { accountRepository.accountFor(email) } returns Optional.of(anAccount)
@@ -56,8 +62,9 @@ internal class ResetAccountPasswordTest {
 
     @Test
     internal fun `when a ticket was revoked`() {
-        val verificationTicket = VerificationTicket("A_TIKET")
+        val verificationTicket = VerificationTicket("A_TICKET")
 
+        every { passwordPolicy.accept("NEW_PSWD") } just runs
         every { ticketRepository.loadFor(verificationTicket) } returns Optional.empty()
 
         assertThrows(InvalidTicketException::class.java) {
