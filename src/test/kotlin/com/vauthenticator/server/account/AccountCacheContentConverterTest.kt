@@ -46,7 +46,8 @@ class AccountCacheContentConverterTest {
     private fun aCompleteAccount() = aPartialAccount()
         .copy(
             birthDate = Date.isoDateFor("2023-01-01"),
-            phone = Phone.phoneFor("+23 333 2323233")
+            phone = Phone.phoneFor("+23 333 2323233"),
+            locale = UserLocale.localeFrom("en-US")
         )
 
     private fun aPartialAccount() = anAccount()

@@ -11,5 +11,6 @@
   "firstName": "A First Name",
   "lastName": "A Last Name",
   "birthDate": "",
-  "phone": ""
+  "phone": "",
+  "locale": ""
 }
