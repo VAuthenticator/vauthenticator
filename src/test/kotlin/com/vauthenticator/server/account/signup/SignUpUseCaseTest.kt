@@ -5,9 +5,9 @@ import com.vauthenticator.server.account.mailverification.SendVerifyMailChalleng
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.account.welcome.SayWelcome
 import com.vauthenticator.server.clientapp.ClientAppFixture.aClientApp
-import com.vauthenticator.server.mail.MailSenderService
 import com.vauthenticator.server.oauth2.clientapp.*
 import com.vauthenticator.server.oauth2.clientapp.Scope.Companion.SIGN_UP
+import com.vauthenticator.server.password.PasswordPolicy
 import com.vauthenticator.server.password.VAuthenticatorPasswordEncoder
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -30,7 +30,7 @@ internal class SignUpUseCaseTest {
     lateinit var clientAccountRepository: ClientApplicationRepository
 
     @MockK
-    lateinit var welcomeMailSender: MailSenderService
+    lateinit var passwordPolicy: PasswordPolicy
 
     @MockK
     lateinit var sayWelcome: SayWelcome
@@ -46,6 +46,7 @@ internal class SignUpUseCaseTest {
     @BeforeEach
     internal fun setUp() {
         underTest = SignUpUseCase(
+            passwordPolicy,
             clientAccountRepository,
             accountRepository,
             sendVerifyMailChallenge,
@@ -60,6 +61,7 @@ internal class SignUpUseCaseTest {
         val aClientApp = aClientApp(clientAppId).copy(scopes = Scopes(setOf(SIGN_UP)))
         val account = anAccount().copy(authorities = listOf("AN_AUTHORITY"), password = "encrypted_secret")
 
+        every { passwordPolicy.accept("secret") } just runs
         every { clientAccountRepository.findOne(clientAppId) } returns Optional.of(aClientApp)
         every { vAuthenticatorPasswordEncoder.encode("secret") } returns "encrypted_secret"
         every { accountRepository.create(account) } just runs
@@ -78,6 +80,7 @@ internal class SignUpUseCaseTest {
         val aClientApp = aClientApp(clientAppId)
         val account = anAccount().copy(authorities = listOf("AN_AUTHORITY"))
 
+        every { passwordPolicy.accept("secret") } just runs
         every { clientAccountRepository.findOne(clientAppId) } returns Optional.of(aClientApp)
 
         Assertions.assertThrows(InsufficientClientApplicationScopeException::class.java) {

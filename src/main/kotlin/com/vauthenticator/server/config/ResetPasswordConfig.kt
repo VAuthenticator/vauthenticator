@@ -9,6 +9,7 @@ import com.vauthenticator.server.account.tiket.VerificationTicketFactory
 import com.vauthenticator.server.document.DocumentRepository
 import com.vauthenticator.server.mail.*
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
+import com.vauthenticator.server.password.PasswordPolicy
 import com.vauthenticator.server.password.VAuthenticatorPasswordEncoder
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -38,9 +39,10 @@ class ResetPasswordConfig {
     fun resetPasswordChallengeSent(
         accountRepository: AccountRepository,
         vAuthenticatorPasswordEncoder: VAuthenticatorPasswordEncoder,
+        passwordPolicy: PasswordPolicy,
         ticketRepository: TicketRepository
     ) =
-        ResetAccountPassword(accountRepository, vAuthenticatorPasswordEncoder, ticketRepository)
+        ResetAccountPassword(accountRepository, vAuthenticatorPasswordEncoder,passwordPolicy, ticketRepository)
 
     @Bean
     fun resetPasswordMailSender(

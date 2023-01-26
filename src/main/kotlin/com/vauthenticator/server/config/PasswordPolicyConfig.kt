@@ -16,8 +16,8 @@ class PasswordPolicyConfig {
     fun passwordPolicy(passwordPolicyConfigProp: PasswordPolicyConfigProp) =
         CompositePasswordPolicy(
             setOf(
-                MinimumCharacterPasswordPolicy(passwordPolicyConfigProp.passwordMinSize),
-                SpecialCharacterPasswordPolicy(passwordPolicyConfigProp.passwordMinSpecialSymbol)
+                MinimumCharacterPasswordPolicy(passwordPolicyConfigProp.minSize),
+                SpecialCharacterPasswordPolicy(passwordPolicyConfigProp.minSpecialSymbol)
             )
         )
 }
