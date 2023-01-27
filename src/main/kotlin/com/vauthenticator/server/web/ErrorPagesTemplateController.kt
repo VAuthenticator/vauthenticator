@@ -9,30 +9,20 @@ import org.springframework.web.bind.annotation.RequestMapping
 
 @Controller
 class ErrorPagesTemplateController : ErrorController {
+    private val errorMessages = mapOf("defauldMessage" to "Oops........ something goes wrong in VAuthenticator")
 
     @RequestMapping("/error")
-    fun handleError(request: HttpServletRequest,
-                    exception: Exception,
-                    model: Model): String {
+    fun handleError(request: HttpServletRequest, model: Model): String {
+        model.addAttribute("errorPageTitle", "VAuthenticator")
+        model.addAttribute("errors", errorMessages)
         when (request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE) as Int) {
-            400 -> {
-                model.addAttribute("errorPageTitle", "Page not found")
-                model.addAttribute("errorMessage", "Page not found")
-            }
-
-            404 -> {
-                println(exception.message)
-                model.addAttribute("errorPageTitle", "Page not found 111111111111111")
-                model.addAttribute("errorMessage", "Page not found")
-            }
-
-            500 -> {
-                model.addAttribute("errorPageTitle", "Page not found")
-                model.addAttribute("errorMessage", "Page not found")
-            }
+            400 -> model.addAttribute("assetBundle", "400_error_bundle.js")
+            404 -> model.addAttribute("assetBundle", "404_error_bundle.js")
+            500 -> model.addAttribute("assetBundle", "500_error_bundle.js")
+            else -> model.addAttribute("assetBundle", "default_error_bundle.js")
         }
 
-        // display generic error
-        return "error-template";
+        return "error-template"
     }
+
 }
