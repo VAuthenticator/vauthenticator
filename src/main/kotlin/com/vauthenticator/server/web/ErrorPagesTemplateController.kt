@@ -1,5 +1,6 @@
 package com.vauthenticator.server.web
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.RequestDispatcher
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.boot.web.servlet.error.ErrorController
@@ -8,8 +9,8 @@ import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.RequestMapping
 
 @Controller
-class ErrorPagesTemplateController : ErrorController {
-    private val errorMessages = mapOf("defauldMessage" to "Oops........ something goes wrong in VAuthenticator")
+class ErrorPagesTemplateController(private val objectMapper: ObjectMapper) : ErrorController {
+    private val errorMessages = objectMapper.writeValueAsString(mapOf("defaultMessage" to "Oops........ something goes wrong in VAuthenticator"))
 
     @RequestMapping("/error")
     fun handleError(request: HttpServletRequest, model: Model): String {
