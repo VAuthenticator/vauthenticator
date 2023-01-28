@@ -31,6 +31,9 @@ data class Account(
         get() = email.toSha256()
 }
 
+@JvmInline
+value class Email(val content : String){}
+
 data class UserLocale(val locale: Locale) {
     fun formattedLocale(): String = this.locale.toLanguageTag()
 
