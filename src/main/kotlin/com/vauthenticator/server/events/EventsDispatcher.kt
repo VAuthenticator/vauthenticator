@@ -34,7 +34,7 @@ class DefaultSpringEventEventsDispatcher(private val publisher: ApplicationEvent
                 logger.info("EVENT PROCESSING")
 
                 dispatch(
-                    DefaultSpringEvent(
+                    VAuthenticatorAuthEvent(
                         Email((Optional.ofNullable(currentRequest.remoteUser)).orElseGet { "UNKNOWN" }),
                         ClientAppId(it),
                         Instant.now(),

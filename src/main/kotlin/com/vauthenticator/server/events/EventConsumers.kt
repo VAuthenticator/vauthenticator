@@ -1,6 +1,5 @@
 package com.vauthenticator.server.events
 
-import com.vauthenticator.server.extentions.decoder
 import org.slf4j.LoggerFactory
 
 class LoggerEventConsumer : EventConsumer {
@@ -11,16 +10,11 @@ class LoggerEventConsumer : EventConsumer {
         val logLine = """
             The user : ${event.clientAppId.content} 
             with the client id ${event.userName.content} 
-            has done a ${eventClassFrom(event)} 
             event at ${event.timeStamp.epochSecond}
         """.trimIndent()
 
+        val vAuthenticatorAuthEvent = event as VAuthenticatorAuthEvent
+        logger.info(vAuthenticatorAuthEvent.source.toString())
         logger.info(logLine)
     }
-
-    private fun eventClassFrom(event: VAuthenticatorEvent) : String =
-        when(event) {
-             is DefaultSpringEvent -> event.source::class.simpleName!!
-            else -> event::class.simpleName!!
-        }
 }

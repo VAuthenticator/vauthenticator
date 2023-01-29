@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
@@ -14,6 +15,7 @@ import java.util.*
 
 @Controller
 class MfaController(
+    private val publisher: ApplicationEventPublisher,
     private val objectMapper: ObjectMapper,
     private val successHandler: AuthenticationSuccessHandler,
     private val otpMfaSender: OtpMfaSender,
@@ -62,10 +64,13 @@ class MfaController(
             otpMfaVerifier.verifyMfaChallengeFor(authentication.name, MfaChallenge(mfaCode))
 
             SecurityContextHolder.getContext().authentication = authentication.delegate
+            publisher.publishEvent(MfaSuccessEvent( authentication.delegate))
             successHandler.onAuthenticationSuccess(request, response, authentication.delegate)
         } catch (e: Exception) {
             logger.error(e.message, e)
-            request.session.setAttribute("MFA_SPRING_SECURITY_LAST_EXCEPTION", MfaException("Invalid mfa code"))
+            val mfaException = MfaException("Invalid mfa code")
+            request.session.setAttribute("MFA_SPRING_SECURITY_LAST_EXCEPTION", mfaException)
+            publisher.publishEvent(MfaFailureEvent(authentication.delegate, mfaException))
 
             response.sendRedirect("/mfa-challenge?error")
         }
@@ -73,9 +78,7 @@ class MfaController(
 }
 
 @RestController
-class MfaApi(
-    private val otpMfaSender: OtpMfaSender,
-) {
+class MfaApi(private val otpMfaSender: OtpMfaSender) {
     @PutMapping("/mfa-challenge/send")
     fun sendAgain(authentication: Authentication) {
         otpMfaSender.sendMfaChallenge(authentication.name)

@@ -1,8 +1,12 @@
 package com.vauthenticator.server.events
 
 import com.vauthenticator.server.account.Email
+import com.vauthenticator.server.mfa.MfaAuthentication
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import org.springframework.security.authentication.event.AbstractAuthenticationEvent
+import org.springframework.security.authentication.event.AbstractAuthenticationFailureEvent
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.AuthenticationException
 import java.time.Instant
 
 interface EventsDispatcher {
@@ -25,15 +29,9 @@ sealed class VAuthenticatorEvent(
     val timeStamp: Instant
 )
 
-class DefaultSpringEvent(
-    email: Email,
+class VAuthenticatorAuthEvent(
+    userName: Email,
     clientAppId: ClientAppId,
     timeStamp: Instant,
     val source: AbstractAuthenticationEvent
-) : VAuthenticatorEvent(email, clientAppId, timeStamp)
-
-class VAuthenticatorMFAEvent(
-    email: Email,
-    clientAppId: ClientAppId,
-    timeStamp: Instant
-) : VAuthenticatorEvent(email, clientAppId, timeStamp)
+) : VAuthenticatorEvent(userName, clientAppId, timeStamp)
