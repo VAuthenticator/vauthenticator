@@ -17,7 +17,7 @@ open class SignUpUseCase(
     private val accountRepository: AccountRepository,
     private val sendVerifyMailChallenge: SendVerifyMailChallenge,
     private val vAuthenticatorPasswordEncoder: VAuthenticatorPasswordEncoder,
-    private val ayWelcome: SayWelcome
+    private val sayWelcome: SayWelcome
 ) {
     open fun execute(clientAppId: ClientAppId, account: Account) {
         passwordPolicy.accept(account.password)
@@ -29,7 +29,7 @@ open class SignUpUseCase(
                         password = vAuthenticatorPasswordEncoder.encode(account.password)
                     )
                     accountRepository.create(registeredAccount)
-                    ayWelcome.welcome(registeredAccount.email)
+                    sayWelcome.welcome(registeredAccount.email)
                     sendVerifyMailChallenge.sendVerifyMail(account.email, clientAppId)
                 } else {
                     throw InsufficientClientApplicationScopeException("The client app ${clientAppId.content} does not support signup use case........ consider to add ${Scope.SIGN_UP.content} as scope")

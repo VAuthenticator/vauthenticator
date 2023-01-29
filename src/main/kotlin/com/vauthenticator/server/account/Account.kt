@@ -32,7 +32,7 @@ data class Account(
 }
 
 @JvmInline
-value class Email(val content : String){}
+value class Email(val content: String) {}
 
 data class UserLocale(val locale: Locale) {
     fun formattedLocale(): String = this.locale.toLanguageTag()

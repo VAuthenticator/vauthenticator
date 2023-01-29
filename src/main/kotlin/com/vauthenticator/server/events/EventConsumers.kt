@@ -1,25 +1,26 @@
 package com.vauthenticator.server.events
 
-import io.micrometer.core.instrument.Counter
-import io.micrometer.core.instrument.MeterRegistry
+import com.vauthenticator.server.extentions.decoder
 import org.slf4j.LoggerFactory
 
 class LoggerEventConsumer : EventConsumer {
 
     private val logger = LoggerFactory.getLogger(LoggerEventConsumer::class.java)
-    override fun accept(event: VAuthenticatorEvent) {
-        logger.info("The user : ${event.clientAppId.content} with the client id ${event.email.content} has done a ${event::class.simpleName} event at ${event.timeStamp.epochSecond}")
-    }
-}
-
-class PrometheusEventConsumer(private val registry: MeterRegistry) : EventConsumer {
 
     override fun accept(event: VAuthenticatorEvent) {
-        Counter
-            .builder(event::class.simpleName!!)
-            .tag("user_name", event.email.content)
-            .tag("client_id", event.clientAppId.content)
-            .tag("time_stamp", event.timeStamp.epochSecond.toString())
-            .register(registry)
+        val logLine = """
+            The user : ${event.clientAppId.content} 
+            with the client id ${event.userName.content} 
+            has done a ${eventClassFrom(event)} 
+            event at ${event.timeStamp.epochSecond}
+        """.trimIndent()
+
+        logger.info(logLine)
     }
+
+    private fun eventClassFrom(event: VAuthenticatorEvent) : String =
+        when(event) {
+             is DefaultSpringEvent -> event.source::class.simpleName!!
+            else -> event::class.simpleName!!
+        }
 }

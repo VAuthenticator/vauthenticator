@@ -1,6 +1,6 @@
 package com.vauthenticator.server.events
 
-import com.vauthenticator.server.events.EventFixture.userLoggedEvent
+import com.vauthenticator.server.events.EventFixture.defaultSpringEvent
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -13,19 +13,19 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.context.ApplicationEventPublisher
 
 @ExtendWith(MockKExtension::class)
-class SpringEventEventsDispatcherTest {
+class VAuthenticatorEventsDispatcherTest {
 
     @MockK
     private lateinit var publisher: ApplicationEventPublisher
 
     @Test
     fun `when an event is published`() {
-        val underTest = SpringEventEventsDispatcher(publisher)
+        val underTest = VAuthenticatorEventsDispatcher(publisher)
 
-        every { publisher.publishEvent(userLoggedEvent) } just runs
+        every { publisher.publishEvent(defaultSpringEvent) } just runs
 
-        underTest.dispatch(userLoggedEvent)
+        underTest.dispatch(defaultSpringEvent)
 
-        verify { publisher.publishEvent(userLoggedEvent) }
+        verify { publisher.publishEvent(defaultSpringEvent) }
     }
 }
