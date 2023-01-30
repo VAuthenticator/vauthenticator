@@ -155,6 +155,10 @@ class WebSecurityConfig(
     fun successHandler(): AuthenticationSuccessHandler {
         return SavedRequestAwareAuthenticationSuccessHandler()
     }
+    @Bean
+    fun mfaFailureHandler(): AuthenticationFailureHandler {
+        return SimpleUrlAuthenticationFailureHandler("/mfa-challenge?error")
+    }
 
     @Bean
     fun failureHandler(): AuthenticationFailureHandler {

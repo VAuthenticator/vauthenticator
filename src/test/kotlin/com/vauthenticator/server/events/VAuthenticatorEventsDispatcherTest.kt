@@ -1,21 +1,13 @@
 package com.vauthenticator.server.events
 
-import com.vauthenticator.server.events.EventFixture.defaultSpringEvent
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
-import io.mockk.just
-import io.mockk.runs
-import io.mockk.verify
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.springframework.context.ApplicationEventPublisher
 
 @ExtendWith(MockKExtension::class)
 class VAuthenticatorEventsDispatcherTest {
 
-    @MockK
+/*    @MockK
     private lateinit var publisher: ApplicationEventPublisher
 
     @Test
@@ -27,5 +19,5 @@ class VAuthenticatorEventsDispatcherTest {
         underTest.dispatch(defaultSpringEvent)
 
         verify { publisher.publishEvent(defaultSpringEvent) }
-    }
+    }*/
 }

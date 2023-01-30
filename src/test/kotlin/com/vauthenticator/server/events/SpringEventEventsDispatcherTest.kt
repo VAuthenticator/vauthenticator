@@ -15,7 +15,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
 @ExtendWith(MockKExtension::class)
-class DefaultSpringEventEventsDispatcherTest {
+class SpringEventEventsDispatcherTest {
     lateinit var mokMvc: MockMvc
 /*
     @MockK

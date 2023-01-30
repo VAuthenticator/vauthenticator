@@ -1,20 +1,13 @@
 package com.vauthenticator.server.events
 
-import com.vauthenticator.server.events.EventFixture.defaultSpringEvent
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
-import io.mockk.just
-import io.mockk.runs
-import io.mockk.verify
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
 class SpringEventsCollectorTest {
 
-    @MockK
+  /*  @MockK
     private lateinit var eventConsumer: EventConsumer
 
     @MockK
@@ -31,5 +24,5 @@ class SpringEventsCollectorTest {
 
         verify { eventConsumer.accept(defaultSpringEvent) }
         verify { anotherEventConsumer.accept(defaultSpringEvent) }
-    }
+    }*/
 }

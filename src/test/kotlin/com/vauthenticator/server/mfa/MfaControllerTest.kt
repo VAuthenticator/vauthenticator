@@ -13,6 +13,8 @@ import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.context.ApplicationEventPublisher
+import org.springframework.security.web.authentication.AuthenticationFailureHandler
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
@@ -27,6 +29,12 @@ internal class MfaControllerTest {
     private lateinit var successHandler: AuthenticationSuccessHandler
 
     @MockK
+    private lateinit var failureHandler: AuthenticationFailureHandler
+
+    @MockK
+    private lateinit var publisher: ApplicationEventPublisher
+
+    @MockK
     private lateinit var otpMfaSender: OtpMfaSender
 
     @MockK
@@ -36,9 +44,13 @@ internal class MfaControllerTest {
     @BeforeEach
     internal fun setUp() {
         mokMvc = MockMvcBuilders.standaloneSetup(
-            MfaController(ObjectMapper(), successHandler, otpMfaSender, otpMfaVerifier)
-        )
-            .build()
+            MfaController(
+                publisher,
+                ObjectMapper(),
+                successHandler, failureHandler,
+                otpMfaSender, otpMfaVerifier
+            )
+        ).build()
     }
 
     @Test

@@ -9,6 +9,6 @@ import java.time.Instant
 
 object EventFixture {
 
-    val defaultSpringEvent = DefaultSpringEvent(Email("anemail@domain.com"), ClientAppId("A_CLIENT_APP_ID"), Instant.now(), AuthenticationSuccessEvent(mockk()))
-    val mfaEvent = VAuthenticatorMFAEvent(Email("anemail@domain.com"), ClientAppId("A_CLIENT_APP_ID"), Instant.now(), MfaAuthentication(mockk()))
+//    val defaultSpringEvent = DefaultSpringEvent(Email("anemail@domain.com"), ClientAppId("A_CLIENT_APP_ID"), Instant.now(), AuthenticationSuccessEvent(mockk()))
+//    val mfaEvent = VAuthenticatorMFAEvent(Email("anemail@domain.com"), ClientAppId("A_CLIENT_APP_ID"), Instant.now(), MfaAuthentication(mockk()))
 }

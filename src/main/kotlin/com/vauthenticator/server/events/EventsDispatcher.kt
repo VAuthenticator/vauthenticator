@@ -20,37 +20,44 @@ class VAuthenticatorEventsDispatcher(private val publisher: ApplicationEventPubl
 
 }
 
-class DefaultSpringEventEventsDispatcher(private val publisher: ApplicationEventPublisher) : EventsDispatcher {
+class SpringEventEventsDispatcher(private val publisher: ApplicationEventPublisher) : EventsDispatcher {
 
-    private val logger = LoggerFactory.getLogger(DefaultSpringEventEventsDispatcher::class.java)
+    private val logger = LoggerFactory.getLogger(SpringEventEventsDispatcher::class.java)
 
     @EventListener
     fun handle(event: AbstractAuthenticationEvent) {
-        val currentRequest: HttpServletRequest =
-            (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes).request
-        logger.info("PRE EVENT PROCESSING")
+        val currentRequest = httpServletRequestFromRequestContextHolder()
         clientIdForm(currentRequest)
-            .ifPresentOrElse({
-                logger.info("EVENT PROCESSING")
-
-                dispatch(
-                    VAuthenticatorAuthEvent(
-                        Email((Optional.ofNullable(currentRequest.remoteUser)).orElseGet { "UNKNOWN" }),
-                        ClientAppId(it),
-                        Instant.now(),
-                        event
-                    )
-                )
-            },
-                {
-                    logger.info("PRE EVENT NOT PROCESSED")
-                }
+            .ifPresentOrElse(
+                { dispatchAdaptedEventFor(currentRequest, it, event) },
+                { logger.debug("PRE EVENT NOT PROCESSED") }
             )
+    }
 
+    private fun httpServletRequestFromRequestContextHolder(): HttpServletRequest {
+        logger.debug("PRE EVENT PROCESSING")
+        return (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes).request
     }
 
     private fun clientIdForm(currentRequest: HttpServletRequest): Optional<String> =
         currentRequest.oauth2ClientId().or { currentRequest.session.oauth2ClientId() }
+
+    private fun dispatchAdaptedEventFor(
+        currentRequest: HttpServletRequest,
+        it: String,
+        event: AbstractAuthenticationEvent
+    ) {
+        logger.debug("EVENT PROCESSING")
+
+        dispatch(
+            VAuthenticatorAuthEvent(
+                Email((Optional.ofNullable(currentRequest.remoteUser)).orElseGet { "UNKNOWN" }),
+                ClientAppId(it),
+                Instant.now(),
+                event
+            )
+        )
+    }
 
     override fun dispatch(event: VAuthenticatorEvent) {
         publisher.publishEvent(event)

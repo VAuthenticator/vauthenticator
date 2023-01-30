@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.web.authentication.AuthenticationEntryPointFailureHandler
+import org.springframework.security.web.authentication.AuthenticationFailureHandler
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -18,6 +20,7 @@ class MfaController(
     private val publisher: ApplicationEventPublisher,
     private val objectMapper: ObjectMapper,
     private val successHandler: AuthenticationSuccessHandler,
+    private val mfaFailureHandler: AuthenticationFailureHandler,
     private val otpMfaSender: OtpMfaSender,
     private val otpMfaVerifier: OtpMfaVerifier
 ) {
@@ -38,7 +41,6 @@ class MfaController(
     ): String {
         val errors = errorMessageFor(httpServletRequest)
         model.addAttribute("errors", objectMapper.writeValueAsString(errors))
-
         model.addAttribute("assetBundle", "mfa_bundle.js")
         return "template"
     }
@@ -51,7 +53,7 @@ class MfaController(
         }
 
     private fun hasBadLoginFrom(httpServletRequest: HttpServletRequest) =
-        !Optional.ofNullable(httpServletRequest.session.getAttribute("MFA_SPRING_SECURITY_LAST_EXCEPTION")).isEmpty
+        !Optional.ofNullable(httpServletRequest.session.getAttribute("SPRING_SECURITY_LAST_EXCEPTION")).isEmpty
 
     @PostMapping("/mfa-challenge")
     fun processSecondFactor(
@@ -69,10 +71,8 @@ class MfaController(
         } catch (e: Exception) {
             logger.error(e.message, e)
             val mfaException = MfaException("Invalid mfa code")
-            request.session.setAttribute("MFA_SPRING_SECURITY_LAST_EXCEPTION", mfaException)
             publisher.publishEvent(MfaFailureEvent(authentication.delegate, mfaException))
-
-            response.sendRedirect("/mfa-challenge?error")
+            mfaFailureHandler.onAuthenticationFailure(request, response, mfaException)
         }
     }
 }
