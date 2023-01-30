@@ -2,6 +2,7 @@ package com.vauthenticator.server.events
 
 import com.vauthenticator.server.account.Email
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
+import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.security.authentication.event.AbstractAuthenticationEvent
 import java.time.Instant
 
@@ -16,8 +17,12 @@ interface EventsCollector {
 
 interface EventConsumer {
     fun accept(event: VAuthenticatorEvent)
+    fun handleable(): Boolean
 
 }
+
+@ConfigurationProperties("event.consumer")
+data class EventConsumerConfig(val enable: Map<String, Boolean>)
 
 sealed class VAuthenticatorEvent(
     val userName: Email,

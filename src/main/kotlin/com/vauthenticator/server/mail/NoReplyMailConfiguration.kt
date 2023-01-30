@@ -9,5 +9,4 @@ data class NoReplyMailConfiguration(
     val verificationMailSubject: String = "",
     val resetPasswordMailSubject: String = "",
     val mfaMailSubject: String = ""
-) {
-}
+)

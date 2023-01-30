@@ -21,7 +21,7 @@ class TaimosOtpMfa(
     private val mfaAccountMethodsRepository: MfaAccountMethodsRepository,
     private val properties: OtpConfigurationProperties
 ) : OtpMfa {
-    private val tokenTimeWindow: Int = properties.otpTimeToLiveInSeconds
+    private val tokenTimeWindow: Int = properties.timeToLiveInSeconds
     private val tokenTimeWindowMillis: Long = (tokenTimeWindow * 1000).toLong()
 
     override fun generateSecretKeyFor(account: Account): MfaSecret {
@@ -39,7 +39,7 @@ class TaimosOtpMfa(
                 secretKey.content(),
                 System.currentTimeMillis(),
                 tokenTimeWindow,
-                properties.otpLength
+                properties.length
             )
         )
     }
@@ -54,7 +54,7 @@ class TaimosOtpMfa(
                     tokenTimeWindowMillis,
                     System.currentTimeMillis(),
                     tokenTimeWindow,
-                    properties.otpLength
+                    properties.length
                 );
             if (!validated) {
                 throw MfaException("Customer Code does not match with system code")
@@ -67,4 +67,4 @@ class TaimosOtpMfa(
 }
 
 @ConfigurationProperties("mfa.otp")
-data class OtpConfigurationProperties(val otpLength: Int, val otpTimeToLiveInSeconds: Int)
+data class OtpConfigurationProperties(val length: Int, val timeToLiveInSeconds: Int)

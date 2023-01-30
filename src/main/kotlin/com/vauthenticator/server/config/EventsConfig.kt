@@ -1,15 +1,12 @@
 package com.vauthenticator.server.config
 
-import com.vauthenticator.server.events.LoggerEventConsumer
-import com.vauthenticator.server.events.VAuthenticatorEventsDispatcher
-import com.vauthenticator.server.events.SpringEventEventsDispatcher
-import com.vauthenticator.server.events.SpringEventsCollector
+import com.vauthenticator.server.events.*
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration(proxyBeanMethods = false)
-class EventsConfig {
+class EventsConfig(private val eventConsumerConfig: EventConsumerConfig) {
 
     @Bean
     fun eventsDispatcherAdapter(publisher: ApplicationEventPublisher) =
@@ -22,7 +19,7 @@ class EventsConfig {
     @Bean
     fun eventsCollector() =
         SpringEventsCollector(
-            listOf(LoggerEventConsumer())
+            listOf(LoggerEventConsumer(eventConsumerConfig))
         )
 
 }
