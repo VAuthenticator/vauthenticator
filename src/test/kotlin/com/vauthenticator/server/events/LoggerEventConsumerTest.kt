@@ -20,9 +20,9 @@ class LoggerEventConsumerTest {
             with the client id anemail@domain.com 
             has done AuthenticationSuccessEvent event
             event at ${vauthenticatorAuthEvent.timeStamp.epochSecond}
-            event payload: org.springframework.security.authentication.event.AuthenticationSuccessEvent[source=Authentication(#1)]
+            event payload: org.springframework.security.authentication.event.AuthenticationSuccessEvent
             """.trimIndent()
-        assertTrue(output.out.contains(message));
+        assertTrue(output.out.contains(message))
     }
 
 }
