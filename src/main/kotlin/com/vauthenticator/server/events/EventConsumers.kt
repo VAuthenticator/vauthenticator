@@ -8,9 +8,9 @@ class LoggerEventConsumer : EventConsumer {
 
     override fun accept(event: VAuthenticatorEvent) {
         val logLine = """
-            The user : ${event.clientAppId.content} 
-            with the client id ${event.userName.content} 
-            has done ${event.payload::class.simpleName} event
+            The user ${event.userName.content}
+            with the client id ${event.clientAppId.content}
+            has done an ${event.payload::class.simpleName} event
             event at ${event.timeStamp.epochSecond}
             event payload: ${event.payload}
      """.trimIndent()

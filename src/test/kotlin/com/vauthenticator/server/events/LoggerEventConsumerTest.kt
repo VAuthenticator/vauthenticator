@@ -16,9 +16,9 @@ class LoggerEventConsumerTest {
 
         underTest.accept(vauthenticatorAuthEvent)
         val message = """
-            The user : A_CLIENT_APP_ID 
-            with the client id anemail@domain.com 
-            has done AuthenticationSuccessEvent event
+            The user anemail@domain.com
+            with the client id A_CLIENT_APP_ID
+            has done an AuthenticationSuccessEvent event
             event at ${vauthenticatorAuthEvent.timeStamp.epochSecond}
             event payload: org.springframework.security.authentication.event.AuthenticationSuccessEvent
             """.trimIndent()
