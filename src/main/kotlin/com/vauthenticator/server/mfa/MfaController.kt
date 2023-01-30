@@ -4,8 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.web.authentication.AuthenticationEntryPointFailureHandler
+import org.springframework.security.web.authentication.AuthenticationFailureHandler
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -14,8 +17,10 @@ import java.util.*
 
 @Controller
 class MfaController(
+    private val publisher: ApplicationEventPublisher,
     private val objectMapper: ObjectMapper,
     private val successHandler: AuthenticationSuccessHandler,
+    private val mfaFailureHandler: AuthenticationFailureHandler,
     private val otpMfaSender: OtpMfaSender,
     private val otpMfaVerifier: OtpMfaVerifier
 ) {
@@ -36,7 +41,6 @@ class MfaController(
     ): String {
         val errors = errorMessageFor(httpServletRequest)
         model.addAttribute("errors", objectMapper.writeValueAsString(errors))
-
         model.addAttribute("assetBundle", "mfa_bundle.js")
         return "template"
     }
@@ -49,7 +53,7 @@ class MfaController(
         }
 
     private fun hasBadLoginFrom(httpServletRequest: HttpServletRequest) =
-        !Optional.ofNullable(httpServletRequest.session.getAttribute("MFA_SPRING_SECURITY_LAST_EXCEPTION")).isEmpty
+        !Optional.ofNullable(httpServletRequest.session.getAttribute("SPRING_SECURITY_LAST_EXCEPTION")).isEmpty
 
     @PostMapping("/mfa-challenge")
     fun processSecondFactor(
@@ -62,20 +66,19 @@ class MfaController(
             otpMfaVerifier.verifyMfaChallengeFor(authentication.name, MfaChallenge(mfaCode))
 
             SecurityContextHolder.getContext().authentication = authentication.delegate
+            publisher.publishEvent(MfaSuccessEvent( authentication.delegate))
             successHandler.onAuthenticationSuccess(request, response, authentication.delegate)
         } catch (e: Exception) {
             logger.error(e.message, e)
-            request.session.setAttribute("MFA_SPRING_SECURITY_LAST_EXCEPTION", MfaException("Invalid mfa code"))
-
-            response.sendRedirect("/mfa-challenge?error")
+            val mfaException = MfaException("Invalid mfa code")
+            publisher.publishEvent(MfaFailureEvent(authentication.delegate, mfaException))
+            mfaFailureHandler.onAuthenticationFailure(request, response, mfaException)
         }
     }
 }
 
 @RestController
-class MfaApi(
-    private val otpMfaSender: OtpMfaSender,
-) {
+class MfaApi(private val otpMfaSender: OtpMfaSender) {
     @PutMapping("/mfa-challenge/send")
     fun sendAgain(authentication: Authentication) {
         otpMfaSender.sendMfaChallenge(authentication.name)

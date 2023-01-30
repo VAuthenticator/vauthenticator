@@ -1,9 +1,18 @@
 package com.vauthenticator.server.mfa
 
 import com.vauthenticator.server.keys.Kid
+import org.springframework.security.authentication.event.AbstractAuthenticationEvent
+import org.springframework.security.authentication.event.AbstractAuthenticationFailureEvent
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.AuthenticationException
 
 
-class MfaException(message: String) : RuntimeException(message)
+class MfaException(message: String) : AuthenticationException(message)
+
+class MfaFailureEvent(authentication: Authentication, exception: AuthenticationException) :
+    AbstractAuthenticationFailureEvent(authentication, exception) {}
+
+class MfaSuccessEvent(authentication: Authentication) : AbstractAuthenticationEvent(authentication) {}
 
 @JvmInline
 value class MfaSecret(private val content: String) {
