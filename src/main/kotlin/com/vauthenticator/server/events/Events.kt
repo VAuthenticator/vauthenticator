@@ -1,12 +1,8 @@
 package com.vauthenticator.server.events
 
 import com.vauthenticator.server.account.Email
-import com.vauthenticator.server.mfa.MfaAuthentication
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import org.springframework.security.authentication.event.AbstractAuthenticationEvent
-import org.springframework.security.authentication.event.AbstractAuthenticationFailureEvent
-import org.springframework.security.core.Authentication
-import org.springframework.security.core.AuthenticationException
 import java.time.Instant
 
 interface EventsDispatcher {
@@ -26,12 +22,24 @@ interface EventConsumer {
 sealed class VAuthenticatorEvent(
     val userName: Email,
     val clientAppId: ClientAppId,
-    val timeStamp: Instant
+    val timeStamp: Instant,
+    val payload: Any
 )
+
 
 class VAuthenticatorAuthEvent(
     userName: Email,
     clientAppId: ClientAppId,
     timeStamp: Instant,
-    val source: AbstractAuthenticationEvent
-) : VAuthenticatorEvent(userName, clientAppId, timeStamp)
+    payload: AbstractAuthenticationEvent
+) : VAuthenticatorEvent(userName, clientAppId, timeStamp, payload) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return javaClass.hashCode()
+    }
+}

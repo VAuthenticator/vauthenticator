@@ -10,11 +10,10 @@ class LoggerEventConsumer : EventConsumer {
         val logLine = """
             The user : ${event.clientAppId.content} 
             with the client id ${event.userName.content} 
+            has done ${event.payload::class.simpleName} event
             event at ${event.timeStamp.epochSecond}
-        """.trimIndent()
-
-        val vAuthenticatorAuthEvent = event as VAuthenticatorAuthEvent
-        logger.info(vAuthenticatorAuthEvent.source.toString())
+            event payload: ${event.payload}
+     """.trimIndent()
         logger.info(logLine)
     }
 }
