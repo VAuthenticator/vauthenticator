@@ -4,7 +4,7 @@ spring:
 
 mfa:
   otp:
-    otpLength: 6
-    otpTimeToLiveInSeconds: 30
+    length: 6
+    timeToLiveInSeconds: 30
 
 iamUserAwsCredentialsProvider: true

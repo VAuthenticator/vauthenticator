@@ -11,7 +11,6 @@ class LoggerEventConsumer(private val eventConsumerConfig: EventConsumerConfig) 
     override fun accept(event: VAuthenticatorEvent) {
         if (handleable()) {
             val logLine = """
-}
             The user ${event.userName.content}
             with the client id ${event.clientAppId.content}
             has done an ${event.payload::class.simpleName} event
