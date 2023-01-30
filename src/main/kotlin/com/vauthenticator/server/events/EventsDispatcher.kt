@@ -51,7 +51,7 @@ class SpringEventEventsDispatcher(private val publisher: ApplicationEventPublish
 
         dispatch(
             VAuthenticatorAuthEvent(
-                Email((Optional.ofNullable(currentRequest.remoteUser)).orElseGet { "UNKNOWN" }),
+                Email((Optional.ofNullable(event.authentication.name)).orElseGet { "UNKNOWN" }),
                 ClientAppId(it),
                 Instant.now(),
                 event
