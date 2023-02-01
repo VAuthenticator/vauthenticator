@@ -10,7 +10,7 @@
         <relativePath/>
     </parent>
 
-    <groupId>it.valeriovaudi</groupId>
+    <groupId>com.vauthenticator</groupId>
     <artifactId>vauthenticator</artifactId>
     <version>0.5-SNAPSHOT</version>
 
