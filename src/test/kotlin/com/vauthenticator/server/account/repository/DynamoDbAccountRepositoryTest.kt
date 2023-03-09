@@ -63,39 +63,6 @@ internal class DynamoDbAccountRepositoryTest {
         assertEquals(updatedFindByUsername, accountUpdated)
     }
 
-    @Test
-    fun `find all accounts`() {
-        val anAccount = account.copy()
-        val anotherAccount = account.copy(
-                email = "anotheremail@domain.com",
-                username = "anotheremail@domain.com",
-                firstName = "A_NEW_FIRSTNAME",
-                lastName = "A_NEW_LASTNAME"
-        )
-        accountRepository.save(anAccount)
-        accountRepository.save(anotherAccount)
-
-        val findAll = accountRepository.findAll(true)
-        assertTrue(findAll.contains(anAccount))
-        assertTrue(findAll.contains(anotherAccount))
-    }
-
-    @Test
-    fun `find all accounts without autorities`() {
-        val anAccount = account.copy()
-        val anotherAccount = account.copy(
-                email = "anotheremail@domain.com",
-                username = "anotheremail@domain.com",
-                firstName = "A_NEW_FIRSTNAME",
-                lastName = "A_NEW_LASTNAME"
-        )
-        accountRepository.save(anAccount)
-        accountRepository.save(anotherAccount)
-
-        val findAll = accountRepository.findAll()
-        assertTrue(findAll.contains(anAccount))
-        assertTrue(findAll.contains(anotherAccount))
-    }
 
     @Test
     fun `when overrides authorities to an accounts`() {
@@ -106,7 +73,7 @@ internal class DynamoDbAccountRepositoryTest {
         accountRepository.save(anAccount)
         accountRepository.save(anotherAccount)
 
-        assertEquals(accountRepository.findAll(), listOf(anotherAccount))
+        assertEquals(accountRepository.accountFor(anAccount.username), listOf(anotherAccount))
     }
 
     @Test
@@ -114,7 +81,7 @@ internal class DynamoDbAccountRepositoryTest {
         val anAccount = account.copy()
         accountRepository.create(anAccount)
 
-        assertEquals(accountRepository.findAll(), listOf(anAccount))
+        assertEquals(accountRepository.accountFor(anAccount.username), listOf(anAccount))
     }
 
     @Test
