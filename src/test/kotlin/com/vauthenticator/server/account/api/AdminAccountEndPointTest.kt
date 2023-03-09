@@ -26,30 +26,11 @@ internal class AdminAccountEndPointTest {
     @Mock
     lateinit var accountRepository: AccountRepository
 
-    val objectMapper = ObjectMapper()
+    private val objectMapper = ObjectMapper()
 
     @BeforeEach
     internal fun setUp() {
         mokMvc = MockMvcBuilders.standaloneSetup(AdminAccountEndPoint(accountRepository)).build()
-    }
-
-    @Test
-    internal fun `find all accounts`() {
-        val expectedRepresentation = listOf(
-                AdminAccountApiRepresentation(email = "anemain@domain.com"),
-                AdminAccountApiRepresentation(email = "anotheremain@domain.com")
-        )
-        val masterAccount = com.vauthenticator.server.account.AccountTestFixture.anAccount()
-
-        given(accountRepository.findAll())
-                .willReturn(
-                        listOf(
-                                masterAccount.copy(email = "anemain@domain.com"),
-                                masterAccount.copy(email = "anotheremain@domain.com")
-                        )
-                )
-        mokMvc.perform(get("/api/admin/accounts"))
-                .andExpect(content().string(objectMapper.writeValueAsString(expectedRepresentation)))
     }
 
     @Test

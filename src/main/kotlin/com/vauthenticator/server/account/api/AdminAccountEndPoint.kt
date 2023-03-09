@@ -9,13 +9,6 @@ import org.springframework.web.bind.annotation.*
 @RestController
 class AdminAccountEndPoint(private val accountRepository: AccountRepository) {
 
-    @GetMapping("/api/admin/accounts")
-    fun findAll() =
-            ok(
-                    accountRepository.findAll()
-                            .map { AccountConverter.fromDomainToAccountApiRepresentation(it) }
-            )
-
     @GetMapping("/api/admin/accounts/{email}/email")
     fun findAccountFor(@PathVariable email: String, authentication: Authentication) =
             ok(
