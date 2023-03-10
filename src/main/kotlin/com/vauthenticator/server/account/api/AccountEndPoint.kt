@@ -36,11 +36,17 @@ class AccountEndPoint(
         @RequestBody representation: FinalAccountRepresentation
     ): ResponseEntity<Unit> {
         val account = fromRepresentationToSignedUpAccount(representation)
-        ofNullable(principal).map { it.clientAppId() }.or {session.oauth2ClientId()}
+        clientAppIdFrom(principal, session)
             .map { executeSignUp(it, account) }
             .orElseThrow()
         return status(HttpStatus.CREATED).build()
     }
+
+    private fun clientAppIdFrom(
+        principal: JwtAuthenticationToken?,
+        session: HttpSession
+    ): Optional<ClientAppId> =
+        ofNullable(principal).map { it.clientAppId() }.or { session.oauth2ClientId() }
 
     private fun executeSignUp(clientAppId: ClientAppId, account: Account) {
         signUpUseCase.execute(clientAppId, account)
