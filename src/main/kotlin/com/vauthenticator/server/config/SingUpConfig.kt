@@ -2,7 +2,7 @@ package com.vauthenticator.server.config
 
 import com.vauthenticator.server.account.mailverification.SendVerifyMailChallenge
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.account.signup.SignUpUseCase
+import com.vauthenticator.server.account.signup.SignUpUse
 import com.vauthenticator.server.account.welcome.SayWelcome
 import com.vauthenticator.server.mail.MailSenderService
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration(proxyBeanMethods = false)
-class SingUpConfiguration {
+class SingUpConfig {
 
     @Bean
     fun signUpUseCase(
@@ -23,8 +23,8 @@ class SingUpConfiguration {
         sendVerifyMailChallenge: SendVerifyMailChallenge,
         vAuthenticatorPasswordEncoder: VAuthenticatorPasswordEncoder,
         sayWelcome: SayWelcome,
-    ): SignUpUseCase =
-        SignUpUseCase(
+    ): SignUpUse =
+        SignUpUse(
             passwordPolicy,
             clientAccountRepository,
             accountRepository,

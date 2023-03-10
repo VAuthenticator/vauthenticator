@@ -2,6 +2,8 @@ package com.vauthenticator.server.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.account.AccountCacheContentConverter
+import com.vauthenticator.server.account.SaveAccount
+import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.account.repository.CachedAccountRepository
 import com.vauthenticator.server.account.repository.DynamoDbAccountRepository
 import com.vauthenticator.server.cache.CacheOperation
@@ -16,6 +18,10 @@ import java.time.Duration
 
 @Configuration(proxyBeanMethods = false)
 class AccountConfig {
+
+    @Bean
+    fun saveAccount(accountRepository: AccountRepository): SaveAccount =
+        SaveAccount(accountRepository)
 
     @Bean
     fun accountRepository(

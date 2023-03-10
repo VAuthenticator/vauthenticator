@@ -11,7 +11,7 @@ import com.vauthenticator.server.oauth2.clientapp.Scope
 import com.vauthenticator.server.password.PasswordPolicy
 import com.vauthenticator.server.password.VAuthenticatorPasswordEncoder
 
-open class SignUpUseCase(
+open class SignUpUse(
     private val passwordPolicy: PasswordPolicy,
     private val clientAccountRepository: ClientApplicationRepository,
     private val accountRepository: AccountRepository,
