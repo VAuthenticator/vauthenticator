@@ -1,11 +1,12 @@
 package com.vauthenticator.server.extentions
 
+import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import jakarta.servlet.http.HttpSession
 import org.springframework.security.web.savedrequest.DefaultSavedRequest
 import java.util.*
 import java.util.Optional.*
 
-fun HttpSession.oauth2ClientId(): Optional<String> =
+fun HttpSession.oauth2ClientId(): Optional<ClientAppId> =
      ofNullable(getAttribute("SPRING_SECURITY_SAVED_REQUEST"))
         .flatMap { savedRequest ->
             when (savedRequest) {
@@ -13,6 +14,7 @@ fun HttpSession.oauth2ClientId(): Optional<String> =
                 else -> empty()
         }
     }.or { ofNullable(this.getAttribute("clientId") as String?) }
+         .map { ClientAppId(it) }
 
 
 private fun clientIdFromSessionWithinA(defaultSavedRequest: DefaultSavedRequest): Optional<String> =

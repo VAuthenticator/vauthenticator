@@ -35,16 +35,10 @@ class AccountEndPoint(
         session: HttpSession,
         @RequestBody representation: FinalAccountRepresentation
     ): ResponseEntity<Unit> {
-        fromRepresentationToSignedUpAccount(representation)
-            .let { account ->
-                ofNullable(principal)
-                    .map { executeSignUp(it.clientAppId(), account) }
-                    .orElseGet {
-                        session.oauth2ClientId()
-                            .map { executeSignUp(ClientAppId(it), account) }
-                            .orElseThrow()
-                    }
-            }
+        val account = fromRepresentationToSignedUpAccount(representation)
+        ofNullable(principal).map { it.clientAppId() }.or {session.oauth2ClientId()}
+            .map { executeSignUp(it, account) }
+            .orElseThrow()
         return status(HttpStatus.CREATED).build()
     }
 

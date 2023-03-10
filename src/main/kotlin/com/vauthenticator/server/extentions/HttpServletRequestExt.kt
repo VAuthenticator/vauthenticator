@@ -1,10 +1,11 @@
 package com.vauthenticator.server.extentions
 
+import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import jakarta.servlet.http.HttpServletRequest
 import java.util.*
 
 
-fun HttpServletRequest.oauth2ClientId(): Optional<String> {
-    return Optional.ofNullable((this.getParameter("client_id") as String?))
+fun HttpServletRequest.oauth2ClientId(): Optional<ClientAppId> {
+    return Optional.ofNullable((this.getParameter("client_id") as String?)).map { ClientAppId(it) }
 
 }
