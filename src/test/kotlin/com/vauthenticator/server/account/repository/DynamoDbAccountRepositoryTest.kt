@@ -14,15 +14,16 @@ import java.util.*
 
 internal class DynamoDbAccountRepositoryTest {
 
-    private val account = com.vauthenticator.server.account.AccountTestFixture.anAccount(listOf(Role("role", "description")))
+    private val account =
+        com.vauthenticator.server.account.AccountTestFixture.anAccount(listOf(Role("role", "description")))
     private lateinit var accountRepository: DynamoDbAccountRepository
 
     @BeforeEach
     fun setUp() {
         accountRepository = DynamoDbAccountRepository(
-                dynamoDbClient,
-                dynamoAccountTableName,
-                dynamoAccountRoleTableName
+            dynamoDbClient,
+            dynamoAccountTableName,
+            dynamoAccountRoleTableName
         )
     }
 
@@ -68,12 +69,12 @@ internal class DynamoDbAccountRepositoryTest {
     fun `when overrides authorities to an accounts`() {
         val anAccount = account.copy()
         val anotherAccount = account.copy(
-                authorities = listOf("A_ROLE")
+            authorities = listOf("A_ROLE")
         )
         accountRepository.save(anAccount)
         accountRepository.save(anotherAccount)
 
-        assertEquals(accountRepository.accountFor(anAccount.username), anotherAccount)
+        assertEquals(accountRepository.accountFor(anAccount.username), Optional.of(anotherAccount))
     }
 
     @Test
@@ -81,7 +82,7 @@ internal class DynamoDbAccountRepositoryTest {
         val anAccount = account.copy()
         accountRepository.create(anAccount)
 
-        assertEquals(accountRepository.accountFor(anAccount.username), anAccount)
+        assertEquals(accountRepository.accountFor(anAccount.username), Optional.of(anAccount))
     }
 
     @Test
