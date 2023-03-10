@@ -3,24 +3,21 @@ package com.vauthenticator.server.extentions
 import jakarta.servlet.http.HttpSession
 import org.springframework.security.web.savedrequest.DefaultSavedRequest
 import java.util.*
+import java.util.Optional.*
 
-fun HttpSession.oauth2ClientId(): Optional<String> {
-    val attribute = Optional.ofNullable(this.getAttribute("SPRING_SECURITY_SAVED_REQUEST"))
-    return attribute.flatMap { savedRequest ->
-        when (savedRequest) {
-            is DefaultSavedRequest -> clientIdFromSessionWithinA(savedRequest)
-            else -> Optional.empty()
+fun HttpSession.oauth2ClientId(): Optional<String> =
+     ofNullable(getAttribute("SPRING_SECURITY_SAVED_REQUEST"))
+        .flatMap { savedRequest ->
+            when (savedRequest) {
+                is DefaultSavedRequest -> clientIdFromSessionWithinA(savedRequest)
+                else -> empty()
         }
+    }.or { ofNullable(this.getAttribute("clientId") as String?) }
 
-    }
 
-}
-
-private fun clientIdFromSessionWithinA(defaultSavedRequest: DefaultSavedRequest): Optional<String> {
-    return if (defaultSavedRequest.parameterNames.contains("client_id")) {
-        Optional.ofNullable(defaultSavedRequest.getParameterValues("client_id").firstOrNull())
+private fun clientIdFromSessionWithinA(defaultSavedRequest: DefaultSavedRequest): Optional<String> =
+     if (defaultSavedRequest.parameterNames.contains("client_id")) {
+        ofNullable(defaultSavedRequest.getParameterValues("client_id").firstOrNull())
     } else {
-        Optional.empty()
+        empty()
     }
-
-}

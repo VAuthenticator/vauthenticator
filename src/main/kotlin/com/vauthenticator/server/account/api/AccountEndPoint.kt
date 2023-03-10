@@ -8,6 +8,7 @@ import com.vauthenticator.server.account.api.SignUpAccountConverter.fromRepresen
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.account.signup.SignUpUseCase
 import com.vauthenticator.server.extentions.clientAppId
+import com.vauthenticator.server.extentions.oauth2ClientId
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import jakarta.servlet.http.HttpSession
 import org.slf4j.Logger
@@ -39,7 +40,7 @@ class AccountEndPoint(
                 ofNullable(principal)
                     .map { executeSignUp(it.clientAppId(), account) }
                     .orElseGet {
-                        ofNullable(session.getAttribute("clientId") as String?)
+                        session.oauth2ClientId()
                             .map { executeSignUp(ClientAppId(it), account) }
                             .orElseThrow()
                     }
