@@ -48,6 +48,7 @@ internal class AccountEndPointTest {
         birthDate = "",
         phone = Phone.nullValue().formattedPhone()
     )
+
     private val masterAccount = anAccount().copy(
         accountNonExpired = true,
         emailVerified = false,

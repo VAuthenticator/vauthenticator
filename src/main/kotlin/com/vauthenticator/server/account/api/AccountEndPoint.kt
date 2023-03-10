@@ -35,7 +35,7 @@ class AccountEndPoint(
     ): ResponseEntity<Unit> {
         val account = fromRepresentationToSignedUpAccount(representation)
         clientAppIdFrom(principal, session)
-            .map {signUpUse.execute(it, account) }
+            .map { signUpUse.execute(it, account) }
             .orElseThrow()
         return status(HttpStatus.CREATED).build()
     }
@@ -54,8 +54,7 @@ class AccountEndPoint(
         logWarningForNotEmptyUserNameInRequestBodyFor(representation)
         val incompleteAccount = fromRepresentationToSignedUpAccount(representation)
         return saveAccount.execute(principal, incompleteAccount)
-            .map { ResponseEntity.noContent().build<Unit>() }
-            .orElseGet { ResponseEntity.noContent().build() }
+            .let { ResponseEntity.noContent().build() }
     }
 
     private fun logWarningForNotEmptyUserNameInRequestBodyFor(representation: FinalAccountRepresentation) {

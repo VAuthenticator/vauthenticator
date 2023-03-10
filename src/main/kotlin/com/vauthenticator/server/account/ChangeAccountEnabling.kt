@@ -10,8 +10,8 @@ class ChangeAccountEnabling(private val accountRepository: AccountRepository) {
         accountLocked: Boolean,
         enabled: Boolean,
         authorities: List<String>
-    ): Optional<Unit> = accountRepository.accountFor(email)
-        .map { account ->
+    ) = accountRepository.accountFor(email)
+        .ifPresent { account ->
             accountRepository.save(
                 account.copy(
                     accountNonLocked = !accountLocked,

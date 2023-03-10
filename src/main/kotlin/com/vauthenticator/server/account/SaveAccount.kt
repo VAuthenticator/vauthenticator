@@ -2,14 +2,20 @@ package com.vauthenticator.server.account
 
 import com.vauthenticator.server.account.repository.AccountRepository
 import java.security.Principal
-import java.util.*
 
 class SaveAccount(private val accountRepository: AccountRepository) {
-    fun execute(principal: Principal, account: Account): Optional<Unit> {
+    fun execute(principal: Principal, account: Account) {
         return accountRepository.accountFor(principal.name)
-            .map {
+            .ifPresent {
                 val accountToBeSaved = account.copy(
                     email = principal.name,
+
+                    firstName = account.firstName,
+                    lastName = account.lastName,
+                    birthDate = account.birthDate,
+                    phone = account.phone,
+                    locale = account.locale,
+
                     password = it.password,
                     authorities = it.authorities,
                     accountNonExpired = it.accountNonExpired,

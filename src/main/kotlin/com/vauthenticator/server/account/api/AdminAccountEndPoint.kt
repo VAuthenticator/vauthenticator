@@ -31,9 +31,7 @@ class AdminAccountEndPoint(
             representation.accountLocked,
             representation.enabled,
             representation.authorities
-        )
-            .map { noContent().build<Unit>() }
-            .orElse(noContent().build())
+        ).let { noContent().build<Unit>() }
 
 }
 
