@@ -73,7 +73,7 @@ internal class DynamoDbAccountRepositoryTest {
         accountRepository.save(anAccount)
         accountRepository.save(anotherAccount)
 
-        assertEquals(accountRepository.accountFor(anAccount.username), listOf(anotherAccount))
+        assertEquals(accountRepository.accountFor(anAccount.username), anotherAccount)
     }
 
     @Test
@@ -81,7 +81,7 @@ internal class DynamoDbAccountRepositoryTest {
         val anAccount = account.copy()
         accountRepository.create(anAccount)
 
-        assertEquals(accountRepository.accountFor(anAccount.username), listOf(anAccount))
+        assertEquals(accountRepository.accountFor(anAccount.username), anAccount)
     }
 
     @Test
