@@ -44,7 +44,7 @@ class ChangeAccountEnablingTest {
         val account = anAccount().copy(accountNonLocked = false, enabled = true, authorities = listOf("A_ROLE"))
         every { accountRepository.accountFor(account.email) } returns Optional.empty()
 
-        underTest.execute(account.email, true, true, listOf("A_ROLE"))
+        underTest.execute(account.email, accountLocked = true, enabled = true, authorities = listOf("A_ROLE"))
 
         verify { accountRepository.accountFor(account.email) }
         verify(exactly = 0) { accountRepository.save(account) }
