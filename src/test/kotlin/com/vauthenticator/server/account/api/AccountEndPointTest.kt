@@ -26,6 +26,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import java.util.*
 
+private const val ENDPOINT = "/api/accounts"
+private const val EMAIL = "email@domain.com"
+
 @ExtendWith(MockKExtension::class)
 internal class AccountEndPointTest {
 
@@ -40,7 +43,7 @@ internal class AccountEndPointTest {
     private val objectMapper = ObjectMapper()
 
     private val representation = FinalAccountRepresentation(
-        email = "email@domain.com",
+        email = EMAIL,
         password = "secret",
         firstName = "A First Name",
         lastName = "A Last Name",
@@ -69,9 +72,9 @@ internal class AccountEndPointTest {
         every { signUpUse.execute(ClientAppId(clientAppId), masterAccount) } just runs
 
         mokMvc.perform(
-            post("/api/accounts")
+            post(ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
-                .principal(principalFor(clientAppId, "email@domain.com", listOf("VAUTHENTICATOR_ADMIN")))
+                .principal(principalFor(clientAppId, EMAIL, listOf("VAUTHENTICATOR_ADMIN")))
                 .content(objectMapper.writeValueAsString(representation))
         )
             .andExpect(MockMvcResultMatchers.status().isCreated)
@@ -87,7 +90,7 @@ internal class AccountEndPointTest {
         every { signUpUse.execute(ClientAppId(clientAppId), masterAccount) } just runs
 
         mokMvc.perform(
-            post("/api/accounts")
+            post(ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
                 .sessionAttr("clientId", "A_CLIENT_APP_ID")
                 .content(objectMapper.writeValueAsString(representation))
@@ -109,13 +112,13 @@ internal class AccountEndPointTest {
         )
         val clientAppId = "A_CLIENT_APP_ID"
 
-        every { accountRepository.accountFor("email@domain.com") } returns Optional.of(masterAccount)
+        every { accountRepository.accountFor(EMAIL) } returns Optional.of(masterAccount)
         every { accountRepository.save(masterAccount) } just runs
 
         mokMvc.perform(
-            MockMvcRequestBuilders.put("/api/accounts")
+            MockMvcRequestBuilders.put(ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
-                .principal(principalFor(clientAppId, "email@domain.com", listOf("VAUTHENTICATOR_ADMIN")))
+                .principal(principalFor(clientAppId, EMAIL, listOf("VAUTHENTICATOR_ADMIN")))
                 .content(objectMapper.writeValueAsString(representation))
         )
             .andExpect(MockMvcResultMatchers.status().isNoContent)
