@@ -1,8 +1,6 @@
 package com.vauthenticator.server.account
 
 import com.vauthenticator.server.account.repository.AccountRepository
-import java.security.Principal
-import java.util.*
 
 class ChangeAccountEnabling(private val accountRepository: AccountRepository) {
     fun execute(
