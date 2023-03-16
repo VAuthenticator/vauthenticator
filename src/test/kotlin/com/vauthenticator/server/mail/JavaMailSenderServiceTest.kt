@@ -6,26 +6,26 @@ import com.icegreen.greenmail.junit5.GreenMailExtension
 import com.icegreen.greenmail.util.ServerSetupTest
 import com.vauthenticator.server.account.AccountTestFixture.anAccount
 import com.vauthenticator.server.document.DocumentRepository
+import io.mockk.every
+import io.mockk.mockk
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
-import org.mockito.BDDMockito.given
-import org.mockito.Mockito.mock
 import org.springframework.mail.javamail.JavaMailSenderImpl
 
 internal class JavaMailSenderServiceTest {
     @RegisterExtension
     val greenMail: GreenMailExtension = GreenMailExtension(ServerSetupTest.SMTP)
-            .withConfiguration(GreenMailConfiguration.aConfig().withUser("user", "pwd"))
-            .withPerMethodLifecycle(true)
+        .withConfiguration(GreenMailConfiguration.aConfig().withUser("user", "pwd"))
+        .withPerMethodLifecycle(true)
 
 
     private val mail = "mail@mail.com"
     private val subject = "test"
 
     private lateinit var mailSenderService: MailSenderService
-    private val documentRepository: DocumentRepository = mock(DocumentRepository::class.java)
+    private val documentRepository: DocumentRepository = mockk()
 
     private val templateResolver: MailTemplateResolver = JinjavaMailTemplateResolver(Jinjava())
 
@@ -36,19 +36,23 @@ internal class JavaMailSenderServiceTest {
         javaMailSender.username = "user"
         return javaMailSender
     }
+
     private fun simpleMailMessageFactoryFor(mailType: MailType) = SimpleMailMessageFactory(mail, subject, mailType)
 
     @Test
     @Disabled
     internal fun `when a welcome mail is sent`() {
         val account = anAccount().copy(firstName = "Jhon", lastName = "Miller")
-        val mailTemplateContent = "hi {{ firstName }} {{ lastName }} your signup to vauthenticator succeeded".toByteArray()
+        val mailTemplateContent =
+            "hi {{ firstName }} {{ lastName }} your signup to vauthenticator succeeded".toByteArray()
 
-        mailSenderService = JavaMailSenderService(documentRepository, newJavaMail(), templateResolver, simpleMailMessageFactoryFor(
-            MailType.WELCOME))
+        mailSenderService = JavaMailSenderService(
+            documentRepository, newJavaMail(), templateResolver, simpleMailMessageFactoryFor(
+                MailType.WELCOME
+            )
+        )
 
-        given(documentRepository.loadDocument("mail", MailType.WELCOME.path))
-                .willReturn(mailTemplateContent)
+        every { documentRepository.loadDocument("mail", MailType.WELCOME.path) } returns mailTemplateContent
 
 
         mailSenderService.sendFor(account)
@@ -64,39 +68,57 @@ internal class JavaMailSenderServiceTest {
     @Disabled
     internal fun `when a mail verification mail is sent`() {
         val account = anAccount().copy(firstName = "Jhon", lastName = "Miller")
-        val mailTemplateContent = "hi {{ firstName }} {{ lastName }} in order to verify your mail click <a href='{{ mailVerificationTicket }}'>here</a>".toByteArray()
+        val mailTemplateContent =
+            "hi {{ firstName }} {{ lastName }} in order to verify your mail click <a href='{{ mailVerificationTicket }}'>here</a>".toByteArray()
 
-        mailSenderService = JavaMailSenderService(documentRepository, newJavaMail(), templateResolver, simpleMailMessageFactoryFor(
-            MailType.EMAIL_VERIFICATION))
+        mailSenderService = JavaMailSenderService(
+            documentRepository, newJavaMail(), templateResolver, simpleMailMessageFactoryFor(
+                MailType.EMAIL_VERIFICATION
+            )
+        )
 
-        given(documentRepository.loadDocument("mail", MailType.EMAIL_VERIFICATION.path))
-                .willReturn(mailTemplateContent)
+        every { documentRepository.loadDocument("mail", MailType.EMAIL_VERIFICATION.path) } returns mailTemplateContent
 
-        mailSenderService.sendFor(account, mapOf("mailVerificationTicket" to "https://vauthenticator.com/mail-verify/uuid-1234-uuid"))
+        mailSenderService.sendFor(
+            account,
+            mapOf("mailVerificationTicket" to "https://vauthenticator.com/mail-verify/uuid-1234-uuid")
+        )
         val mail = greenMail.receivedMessages[0]
         assertEquals(account.email, mail.allRecipients[0].toString())
         assertEquals(this.mail, mail.from[0].toString())
         assertEquals(subject, mail.subject)
-        assertEquals("hi Jhon Miller in order to verify your mail click <a href='https://vauthenticator.com/mail-verify/uuid-1234-uuid'>here</a>", mail.content.toString().trim())
+        assertEquals(
+            "hi Jhon Miller in order to verify your mail click <a href='https://vauthenticator.com/mail-verify/uuid-1234-uuid'>here</a>",
+            mail.content.toString().trim()
+        )
     }
 
     @Test
     @Disabled
     internal fun `when a reset password mail is sent`() {
         val account = anAccount().copy(firstName = "Jhon", lastName = "Miller")
-        val mailTemplateContent = "hi {{ firstName }} {{ lastName }} in order to reset your password click <a href='{{ resetPasswordLink }}'>here</a>".toByteArray()
+        val mailTemplateContent =
+            "hi {{ firstName }} {{ lastName }} in order to reset your password click <a href='{{ resetPasswordLink }}'>here</a>".toByteArray()
 
-        mailSenderService = JavaMailSenderService(documentRepository, newJavaMail(), templateResolver, simpleMailMessageFactoryFor(
-            MailType.RESET_PASSWORD))
+        mailSenderService = JavaMailSenderService(
+            documentRepository, newJavaMail(), templateResolver, simpleMailMessageFactoryFor(
+                MailType.RESET_PASSWORD
+            )
+        )
 
-        given(documentRepository.loadDocument("mail", MailType.RESET_PASSWORD.path))
-                .willReturn(mailTemplateContent)
+        every { documentRepository.loadDocument("mail", MailType.RESET_PASSWORD.path) } returns mailTemplateContent
 
-        mailSenderService.sendFor(account, mapOf("resetPasswordLink" to "https://vauthenticator.com/reset-password/uuid-1234-uuid"))
+        mailSenderService.sendFor(
+            account,
+            mapOf("resetPasswordLink" to "https://vauthenticator.com/reset-password/uuid-1234-uuid")
+        )
         val mail = greenMail.receivedMessages[0]
         assertEquals(account.email, mail.allRecipients[0].toString())
         assertEquals(this.mail, mail.from[0].toString())
         assertEquals(subject, mail.subject)
-        assertEquals("hi Jhon Miller in order to reset your password click <a href='https://vauthenticator.com/reset-password/uuid-1234-uuid'>here</a>", mail.content.toString().trim())
+        assertEquals(
+            "hi Jhon Miller in order to reset your password click <a href='https://vauthenticator.com/reset-password/uuid-1234-uuid'>here</a>",
+            mail.content.toString().trim()
+        )
     }
 }
