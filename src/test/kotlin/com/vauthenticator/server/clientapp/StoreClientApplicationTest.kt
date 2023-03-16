@@ -2,23 +2,24 @@ package com.vauthenticator.server.clientapp
 
 import com.vauthenticator.server.oauth2.clientapp.*
 import com.vauthenticator.server.password.VAuthenticatorPasswordEncoder
-import org.junit.jupiter.api.Assertions
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
+import io.mockk.just
+import io.mockk.runs
+import io.mockk.verify
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.BDDMockito.given
-import org.mockito.BDDMockito.verify
-import org.mockito.Mock
-import org.mockito.Mockito.times
-import org.mockito.junit.jupiter.MockitoExtension
 import java.util.*
 
-@ExtendWith(MockitoExtension::class)
+@ExtendWith(MockKExtension::class)
 class StoreClientApplicationTest {
 
-    @Mock
+    @MockK
     lateinit var clientApplicationRepository: ClientApplicationRepository
 
-    @Mock
+    @MockK
     lateinit var passwordEncoder: VAuthenticatorPasswordEncoder
 
     @Test
@@ -26,12 +27,12 @@ class StoreClientApplicationTest {
         val storeClientApplication = StoreClientApplication(clientApplicationRepository, passwordEncoder)
         val aClientApp = ClientAppFixture.aClientApp(ClientAppId("AN_ID"))
 
-        given(passwordEncoder.encode(aClientApp.secret.content))
-                .willReturn(aClientApp.secret.content)
+        every { passwordEncoder.encode(aClientApp.secret.content) } returns aClientApp.secret.content
+        every { clientApplicationRepository.save(aClientApp) } just runs
 
         storeClientApplication.store(aClientApp, true)
-        verify(passwordEncoder).encode(aClientApp.secret.content)
-        verify(clientApplicationRepository).save(aClientApp)
+        verify { passwordEncoder.encode(aClientApp.secret.content) }
+        verify { clientApplicationRepository.save(aClientApp) }
     }
 
     @Test
@@ -40,14 +41,14 @@ class StoreClientApplicationTest {
         val clientAppId = ClientAppId("AN_ID")
         val aClientApp = ClientAppFixture.aClientApp(clientAppId)
 
-        given(clientApplicationRepository.findOne(clientAppId))
-                .willReturn(Optional.of(aClientApp))
+        every { clientApplicationRepository.findOne(clientAppId) } returns Optional.of(aClientApp)
+        every { clientApplicationRepository.save(aClientApp) } just runs
 
         storeClientApplication.store(aClientApp, false)
 
-        verify(passwordEncoder, times(0)).encode(aClientApp.secret.content)
-        verify(clientApplicationRepository).findOne(clientAppId)
-        verify(clientApplicationRepository).save(aClientApp)
+        verify(exactly = 0) { passwordEncoder.encode(aClientApp.secret.content) }
+        verify { clientApplicationRepository.findOne(clientAppId) }
+        verify { clientApplicationRepository.save(aClientApp) }
     }
 
     @Test
@@ -57,17 +58,15 @@ class StoreClientApplicationTest {
         val aClientApp = ClientAppFixture.aClientApp(clientAppId)
         val updatedClientApp = ClientAppFixture.aClientApp(clientAppId, password = Secret("A_NEW_PASSWORD"))
 
-        given(clientApplicationRepository.findOne(clientAppId))
-                .willReturn(Optional.of(aClientApp))
-
-        given(passwordEncoder.encode("A_NEW_PASSWORD"))
-                .willReturn("A_NEW_PASSWORD")
+        every { clientApplicationRepository.findOne(clientAppId) } returns Optional.of(aClientApp)
+        every { passwordEncoder.encode("A_NEW_PASSWORD") } returns "A_NEW_PASSWORD"
+        every { clientApplicationRepository.save(updatedClientApp) } just runs
 
         storeClientApplication.resetPassword(clientAppId, Secret("A_NEW_PASSWORD"))
 
-        verify(passwordEncoder).encode("A_NEW_PASSWORD")
-        verify(clientApplicationRepository).findOne(clientAppId)
-        verify(clientApplicationRepository).save(updatedClientApp)
+        verify { passwordEncoder.encode("A_NEW_PASSWORD") }
+        verify { clientApplicationRepository.findOne(clientAppId) }
+        verify { clientApplicationRepository.save(updatedClientApp) }
     }
 
     @Test
@@ -75,11 +74,9 @@ class StoreClientApplicationTest {
         val storeClientApplication = StoreClientApplication(clientApplicationRepository, passwordEncoder)
         val clientAppId = ClientAppId("AN_ID")
 
-        given(clientApplicationRepository.findOne(clientAppId))
-                .willReturn(Optional.empty())
+        every { clientApplicationRepository.findOne(clientAppId) } returns Optional.empty()
 
-        Assertions.assertThrows(ClientApplicationNotFound::class.java)
-        {
+        assertThrows(ClientApplicationNotFound::class.java) {
             storeClientApplication.resetPassword(clientAppId, Secret("A_NEW_PASSWORD"))
         }
     }

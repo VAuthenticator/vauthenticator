@@ -1,70 +1,74 @@
 package com.vauthenticator.server.account.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.vauthenticator.server.account.AccountTestFixture
+import com.vauthenticator.server.account.ChangeAccountEnabling
 import com.vauthenticator.server.account.repository.AccountRepository
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
+import io.mockk.just
+import io.mockk.runs
+import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.BDDMockito.given
-import org.mockito.Mock
-import org.mockito.Mockito
-import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import java.util.*
 
-@ExtendWith(MockitoExtension::class)
+@ExtendWith(MockKExtension::class)
 internal class AdminAccountEndPointTest {
 
     lateinit var mokMvc: MockMvc
 
-    @Mock
+    @MockK
     lateinit var accountRepository: AccountRepository
 
-    val objectMapper = ObjectMapper()
+    private val objectMapper = ObjectMapper()
 
     @BeforeEach
     internal fun setUp() {
-        mokMvc = MockMvcBuilders.standaloneSetup(AdminAccountEndPoint(accountRepository)).build()
-    }
-
-    @Test
-    internal fun `find all accounts`() {
-        val expectedRepresentation = listOf(
-                AdminAccountApiRepresentation(email = "anemain@domain.com"),
-                AdminAccountApiRepresentation(email = "anotheremain@domain.com")
-        )
-        val masterAccount = com.vauthenticator.server.account.AccountTestFixture.anAccount()
-
-        given(accountRepository.findAll())
-                .willReturn(
-                        listOf(
-                                masterAccount.copy(email = "anemain@domain.com"),
-                                masterAccount.copy(email = "anotheremain@domain.com")
-                        )
-                )
-        mokMvc.perform(get("/api/admin/accounts"))
-                .andExpect(content().string(objectMapper.writeValueAsString(expectedRepresentation)))
+        mokMvc = MockMvcBuilders.standaloneSetup(
+            AdminAccountEndPoint(
+                accountRepository,
+                ChangeAccountEnabling(accountRepository)
+            )
+        ).build()
     }
 
     @Test
     internal fun `set an account as disabled`() {
         val representation = AdminAccountApiRepresentation(email = "anemail@domain.com", enabled = false)
-        val masterAccount = com.vauthenticator.server.account.AccountTestFixture.anAccount().copy(enabled = false)
+        val masterAccount = AccountTestFixture.anAccount().copy(enabled = false)
 
-        given(accountRepository.accountFor("anemain@domain.com"))
-                .willReturn(Optional.of(com.vauthenticator.server.account.AccountTestFixture.anAccount()))
+        every { accountRepository.accountFor("anemain@domain.com") } returns Optional.of(AccountTestFixture.anAccount())
+        every { accountRepository.save(masterAccount) } just runs
 
-        mokMvc.perform(put("/api/admin/accounts/anemain@domain.com/email")
+        mokMvc.perform(
+            put("/api/admin/accounts/anemain@domain.com/email")
                 .contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(representation)))
-                .andExpect(status().isNoContent)
+                .content(objectMapper.writeValueAsString(representation))
+        )
+            .andExpect(status().isNoContent)
 
-        Mockito.verify(accountRepository).save(masterAccount)
+        verify { accountRepository.save(masterAccount) }
+    }
+
+    @Test
+    internal fun `when the account is not found`() {
+        val representation = AdminAccountApiRepresentation(email = "anemail@domain.com", enabled = false)
+
+        every { accountRepository.accountFor("anemain@domain.com") } returns Optional.empty()
+
+        mokMvc.perform(
+            put("/api/admin/accounts/anemain@domain.com/email")
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(representation))
+        )
+            .andExpect(status().isNoContent)
     }
 }

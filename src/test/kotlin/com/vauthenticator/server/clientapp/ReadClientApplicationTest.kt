@@ -2,18 +2,18 @@ package com.vauthenticator.server.clientapp
 
 import com.vauthenticator.server.clientapp.ClientAppFixture.aClientApp
 import com.vauthenticator.server.oauth2.clientapp.*
-import org.junit.jupiter.api.Assertions
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.BDDMockito.given
-import org.mockito.Mock
-import org.mockito.junit.jupiter.MockitoExtension
 import java.util.*
 
-@ExtendWith(MockitoExtension::class)
+@ExtendWith(MockKExtension::class)
 class ReadClientApplicationTest {
 
-    @Mock
+    @MockK
     lateinit var clientApplicationRepository: ClientApplicationRepository
 
     @Test
@@ -21,11 +21,10 @@ class ReadClientApplicationTest {
         val clientAppId = ClientAppId("AN_ID")
         val readClientApplication = ReadClientApplication(clientApplicationRepository)
 
-        given(clientApplicationRepository.findOne(clientAppId))
-                .willReturn(Optional.of(aClientApp(clientAppId)))
+        every { clientApplicationRepository.findOne(clientAppId) } returns Optional.of(aClientApp(clientAppId))
 
         val actual: Optional<ClientApplication> = readClientApplication.findOne(clientAppId)
-        Assertions.assertEquals(actual,Optional.of(aClientApp(clientAppId, Secret("*******"))))
+        assertEquals(actual, Optional.of(aClientApp(clientAppId, Secret("*******"))))
     }
 
     @Test
@@ -33,10 +32,9 @@ class ReadClientApplicationTest {
         val clientAppId = ClientAppId("AN_ID")
         val readClientApplication = ReadClientApplication(clientApplicationRepository)
 
-        given(clientApplicationRepository.findAll())
-                .willReturn(listOf(aClientApp(clientAppId)))
+        every { clientApplicationRepository.findAll() } returns listOf(aClientApp(clientAppId))
 
         val actual: List<ClientApplication> = readClientApplication.findAll()
-        Assertions.assertEquals(actual, listOf(aClientApp(clientAppId, Secret("*******"))))
+        assertEquals(actual, listOf(aClientApp(clientAppId, Secret("*******"))))
     }
 }

@@ -6,8 +6,6 @@ import software.amazon.awssdk.services.dynamodb.model.*
 
 object DynamoAccountQueryFactory {
 
-    fun findAllAccountQueryFor(table: String): ScanRequest = ScanRequest.builder().tableName(table).build()
-
     fun findAccountQueryForUserName(username: String, table: String): GetItemRequest = GetItemRequest.builder()
             .tableName(table)
             .key(

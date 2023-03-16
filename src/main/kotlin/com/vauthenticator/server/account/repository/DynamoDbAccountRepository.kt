@@ -7,13 +7,11 @@ import com.vauthenticator.server.account.repository.DynamoAccountConverter.fromD
 import com.vauthenticator.server.account.repository.DynamoAccountQueryFactory.deleteAccountRoleQueryFor
 import com.vauthenticator.server.account.repository.DynamoAccountQueryFactory.findAccountQueryForUserName
 import com.vauthenticator.server.account.repository.DynamoAccountQueryFactory.findAccountRoleByUserNameQueryFor
-import com.vauthenticator.server.account.repository.DynamoAccountQueryFactory.findAllAccountQueryFor
 import com.vauthenticator.server.account.repository.DynamoAccountQueryFactory.storeAccountQueryFor
 import com.vauthenticator.server.account.repository.DynamoAccountQueryFactory.storeAccountRoleQueryFor
 import com.vauthenticator.server.extentions.filterEmptyAccountMetadata
 import com.vauthenticator.server.extentions.valueAsStringFor
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 import software.amazon.awssdk.services.dynamodb.model.ConditionalCheckFailedException
 import java.util.*
 
@@ -22,21 +20,6 @@ class DynamoDbAccountRepository(
         private val dynamoAccountTableName: String,
         private val dynamoAccountRoleTableName: String
 ) : AccountRepository {
-
-    override fun findAll(eagerRolesLoad: Boolean): List<Account> =
-            findAllFromDynamo()
-                    .map(this::convertAccountFrom)
-
-    private fun findAllFromDynamo() =
-            dynamoDbClient.scan(
-                    findAllAccountQueryFor(dynamoAccountTableName)
-            ).items()
-
-    private fun convertAccountFrom(accountDynamoItem: MutableMap<String, AttributeValue>): Account {
-        val authorities: List<String> = findAuthoritiesNameFor(accountDynamoItem.valueAsStringFor("user_name"))
-        return fromDynamoToDomain(accountDynamoItem, authorities)
-    }
-
 
     override fun accountFor(username: String): Optional<Account> {
         return Optional.ofNullable(findAccountFor(username))

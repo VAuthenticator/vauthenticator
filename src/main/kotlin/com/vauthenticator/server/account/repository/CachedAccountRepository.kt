@@ -4,6 +4,7 @@ import com.vauthenticator.server.account.Account
 import com.vauthenticator.server.cache.CacheContentConverter
 import com.vauthenticator.server.cache.CacheOperation
 import java.util.*
+import java.util.Optional.*
 
 class CachedAccountRepository(
     private val cacheContentConverter: CacheContentConverter<Account>,
@@ -13,7 +14,7 @@ class CachedAccountRepository(
 
     override fun accountFor(username: String): Optional<Account> {
         return cacheOperation.get(username)
-            .flatMap { Optional.of(cacheContentConverter.getObjectFromCacheContentFor(it)) }
+            .flatMap { of(cacheContentConverter.getObjectFromCacheContentFor(it)) }
             .or {
                 val loadedAccount = delegate.accountFor(username)
                 loadedAccount.ifPresent {

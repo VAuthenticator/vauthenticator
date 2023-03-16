@@ -42,13 +42,13 @@ class LoginPageController(
     }
 
     private fun clientAppFeaturesFor(
-        clientId: Optional<String>,
+        clientId: Optional<ClientAppId>,
         model: Model,
         features: MutableMap<String, Boolean>
     ) {
         clientId.ifPresent {
-            model.addAttribute("clientId", it)
-            clientApplicationRepository.findOne(ClientAppId(it))
+            model.addAttribute("clientId", it.content)
+            clientApplicationRepository.findOne(it)
                 .map { clientApp ->
                     logger.debug("clientApp.scopes.content: ${clientApp.scopes.content}")
                     features[ClientApplicationFeatures.SIGNUP.value] = clientApp.scopes.content.contains(Scope.SIGN_UP)

@@ -29,7 +29,7 @@ class SpringEventEventsDispatcher(private val publisher: ApplicationEventPublish
         val currentRequest = httpServletRequestFromRequestContextHolder()
         clientIdForm(currentRequest)
             .ifPresentOrElse(
-                { dispatchAdaptedEventFor(currentRequest, it, event) },
+                { dispatchAdaptedEventFor(currentRequest, it.content, event) },
                 { logger.debug("PRE EVENT NOT PROCESSED") }
             )
     }
@@ -39,7 +39,7 @@ class SpringEventEventsDispatcher(private val publisher: ApplicationEventPublish
         return (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes).request
     }
 
-    private fun clientIdForm(currentRequest: HttpServletRequest): Optional<String> =
+    private fun clientIdForm(currentRequest: HttpServletRequest): Optional<ClientAppId> =
         currentRequest.oauth2ClientId().or { currentRequest.session.oauth2ClientId() }
 
     private fun dispatchAdaptedEventFor(

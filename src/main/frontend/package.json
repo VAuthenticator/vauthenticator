@@ -1,6 +1,6 @@
 {
   "name": "vautehenticator-asset",
-  "version": "1.1.0",
+  "version": "0.6",
   "description": "VAuthenticator UI Asset library",
   "babel": {
     "presets": [

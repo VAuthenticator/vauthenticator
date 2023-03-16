@@ -21,7 +21,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import java.util.*
 
 @ExtendWith(MockKExtension::class)
-internal class SignUpUseCaseTest {
+internal class SignUpUseTest {
 
     @MockK
     lateinit var accountRepository: AccountRepository
@@ -41,11 +41,11 @@ internal class SignUpUseCaseTest {
     @MockK
     lateinit var sendVerifyMailChallenge: SendVerifyMailChallenge
 
-    private lateinit var underTest: SignUpUseCase
+    private lateinit var underTest: SignUpUse
 
     @BeforeEach
     internal fun setUp() {
-        underTest = SignUpUseCase(
+        underTest = SignUpUse(
             passwordPolicy,
             clientAccountRepository,
             accountRepository,

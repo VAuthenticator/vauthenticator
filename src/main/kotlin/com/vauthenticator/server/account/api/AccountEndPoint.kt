@@ -1,13 +1,11 @@
 package com.vauthenticator.server.account.api
 
-import com.vauthenticator.server.account.Account
+import com.vauthenticator.server.account.*
 import com.vauthenticator.server.account.Date
-import com.vauthenticator.server.account.Phone
-import com.vauthenticator.server.account.UserLocale
 import com.vauthenticator.server.account.api.SignUpAccountConverter.fromRepresentationToSignedUpAccount
-import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.account.signup.SignUpUseCase
+import com.vauthenticator.server.account.signup.SignUpUse
 import com.vauthenticator.server.extentions.clientAppId
+import com.vauthenticator.server.extentions.oauth2ClientId
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import jakarta.servlet.http.HttpSession
 import org.slf4j.Logger
@@ -15,6 +13,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.status
+import org.springframework.security.core.context.SecurityContextHolder.*
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.web.bind.annotation.*
 import java.util.*
@@ -23,8 +22,8 @@ import java.util.Optional.ofNullable
 @RestController
 @SessionAttributes("clientId")
 class AccountEndPoint(
-    private val signUpUseCase: SignUpUseCase,
-    private val accountRepository: AccountRepository
+    private val signUpUse: SignUpUse,
+    private val saveAccount: SaveAccount
 ) {
     val logger: Logger = LoggerFactory.getLogger(AccountEndPoint::class.java)
 
@@ -34,56 +33,28 @@ class AccountEndPoint(
         session: HttpSession,
         @RequestBody representation: FinalAccountRepresentation
     ): ResponseEntity<Unit> {
-        fromRepresentationToSignedUpAccount(representation)
-            .let { account ->
-                ofNullable(principal)
-                    .map { executeSignUp(it.clientAppId(), account) }
-                    .orElseGet {
-                        ofNullable(session.getAttribute("clientId") as String?)
-                            .map { executeSignUp(ClientAppId(it), account) }
-                            .orElseThrow()
-                    }
-            }
+        val account = fromRepresentationToSignedUpAccount(representation)
+        clientAppIdFrom(principal, session)
+            .map { signUpUse.execute(it, account) }
+            .orElseThrow()
         return status(HttpStatus.CREATED).build()
     }
 
-    private fun executeSignUp(clientAppId: ClientAppId, account: Account) {
-        signUpUseCase.execute(clientAppId, account)
-    }
+    private fun clientAppIdFrom(
+        principal: JwtAuthenticationToken?,
+        session: HttpSession
+    ): Optional<ClientAppId> =
+        ofNullable(principal).map { it.clientAppId() }.or { session.oauth2ClientId() }
 
     @PutMapping("/api/accounts")
     fun save(
         principal: JwtAuthenticationToken,
         @RequestBody representation: FinalAccountRepresentation
     ): ResponseEntity<Unit> {
-        //todo should be an use case start
-        val userName = principal.name
-
         logWarningForNotEmptyUserNameInRequestBodyFor(representation)
-        return accountRepository.accountFor(userName)
-            .map { account ->
-                val filledRepresentation = representation.copy(
-                    email = userName,
-                    password = account.password,
-                    authorities = account.authorities
-                )
-                val accountToBeSaved = fromRepresentationToSignedUpAccount(
-                    filledRepresentation
-                ).copy(
-                    accountNonExpired = account.accountNonExpired,
-                    accountNonLocked = account.accountNonLocked,
-                    credentialsNonExpired = account.credentialsNonExpired,
-                    enabled = account.enabled,
-                    emailVerified = account.emailVerified,
-                )
-                accountRepository.save(accountToBeSaved)
-                //todo should be an use case end
-                ResponseEntity.noContent().build<Unit>()
-            }
-            .orElseGet {
-                ResponseEntity.noContent().build()
-            }
-
+        val incompleteAccount = fromRepresentationToSignedUpAccount(representation)
+        return saveAccount.execute(principal, incompleteAccount)
+            .let { ResponseEntity.noContent().build() }
     }
 
     private fun logWarningForNotEmptyUserNameInRequestBodyFor(representation: FinalAccountRepresentation) {
