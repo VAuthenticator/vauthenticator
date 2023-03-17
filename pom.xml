@@ -20,9 +20,9 @@
     <properties>
         <java.version>17</java.version>
         <kotlin.version>1.7.22</kotlin.version>
-        <snakeyaml.version>1.33</snakeyaml.version>
+        <snakeyaml.version>2.0</snakeyaml.version>
 
-        <io.mockk.version>1.13.2</io.mockk.version>
+        <io.mockk.version>1.13.4</io.mockk.version>
         <aws.sdk.version>2.18.24</aws.sdk.version>
         <greenmail.version>2.0.0</greenmail.version>
         <oauth2-authorization-server.version>1.0.0</oauth2-authorization-server.version>
@@ -138,6 +138,13 @@
             <artifactId>micrometer-tracing-bridge-brave</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+
         <!-- kotlin dependencies -->
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
@@ -157,11 +164,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-registry-prometheus</artifactId>
-            <scope>runtime</scope>
-        </dependency>
+
 
         <!-- testing -->
         <dependency>
