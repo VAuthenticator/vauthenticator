@@ -9,8 +9,8 @@ import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.RequestMapping
 
 @Controller
-class ErrorPagesTemplateController(private val objectMapper: ObjectMapper) : ErrorController {
-    private val errorMessages = objectMapper.writeValueAsString(mapOf("defaultMessage" to "Oops........ something goes wrong in VAuthenticator"))
+class ErrorPagesTemplateController(objectMapper: ObjectMapper) : ErrorController {
+    private val errorMessages = objectMapper.writeValueAsString(mapOf("defaultMessage" to "Oops........ something went wrong in VAuthenticator"))
 
     @RequestMapping("/error")
     fun handleError(request: HttpServletRequest, model: Model): String {
