@@ -101,6 +101,20 @@ jobs:
           npm install --legacy-peer-deps
           npm run-script production-build
 
+      - name: load static file on s3
+        uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - run: |
+          cd src/main/frontend/dist/asset
+          ls *.js | while read line
+          do 
+            aws s3 cp $line s3://${{ secrets.VAUTHENTICATOR_BUCKET }}/static/content/asset/$line
+          done
+      
+
       - name: docker push
         run: |
           cd src/main/frontend
