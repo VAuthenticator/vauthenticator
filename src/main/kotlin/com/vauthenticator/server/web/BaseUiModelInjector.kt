@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ModelAttribute
 
 @ControllerAdvice
-class BaseUiModelInjector(@Value("\${assetServer.baseUrl:http://localhost:\${server.port}/static/content/asset}") private val assetServerBaseUrl: String) {
+class BaseUiModelInjector(@Value("\${assetServer.baseUrl:http://local.api.vauthenticator.com:\${server.port}/static/content/asset}") private val assetServerBaseUrl: String) {
 
     @ModelAttribute("assetServerBaseUrl")
     fun assetServerBaseUrl() = assetServerBaseUrl
