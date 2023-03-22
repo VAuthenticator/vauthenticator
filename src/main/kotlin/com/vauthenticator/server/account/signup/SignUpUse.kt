@@ -21,7 +21,7 @@ open class SignUpUse(
         passwordPolicy.accept(account.password)
         clientAccountRepository.findOne(clientAppId)
             .map {
-                if (it.hasEnoughScopes(Scopes(setOf(Scope.SIGN_UP, Scope.MAIL_VERIFY)))) {
+                if (it.hasEnoughScopes(Scopes.from(Scope.SIGN_UP, Scope.MAIL_VERIFY))) {
                     val registeredAccount = account.copy(
                         authorities = it.authorities.content.map { it.content },
                         password = vAuthenticatorPasswordEncoder.encode(account.password)
