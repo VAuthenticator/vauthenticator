@@ -4,6 +4,7 @@ import com.vauthenticator.server.account.AccountNotFoundException
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.account.tiket.VerificationTicket
 import com.vauthenticator.server.account.tiket.VerificationTicketFactory
+import com.vauthenticator.server.extentions.hasEnoughScopes
 import com.vauthenticator.server.mail.MailSenderService
 import com.vauthenticator.server.oauth2.clientapp.*
 
@@ -18,7 +19,7 @@ class SendVerifyMailChallenge(private val clientAccountRepository: ClientApplica
     fun sendVerifyMail(mail: String, clientAppId: ClientAppId) {
         clientAccountRepository.findOne(clientAppId)
                 .map { clientApp ->
-                    if (allowedOperationFor(clientApp)) {
+                    if (clientApp.hasEnoughScopes(Scope.MAIL_VERIFY)) {
                         sendVerificationTicketFor(mail, clientApp)
                     } else {
                         throw InsufficientClientApplicationScopeException("The client app ${clientAppId.content} does not support mail verification use case........ consider to add ${Scope.MAIL_VERIFY.content} as scope")
@@ -38,8 +39,5 @@ class SendVerifyMailChallenge(private val clientAccountRepository: ClientApplica
         val verificationLink = "$frontChannelBaseUrl/mail-verify/${verificationTicket.content}"
         return mapOf(LINK_KEY to verificationLink)
     }
-
-    private fun allowedOperationFor(clientApp: ClientApplication) =
-            clientApp.scopes.content.contains(Scope.MAIL_VERIFY)
 
 }

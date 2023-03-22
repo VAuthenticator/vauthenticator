@@ -6,6 +6,7 @@ import com.vauthenticator.server.account.tiket.InvalidTicketException
 import com.vauthenticator.server.account.tiket.Ticket
 import com.vauthenticator.server.account.tiket.TicketRepository
 import com.vauthenticator.server.account.tiket.VerificationTicket
+import com.vauthenticator.server.extentions.hasEnoughScopes
 import com.vauthenticator.server.mfa.MfaMethod
 import com.vauthenticator.server.mfa.MfaMethodsEnrolmentAssociation
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
@@ -34,7 +35,7 @@ class VerifyMailChallengeSent(
     private fun enableAccountForEnabledClientAppFrom(ticket: Ticket) {
         clientAccountRepository.findOne(ClientAppId(ticket.clientAppId))
             .map { clientApplication ->
-                if (clientApplication.scopes.content.contains(Scope.MAIL_VERIFY)) {
+                if (clientApplication.hasEnoughScopes(Scope.MAIL_VERIFY)) {
                     val account = enableAccountFrom(ticket)
                     mfaMethodsEnrolmentAssociation.associate(account, MfaMethod.EMAIL_MFA_METHOD)
                 } else {

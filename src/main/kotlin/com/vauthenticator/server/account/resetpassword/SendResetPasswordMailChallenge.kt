@@ -2,8 +2,12 @@ package com.vauthenticator.server.account.resetpassword
 
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.account.tiket.VerificationTicketFactory
+import com.vauthenticator.server.extentions.hasEnoughScopes
 import com.vauthenticator.server.mail.MailSenderService
-import com.vauthenticator.server.oauth2.clientapp.*
+import com.vauthenticator.server.oauth2.clientapp.ClientAppId
+import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
+import com.vauthenticator.server.oauth2.clientapp.InsufficientClientApplicationScopeException
+import com.vauthenticator.server.oauth2.clientapp.Scope
 
 class SendResetPasswordMailChallenge(
     private val clientApplicationRepository: ClientApplicationRepository,
@@ -16,7 +20,7 @@ class SendResetPasswordMailChallenge(
     fun sendResetPasswordMail(mail: String, clientAppId: ClientAppId) {
         clientApplicationRepository.findOne(clientAppId)
             .map {
-                if (hasEnoughScopes(it)) {
+                if (it.hasEnoughScopes(Scope.RESET_PASSWORD)) {
                     sendResetPasswordMailFor(mail, clientAppId)
                 } else {
                     throw InsufficientClientApplicationScopeException("The client app ${clientAppId.content} does not support reset-password use case........ consider to add ${Scope.RESET_PASSWORD.content} as scope")
@@ -34,8 +38,5 @@ class SendResetPasswordMailChallenge(
                 )
             }
     }
-
-    private fun hasEnoughScopes(it: ClientApplication) =
-        it.scopes.content.contains(Scope.RESET_PASSWORD)
 
 }
