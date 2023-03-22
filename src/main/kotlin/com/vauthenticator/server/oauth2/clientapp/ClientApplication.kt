@@ -32,7 +32,6 @@ enum class AuthorizedGrantType { CLIENT_CREDENTIALS, PASSWORD, AUTHORIZATION_COD
 
 data class Secret(val content: String)
 
-data class ResourceId(val content: String)
 data class ClientAppId(val content: String) {
     companion object {
         fun empty(): ClientAppId = ClientAppId("")
@@ -60,6 +59,9 @@ data class Scope(val content: String) {
         val MAIL_VERIFY = Scope("admin:mail-verify")
         val RESET_PASSWORD = Scope("admin:reset-password")
 
+        val MAIL_TEMPLATE_READER = Scope("admin:mail-template-reader")
+        val MAIL_TEMPLATE_WRITER = Scope("admin:mail-template-writer")
+
         val KEY_READER = Scope("admin:key-reader")
         val KEY_EDITOR = Scope("admin:key-editor")
 
@@ -69,12 +71,18 @@ data class Scope(val content: String) {
             Scope("openid"),
             Scope("profile"),
             Scope("email"),
+
             Scope("admin:signup"),
             Scope("admin:welcome"),
             Scope("admin:mail-verify"),
             Scope("admin:reset-password"),
+
             Scope("admin:key-reader"),
             Scope("admin:key-editor"),
+
+            Scope("admin:mail-template-reader"),
+            Scope("admin:mail-template-writer"),
+
             Scope("mfa:always")
         )
 

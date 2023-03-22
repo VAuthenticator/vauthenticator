@@ -50,7 +50,7 @@ class JavaMailSenderService(
 
     private fun mailContentFor(mail: MailMessage): String {
         val documentContent = documentRepository.loadDocument(MAIL_DOCUMENT_TYPE, mailTemplatePathFor(mail.type))
-        return String(documentContent)
+        return String(documentContent.content)
     }
 
     private fun mailTemplatePathFor(mailType: MailType): String = mailType.path

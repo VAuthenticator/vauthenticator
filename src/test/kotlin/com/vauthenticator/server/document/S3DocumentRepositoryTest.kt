@@ -19,6 +19,6 @@ internal class S3DocumentRepositoryTest {
         val document = documentRepository.loadDocument("mail", "templates/welcome.html")
 
         val expected = FileUtils.loadFileFor("index.html")
-        assertEquals(expected, String(document))
+        assertEquals(expected, String(document.content))
     }
 }
