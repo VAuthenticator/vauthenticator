@@ -92,10 +92,13 @@ class WebSecurityConfig(
                     .requestMatchers("/mfa-challenge").access(mfaAuthorizationManager)
                     .requestMatchers(*WHITE_LIST).permitAll()
                     .requestMatchers("/api/accounts").permitAll()
-                    .requestMatchers("/api/sign-up/mail/{mail}/welcome").hasAnyAuthority(Scope.WELCOME.content)
-                    .requestMatchers("/api/mail/{mail}/verify-challenge").hasAnyAuthority(Scope.MAIL_VERIFY.content)
-                    .requestMatchers("/api/mail/{mail}/rest-password-challenge").permitAll()
-                    .requestMatchers("/api/reset-password/{ticket}").permitAll()
+                    .requestMatchers(HttpMethod.PUT,"/api/sign-up/mail/{mail}/welcome").hasAnyAuthority(Scope.WELCOME.content)
+                    .requestMatchers(HttpMethod.PUT,"/api/mail/{mail}/verify-challenge").hasAnyAuthority(Scope.MAIL_VERIFY.content)
+                    .requestMatchers(HttpMethod.PUT,"/api/mail/{mail}/rest-password-challenge").permitAll()
+                    .requestMatchers(HttpMethod.PUT,"/api/reset-password/{ticket}").permitAll()
+
+                    .requestMatchers(HttpMethod.PUT, "/api/mail-template")
+                    .hasAnyAuthority(Scope.MAIL_TEMPLATE_WRITER.content)
 
                     .requestMatchers(HttpMethod.GET, "/api/keys").hasAnyAuthority(Scope.KEY_READER.content)
                     .requestMatchers(HttpMethod.POST, "/api/keys").hasAnyAuthority(Scope.KEY_EDITOR.content)
@@ -155,6 +158,7 @@ class WebSecurityConfig(
     fun successHandler(): AuthenticationSuccessHandler {
         return SavedRequestAwareAuthenticationSuccessHandler()
     }
+
     @Bean
     fun mfaFailureHandler(): AuthenticationFailureHandler {
         return SimpleUrlAuthenticationFailureHandler("/mfa-challenge?error")
