@@ -43,7 +43,7 @@ class MailEndPointTest {
         every {
             documentRepository.saveDocument(
                 MailType.WELCOME.name,
-                Document("text/html", "A_TEMPLATE".toByteArray())
+                Document("text/html", "templates/welcome.html", "A_TEMPLATE".toByteArray())
             )
         } just runs
 

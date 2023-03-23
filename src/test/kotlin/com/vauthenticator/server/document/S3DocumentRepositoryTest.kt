@@ -26,13 +26,13 @@ internal class S3DocumentRepositoryTest {
         initDocumentTests(s3Client)
 
         val documentFile = FileUtils.loadFileFor("index.html")
-        val document = Document("", documentFile.toByteArray())
+        val document = Document("text/html", "templates/welcome.html", documentFile.toByteArray())
 
         val documentRepository = S3DocumentRepository(s3Client, documentBucket)
 
         documentRepository.saveDocument(MailType.RESET_PASSWORD.name, document)
 
-        val actual =documentRepository.loadDocument("mail", "templates/welcome.html")
+        val actual = documentRepository.loadDocument("mail", "templates/welcome.html")
         assertEquals(actual, document)
     }
 }

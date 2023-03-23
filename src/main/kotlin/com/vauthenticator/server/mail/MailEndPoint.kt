@@ -14,8 +14,11 @@ data class SaveMailTemplateRequest(val mailType: MailType, val body: String)
 class MailEndPoint(private val documentRepository: DocumentRepository) {
 
     @PutMapping("/api/mail-template")
-    fun saveMailTemplate(@RequestBody request: SaveMailTemplateRequest) : ResponseEntity<Unit> {
-        documentRepository.saveDocument(request.mailType.name, Document(MediaType.TEXT_HTML_VALUE, request.body.toByteArray()))
+    fun saveMailTemplate(@RequestBody request: SaveMailTemplateRequest): ResponseEntity<Unit> {
+        documentRepository.saveDocument(
+            request.mailType.name,
+            Document(MediaType.TEXT_HTML_VALUE, request.mailType.path, request.body.toByteArray())
+        )
         return ResponseEntity.noContent().build()
     }
 }
