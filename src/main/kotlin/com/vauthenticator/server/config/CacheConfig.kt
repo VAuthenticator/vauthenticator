@@ -2,6 +2,7 @@ package com.vauthenticator.server.config
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.vauthenticator.server.document.DocumentRepository
+import com.vauthenticator.server.document.DocumentType
 import com.vauthenticator.server.web.StaticController
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -25,7 +26,7 @@ class CacheConfig(private val documentRepository: DocumentRepository) {
                 .refreshAfterWrite(ttl)
                 .build { assetName ->
                     logger.debug("loading $assetName ....")
-                    documentRepository.loadDocument("static-auth-server", "content/asset/$assetName")
+                    documentRepository.loadDocument(DocumentType.STATIC.content, "content/asset/$assetName")
                 }
         )
     }

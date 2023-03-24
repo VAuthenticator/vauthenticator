@@ -1,5 +1,9 @@
 package com.vauthenticator.server.document
 
+enum class DocumentType(val content: String) {
+    MAIL("mail"), STATIC("static-auth-server")
+}
+
 data class Document(val contentType: String, val path: String, val content: ByteArray) {
 
     override fun equals(other: Any?): Boolean {

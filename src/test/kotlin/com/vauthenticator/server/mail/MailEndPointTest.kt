@@ -3,6 +3,7 @@ package com.vauthenticator.server.mail
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.document.Document
 import com.vauthenticator.server.document.DocumentRepository
+import com.vauthenticator.server.document.DocumentType
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -42,7 +43,7 @@ class MailEndPointTest {
 
         every {
             documentRepository.saveDocument(
-                MailType.WELCOME.name,
+                DocumentType.MAIL.content,
                 Document("text/html", "templates/welcome.html", "A_TEMPLATE".toByteArray())
             )
         } just runs
