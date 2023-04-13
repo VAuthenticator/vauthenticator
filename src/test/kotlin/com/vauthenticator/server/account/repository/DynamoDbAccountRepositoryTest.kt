@@ -7,7 +7,6 @@ import com.vauthenticator.server.support.DatabaseUtils.dynamoAccountRoleTableNam
 import com.vauthenticator.server.support.DatabaseUtils.dynamoAccountTableName
 import com.vauthenticator.server.support.DatabaseUtils.dynamoDbClient
 import com.vauthenticator.server.support.DatabaseUtils.resetDatabase
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
@@ -21,18 +20,14 @@ internal class DynamoDbAccountRepositoryTest {
 
     @BeforeEach
     fun setUp() {
+        resetDatabase()
+
         accountRepository = DynamoDbAccountRepository(
             dynamoDbClient,
             dynamoAccountTableName,
             dynamoAccountRoleTableName
         )
     }
-
-    @AfterEach
-    fun tearDown() {
-        resetDatabase()
-    }
-
 
     @Test
     fun `find an account by email`() {
