@@ -23,3 +23,7 @@ jobs:
           do
             aws s3 cp communication/default/mail/$TEMPLATE s3://${{ secrets.VAUTHENTICATOR_BUCKET }}/mail/templates/$TEMPLATE
           done
+          cd src/main/frontend/dist/asset
+          for i in *.js; do
+            aws s3 cp $i s3://${{ secrets.VAUTHENTICATOR_BUCKET }}/static-auth-server/content/asset/$i
+          done
