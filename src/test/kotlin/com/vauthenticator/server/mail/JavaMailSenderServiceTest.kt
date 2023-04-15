@@ -52,7 +52,7 @@ internal class JavaMailSenderServiceTest {
             )
         )
 
-        every { documentRepository.loadDocument("mail", MailType.WELCOME.path) } returns mailTemplateContent
+        every { documentRepository.loadDocument("mail", MailType.WELCOME.path).content } returns mailTemplateContent
 
 
         mailSenderService.sendFor(account)
@@ -77,7 +77,7 @@ internal class JavaMailSenderServiceTest {
             )
         )
 
-        every { documentRepository.loadDocument("mail", MailType.EMAIL_VERIFICATION.path) } returns mailTemplateContent
+        every { documentRepository.loadDocument("mail", MailType.EMAIL_VERIFICATION.path).content } returns mailTemplateContent
 
         mailSenderService.sendFor(
             account,
@@ -106,7 +106,7 @@ internal class JavaMailSenderServiceTest {
             )
         )
 
-        every { documentRepository.loadDocument("mail", MailType.RESET_PASSWORD.path) } returns mailTemplateContent
+        every { documentRepository.loadDocument("mail", MailType.RESET_PASSWORD.path).content } returns mailTemplateContent
 
         mailSenderService.sendFor(
             account,

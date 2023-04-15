@@ -1,9 +1,6 @@
 package com.vauthenticator.server.extentions
 
-import com.vauthenticator.server.oauth2.clientapp.Authorities
-import com.vauthenticator.server.oauth2.clientapp.AuthorizedGrantTypes
-import com.vauthenticator.server.oauth2.clientapp.Scopes
-import com.vauthenticator.server.oauth2.clientapp.TokenTimeToLive
+import com.vauthenticator.server.oauth2.clientapp.*
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 
 fun Scopes.asDynamoAttribute(): AttributeValue = AttributeValue.builder().ss(this.content.map { it.content }).build()
@@ -16,3 +13,9 @@ fun Authorities.asDynamoAttribute(): AttributeValue =
 
 fun TokenTimeToLive.asDynamoAttribute(): AttributeValue =
     AttributeValue.builder().n(this.content.toString()).build()
+
+
+fun ClientApplication.hasEnoughScopes(scopes: Scopes) =
+    this.scopes.content.stream().anyMatch { scopes.content.contains(it) }
+
+fun ClientApplication.hasEnoughScopes(scope: Scope) = hasEnoughScopes(Scopes(setOf(scope)))

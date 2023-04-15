@@ -23,12 +23,11 @@ class ClientApplicationConfig {
         clientApplicationCacheOperation: CacheOperation<String, String>,
         objectMapper: ObjectMapper,
         @Value("\${vauthenticator.dynamo-db.client-application.table-name}") clientAppTableName: String
-    ) =
-        CachedClientApplicationRepository(
-            ClientApplicationCacheContentConverter(objectMapper),
-            clientApplicationCacheOperation,
-            DynamoDbClientApplicationRepository(dynamoDbClient, clientAppTableName)
-        )
+    ) = CachedClientApplicationRepository(
+        ClientApplicationCacheContentConverter(objectMapper),
+        clientApplicationCacheOperation,
+        DynamoDbClientApplicationRepository(dynamoDbClient, clientAppTableName)
+    )
 
     @Bean
     fun readClientApplication(clientApplicationRepository: ClientApplicationRepository) =

@@ -1,5 +1,6 @@
 package com.vauthenticator.server.mfa
 
+import com.vauthenticator.server.extentions.hasEnoughScopes
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.Scope
@@ -30,7 +31,7 @@ class MfaAuthenticationHandler(private val clientApplicationRepository: ClientAp
 
         val clientId = request.session.getAttribute("clientId") as String
         val isMfaRequired = clientApplicationRepository.findOne(ClientAppId(clientId))
-            .filter { it.scopes.content.contains(Scope.MFA_ALWAYS) }
+            .filter { it.hasEnoughScopes(Scope.MFA_ALWAYS) }
             .isPresent
 
         if (isMfaRequired) {

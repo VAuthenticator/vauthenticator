@@ -1,37 +1,33 @@
 package com.vauthenticator.server.account.repository
 
 import com.vauthenticator.server.account.Account
+import com.vauthenticator.server.account.AccountTestFixture.anAccount
 import com.vauthenticator.server.role.Role
 import com.vauthenticator.server.support.DatabaseUtils.dynamoAccountRoleTableName
 import com.vauthenticator.server.support.DatabaseUtils.dynamoAccountTableName
 import com.vauthenticator.server.support.DatabaseUtils.dynamoDbClient
 import com.vauthenticator.server.support.DatabaseUtils.resetDatabase
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.*
 
 internal class DynamoDbAccountRepositoryTest {
 
-    private val account =
-        com.vauthenticator.server.account.AccountTestFixture.anAccount(listOf(Role("role", "description")))
+    private val account = anAccount(listOf(Role("role", "description")))
     private lateinit var accountRepository: DynamoDbAccountRepository
 
     @BeforeEach
     fun setUp() {
+        resetDatabase()
+
         accountRepository = DynamoDbAccountRepository(
             dynamoDbClient,
             dynamoAccountTableName,
             dynamoAccountRoleTableName
         )
     }
-
-    @AfterEach
-    fun tearDown() {
-        resetDatabase()
-    }
-
 
     @Test
     fun `find an account by email`() {
@@ -67,31 +63,27 @@ internal class DynamoDbAccountRepositoryTest {
 
     @Test
     fun `when overrides authorities to an accounts`() {
-        val anAccount = account.copy()
         val anotherAccount = account.copy(
             authorities = listOf("A_ROLE")
         )
-        accountRepository.save(anAccount)
+        accountRepository.save(account)
         accountRepository.save(anotherAccount)
 
-        assertEquals(accountRepository.accountFor(anAccount.username), Optional.of(anotherAccount))
+        assertEquals(accountRepository.accountFor(account.username), Optional.of(anotherAccount))
     }
 
     @Test
     internal fun `when a new account is created`() {
-        val anAccount = account.copy()
-        accountRepository.create(anAccount)
+        accountRepository.create(account)
 
-        assertEquals(accountRepository.accountFor(anAccount.username), Optional.of(anAccount))
+        assertEquals(accountRepository.accountFor(account.username), Optional.of(account))
     }
 
     @Test
     internal fun `when a new account is created then once`() {
-        val anAccount = account.copy()
-
         assertThrows(AccountRegistrationException::class.java) {
-            accountRepository.create(anAccount)
-            accountRepository.create(anAccount)
+            accountRepository.create(account)
+            accountRepository.create(account)
         }
 
     }

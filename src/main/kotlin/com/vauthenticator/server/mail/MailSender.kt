@@ -2,11 +2,11 @@ package com.vauthenticator.server.mail
 
 import com.vauthenticator.server.account.Account
 import com.vauthenticator.server.document.DocumentRepository
+import com.vauthenticator.server.document.DocumentType
 import jakarta.mail.internet.MimeMessage
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 
-private const val MAIL_DOCUMENT_TYPE = "mail"
 
 interface MailSenderService {
     fun sendFor(account: Account, mailContext: MailContext = emptyMap())
@@ -49,8 +49,8 @@ class JavaMailSenderService(
     }
 
     private fun mailContentFor(mail: MailMessage): String {
-        val documentContent = documentRepository.loadDocument(MAIL_DOCUMENT_TYPE, mailTemplatePathFor(mail.type))
-        return String(documentContent)
+        val documentContent = documentRepository.loadDocument(DocumentType.MAIL.content, mailTemplatePathFor(mail.type))
+        return String(documentContent.content)
     }
 
     private fun mailTemplatePathFor(mailType: MailType): String = mailType.path

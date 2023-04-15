@@ -5,7 +5,6 @@ typealias MailContext = Map<String, Any>
 enum class MailType(val path: String) {
     WELCOME("templates/welcome.html"),
     EMAIL_VERIFICATION("templates/mail-verify-challenge.html"),
-    SUCCESSFUL_EMAIL_VERIFICATION("templates/successful-mail-verification.html"),
     RESET_PASSWORD("templates/reset-password.html"),
     MFA("templates/mfa-challenge.html");
 }

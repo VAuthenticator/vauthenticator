@@ -1,6 +1,7 @@
 package com.vauthenticator.server.login
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.vauthenticator.server.extentions.hasEnoughScopes
 import com.vauthenticator.server.extentions.oauth2ClientId
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationFeatures
@@ -51,9 +52,9 @@ class LoginPageController(
             clientApplicationRepository.findOne(it)
                 .map { clientApp ->
                     logger.debug("clientApp.scopes.content: ${clientApp.scopes.content}")
-                    features[ClientApplicationFeatures.SIGNUP.value] = clientApp.scopes.content.contains(Scope.SIGN_UP)
+                    features[ClientApplicationFeatures.SIGNUP.value] = clientApp.hasEnoughScopes(Scope.SIGN_UP)
                     features[ClientApplicationFeatures.RESET_PASSWORD.value] =
-                        clientApp.scopes.content.contains(Scope.RESET_PASSWORD)
+                        clientApp.hasEnoughScopes(Scope.RESET_PASSWORD)
                 }
         }
     }
