@@ -15,7 +15,9 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
@@ -27,7 +29,7 @@ class MailEndPointTest {
     @MockK
     lateinit var documentRepository: DocumentRepository
 
-    val objectMapper = ObjectMapper()
+    private val objectMapper = ObjectMapper()
 
     @BeforeEach
     internal fun setUp() {
@@ -35,8 +37,31 @@ class MailEndPointTest {
     }
 
     @Test
+    fun `when an mfa mail template is retrieved`() {
+        val response = MailTemplate(
+            MailType.MFA,
+            "A_TEMPLATE"
+        )
+
+        every {
+            documentRepository.loadDocument(
+                DocumentType.MAIL.content,
+                MailType.MFA.path
+            )
+        } returns Document("", MailType.MFA.path, "A_TEMPLATE".toByteArray())
+
+        mockMvc.perform(
+            get("/api/mail-template/${MailType.MFA}")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(response))
+        )
+            .andExpect(status().isOk)
+            .andExpect(content().json(objectMapper.writeValueAsString(response)))
+    }
+
+    @Test
     fun `when a new mail template is uploaded`() {
-        val request = SaveMailTemplateRequest(
+        val request = MailTemplate(
             MailType.WELCOME,
             "A_TEMPLATE"
         )
@@ -53,6 +78,5 @@ class MailEndPointTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
         ).andExpect(status().isNoContent)
-
     }
 }
