@@ -97,6 +97,9 @@ class WebSecurityConfig(
                     .requestMatchers(HttpMethod.PUT,"/api/mail/{mail}/rest-password-challenge").permitAll()
                     .requestMatchers(HttpMethod.PUT,"/api/reset-password/{ticket}").permitAll()
 
+                    .requestMatchers(HttpMethod.GET, "/api/mail-template")
+                    .hasAnyAuthority(Scope.MAIL_TEMPLATE_READER.content)
+
                     .requestMatchers(HttpMethod.PUT, "/api/mail-template")
                     .hasAnyAuthority(Scope.MAIL_TEMPLATE_WRITER.content)
 
