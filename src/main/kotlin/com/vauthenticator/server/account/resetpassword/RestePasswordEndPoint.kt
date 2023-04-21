@@ -20,7 +20,7 @@ class ResetPasswordEndPoint(
     private val resetAccountPassword: ResetAccountPassword
 ) {
 
-    @PutMapping("/api/mail/{mail}/rest-password-challenge")
+    @PutMapping("/api/mail/{mail}/reset-password-challenge")
     fun sendVerifyMail(@PathVariable mail: String, session: HttpSession, principal: JwtAuthenticationToken?) =
         clientIdFrom(session, principal).let {
             sendResetPasswordMailChallenge.sendResetPasswordMail(mail, it)
