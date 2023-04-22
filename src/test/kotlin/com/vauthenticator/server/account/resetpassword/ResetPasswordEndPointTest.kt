@@ -43,7 +43,7 @@ internal class ResetPasswordEndPointTest {
     internal fun `when a challenge is sent`() {
         every { sendResetPasswordMailChallenge.sendResetPasswordMail("email@domain.com", clientAppId) } just runs
 
-        mokMvc.perform(put("/api/mail/{mail}/rest-password-challenge", "email@domain.com")
+        mokMvc.perform(put("/api/mail/{mail}/reset-password-challenge", "email@domain.com")
                 .principal(principalFor("A_CLIENT_APP_ID", "email@domain.com", listOf("VAUTHENTICATOR_ADMIN"))))
                 .andExpect(status().isNoContent)
     }
@@ -51,7 +51,7 @@ internal class ResetPasswordEndPointTest {
     internal fun `when a password is reset as anonymous but starting from ui`() {
         every { sendResetPasswordMailChallenge.sendResetPasswordMail("email@domain.com", clientAppId) } just runs
 
-        mokMvc.perform(put("/api/mail/{mail}/rest-password-challenge", "email@domain.com")
+        mokMvc.perform(put("/api/mail/{mail}/reset-password-challenge", "email@domain.com")
                 .sessionAttr("clientId", "A_CLIENT_APP_ID")
         ).andExpect(status().isNoContent)
     }

@@ -13,7 +13,7 @@ const ResetPasswordChallengeSender = (props) => {
     const [email, setEmail] = React.useState("")
 
     const sentResetPasswordChallenge = (email) => {
-        return fetch(`/api/mail/${email}/rest-password-challenge`, {
+        return fetch(`/api/mail/${email}/reset-password-challenge`, {
             method: "PUT",
             credentials: 'same-origin'
         }).then(r => {
