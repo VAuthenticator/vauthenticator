@@ -2,7 +2,7 @@ package com.vauthenticator.server.account.resetpassword
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.account.tiket.VerificationTicket
-import com.vauthenticator.server.oauth2.clientapp.ClientAppId
+import com.vauthenticator.server.extentions.oauth2ClientId
 import com.vauthenticator.server.oauth2.clientapp.InsufficientClientApplicationScopeException
 import jakarta.servlet.http.HttpSession
 import org.springframework.http.HttpStatus
@@ -23,12 +23,11 @@ class ResetPasswordEndPoint(
 
     @PutMapping("/api/mail/{mail}/reset-password-challenge")
     fun sendVerifyMail(@PathVariable mail: String, session: HttpSession, principal: JwtAuthenticationToken?) {
-        return Optional.ofNullable(principal).map{
-            sendResetPasswordMailChallenge.authenticatedSendResetPasswordMail(mail, it)
-        }.orElseGet{
-            val clientAppId = ClientAppId(session.getAttribute("clientId") as String)
-            sendResetPasswordMailChallenge.anonymousSendResetPasswordMail(mail, clientAppId)
-        }.let{
+        return Optional.ofNullable(principal).map {
+            sendResetPasswordMailChallenge.sendResetPasswordMail(mail, it)
+        }.orElseGet {
+            sendResetPasswordMailChallenge.sendResetPasswordMail(mail, session.oauth2ClientId().get())
+        }.let {
             noContent().build<Unit>()
         }
     }

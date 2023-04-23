@@ -38,6 +38,7 @@ object SecurityFixture {
         var claim = JWTClaimsSet.Builder()
             .claim(IdTokenClaimNames.AZP, clientAppId)
             .claim(IdTokenClaimNames.AUD, clientAppId)
+            .claim("scope", emptyList<String>())
 
         if (email.isNotBlank()) {
             claim = claim.claim("user_name", email)

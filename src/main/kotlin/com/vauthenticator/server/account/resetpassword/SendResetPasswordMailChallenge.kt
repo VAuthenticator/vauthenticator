@@ -19,7 +19,7 @@ class SendResetPasswordMailChallenge(
     private val frontChannelBaseUrl: String
 ) {
 
-    fun anonymousSendResetPasswordMail(mail: String, clientAppId: ClientAppId) {
+    fun sendResetPasswordMail(mail: String, clientAppId: ClientAppId) {
         clientApplicationRepository.findOne(clientAppId)
             .map {
                 if (it.hasEnoughScopes(Scope.RESET_PASSWORD)) {
@@ -29,7 +29,7 @@ class SendResetPasswordMailChallenge(
                 }
             }
     }
-    fun authenticatedSendResetPasswordMail(mail: String, principal: JwtAuthenticationToken) {
+    fun sendResetPasswordMail(mail: String, principal: JwtAuthenticationToken) {
         if (principal.hasEnoughScopes(Scope.RESET_PASSWORD)) {
             sendResetPasswordMailFor(mail, principal.clientAppId())
         } else {
@@ -37,7 +37,7 @@ class SendResetPasswordMailChallenge(
         }
     }
 
-    fun sendResetPasswordMailFor(mail: String, clientAppId: ClientAppId) {
+    private fun sendResetPasswordMailFor(mail: String, clientAppId: ClientAppId) {
         accountRepository.accountFor(username = mail)
             .map {
                 val ticket = ticketFactory.createTicketFor(it, clientAppId)

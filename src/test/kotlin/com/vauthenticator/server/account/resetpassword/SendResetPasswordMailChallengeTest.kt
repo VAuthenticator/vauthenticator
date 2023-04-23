@@ -11,6 +11,7 @@ import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.InsufficientClientApplicationScopeException
 import com.vauthenticator.server.oauth2.clientapp.Scope
 import com.vauthenticator.server.oauth2.clientapp.Scopes
+import com.vauthenticator.server.support.SecurityFixture.principalFor
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -41,33 +42,54 @@ internal class SendResetPasswordMailChallengeTest {
 
     @BeforeEach
     internal fun setUp() {
-        underTest = SendResetPasswordMailChallenge(clientApplicationRepository, accountRepository, ticketFactory, mailSenderService, "https://vauthenticator.com")
+        underTest = SendResetPasswordMailChallenge(
+            clientApplicationRepository,
+            accountRepository,
+            ticketFactory,
+            mailSenderService,
+            "https://vauthenticator.com"
+        )
     }
 
     @Test
-    internal fun `happy path`() {
+    internal fun `happy path `() {
         val anAccount = anAccount()
         val clientAppId = aClientAppId()
 
-        every { clientApplicationRepository.findOne(clientAppId) } returns Optional.of(aClientApp(clientAppId).copy(scopes = Scopes(setOf(
-            Scope.RESET_PASSWORD))
-        ))
+        every { clientApplicationRepository.findOne(clientAppId) } returns Optional.of(
+            aClientApp(clientAppId)
+                .copy(scopes = Scopes(setOf(Scope.RESET_PASSWORD)))
+        )
         every { accountRepository.accountFor(anAccount.email) } returns Optional.of(anAccount)
         every { ticketFactory.createTicketFor(anAccount, clientAppId) } returns VerificationTicket("A_TICKET")
-        every { mailSenderService.sendFor(anAccount, mapOf("resetPasswordLink" to "https://vauthenticator.com/reset-password/A_TICKET")) } just runs
+        every {
+            mailSenderService.sendFor(
+                anAccount,
+                mapOf("resetPasswordLink" to "https://vauthenticator.com/reset-password/A_TICKET")
+            )
+        } just runs
 
-        underTest.anonymousSendResetPasswordMail(anAccount.email, clientAppId)
+        underTest.sendResetPasswordMail(anAccount.email, clientAppId)
     }
 
     @Test
-    internal fun `when the client app does not have enought scopes`() {
+    internal fun `when the client app does not have enough scopes`() {
         val anAccount = anAccount()
         val clientAppId = aClientAppId()
 
         every { clientApplicationRepository.findOne(clientAppId) } returns Optional.of(aClientApp(clientAppId))
 
         assertThrows(InsufficientClientApplicationScopeException::class.java) {
-            underTest.anonymousSendResetPasswordMail(anAccount.email, clientAppId)
+            underTest.sendResetPasswordMail(anAccount.email, clientAppId)
+        }
+    }
+    @Test
+    internal fun `when the token does not have enough scopes`() {
+        val anAccount = anAccount()
+        val clientAppId = aClientAppId()
+
+        assertThrows(InsufficientClientApplicationScopeException::class.java) {
+            underTest.sendResetPasswordMail(anAccount.email, principalFor(clientAppId.content, anAccount.email))
         }
     }
 }
