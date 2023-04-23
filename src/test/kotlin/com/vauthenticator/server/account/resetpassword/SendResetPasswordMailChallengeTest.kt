@@ -56,7 +56,7 @@ internal class SendResetPasswordMailChallengeTest {
         every { ticketFactory.createTicketFor(anAccount, clientAppId) } returns VerificationTicket("A_TICKET")
         every { mailSenderService.sendFor(anAccount, mapOf("resetPasswordLink" to "https://vauthenticator.com/reset-password/A_TICKET")) } just runs
 
-        underTest.sendResetPasswordMail(anAccount.email, clientAppId)
+        underTest.anonymousSendResetPasswordMail(anAccount.email, clientAppId)
     }
 
     @Test
@@ -67,7 +67,7 @@ internal class SendResetPasswordMailChallengeTest {
         every { clientApplicationRepository.findOne(clientAppId) } returns Optional.of(aClientApp(clientAppId))
 
         assertThrows(InsufficientClientApplicationScopeException::class.java) {
-            underTest.sendResetPasswordMail(anAccount.email, clientAppId)
+            underTest.anonymousSendResetPasswordMail(anAccount.email, clientAppId)
         }
     }
 }

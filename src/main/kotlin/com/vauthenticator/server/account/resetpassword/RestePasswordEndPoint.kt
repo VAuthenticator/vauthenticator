@@ -2,9 +2,10 @@ package com.vauthenticator.server.account.resetpassword
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.account.tiket.VerificationTicket
-import com.vauthenticator.server.extentions.clientAppId
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
+import com.vauthenticator.server.oauth2.clientapp.InsufficientClientApplicationScopeException
 import jakarta.servlet.http.HttpSession
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.*
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
@@ -21,23 +22,26 @@ class ResetPasswordEndPoint(
 ) {
 
     @PutMapping("/api/mail/{mail}/reset-password-challenge")
-    fun sendVerifyMail(@PathVariable mail: String, session: HttpSession, principal: JwtAuthenticationToken?) =
-        clientIdFrom(session, principal).let {
-            sendResetPasswordMailChallenge.sendResetPasswordMail(mail, it)
-                .let { noContent().build<Unit>() }
-
+    fun sendVerifyMail(@PathVariable mail: String, session: HttpSession, principal: JwtAuthenticationToken?) {
+        return Optional.ofNullable(principal).map{
+            sendResetPasswordMailChallenge.authenticatedSendResetPasswordMail(mail, it)
+        }.orElseGet{
+            val clientAppId = ClientAppId(session.getAttribute("clientId") as String)
+            sendResetPasswordMailChallenge.anonymousSendResetPasswordMail(mail, clientAppId)
+        }.let{
+            noContent().build<Unit>()
         }
-
-    private fun clientIdFrom(session: HttpSession, principal: JwtAuthenticationToken?): ClientAppId =
-        Optional.ofNullable(principal).map { it.clientAppId() }
-            .orElseGet { ClientAppId(session.getAttribute("clientId") as String) }
-
+    }
 
     @PutMapping("/api/reset-password/{ticket}")
     fun resetPassword(@PathVariable ticket: String, @RequestBody request: ResetPasswordRequest): ResponseEntity<Unit> {
         resetAccountPassword.resetPasswordFromMailChallenge(VerificationTicket(ticket), request)
         return noContent().build()
     }
+
+    @ExceptionHandler(InsufficientClientApplicationScopeException::class)
+    fun insufficientClientApplicationScopeExceptionHandler(ex: InsufficientClientApplicationScopeException) =
+        status(HttpStatus.FORBIDDEN).body(ex.message)
 }
 
 @Controller
