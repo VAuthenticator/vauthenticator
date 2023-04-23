@@ -10,7 +10,7 @@ object ClientAppFixture {
     ) = ClientApplication(
             clientAppId,
             password,
-            Scopes.from(Scope.EMAIL, Scope.OPEN_ID, Scope.PROFILE),
+            Scopes.from(Scope.EMAIL, Scope.OPEN_ID, Scope.PROFILE, Scope.RESET_PASSWORD),
             AuthorizedGrantTypes.from(AuthorizedGrantType.PASSWORD),
             CallbackUri("http://an_uri"),
             authorities,

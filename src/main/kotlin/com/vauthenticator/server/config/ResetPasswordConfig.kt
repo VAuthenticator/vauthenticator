@@ -28,7 +28,6 @@ class ResetPasswordConfig {
         @Value("\${vauthenticator.host}") frontChannelBaseUrl: String
     ) =
         SendResetPasswordMailChallenge(
-            clientApplicationRepository,
             accountRepository,
             verificationTicketFactory,
             resetPasswordMailSender,

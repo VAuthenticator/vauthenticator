@@ -2,8 +2,8 @@ package com.vauthenticator.server.account.resetpassword
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.account.tiket.VerificationTicket
-import com.vauthenticator.server.extentions.oauth2ClientId
-import com.vauthenticator.server.oauth2.clientapp.InsufficientClientApplicationScopeException
+import com.vauthenticator.server.oauth2.clientapp.*
+import com.vauthenticator.server.role.PermissionValidator
 import jakarta.servlet.http.HttpSession
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -17,20 +17,17 @@ import java.util.*
 @RestController
 @SessionAttributes("clientId")
 class ResetPasswordEndPoint(
+    private val permissionValidator: PermissionValidator,
     private val sendResetPasswordMailChallenge: SendResetPasswordMailChallenge,
     private val resetAccountPassword: ResetAccountPassword
 ) {
 
     @PutMapping("/api/mail/{mail}/reset-password-challenge")
-    fun sendVerifyMail(@PathVariable mail: String, session: HttpSession, principal: JwtAuthenticationToken?) =
-        Optional.ofNullable(principal).map {
-            sendResetPasswordMailChallenge.sendResetPasswordMail(mail, it)
-        }.orElseGet {
-            sendResetPasswordMailChallenge.sendResetPasswordMail(mail, session.oauth2ClientId().get())
-        }.let {
-            noContent().build<Unit>()
-        }
-
+    fun sendVerifyMail2(@PathVariable mail: String, session: HttpSession, principal: JwtAuthenticationToken?): ResponseEntity<Unit> {
+        permissionValidator.validate(principal, session, Scopes.from(Scope.RESET_PASSWORD))
+        sendResetPasswordMailChallenge.sendResetPasswordMailFor(mail)
+        return noContent().build()
+    }
 
     @PutMapping("/api/reset-password/{ticket}")
     fun resetPassword(@PathVariable ticket: String, @RequestBody request: ResetPasswordRequest): ResponseEntity<Unit> {
