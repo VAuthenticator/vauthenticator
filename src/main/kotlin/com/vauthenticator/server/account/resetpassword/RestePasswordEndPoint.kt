@@ -5,7 +5,6 @@ import com.vauthenticator.server.account.tiket.VerificationTicket
 import com.vauthenticator.server.oauth2.clientapp.*
 import com.vauthenticator.server.role.PermissionValidator
 import jakarta.servlet.http.HttpSession
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.*
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
@@ -35,9 +34,6 @@ class ResetPasswordEndPoint(
         return noContent().build()
     }
 
-    @ExceptionHandler(InsufficientClientApplicationScopeException::class)
-    fun insufficientClientApplicationScopeExceptionHandler(ex: InsufficientClientApplicationScopeException) =
-        status(HttpStatus.FORBIDDEN).body(ex.message)
 }
 
 @Controller

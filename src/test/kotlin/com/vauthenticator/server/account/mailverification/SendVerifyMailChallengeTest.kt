@@ -40,11 +40,10 @@ internal class SendVerifyMailChallengeTest {
     @BeforeEach
     fun setup() {
         underTest = SendVerifyMailChallenge(
-                clientAccountRepository,
-                accountRepository,
-                verificationTicketFactory,
-                mailVerificationMailSender,
-                "https://vauthenticator.com"
+            accountRepository,
+            verificationTicketFactory,
+            mailVerificationMailSender,
+            "https://vauthenticator.com"
         )
     }
 
@@ -62,7 +61,7 @@ internal class SendVerifyMailChallengeTest {
         every { verificationTicketFactory.createTicketFor(account, clientAppId ) } returns verificationTicket
         every { mailVerificationMailSender.sendFor(account, requestContext) } just runs
 
-        underTest.sendVerifyMail(account.email, clientAppId)
+        underTest.sendVerifyMail(account.email)
 
         verify { mailVerificationMailSender.sendFor(account, requestContext) }
     }
@@ -76,7 +75,7 @@ internal class SendVerifyMailChallengeTest {
         every { clientAccountRepository.findOne(clientAppId) } returns Optional.of(clientApplication)
 
         Assertions.assertThrows(InsufficientClientApplicationScopeException::class.java) {
-            underTest.sendVerifyMail(account.email, clientAppId)
+            underTest.sendVerifyMail(account.email)
         }
     }
 
@@ -90,7 +89,7 @@ internal class SendVerifyMailChallengeTest {
         every { accountRepository.accountFor(mail) } returns Optional.empty()
 
         Assertions.assertThrows(AccountNotFoundException::class.java) {
-            underTest.sendVerifyMail(mail, clientAppId)
+            underTest.sendVerifyMail(mail)
         }
     }
 

@@ -28,7 +28,7 @@ open class SignUpUse(
                     )
                     accountRepository.create(registeredAccount)
                     sayWelcome.welcome(registeredAccount.email)
-                    sendVerifyMailChallenge.sendVerifyMail(account.email, clientAppId)
+                    sendVerifyMailChallenge.sendVerifyMail(account.email)
                 } else {
                     throw InsufficientClientApplicationScopeException("The client app ${clientAppId.content} does not support signup use case........ consider to add ${Scope.SIGN_UP.content} as scope")
                 }

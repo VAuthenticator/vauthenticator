@@ -66,7 +66,7 @@ internal class SignUpUseTest {
         every { vAuthenticatorPasswordEncoder.encode("secret") } returns "encrypted_secret"
         every { accountRepository.create(account) } just runs
         every { sayWelcome.welcome(account.email) } just runs
-        every { sendVerifyMailChallenge.sendVerifyMail("email@domain.com", clientAppId) } just runs
+        every { sendVerifyMailChallenge.sendVerifyMail("email@domain.com") } just runs
 
 
         underTest.execute(clientAppId, account.copy(password = "secret"))

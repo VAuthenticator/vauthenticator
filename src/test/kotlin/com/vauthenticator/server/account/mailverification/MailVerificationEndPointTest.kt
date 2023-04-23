@@ -1,6 +1,5 @@
 package com.vauthenticator.server.account.mailverification
 
-import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.support.SecurityFixture
 import com.vauthenticator.server.support.SecurityFixture.signedJWTFor
 import io.mockk.every
@@ -36,7 +35,7 @@ internal class MailVerificationEndPointTest {
 
     @Test
     internal fun `when a challenge is sent`() {
-        every { sendVerifyMailChallenge.sendVerifyMail("email@domain.com", ClientAppId("A_CLIENT_APP_ID")) } just runs
+        every { sendVerifyMailChallenge.sendVerifyMail("email@domain.com") } just runs
 
         val signedJWT = signedJWTFor("A_CLIENT_APP_ID", "email@domain.com")
         val principal = JwtAuthenticationToken(Jwt(SecurityFixture.simpleJwtFor("A_CLIENT_APP_ID"), Instant.now(), Instant.now().plusSeconds(100), signedJWT.header.toJSONObject(), signedJWT.payload.toJSONObject()))
