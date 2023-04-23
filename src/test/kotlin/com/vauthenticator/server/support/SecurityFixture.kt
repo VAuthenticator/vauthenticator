@@ -28,7 +28,7 @@ object SecurityFixture {
         return signedJWT.serialize()
     }
 
-    fun signedJWTFor(clientAppId: String, email: String): SignedJWT {
+    fun signedJWTFor(clientAppId: String, email: String, scopes: List<String> =  emptyList()): SignedJWT {
         val header = JWSHeader.Builder(JWSAlgorithm.ES256)
             .type(JOSEObjectType.JWT)
             .keyID("123")
@@ -38,7 +38,7 @@ object SecurityFixture {
         var claim = JWTClaimsSet.Builder()
             .claim(IdTokenClaimNames.AZP, clientAppId)
             .claim(IdTokenClaimNames.AUD, clientAppId)
-            .claim("scope", emptyList<String>())
+            .claim("scope",scopes)
 
         if (email.isNotBlank()) {
             claim = claim.claim("user_name", email)
@@ -51,8 +51,8 @@ object SecurityFixture {
         return signedJWT
     }
 
-    fun principalFor(clientAppId: String, mail: String, authorities: List<String> = emptyList()) =
-        signedJWTFor(clientAppId, mail).let { signedJWT ->
+    fun principalFor(clientAppId: String, mail: String, authorities: List<String> = emptyList(), scopes: List<String> =  emptyList()) =
+        signedJWTFor(clientAppId, mail, scopes).let { signedJWT ->
             JwtAuthenticationToken(
                 Jwt(
                     simpleJwtFor(clientAppId),

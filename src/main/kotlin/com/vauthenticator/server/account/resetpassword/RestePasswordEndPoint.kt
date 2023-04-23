@@ -22,15 +22,15 @@ class ResetPasswordEndPoint(
 ) {
 
     @PutMapping("/api/mail/{mail}/reset-password-challenge")
-    fun sendVerifyMail(@PathVariable mail: String, session: HttpSession, principal: JwtAuthenticationToken?) {
-        return Optional.ofNullable(principal).map {
+    fun sendVerifyMail(@PathVariable mail: String, session: HttpSession, principal: JwtAuthenticationToken?) =
+        Optional.ofNullable(principal).map {
             sendResetPasswordMailChallenge.sendResetPasswordMail(mail, it)
         }.orElseGet {
             sendResetPasswordMailChallenge.sendResetPasswordMail(mail, session.oauth2ClientId().get())
         }.let {
             noContent().build<Unit>()
         }
-    }
+
 
     @PutMapping("/api/reset-password/{ticket}")
     fun resetPassword(@PathVariable ticket: String, @RequestBody request: ResetPasswordRequest): ResponseEntity<Unit> {

@@ -52,7 +52,7 @@ internal class SendResetPasswordMailChallengeTest {
     }
 
     @Test
-    internal fun `happy path `() {
+    internal fun `when the reset password challenge is sent for anonymous call`() {
         val anAccount = anAccount()
         val clientAppId = aClientAppId()
 
@@ -73,6 +73,26 @@ internal class SendResetPasswordMailChallengeTest {
     }
 
     @Test
+    internal fun `when the reset password challenge is sent for autheticated call`() {
+        val anAccount = anAccount()
+        val clientAppId = aClientAppId()
+
+        every { accountRepository.accountFor(anAccount.email) } returns Optional.of(anAccount)
+        every { ticketFactory.createTicketFor(anAccount, clientAppId) } returns VerificationTicket("A_TICKET")
+        every {
+            mailSenderService.sendFor(
+                anAccount,
+                mapOf("resetPasswordLink" to "https://vauthenticator.com/reset-password/A_TICKET")
+            )
+        } just runs
+
+        underTest.sendResetPasswordMail(
+            anAccount.email,
+            principalFor(clientAppId.content, anAccount.email, emptyList(), listOf(Scope.RESET_PASSWORD.content))
+        )
+    }
+
+    @Test
     internal fun `when the client app does not have enough scopes`() {
         val anAccount = anAccount()
         val clientAppId = aClientAppId()
@@ -83,6 +103,7 @@ internal class SendResetPasswordMailChallengeTest {
             underTest.sendResetPasswordMail(anAccount.email, clientAppId)
         }
     }
+
     @Test
     internal fun `when the token does not have enough scopes`() {
         val anAccount = anAccount()
