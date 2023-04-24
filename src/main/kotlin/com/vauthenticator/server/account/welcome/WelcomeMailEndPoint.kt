@@ -1,7 +1,12 @@
 package com.vauthenticator.server.account.welcome
 
 import com.vauthenticator.server.account.AccountNotFoundException
+import com.vauthenticator.server.oauth2.clientapp.Scope
+import com.vauthenticator.server.oauth2.clientapp.Scopes
+import com.vauthenticator.server.role.PermissionValidator
+import jakarta.servlet.http.HttpSession
 import org.springframework.http.ResponseEntity
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PutMapping
@@ -9,15 +14,16 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class WelcomeMailEndPoint(
+    private val permissionValidator: PermissionValidator,
     private val sayWelcome: SayWelcome
 ) {
 
     @PutMapping("/api/sign-up/mail/{mail}/welcome")
-    fun welcome(@PathVariable mail: String) =
+    fun welcome(@PathVariable mail: String, session: HttpSession, principal: JwtAuthenticationToken): ResponseEntity<Unit> {
+        permissionValidator.validate(principal, session, Scopes.from(Scope.WELCOME))
         sayWelcome.welcome(mail)
-            .let {
-                ResponseEntity.noContent().build<Unit>()
-            }
+        return ResponseEntity.noContent().build()
+    }
 
     @ExceptionHandler(AccountNotFoundException::class)
     fun noAccountExceptionHAndler() =

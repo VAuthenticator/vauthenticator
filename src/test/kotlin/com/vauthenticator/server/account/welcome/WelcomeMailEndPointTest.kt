@@ -1,6 +1,10 @@
 package com.vauthenticator.server.account.welcome
 
 import com.vauthenticator.server.account.AccountNotFoundException
+import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
+import com.vauthenticator.server.oauth2.clientapp.Scope
+import com.vauthenticator.server.role.PermissionValidator
+import com.vauthenticator.server.support.SecurityFixture.principalFor
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -23,18 +27,27 @@ internal class WelcomeMailEndPointTest {
     @MockK
     lateinit var sayWelcome: SayWelcome
 
+    @MockK
+    lateinit var clientApplicationRepository: ClientApplicationRepository
+
     @BeforeEach
     internal fun setUp() {
-        mokMvc = MockMvcBuilders.standaloneSetup(WelcomeMailEndPoint(sayWelcome))
+        mokMvc = MockMvcBuilders.standaloneSetup(WelcomeMailEndPoint(PermissionValidator(clientApplicationRepository), sayWelcome))
             .build()
     }
 
     @Test
     internal fun `happy path`() {
-        val anAccount = com.vauthenticator.server.account.AccountTestFixture.anAccount()
+        val principal = principalFor(
+            "A_CLIENT_APP_ID",
+            "email@domain.com",
+            listOf("VAUTHENTICATOR_ADMIN"),
+            listOf(Scope.WELCOME.content)
+        )
         every { sayWelcome.welcome("email@domain.com") } just runs
 
-        mokMvc.perform(put("/api/sign-up/mail/email@domain.com/welcome"))
+        mokMvc.perform(put("/api/sign-up/mail/email@domain.com/welcome")
+            .principal(principal))
             .andExpect(status().isNoContent)
 
         verify { sayWelcome.welcome("email@domain.com") }
