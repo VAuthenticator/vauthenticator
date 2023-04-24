@@ -30,24 +30,32 @@ internal class WelcomeMailEndPointTest {
     @MockK
     lateinit var clientApplicationRepository: ClientApplicationRepository
 
+    private val principal = principalFor(
+        "A_CLIENT_APP_ID",
+        "email@domain.com",
+        listOf("VAUTHENTICATOR_ADMIN"),
+        listOf(Scope.WELCOME.content)
+    )
+
     @BeforeEach
     internal fun setUp() {
-        mokMvc = MockMvcBuilders.standaloneSetup(WelcomeMailEndPoint(PermissionValidator(clientApplicationRepository), sayWelcome))
+        mokMvc = MockMvcBuilders.standaloneSetup(
+            WelcomeMailEndPoint(
+                PermissionValidator(clientApplicationRepository),
+                sayWelcome
+            )
+        )
             .build()
     }
 
     @Test
     internal fun `happy path`() {
-        val principal = principalFor(
-            "A_CLIENT_APP_ID",
-            "email@domain.com",
-            listOf("VAUTHENTICATOR_ADMIN"),
-            listOf(Scope.WELCOME.content)
-        )
         every { sayWelcome.welcome("email@domain.com") } just runs
 
-        mokMvc.perform(put("/api/sign-up/mail/email@domain.com/welcome")
-            .principal(principal))
+        mokMvc.perform(
+            put("/api/sign-up/mail/email@domain.com/welcome")
+                .principal(principal)
+        )
             .andExpect(status().isNoContent)
 
         verify { sayWelcome.welcome("email@domain.com") }
@@ -57,7 +65,10 @@ internal class WelcomeMailEndPointTest {
     internal fun `no account found`() {
         every { sayWelcome.welcome("email@domain.com") } throws AccountNotFoundException("")
 
-        mokMvc.perform(put("/api/sign-up/mail/email@domain.com/welcome"))
+        mokMvc.perform(
+            put("/api/sign-up/mail/email@domain.com/welcome")
+                .principal(principal)
+        )
             .andExpect(status().isNotFound)
     }
 }
