@@ -6,7 +6,12 @@ import com.vauthenticator.server.account.Phone
 import com.vauthenticator.server.account.SaveAccount
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.account.signup.SignUpUse
+import com.vauthenticator.server.clientapp.ClientAppFixture
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
+import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
+import com.vauthenticator.server.oauth2.clientapp.Scope
+import com.vauthenticator.server.oauth2.clientapp.Scopes
+import com.vauthenticator.server.role.PermissionValidator
 import com.vauthenticator.server.support.SecurityFixture.principalFor
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -28,11 +33,16 @@ import java.util.*
 
 private const val ENDPOINT = "/api/accounts"
 private const val EMAIL = "email@domain.com"
+private const val ADMIN_ROLE = "VAUTHENTICATOR_ADMIN"
+private const val A_CLIENT_APP_ID = "A_CLIENT_APP_ID"
 
 @ExtendWith(MockKExtension::class)
 internal class AccountEndPointTest {
 
     lateinit var mokMvc: MockMvc
+
+    @MockK
+    lateinit var clientApplicationRepository: ClientApplicationRepository
 
     @MockK
     lateinit var signUpUse: SignUpUse
@@ -62,42 +72,65 @@ internal class AccountEndPointTest {
 
     @BeforeEach
     internal fun setUp() {
-        mokMvc = MockMvcBuilders.standaloneSetup(AccountEndPoint(signUpUse, SaveAccount(accountRepository)))
+        mokMvc = MockMvcBuilders.standaloneSetup(
+            AccountEndPoint(
+                PermissionValidator(clientApplicationRepository),
+                signUpUse,
+                SaveAccount(accountRepository)
+            )
+        )
             .build()
     }
 
     @Test
     internal fun `sign up a new account`() {
-        val clientAppId = "A_CLIENT_APP_ID"
-        every { signUpUse.execute(ClientAppId(clientAppId), masterAccount) } just runs
+        val clientAppId = ClientAppId(A_CLIENT_APP_ID)
+        every { signUpUse.execute(clientAppId, masterAccount) } just runs
+        every { clientApplicationRepository.findOne(clientAppId) } returns Optional.of(
+            ClientAppFixture.aClientApp(
+                ClientAppId(A_CLIENT_APP_ID)
+            )
+        )
 
         mokMvc.perform(
             post(ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
-                .principal(principalFor(clientAppId, EMAIL, listOf("VAUTHENTICATOR_ADMIN")))
+                .principal(
+                    principalFor(
+                        A_CLIENT_APP_ID,
+                        EMAIL,
+                        listOf(ADMIN_ROLE),
+                        listOf(Scope.SIGN_UP.content)
+                    )
+                )
                 .content(objectMapper.writeValueAsString(representation))
         )
             .andExpect(MockMvcResultMatchers.status().isCreated)
 
-        verify { signUpUse.execute(ClientAppId(clientAppId), masterAccount) }
+        verify { signUpUse.execute(clientAppId, masterAccount) }
 
         masterAccountAssertions()
     }
 
     @Test
     internal fun `sign up a new account like form ui with client app id in the session`() {
-        val clientAppId = "A_CLIENT_APP_ID"
-        every { signUpUse.execute(ClientAppId(clientAppId), masterAccount) } just runs
+        val clientAppId = ClientAppId(A_CLIENT_APP_ID)
+        every { signUpUse.execute(clientAppId, masterAccount) } just runs
+        every { clientApplicationRepository.findOne(clientAppId) } returns Optional.of(
+            ClientAppFixture.aClientApp(
+                ClientAppId(A_CLIENT_APP_ID),
+            ).copy(scopes = Scopes.from(Scope.SIGN_UP))
+        )
 
         mokMvc.perform(
             post(ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
-                .sessionAttr("clientId", "A_CLIENT_APP_ID")
+                .sessionAttr("clientId", A_CLIENT_APP_ID)
                 .content(objectMapper.writeValueAsString(representation))
         )
             .andExpect(MockMvcResultMatchers.status().isCreated)
 
-        verify { signUpUse.execute(ClientAppId(clientAppId), masterAccount) }
+        verify { signUpUse.execute(clientAppId, masterAccount) }
         masterAccountAssertions()
     }
 
@@ -110,7 +143,7 @@ internal class AccountEndPointTest {
             credentialsNonExpired = true,
             enabled = true,
         )
-        val clientAppId = "A_CLIENT_APP_ID"
+        val clientAppId = A_CLIENT_APP_ID
 
         every { accountRepository.accountFor(EMAIL) } returns Optional.of(masterAccount)
         every { accountRepository.save(masterAccount) } just runs
@@ -118,7 +151,7 @@ internal class AccountEndPointTest {
         mokMvc.perform(
             MockMvcRequestBuilders.put(ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
-                .principal(principalFor(clientAppId, EMAIL, listOf("VAUTHENTICATOR_ADMIN")))
+                .principal(principalFor(clientAppId, EMAIL, listOf(ADMIN_ROLE)))
                 .content(objectMapper.writeValueAsString(representation))
         )
             .andExpect(MockMvcResultMatchers.status().isNoContent)
