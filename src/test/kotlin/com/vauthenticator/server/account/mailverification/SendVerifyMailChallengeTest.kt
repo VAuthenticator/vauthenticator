@@ -5,6 +5,7 @@ import com.vauthenticator.server.account.AccountTestFixture.anAccount
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.account.tiket.VerificationTicket
 import com.vauthenticator.server.account.tiket.VerificationTicketFactory
+import com.vauthenticator.server.clientapp.A_CLIENT_APP_ID
 import com.vauthenticator.server.clientapp.ClientAppFixture.aClientApp
 import com.vauthenticator.server.mail.MailSenderService
 import com.vauthenticator.server.oauth2.clientapp.*
@@ -66,7 +67,7 @@ internal class SendVerifyMailChallengeTest {
     @Test
     internal fun `when account does not exist`() {
         val mail = "anemail@test.com"
-        val clientAppId = ClientAppId("A_CLIENT_APP_ID")
+        val clientAppId = ClientAppId(A_CLIENT_APP_ID)
         val clientApplication = aClientApp(clientAppId).copy(scopes = Scopes.from(Scope.MAIL_VERIFY))
 
         every { clientAccountRepository.findOne(clientAppId) } returns Optional.of(clientApplication)

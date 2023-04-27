@@ -1,5 +1,7 @@
 package com.vauthenticator.server.account.mailverification
 
+import com.vauthenticator.server.account.EMAIL
+import com.vauthenticator.server.clientapp.A_CLIENT_APP_ID
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.Scope
 import com.vauthenticator.server.role.PermissionValidator
@@ -41,12 +43,12 @@ internal class MailVerificationEndPointTest {
 
     @Test
     internal fun `when a challenge is sent`() {
-        every { sendVerifyMailChallenge.sendVerifyMail("email@domain.com") } just runs
+        every { sendVerifyMailChallenge.sendVerifyMail(EMAIL) } just runs
 
-        val signedJWT = signedJWTFor("A_CLIENT_APP_ID", "email@domain.com", listOf(Scope.MAIL_VERIFY.content))
-        val principal = JwtAuthenticationToken(Jwt(SecurityFixture.simpleJwtFor("A_CLIENT_APP_ID"), Instant.now(), Instant.now().plusSeconds(100), signedJWT.header.toJSONObject(), signedJWT.payload.toJSONObject()))
+        val signedJWT = signedJWTFor(A_CLIENT_APP_ID, EMAIL, listOf(Scope.MAIL_VERIFY.content))
+        val principal = JwtAuthenticationToken(Jwt(SecurityFixture.simpleJwtFor(A_CLIENT_APP_ID), Instant.now(), Instant.now().plusSeconds(100), signedJWT.header.toJSONObject(), signedJWT.payload.toJSONObject()))
 
-        mokMvc.perform(put("/api/mail/{mail}/verify-challenge", "email@domain.com")
+        mokMvc.perform(put("/api/mail/{mail}/verify-challenge", EMAIL)
                 .principal(principal))
                 .andExpect(status().isNoContent)
     }

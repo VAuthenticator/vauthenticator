@@ -1,13 +1,16 @@
 package com.vauthenticator.server.account.resetpassword
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.vauthenticator.server.account.EMAIL
 import com.vauthenticator.server.account.tiket.VerificationTicket
+import com.vauthenticator.server.clientapp.A_CLIENT_APP_ID
 import com.vauthenticator.server.clientapp.ClientAppFixture.aClientApp
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.Scope
 import com.vauthenticator.server.role.PermissionValidator
 import com.vauthenticator.server.support.SecurityFixture.principalFor
+import com.vauthenticator.server.support.VAUTHENTICATOR_ADMIN
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -29,7 +32,7 @@ internal class ResetPasswordEndPointTest {
 
     lateinit var mokMvc: MockMvc
 
-    val clientAppId = ClientAppId("A_CLIENT_APP_ID")
+    val clientAppId = ClientAppId(A_CLIENT_APP_ID)
 
 
     @MockK
@@ -57,15 +60,15 @@ internal class ResetPasswordEndPointTest {
     @Test
     internal fun `when a challenge is sent`() {
         val principal = principalFor(
-            "A_CLIENT_APP_ID",
-            "email@domain.com",
-            listOf("VAUTHENTICATOR_ADMIN"),
+            A_CLIENT_APP_ID,
+            EMAIL,
+            listOf(VAUTHENTICATOR_ADMIN),
             listOf(Scope.RESET_PASSWORD.content)
         )
-        every { sendResetPasswordMailChallenge.sendResetPasswordMailFor("email@domain.com") } just runs
+        every { sendResetPasswordMailChallenge.sendResetPasswordMailFor(EMAIL) } just runs
 
         mokMvc.perform(
-            put("/api/mail/{mail}/reset-password-challenge", "email@domain.com")
+            put("/api/mail/{mail}/reset-password-challenge", EMAIL)
                 .principal(principal)
         )
             .andExpect(status().isNoContent)
@@ -73,12 +76,12 @@ internal class ResetPasswordEndPointTest {
 
     @Test
     internal fun `when a password is reset as anonymous but starting from ui`() {
-        every { sendResetPasswordMailChallenge.sendResetPasswordMailFor("email@domain.com") } just runs
-        every { clientApplicationRepository.findOne(clientAppId) } returns Optional.of(aClientApp(ClientAppId("A_CLIENT_APP_ID")))
+        every { sendResetPasswordMailChallenge.sendResetPasswordMailFor(EMAIL) } just runs
+        every { clientApplicationRepository.findOne(clientAppId) } returns Optional.of(aClientApp(ClientAppId(A_CLIENT_APP_ID)))
 
         mokMvc.perform(
-            put("/api/mail/{mail}/reset-password-challenge", "email@domain.com")
-                .sessionAttr("clientId", "A_CLIENT_APP_ID")
+            put("/api/mail/{mail}/reset-password-challenge", EMAIL)
+                .sessionAttr("clientId", A_CLIENT_APP_ID)
         ).andExpect(status().isNoContent)
     }
 

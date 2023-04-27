@@ -2,6 +2,8 @@ package com.vauthenticator.server.clientapp
 
 import com.vauthenticator.server.oauth2.clientapp.*
 
+const val A_CLIENT_APP_ID = "A_CLIENT_APP_ID"
+
 object ClientAppFixture {
     fun aClientApp(clientAppId: ClientAppId,
                    password: Secret = Secret("secret"),
@@ -21,6 +23,6 @@ object ClientAppFixture {
             PostLogoutRedirectUri("http://an_uri"),
             logoutUri)
 
-    fun aClientAppId(): ClientAppId = ClientAppId("A_CLIENT_APP_ID")
+    fun aClientAppId(): ClientAppId = ClientAppId(A_CLIENT_APP_ID)
 
 }

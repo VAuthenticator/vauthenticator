@@ -2,10 +2,12 @@ package com.vauthenticator.server.account.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.account.AccountTestFixture.anAccount
+import com.vauthenticator.server.account.EMAIL
 import com.vauthenticator.server.account.Phone
 import com.vauthenticator.server.account.SaveAccount
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.account.signup.SignUpUse
+import com.vauthenticator.server.clientapp.A_CLIENT_APP_ID
 import com.vauthenticator.server.clientapp.ClientAppFixture
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
@@ -13,6 +15,7 @@ import com.vauthenticator.server.oauth2.clientapp.Scope
 import com.vauthenticator.server.oauth2.clientapp.Scopes
 import com.vauthenticator.server.role.PermissionValidator
 import com.vauthenticator.server.support.SecurityFixture.principalFor
+import com.vauthenticator.server.support.VAUTHENTICATOR_ADMIN
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -32,9 +35,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import java.util.*
 
 private const val ENDPOINT = "/api/accounts"
-private const val EMAIL = "email@domain.com"
-private const val ADMIN_ROLE = "VAUTHENTICATOR_ADMIN"
-private const val A_CLIENT_APP_ID = "A_CLIENT_APP_ID"
 
 @ExtendWith(MockKExtension::class)
 internal class AccountEndPointTest {
@@ -99,7 +99,7 @@ internal class AccountEndPointTest {
                     principalFor(
                         A_CLIENT_APP_ID,
                         EMAIL,
-                        listOf(ADMIN_ROLE),
+                        listOf(VAUTHENTICATOR_ADMIN),
                         listOf(Scope.SIGN_UP.content)
                     )
                 )
@@ -151,7 +151,7 @@ internal class AccountEndPointTest {
         mokMvc.perform(
             MockMvcRequestBuilders.put(ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
-                .principal(principalFor(clientAppId, EMAIL, listOf(ADMIN_ROLE)))
+                .principal(principalFor(clientAppId, EMAIL, listOf(VAUTHENTICATOR_ADMIN)))
                 .content(objectMapper.writeValueAsString(representation))
         )
             .andExpect(MockMvcResultMatchers.status().isNoContent)

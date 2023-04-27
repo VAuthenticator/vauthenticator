@@ -17,6 +17,8 @@ import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import java.time.Instant
 
+const val VAUTHENTICATOR_ADMIN = "VAUTHENTICATOR_ADMIN"
+
 object SecurityFixture {
 
     private val key: ECKey = ECKeyGenerator(Curve.P_256)
@@ -28,7 +30,7 @@ object SecurityFixture {
         return signedJWT.serialize()
     }
 
-    fun signedJWTFor(clientAppId: String, email: String, scopes: List<String> =  emptyList()): SignedJWT {
+    fun signedJWTFor(clientAppId: String, email: String, scopes: List<String> = emptyList()): SignedJWT {
         val header = JWSHeader.Builder(JWSAlgorithm.ES256)
             .type(JOSEObjectType.JWT)
             .keyID("123")
@@ -38,7 +40,7 @@ object SecurityFixture {
         var claim = JWTClaimsSet.Builder()
             .claim(IdTokenClaimNames.AZP, clientAppId)
             .claim(IdTokenClaimNames.AUD, clientAppId)
-            .claim("scope",scopes)
+            .claim("scope", scopes)
 
         if (email.isNotBlank()) {
             claim = claim.claim("user_name", email)
@@ -51,7 +53,12 @@ object SecurityFixture {
         return signedJWT
     }
 
-    fun principalFor(clientAppId: String, mail: String, authorities: List<String> = emptyList(), scopes: List<String> =  emptyList()) =
+    fun principalFor(
+        clientAppId: String,
+        mail: String,
+        authorities: List<String> = emptyList(),
+        scopes: List<String> = emptyList()
+    ) =
         signedJWTFor(clientAppId, mail, scopes).let { signedJWT ->
             JwtAuthenticationToken(
                 Jwt(

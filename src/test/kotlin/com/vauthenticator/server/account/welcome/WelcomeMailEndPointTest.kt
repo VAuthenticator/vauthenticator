@@ -1,10 +1,13 @@
 package com.vauthenticator.server.account.welcome
 
 import com.vauthenticator.server.account.AccountNotFoundException
+import com.vauthenticator.server.account.EMAIL
+import com.vauthenticator.server.clientapp.A_CLIENT_APP_ID
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.Scope
 import com.vauthenticator.server.role.PermissionValidator
 import com.vauthenticator.server.support.SecurityFixture.principalFor
+import com.vauthenticator.server.support.VAUTHENTICATOR_ADMIN
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -20,6 +23,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import java.util.*
 
+
 @ExtendWith(MockKExtension::class)
 internal class WelcomeMailEndPointTest {
     lateinit var mokMvc: MockMvc
@@ -31,9 +35,9 @@ internal class WelcomeMailEndPointTest {
     lateinit var clientApplicationRepository: ClientApplicationRepository
 
     private val principal = principalFor(
-        "A_CLIENT_APP_ID",
-        "email@domain.com",
-        listOf("VAUTHENTICATOR_ADMIN"),
+        A_CLIENT_APP_ID,
+        EMAIL,
+        listOf(VAUTHENTICATOR_ADMIN),
         listOf(Scope.WELCOME.content)
     )
 
@@ -50,7 +54,7 @@ internal class WelcomeMailEndPointTest {
 
     @Test
     internal fun `happy path`() {
-        every { sayWelcome.welcome("email@domain.com") } just runs
+        every { sayWelcome.welcome(EMAIL) } just runs
 
         mokMvc.perform(
             put("/api/sign-up/mail/email@domain.com/welcome")
@@ -58,12 +62,12 @@ internal class WelcomeMailEndPointTest {
         )
             .andExpect(status().isNoContent)
 
-        verify { sayWelcome.welcome("email@domain.com") }
+        verify { sayWelcome.welcome(EMAIL) }
     }
 
     @Test
     internal fun `no account found`() {
-        every { sayWelcome.welcome("email@domain.com") } throws AccountNotFoundException("")
+        every { sayWelcome.welcome(EMAIL) } throws AccountNotFoundException("")
 
         mokMvc.perform(
             put("/api/sign-up/mail/email@domain.com/welcome")
