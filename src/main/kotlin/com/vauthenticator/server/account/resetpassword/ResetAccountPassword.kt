@@ -21,7 +21,7 @@ class ResetAccountPassword(
             passwordResetFor(it, request)
             ticketRepository.delete(verificationTicket)
         }
-            .orElseThrow { throw InvalidTicketException("Te ticket ${verificationTicket.content} is not a valid ticket it seems to be used or expired") }
+            .orElseThrow { throw InvalidTicketException("The ticket ${verificationTicket.content} is not a valid ticket it seems to be used or expired") }
     }
 
     private fun passwordResetFor(it: Ticket, request: ResetPasswordRequest): Optional<Unit> =

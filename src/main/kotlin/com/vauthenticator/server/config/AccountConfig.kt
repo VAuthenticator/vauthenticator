@@ -9,7 +9,6 @@ import com.vauthenticator.server.account.repository.CachedAccountRepository
 import com.vauthenticator.server.account.repository.DynamoDbAccountRepository
 import com.vauthenticator.server.cache.CacheOperation
 import com.vauthenticator.server.cache.RedisCacheOperation
-import com.vauthenticator.server.role.DynamoDbRoleRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -41,13 +40,6 @@ class AccountConfig {
             accountCacheOperation,
             DynamoDbAccountRepository(dynamoDbClient, accountTableName, accountRoleTableName),
         )
-
-    @Bean
-    fun roleRepository(
-        dynamoDbClient: DynamoDbClient,
-        @Value("\${vauthenticator.dynamo-db.role.table-name}") roleTableName: String
-    ) =
-        DynamoDbRoleRepository(dynamoDbClient, roleTableName)
 
 
     @Bean

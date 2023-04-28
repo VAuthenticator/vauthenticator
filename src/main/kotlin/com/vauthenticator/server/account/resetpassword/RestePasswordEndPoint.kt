@@ -2,8 +2,8 @@ package com.vauthenticator.server.account.resetpassword
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.account.tiket.VerificationTicket
-import com.vauthenticator.server.extentions.clientAppId
-import com.vauthenticator.server.oauth2.clientapp.ClientAppId
+import com.vauthenticator.server.oauth2.clientapp.*
+import com.vauthenticator.server.role.PermissionValidator
 import jakarta.servlet.http.HttpSession
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.*
@@ -16,28 +16,24 @@ import java.util.*
 @RestController
 @SessionAttributes("clientId")
 class ResetPasswordEndPoint(
+    private val permissionValidator: PermissionValidator,
     private val sendResetPasswordMailChallenge: SendResetPasswordMailChallenge,
     private val resetAccountPassword: ResetAccountPassword
 ) {
 
     @PutMapping("/api/mail/{mail}/reset-password-challenge")
-    fun sendVerifyMail(@PathVariable mail: String, session: HttpSession, principal: JwtAuthenticationToken?) =
-        clientIdFrom(session, principal).let {
-            sendResetPasswordMailChallenge.sendResetPasswordMail(mail, it)
-                .let { noContent().build<Unit>() }
-
-        }
-
-    private fun clientIdFrom(session: HttpSession, principal: JwtAuthenticationToken?): ClientAppId =
-        Optional.ofNullable(principal).map { it.clientAppId() }
-            .orElseGet { ClientAppId(session.getAttribute("clientId") as String) }
-
+    fun sendVerifyMail2(@PathVariable mail: String, session: HttpSession, principal: JwtAuthenticationToken?): ResponseEntity<Unit> {
+        permissionValidator.validate(principal, session, Scopes.from(Scope.RESET_PASSWORD))
+        sendResetPasswordMailChallenge.sendResetPasswordMailFor(mail)
+        return noContent().build()
+    }
 
     @PutMapping("/api/reset-password/{ticket}")
     fun resetPassword(@PathVariable ticket: String, @RequestBody request: ResetPasswordRequest): ResponseEntity<Unit> {
         resetAccountPassword.resetPasswordFromMailChallenge(VerificationTicket(ticket), request)
         return noContent().build()
     }
+
 }
 
 @Controller

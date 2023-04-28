@@ -5,6 +5,7 @@ import com.vauthenticator.server.account.AccountTestFixture.anAccount
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.account.tiket.VerificationTicket
 import com.vauthenticator.server.account.tiket.VerificationTicketFactory
+import com.vauthenticator.server.clientapp.A_CLIENT_APP_ID
 import com.vauthenticator.server.clientapp.ClientAppFixture.aClientApp
 import com.vauthenticator.server.mail.MailSenderService
 import com.vauthenticator.server.oauth2.clientapp.*
@@ -40,57 +41,40 @@ internal class SendVerifyMailChallengeTest {
     @BeforeEach
     fun setup() {
         underTest = SendVerifyMailChallenge(
-                clientAccountRepository,
-                accountRepository,
-                verificationTicketFactory,
-                mailVerificationMailSender,
-                "https://vauthenticator.com"
+            accountRepository,
+            verificationTicketFactory,
+            mailVerificationMailSender,
+            "https://vauthenticator.com"
         )
     }
 
     @Test
     internal fun `happy path`() {
-        val clientAppId = ClientAppId("A_CLIENT_APP_ID")
         val account = anAccount()
-        val clientApplication = aClientApp(clientAppId).copy(scopes = Scopes.from(Scope.MAIL_VERIFY))
         val verificationTicket = VerificationTicket("A_TICKET")
         val requestContext = mapOf("verificationMailLink" to "https://vauthenticator.com/mail-verify/A_TICKET")
 
 
-        every { clientAccountRepository.findOne(clientAppId) } returns Optional.of(clientApplication)
         every { accountRepository.accountFor(account.email) } returns Optional.of(account)
-        every { verificationTicketFactory.createTicketFor(account, clientAppId ) } returns verificationTicket
+        every { verificationTicketFactory.createTicketFor(account, ClientAppId.empty() ) } returns verificationTicket
         every { mailVerificationMailSender.sendFor(account, requestContext) } just runs
 
-        underTest.sendVerifyMail(account.email, clientAppId)
+        underTest.sendVerifyMail(account.email)
 
         verify { mailVerificationMailSender.sendFor(account, requestContext) }
     }
 
     @Test
-    internal fun `when client app does not have the correct scope`() {
-        val clientAppId = ClientAppId("A_CLIENT_APP_ID")
-        val account = anAccount()
-        val clientApplication = aClientApp(clientAppId)
-
-        every { clientAccountRepository.findOne(clientAppId) } returns Optional.of(clientApplication)
-
-        Assertions.assertThrows(InsufficientClientApplicationScopeException::class.java) {
-            underTest.sendVerifyMail(account.email, clientAppId)
-        }
-    }
-
-    @Test
     internal fun `when account does not exist`() {
         val mail = "anemail@test.com"
-        val clientAppId = ClientAppId("A_CLIENT_APP_ID")
+        val clientAppId = ClientAppId(A_CLIENT_APP_ID)
         val clientApplication = aClientApp(clientAppId).copy(scopes = Scopes.from(Scope.MAIL_VERIFY))
 
         every { clientAccountRepository.findOne(clientAppId) } returns Optional.of(clientApplication)
         every { accountRepository.accountFor(mail) } returns Optional.empty()
 
         Assertions.assertThrows(AccountNotFoundException::class.java) {
-            underTest.sendVerifyMail(mail, clientAppId)
+            underTest.sendVerifyMail(mail)
         }
     }
 

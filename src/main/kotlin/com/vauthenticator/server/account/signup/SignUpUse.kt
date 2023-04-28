@@ -4,8 +4,8 @@ import com.vauthenticator.server.account.Account
 import com.vauthenticator.server.account.mailverification.SendVerifyMailChallenge
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.account.welcome.SayWelcome
-import com.vauthenticator.server.extentions.hasEnoughScopes
-import com.vauthenticator.server.oauth2.clientapp.*
+import com.vauthenticator.server.oauth2.clientapp.ClientAppId
+import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
 import com.vauthenticator.server.password.PasswordPolicy
 import com.vauthenticator.server.password.VAuthenticatorPasswordEncoder
 
@@ -21,17 +21,13 @@ open class SignUpUse(
         passwordPolicy.accept(account.password)
         clientAccountRepository.findOne(clientAppId)
             .map {
-                if (it.hasEnoughScopes(Scopes.from(Scope.SIGN_UP, Scope.MAIL_VERIFY))) {
-                    val registeredAccount = account.copy(
-                        authorities = it.authorities.content.map { it.content },
-                        password = vAuthenticatorPasswordEncoder.encode(account.password)
-                    )
-                    accountRepository.create(registeredAccount)
-                    sayWelcome.welcome(registeredAccount.email)
-                    sendVerifyMailChallenge.sendVerifyMail(account.email, clientAppId)
-                } else {
-                    throw InsufficientClientApplicationScopeException("The client app ${clientAppId.content} does not support signup use case........ consider to add ${Scope.SIGN_UP.content} as scope")
-                }
+                val registeredAccount = account.copy(
+                    authorities = it.authorities.content.map { it.content },
+                    password = vAuthenticatorPasswordEncoder.encode(account.password)
+                )
+                accountRepository.create(registeredAccount)
+                sayWelcome.welcome(registeredAccount.email)
+                sendVerifyMailChallenge.sendVerifyMail(account.email)
 
             }
     }

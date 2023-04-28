@@ -24,20 +24,19 @@ class MailVerificationConfig {
                                 verificationTicketFactory: VerificationTicketFactory,
                                 verificationMailSender: MailSenderService,
                                 @Value("\${vauthenticator.host}") frontChannelBaseUrl: String) =
-            SendVerifyMailChallenge(clientAccountRepository,
-                    accountRepository,
-                    verificationTicketFactory,
-                    verificationMailSender,
-                    frontChannelBaseUrl)
+            SendVerifyMailChallenge(
+                accountRepository,
+                verificationTicketFactory,
+                verificationMailSender,
+                frontChannelBaseUrl
+            )
 
     @Bean
-    fun verifyMailChallengeSent(clientAccountRepository: ClientApplicationRepository,
-                                accountRepository: AccountRepository,
+    fun verifyMailChallengeSent(accountRepository: AccountRepository,
                                 ticketRepository: TicketRepository,
                                 mfaMethodsEnrolmentAssociation : MfaMethodsEnrolmentAssociation
     ) =
             VerifyMailChallengeSent(
-                clientAccountRepository,
                 accountRepository,
                 ticketRepository,
                 mfaMethodsEnrolmentAssociation

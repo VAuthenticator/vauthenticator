@@ -7,6 +7,9 @@ import com.vauthenticator.server.account.signup.SignUpUse
 import com.vauthenticator.server.extentions.clientAppId
 import com.vauthenticator.server.extentions.oauth2ClientId
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
+import com.vauthenticator.server.oauth2.clientapp.Scope
+import com.vauthenticator.server.oauth2.clientapp.Scopes
+import com.vauthenticator.server.role.PermissionValidator
 import jakarta.servlet.http.HttpSession
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -22,6 +25,7 @@ import java.util.Optional.ofNullable
 @RestController
 @SessionAttributes("clientId")
 class AccountEndPoint(
+    private val permissionValidator: PermissionValidator,
     private val signUpUse: SignUpUse,
     private val saveAccount: SaveAccount
 ) {
@@ -29,10 +33,11 @@ class AccountEndPoint(
 
     @PostMapping("/api/accounts")
     fun signup(
-        principal: JwtAuthenticationToken?,
         session: HttpSession,
+        principal: JwtAuthenticationToken?,
         @RequestBody representation: FinalAccountRepresentation
     ): ResponseEntity<Unit> {
+        permissionValidator.validate(principal, session, Scopes.from(Scope.SIGN_UP))
         val account = fromRepresentationToSignedUpAccount(representation)
         clientAppIdFrom(principal, session)
             .map { signUpUse.execute(it, account) }

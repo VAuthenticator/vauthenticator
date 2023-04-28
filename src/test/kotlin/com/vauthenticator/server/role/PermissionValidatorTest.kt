@@ -1,0 +1,3 @@
+package com.vauthenticator.server.role
+
+class PermissionValidatorTest

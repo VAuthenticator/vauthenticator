@@ -4,36 +4,32 @@ import com.vauthenticator.server.account.AccountNotFoundException
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.account.tiket.VerificationTicket
 import com.vauthenticator.server.account.tiket.VerificationTicketFactory
-import com.vauthenticator.server.extentions.hasEnoughScopes
 import com.vauthenticator.server.mail.MailSenderService
-import com.vauthenticator.server.oauth2.clientapp.*
+import com.vauthenticator.server.oauth2.clientapp.ClientAppId
+import org.slf4j.LoggerFactory
 
 private const val LINK_KEY = "verificationMailLink"
 
-class SendVerifyMailChallenge(private val clientAccountRepository: ClientApplicationRepository,
-                              private val accountRepository: AccountRepository,
-                              private val verificationTicketFactory: VerificationTicketFactory,
-                              private val mailVerificationMailSender: MailSenderService,
-                              private val frontChannelBaseUrl: String) {
+class SendVerifyMailChallenge(
+    private val accountRepository: AccountRepository,
+    private val verificationTicketFactory: VerificationTicketFactory,
+    private val mailVerificationMailSender: MailSenderService,
+    private val frontChannelBaseUrl: String
+) {
 
-    fun sendVerifyMail(mail: String, clientAppId: ClientAppId) {
-        clientAccountRepository.findOne(clientAppId)
-                .map { clientApp ->
-                    if (clientApp.hasEnoughScopes(Scope.MAIL_VERIFY)) {
-                        sendVerificationTicketFor(mail, clientApp)
-                    } else {
-                        throw InsufficientClientApplicationScopeException("The client app ${clientAppId.content} does not support mail verification use case........ consider to add ${Scope.MAIL_VERIFY.content} as scope")
-                    }
-                }
+    private val logger = LoggerFactory.getLogger(SendVerifyMailChallenge::class.java)
+
+    fun sendVerifyMail(mail: String) {
+        accountRepository.accountFor(mail)
+            .map { account ->
+                val verificationTicket = verificationTicketFactory.createTicketFor(account, ClientAppId.empty())
+                val mailContext = mailContextFrom(verificationTicket)
+                mailVerificationMailSender.sendFor(account, mailContext)
+            }.orElseThrow {
+                logger.warn("account not found")
+                AccountNotFoundException("account not found")
+            }
     }
-
-    private fun sendVerificationTicketFor(mail: String, clientApp: ClientApplication) =
-            accountRepository.accountFor(mail)
-                    .map { account ->
-                        val verificationTicket = verificationTicketFactory.createTicketFor(account, clientApp.clientAppId)
-                        val mailContext = mailContextFrom(verificationTicket)
-                        mailVerificationMailSender.sendFor(account, mailContext)
-                    }.orElseThrow { AccountNotFoundException("account not found") }
 
     private fun mailContextFrom(verificationTicket: VerificationTicket): Map<String, String> {
         val verificationLink = "$frontChannelBaseUrl/mail-verify/${verificationTicket.content}"
