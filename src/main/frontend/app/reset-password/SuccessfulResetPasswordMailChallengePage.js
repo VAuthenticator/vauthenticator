@@ -19,7 +19,7 @@ const SuccessfulResetPasswordMailChallenge = () => {
                 </Grid>
 
                 <Typography variant="h3" component="h3">
-                    We are sent an email on your account inbox please follow the instruction on the mail to reset yout
+                    We are sent an email on your account inbox please follow the instruction on the mail to reset your
                     password
                 </Typography>
             </Template>
