@@ -12,7 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
+import org.springframework.test.web.servlet.setup.MockMvcBuilders.*
 
 @ExtendWith(MockKExtension::class)
 internal class MailVerificationControllerTest {
@@ -24,8 +24,7 @@ internal class MailVerificationControllerTest {
 
     @BeforeEach
     internal fun setUp() {
-        mokMvc = MockMvcBuilders.standaloneSetup(MailVerificationController(mailVerifyMailChallengeSent))
-                .build()
+        mokMvc = standaloneSetup(MailVerificationController(mailVerifyMailChallengeSent)).build()
     }
 
     @Test
@@ -33,6 +32,6 @@ internal class MailVerificationControllerTest {
         every { mailVerifyMailChallengeSent.verifyMail("A_TICKET") } just runs
 
         mokMvc.perform(MockMvcRequestBuilders.get("/mail-verify/A_TICKET"))
-                .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.status().isOk)
     }
 }

@@ -3,14 +3,14 @@ import ReactDOM from 'react-dom';
 import {Divider, Grid, ThemeProvider, Typography} from "@mui/material";
 import theme from "../component/styles";
 import Template from "../component/Template";
-import {VpnKey} from "@mui/icons-material";
+import {Mail} from "@mui/icons-material";
 
-const ResetPasswordMainPage = () => {
+const SuccessfulMailVerifyPage = () => {
     return (
         <ThemeProvider theme={theme}>
             <Template maxWidth="lg">
                 <Typography variant="h3" component="h3">
-                    <VpnKey fontSize="large"/> Reset Password
+                    <Mail fontSize="large"/> Confirmation of your email verification
                 </Typography>
 
                 <Grid style={{marginTop: '10px'}}>
@@ -18,14 +18,14 @@ const ResetPasswordMainPage = () => {
                 </Grid>
 
                 <Typography variant="h3" component="h2">
-                    Password reset suceeded
+                    Your email has been successful verified.
                 </Typography>
             </Template>
         </ThemeProvider>
     )
 }
 
-if (document.getElementById('app')) {
+if (document.getElementById('SuccessfulMailVerifyPage')) {
     let features = document.getElementById('features').innerHTML
-    ReactDOM.render(<ResetPasswordMainPage rawFeatures={features}/>, document.getElementById('app'));
+    ReactDOM.render(<SuccessfulMailVerifyPage rawFeatures={features}/>, document.getElementById('app'));
 }
