@@ -20,7 +20,7 @@ internal class AccountConverterTest {
         )))
         val accountApiRepresentation = fromDomainToAccountApiRepresentation(anAccount)
         assertEquals(
-            AdminAccountApiRepresentation(accountLocked = true, enabled = true, email = "email@domain.com", authorities = listOf(
+            AdminAccountApiRepresentation(accountLocked = true, enabled = true, email = "email@domain.com", authorities = setOf(
                 adminRole
             )), accountApiRepresentation)
     }

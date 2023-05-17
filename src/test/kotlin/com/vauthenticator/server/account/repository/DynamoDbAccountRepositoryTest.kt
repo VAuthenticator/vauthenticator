@@ -62,7 +62,7 @@ internal class DynamoDbAccountRepositoryTest {
     @Test
     fun `when overrides authorities to an accounts`() {
         val anotherAccount = account.copy(
-            authorities = listOf("A_ROLE")
+            authorities = setOf("A_ROLE")
         )
         accountRepository.save(account)
         accountRepository.save(anotherAccount)

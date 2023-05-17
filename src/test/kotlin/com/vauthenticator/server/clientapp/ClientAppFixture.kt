@@ -8,7 +8,7 @@ object ClientAppFixture {
     fun aClientApp(clientAppId: ClientAppId,
                    password: Secret = Secret("secret"),
                    logoutUri: LogoutUri = LogoutUri("http://an_uri"),
-                   authorities: Authorities = Authorities(listOf(Authority("AN_AUTHORITY")))
+                   authorities: Authorities = Authorities(setOf(Authority("AN_AUTHORITY")))
     ) = ClientApplication(
             clientAppId,
             password,

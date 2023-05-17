@@ -126,7 +126,7 @@ class AccountCacheContentConverter(private val objectMapper: ObjectMapper) : Cac
                     enabled = it["enabled"] as Boolean,
                     username = it["username"] as String,
                     password = it["password"] as String,
-                    authorities = it["authorities"] as Set<String>,
+                    authorities = (it["authorities"] as List<String>).toSet(),
                     email = it["email"] as String,
                     emailVerified = it["emailVerified"] as Boolean,
                     firstName = it["firstName"] as String,
