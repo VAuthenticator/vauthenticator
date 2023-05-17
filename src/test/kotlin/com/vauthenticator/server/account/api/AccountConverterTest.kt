@@ -14,7 +14,7 @@ internal class AccountConverterTest {
 
     @Test
     fun whenAccountViewIsForAdmin() {
-        val anAccount = anAccount(listOf(Role(adminRole, "A ROLE DESCRIPTION")))
+        val anAccount = anAccount(setOf(Role(adminRole, "A ROLE DESCRIPTION")))
         UsernamePasswordAuthenticationToken(mockk(), mockk(), listOf(SimpleGrantedAuthority(
             adminRole
         )))

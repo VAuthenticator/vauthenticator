@@ -19,7 +19,7 @@ object AccountTestFixture {
         locale = UserLocale.empty()
     )
 
-    fun anAccount(roles: List<Role>) = Account(
+    fun anAccount(roles: Set<Role>) = Account(
         enabled = true,
         username = EMAIL,
         password = "secret",
