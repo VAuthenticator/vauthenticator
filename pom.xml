@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.0.4</version>
+        <version>3.1.0-RC2</version>
         <relativePath/>
     </parent>
 
@@ -25,7 +25,7 @@
         <io.mockk.version>1.13.4</io.mockk.version>
         <aws.sdk.version>2.18.24</aws.sdk.version>
         <greenmail.version>2.0.0</greenmail.version>
-        <oauth2-authorization-server.version>1.0.0</oauth2-authorization-server.version>
+        <oauth2-authorization-server.version>1.1.0</oauth2-authorization-server.version>
         <wiremock.version>2.27.2</wiremock.version>
         <two-factor-auth.version>1.3</two-factor-auth.version>
     </properties>
@@ -133,7 +133,7 @@
         </dependency>
 
         <!-- tracing dependencies -->
-      <!--?  <dependency>
+        <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-tracing-bridge-brave</artifactId>
         </dependency>
@@ -143,7 +143,7 @@
             <artifactId>micrometer-registry-prometheus</artifactId>
             <scope>runtime</scope>
         </dependency>
--->
+
 
         <!-- kotlin dependencies -->
         <dependency>
@@ -187,13 +187,6 @@
         </dependency>
     </dependencies>
 
-    <scm>
-        <connection>scm:git:${project.scm.url}</connection>
-        <developerConnection>scm:git:${project.scm.url}</developerConnection>
-        <url>git@github.com:mrFlick72/vauthenticator.git</url>
-        <tag>HEAD</tag>
-    </scm>
-
     <build>
         <finalName>vauthenticator</finalName>
 
@@ -226,5 +219,26 @@
             </plugin>
         </plugins>
     </build>
+
+    <repositories>
+        <repository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
 
 </project>
