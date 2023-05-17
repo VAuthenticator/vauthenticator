@@ -30,16 +30,11 @@ class DynamoDbAccountRepository(
     }
 
     private fun storeAccountFrom(account: Account, withUpsert: Boolean) {
-        dynamoDbClient.putItem(
-            storeAccountQueryFor(account, dynamoAccountTableName, withUpsert)
-        )
+        dynamoDbClient.putItem(storeAccountQueryFor(account, dynamoAccountTableName, withUpsert))
     }
 
     override fun create(account: Account) = try {
-        storeAccountFrom(
-            account = account,
-            withUpsert = false
-        )
+        storeAccountFrom(account = account, withUpsert = false)
     } catch (e: ConditionalCheckFailedException) {
         throw AccountRegistrationException("account already created", e)
     }
