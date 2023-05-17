@@ -3,7 +3,6 @@ package com.vauthenticator.server.account.repository
 import com.vauthenticator.server.account.Account
 import com.vauthenticator.server.account.AccountTestFixture.anAccount
 import com.vauthenticator.server.role.Role
-import com.vauthenticator.server.support.DatabaseUtils.dynamoAccountRoleTableName
 import com.vauthenticator.server.support.DatabaseUtils.dynamoAccountTableName
 import com.vauthenticator.server.support.DatabaseUtils.dynamoDbClient
 import com.vauthenticator.server.support.DatabaseUtils.resetDatabase
@@ -24,8 +23,7 @@ internal class DynamoDbAccountRepositoryTest {
 
         accountRepository = DynamoDbAccountRepository(
             dynamoDbClient,
-            dynamoAccountTableName,
-            dynamoAccountRoleTableName
+            dynamoAccountTableName
         )
     }
 

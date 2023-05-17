@@ -39,7 +39,7 @@ data class AdminAccountApiRepresentation(
     val accountLocked: Boolean = true,
     val enabled: Boolean = true,
     var email: String = "",
-    val authorities: List<String> = emptyList()
+    val authorities: Set<String> = emptySet()
 )
 
 object AccountConverter {

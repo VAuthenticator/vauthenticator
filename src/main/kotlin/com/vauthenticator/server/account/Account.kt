@@ -15,7 +15,7 @@ data class Account(
 
     var username: String,
     var password: String,
-    var authorities: List<String>,
+    var authorities: Set<String>,
 
     var email: String,
     var emailVerified: Boolean = false,
@@ -126,7 +126,7 @@ class AccountCacheContentConverter(private val objectMapper: ObjectMapper) : Cac
                     enabled = it["enabled"] as Boolean,
                     username = it["username"] as String,
                     password = it["password"] as String,
-                    authorities = it["authorities"] as List<String>,
+                    authorities = it["authorities"] as Set<String>,
                     email = it["email"] as String,
                     emailVerified = it["emailVerified"] as Boolean,
                     firstName = it["firstName"] as String,

@@ -22,7 +22,7 @@ open class SignUpUse(
         clientAccountRepository.findOne(clientAppId)
             .map {
                 val registeredAccount = account.copy(
-                    authorities = it.authorities.content.map { it.content },
+                    authorities = it.authorities.content.map { it.content }.toSet(),
                     password = vAuthenticatorPasswordEncoder.encode(account.password)
                 )
                 accountRepository.create(registeredAccount)

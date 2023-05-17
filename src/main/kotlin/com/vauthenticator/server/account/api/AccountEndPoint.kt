@@ -1,7 +1,6 @@
 package com.vauthenticator.server.account.api
 
 import com.vauthenticator.server.account.*
-import com.vauthenticator.server.account.Date
 import com.vauthenticator.server.account.api.SignUpAccountConverter.fromRepresentationToSignedUpAccount
 import com.vauthenticator.server.account.signup.SignUpUse
 import com.vauthenticator.server.extentions.clientAppId
@@ -95,7 +94,7 @@ object SignUpAccountConverter {
             firstName = representation.firstName,
             lastName = representation.lastName,
             email = representation.email,
-            authorities = representation.authorities,
+            authorities = representation.authorities.toSet(),
             birthDate = Date.isoDateFor(representation.birthDate),
             phone = Phone.phoneFor(representation.phone),
             locale = UserLocale.localeFrom(representation.locale),

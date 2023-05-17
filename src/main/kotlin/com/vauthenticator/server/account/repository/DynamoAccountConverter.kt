@@ -7,12 +7,12 @@ import com.vauthenticator.server.account.UserLocale
 import com.vauthenticator.server.extentions.asDynamoAttribute
 import com.vauthenticator.server.extentions.valueAsBoolFor
 import com.vauthenticator.server.extentions.valueAsStringFor
+import com.vauthenticator.server.extentions.valueAsStringSetFor
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 
 object DynamoAccountConverter {
     fun fromDynamoToDomain(
         dynamoPayload: MutableMap<String, AttributeValue>,
-        authorities: List<String>
     ) = Account(
         accountNonExpired = dynamoPayload.valueAsBoolFor("accountNonExpired"),
         accountNonLocked = dynamoPayload.valueAsBoolFor("accountNonLocked"),
@@ -24,7 +24,7 @@ object DynamoAccountConverter {
         emailVerified = dynamoPayload.valueAsBoolFor("emailVerified"),
         firstName = dynamoPayload.valueAsStringFor("firstName"),
         lastName = dynamoPayload.valueAsStringFor("lastName"),
-        authorities = authorities,
+        authorities = dynamoPayload.valueAsStringSetFor("authorities"),
         birthDate = Date.isoDateFor(dynamoPayload.valueAsStringFor("birthDate")),
         phone = Phone.phoneFor(dynamoPayload.valueAsStringFor("phone")),
         locale = UserLocale.localeFrom(dynamoPayload.valueAsStringFor("locale"))
@@ -40,6 +40,7 @@ object DynamoAccountConverter {
             "password" to account.password.asDynamoAttribute(),
             "email" to account.email.asDynamoAttribute(),
             "emailVerified" to account.emailVerified.asDynamoAttribute(),
+            "authorities" to account.authorities.asDynamoAttribute(),
             "firstName" to account.firstName.asDynamoAttribute(),
             "lastName" to account.lastName.asDynamoAttribute(),
             "birthDate" to account.birthDate.map { it.asDynamoAttribute() }.orElse("".asDynamoAttribute()),

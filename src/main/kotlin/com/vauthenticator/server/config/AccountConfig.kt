@@ -38,7 +38,7 @@ class AccountConfig {
         CachedAccountRepository(
             AccountCacheContentConverter(mapper),
             accountCacheOperation,
-            DynamoDbAccountRepository(dynamoDbClient, accountTableName, accountRoleTableName),
+            DynamoDbAccountRepository(dynamoDbClient, accountTableName),
         )
 
 

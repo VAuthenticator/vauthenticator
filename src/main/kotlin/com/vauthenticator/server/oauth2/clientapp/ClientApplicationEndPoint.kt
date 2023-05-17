@@ -94,7 +94,7 @@ data class ClientAppRepresentation(
                 authorizedGrantTypes = AuthorizedGrantTypes(representation.authorizedGrantTypes.map { it.uppercase() }
                     .map { AuthorizedGrantType.valueOf(it) }),
                 webServerRedirectUri = CallbackUri(representation.webServerRedirectUri),
-                authorities = Authorities(representation.authorities.map { it.uppercase() }.map(::Authority)),
+                authorities = Authorities(representation.authorities.map { it.uppercase() }.map(::Authority).toSet()),
                 accessTokenValidity = TokenTimeToLive(representation.accessTokenValidity),
                 refreshTokenValidity = TokenTimeToLive(representation.refreshTokenValidity),
                 postLogoutRedirectUri = PostLogoutRedirectUri(representation.postLogoutRedirectUri),

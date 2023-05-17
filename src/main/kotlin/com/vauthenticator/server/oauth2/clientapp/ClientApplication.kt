@@ -89,9 +89,9 @@ data class Scope(val content: String) {
     }
 }
 
-data class Authorities(val content: List<Authority>) {
+data class Authorities(val content: Set<Authority>) {
     companion object {
-        fun empty() = Authorities(emptyList())
+        fun empty() = Authorities(emptySet())
     }
 }
 
