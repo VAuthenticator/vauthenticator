@@ -12,6 +12,7 @@ import software.amazon.awssdk.services.dynamodb.model.ScanRequest
 
 interface RoleRepository {
 
+    fun defaultRole(): Role
     fun findAll(): List<Role>
     fun save(role: Role)
     fun delete(role: String)
@@ -22,6 +23,8 @@ class DynamoDbRoleRepository(
     private val dynamoDbClient: DynamoDbClient,
     private val tableName: String
 ) : RoleRepository {
+    override fun defaultRole() = Role("ROLE_USER", "Default User Role")
+
     override fun findAll() =
         dynamoDbClient.scan(findAllRequestFor(tableName))
             .items()
@@ -32,8 +35,13 @@ class DynamoDbRoleRepository(
             .let { }
 
     override fun delete(roleName: String) =
-        dynamoDbClient.deleteItem(deleteRoleRequestFor(roleName, tableName))
-            .let { }
+        if (roleName == defaultRole().name) {
+            throw DefaultRoleDeleteException("the role $roleName is not allowed to be deleted")
+        } else {
+            dynamoDbClient.deleteItem(deleteRoleRequestFor(roleName, tableName))
+                .let { }
+        }
+
 
 }
 

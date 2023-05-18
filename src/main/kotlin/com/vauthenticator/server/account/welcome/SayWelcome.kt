@@ -9,7 +9,7 @@ class SayWelcome(
     private val welcomeMailSender: MailSenderService
 ) {
 
-    fun welcome(mail: String) =
+    fun welcome(mail: String): Unit =
         accountRepository.accountFor(mail)
             .map { welcomeMailSender.sendFor(it) }
             .orElseThrow { AccountNotFoundException("no account with mail $mail in the database") }

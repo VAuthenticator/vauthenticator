@@ -4,6 +4,7 @@ import com.vauthenticator.server.account.Account
 import com.vauthenticator.server.account.AccountTestFixture.anAccount
 import com.vauthenticator.server.role.DynamoDbRoleRepository
 import com.vauthenticator.server.role.Role
+import com.vauthenticator.server.role.defaultRole
 import com.vauthenticator.server.support.DatabaseUtils.dynamoAccountTableName
 import com.vauthenticator.server.support.DatabaseUtils.dynamoDbClient
 import com.vauthenticator.server.support.DatabaseUtils.dynamoRoleTableName
@@ -18,7 +19,7 @@ internal class DynamoDbAccountRepositoryTest {
 
     private val role = Role("role", "description")
     private val anotherRole = Role("another_role", "description")
-    private val account = anAccount(setOf(role))
+    private val account = anAccount(setOf(role, defaultRole))
     private lateinit var accountRepository: DynamoDbAccountRepository
     private lateinit var roleRepository: DynamoDbRoleRepository
 
@@ -38,6 +39,7 @@ internal class DynamoDbAccountRepositoryTest {
         )
 
 
+        roleRepository.save(roleRepository.defaultRole())
         roleRepository.save(role)
         roleRepository.save(anotherRole)
     }
@@ -57,8 +59,7 @@ internal class DynamoDbAccountRepositoryTest {
 
         val findByUsername: Account = accountRepository.accountFor(account.username).orElseThrow()
 
-        println(findByUsername)
-        assertEquals(findByUsername, account.copy(authorities = emptySet()))
+        assertEquals(findByUsername, account.copy(authorities = setOf(roleRepository.defaultRole().name)))
     }
 
     @Test

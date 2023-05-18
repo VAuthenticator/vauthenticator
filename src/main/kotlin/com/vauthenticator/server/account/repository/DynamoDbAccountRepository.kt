@@ -27,7 +27,11 @@ class DynamoDbAccountRepository(
     private fun stealRoleCleanUpFor(account: Account): Account {
         val roles = roleRepository.findAll()
         val filteredAuthorities = account.authorities.filter { role -> roles.map { it.name }.contains(role) }.toSet()
-        return account.copy(authorities = filteredAuthorities)
+        val updatedAccount = account.copy(authorities = filteredAuthorities)
+        if (filteredAuthorities != account.authorities) {
+            save(updatedAccount)
+        }
+        return updatedAccount
     }
 
     private fun findAccountFor(username: String) =

@@ -30,11 +30,11 @@ class PermissionValidator(private val clientApplicationRepository: ClientApplica
         scopes: Scopes
     ) {
         session.oauth2ClientId()
-            .ifPresentOrElse({
-                clientApplicationRepository.findOne(it)
-                    .ifPresent {
-                        if (!it.hasEnoughScopes(scopes)) {
-                            throw InsufficientClientApplicationScopeException("The client app ${it.clientAppId.content} does not support this use case........ consider to add ${scopes.content.map { it.content }} as scope")
+            .ifPresentOrElse({ clientAppId ->
+                clientApplicationRepository.findOne(clientAppId)
+                    .ifPresent { clientApplication ->
+                        if (!clientApplication.hasEnoughScopes(scopes)) {
+                            throw InsufficientClientApplicationScopeException("The client app ${clientApplication.clientAppId.content} does not support this use case........ consider to add ${scopes.content.map { it.content }} as scope")
                         }
                     }
 

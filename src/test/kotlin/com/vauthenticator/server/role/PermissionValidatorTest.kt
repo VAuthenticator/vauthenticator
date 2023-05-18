@@ -1,3 +1,6 @@
 package com.vauthenticator.server.role
 
-class PermissionValidatorTest
+class PermissionValidatorTest {
+
+    //TODO add tests
+}
