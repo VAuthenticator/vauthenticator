@@ -1,6 +1,75 @@
 package com.vauthenticator.server.role
 
+import com.vauthenticator.server.clientapp.ClientAppFixture.aClientApp
+import com.vauthenticator.server.clientapp.ClientAppFixture.aClientAppId
+import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
+import com.vauthenticator.server.oauth2.clientapp.InsufficientClientApplicationScopeException
+import com.vauthenticator.server.oauth2.clientapp.Scope
+import com.vauthenticator.server.oauth2.clientapp.Scopes
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
+import jakarta.servlet.http.HttpSession
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.security.web.savedrequest.DefaultSavedRequest
+import java.util.*
+
+@ExtendWith(MockKExtension::class)
 class PermissionValidatorTest {
 
-    //TODO add tests
+    @MockK
+    private lateinit var clientApplicationRepository: ClientApplicationRepository
+
+    @MockK
+    private lateinit var session: HttpSession
+
+    private lateinit var uut: PermissionValidator
+
+    @BeforeEach
+    fun setUp() {
+        uut = PermissionValidator(clientApplicationRepository)
+    }
+
+    @Test
+    fun `when scopes are validate on client app scopes`() {
+        val clientAppId = aClientAppId()
+        val scopes = Scopes.from(Scope("SCOPE"))
+
+        every { session.getAttribute("SPRING_SECURITY_SAVED_REQUEST") } returns DefaultSavedRequest.Builder()
+            .setParameters(
+                mutableMapOf("client_id" to arrayOf(clientAppId.content))
+            ).build()
+        every { clientApplicationRepository.findOne(clientAppId) } returns Optional.of(
+            aClientApp(clientAppId).copy(
+                scopes = scopes
+            )
+        )
+
+        uut.validate(null, session, scopes)
+    }
+
+    @Test
+    fun `when scopes are not validate on client app scopes`() {
+        val clientAppId = aClientAppId()
+        val scopes = Scopes.from(Scope("SCOPE"))
+
+        every { session.getAttribute("SPRING_SECURITY_SAVED_REQUEST") } returns DefaultSavedRequest.Builder()
+            .setParameters(
+                mutableMapOf("client_id" to arrayOf(clientAppId.content))
+            ).build()
+
+        every { clientApplicationRepository.findOne(clientAppId) } returns Optional.of(
+            aClientApp(clientAppId)
+        )
+
+        assertThrows(InsufficientClientApplicationScopeException::class.java) { uut.validate(null, session, scopes) }
+    }
+
+    @Test
+    fun `when scopes are validate on principal scopes`() {
+        TODO("Not yet implemented")
+    }
 }
