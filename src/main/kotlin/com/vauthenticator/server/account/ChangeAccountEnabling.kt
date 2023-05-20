@@ -7,7 +7,7 @@ class ChangeAccountEnabling(private val accountRepository: AccountRepository) {
         email: String,
         accountLocked: Boolean,
         enabled: Boolean,
-        authorities: List<String>
+        authorities: Set<String>
     ) = accountRepository.accountFor(email)
         .ifPresent { account ->
             accountRepository.save(

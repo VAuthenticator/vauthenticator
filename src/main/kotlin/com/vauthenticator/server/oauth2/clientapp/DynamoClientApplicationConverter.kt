@@ -39,7 +39,7 @@ object DynamoClientApplicationConverter {
                                 .map { it.uppercase() }
                                 .map { AuthorizedGrantType.valueOf(it) }),
                 webServerRedirectUri = CallbackUri(dynamoPayload.valueAsStringFor("web_server_redirect_uri")),
-                authorities = Authorities(dynamoPayload.valuesAsListOfStringFor("authorities").map { Authority(it) }),
+                authorities = Authorities(dynamoPayload.valuesAsListOfStringFor("authorities").map { Authority(it) }.toSet()),
                 accessTokenValidity = TokenTimeToLive(dynamoPayload.valueAsLongFor("access_token_validity")),
                 refreshTokenValidity = TokenTimeToLive(dynamoPayload.valueAsLongFor("refresh_token_validity")),
                 autoApprove = AutoApprove(dynamoPayload.valueAsBoolFor("auto_approve")),

@@ -15,7 +15,7 @@ class ClientApplicationCacheContentConverter(private val objectMapper: ObjectMap
                     authorizedGrantTypes = AuthorizedGrantTypes((it["authorizedGrantTypes"] as List<String>).map(
                         AuthorizedGrantType::valueOf)),
                     webServerRedirectUri = CallbackUri(it["webServerRedirectUri"] as String),
-                    authorities = Authorities((it["authorities"] as List<String>).map { authority -> Authority(authority) }),
+                    authorities = Authorities((it["authorities"] as List<String>).map { authority -> Authority(authority) }.toSet()),
                     accessTokenValidity =  TokenTimeToLive(it["accessTokenValidity"].toString().toLong()),
                     refreshTokenValidity = TokenTimeToLive(it["refreshTokenValidity"].toString().toLong()),
                     additionalInformation = it["additionalInformation"] as Map<String, Any>,

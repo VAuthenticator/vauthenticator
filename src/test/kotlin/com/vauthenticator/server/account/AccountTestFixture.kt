@@ -10,7 +10,7 @@ object AccountTestFixture {
         enabled = true,
         username = EMAIL,
         password = "secret",
-        authorities = emptyList(),
+        authorities = emptySet(),
         email = EMAIL,
         firstName = "A First Name",
         lastName = "A Last Name",
@@ -19,11 +19,11 @@ object AccountTestFixture {
         locale = UserLocale.empty()
     )
 
-    fun anAccount(roles: List<Role>) = Account(
+    fun anAccount(roles: Set<Role>) = Account(
         enabled = true,
         username = EMAIL,
         password = "secret",
-        authorities = roles.map { it.name },
+        authorities = roles.map { it.name }.toSet(),
         email = EMAIL,
         firstName = "A First Name",
         lastName = "A Last Name",

@@ -58,7 +58,7 @@ internal class SignUpUseTest {
     internal fun `when a new account is created`() {
         val clientAppId = ClientAppId("an_id")
         val aClientApp = aClientApp(clientAppId).copy(scopes = Scopes(setOf(SIGN_UP)))
-        val account = anAccount().copy(authorities = listOf("AN_AUTHORITY"), password = "encrypted_secret")
+        val account = anAccount().copy(authorities = setOf("AN_AUTHORITY"), password = "encrypted_secret")
 
         every { passwordPolicy.accept("secret") } just runs
         every { clientAccountRepository.findOne(clientAppId) } returns Optional.of(aClientApp)

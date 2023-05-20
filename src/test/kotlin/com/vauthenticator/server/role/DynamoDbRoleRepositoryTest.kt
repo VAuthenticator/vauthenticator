@@ -5,6 +5,7 @@ import com.vauthenticator.server.support.DatabaseUtils.dynamoRoleTableName
 import com.vauthenticator.server.support.DatabaseUtils.initRoleTests
 import com.vauthenticator.server.support.DatabaseUtils.resetDatabase
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -23,7 +24,7 @@ internal class DynamoDbRoleRepositoryTest {
         val actual = roleRepository.findAll()
         val expected: List<Role> = listOf(Role("a_role", "A_ROLE"))
 
-        Assertions.assertEquals(expected, actual)
+        assertEquals(expected, actual)
     }
 
     @Test
@@ -32,7 +33,7 @@ internal class DynamoDbRoleRepositoryTest {
         val expected = roleRepository.findAll().toSet()
         val actual = listOf(Role("a_role", "A_ROLE"), Role("another_role", "ANOTHER_ROLE")).toSet()
 
-        Assertions.assertEquals(expected, actual)
+        assertEquals(expected, actual)
     }
 
     @Test
@@ -42,7 +43,7 @@ internal class DynamoDbRoleRepositoryTest {
         val expected = roleRepository.findAll().toSet()
         val actual = listOf(Role("a_role", "A_ROLE"), Role("another_role", "ANOTHER_ROLE AGAIN")).toSet()
 
-        Assertions.assertEquals(expected, actual)
+        assertEquals(expected, actual)
     }
 
     @Test
@@ -50,6 +51,11 @@ internal class DynamoDbRoleRepositoryTest {
         roleRepository.delete("a_role")
         val roles = roleRepository.findAll()
 
-        Assertions.assertTrue { roles.isEmpty() }
+        assertTrue { roles.isEmpty() }
+    }
+
+    @Test
+    fun `when default role is attempted to be deleted`() {
+        assertThrows(DefaultRoleDeleteException::class.java) { roleRepository.delete("ROLE_USER") }
     }
 }

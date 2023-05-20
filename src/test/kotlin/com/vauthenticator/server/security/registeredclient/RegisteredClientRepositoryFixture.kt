@@ -41,7 +41,7 @@ object RegisteredClientRepositoryFixture {
                 )
             ),
             webServerRedirectUri = CallbackUri("http://a_call_back"),
-            authorities = Authorities(listOf(Authority("AN_AUTHORITY"), Authority("ANOTHER_AUTHORITY"))),
+            authorities = Authorities(setOf(Authority("AN_AUTHORITY"), Authority("ANOTHER_AUTHORITY"))),
             accessTokenValidity = TokenTimeToLive(100),
             refreshTokenValidity = TokenTimeToLive(200),
             additionalInformation = emptyMap(),

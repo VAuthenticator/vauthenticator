@@ -29,11 +29,11 @@ class ChangeAccountEnablingTest {
 
     @Test
     fun `when we change account datas`() {
-        val account = anAccount().copy(accountNonLocked = false, enabled = true, authorities = listOf("A_ROLE"))
+        val account = anAccount().copy(accountNonLocked = false, enabled = true, authorities = setOf("A_ROLE"))
         every { accountRepository.accountFor(account.email) } returns Optional.of(anAccount())
         every { accountRepository.save(account) } just runs
 
-        underTest.execute(account.email, true, true, listOf("A_ROLE"))
+        underTest.execute(account.email, true, true, setOf("A_ROLE"))
 
         verify { accountRepository.accountFor(account.email) }
         verify { accountRepository.save(account) }
@@ -41,10 +41,10 @@ class ChangeAccountEnablingTest {
 
     @Test
     fun `when the account is not found`() {
-        val account = anAccount().copy(accountNonLocked = false, enabled = true, authorities = listOf("A_ROLE"))
+        val account = anAccount().copy(accountNonLocked = false, enabled = true, authorities = setOf("A_ROLE"))
         every { accountRepository.accountFor(account.email) } returns Optional.empty()
 
-        underTest.execute(account.email, accountLocked = true, enabled = true, authorities = listOf("A_ROLE"))
+        underTest.execute(account.email, accountLocked = true, enabled = true, authorities = setOf("A_ROLE"))
 
         verify { accountRepository.accountFor(account.email) }
         verify(exactly = 0) { accountRepository.save(account) }

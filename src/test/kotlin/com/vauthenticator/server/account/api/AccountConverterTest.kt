@@ -14,13 +14,13 @@ internal class AccountConverterTest {
 
     @Test
     fun whenAccountViewIsForAdmin() {
-        val anAccount = anAccount(listOf(Role(adminRole, "A ROLE DESCRIPTION")))
+        val anAccount = anAccount(setOf(Role(adminRole, "A ROLE DESCRIPTION")))
         UsernamePasswordAuthenticationToken(mockk(), mockk(), listOf(SimpleGrantedAuthority(
             adminRole
         )))
         val accountApiRepresentation = fromDomainToAccountApiRepresentation(anAccount)
         assertEquals(
-            AdminAccountApiRepresentation(accountLocked = true, enabled = true, email = "email@domain.com", authorities = listOf(
+            AdminAccountApiRepresentation(accountLocked = true, enabled = true, email = "email@domain.com", authorities = setOf(
                 adminRole
             )), accountApiRepresentation)
     }
