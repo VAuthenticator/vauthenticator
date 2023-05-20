@@ -1,5 +1,8 @@
 package com.vauthenticator.server.role
 
+import com.vauthenticator.server.account.Account
+import com.vauthenticator.server.cache.CacheContentConverter
+import com.vauthenticator.server.cache.CacheOperation
 import com.vauthenticator.server.role.DynamoDbRoleMapper.deleteRoleRequestFor
 import com.vauthenticator.server.role.DynamoDbRoleMapper.findAllRequestFor
 import com.vauthenticator.server.role.DynamoDbRoleMapper.roleFor
@@ -16,6 +19,14 @@ interface RoleRepository {
     fun findAll(): List<Role>
     fun save(role: Role)
     fun delete(role: String)
+
+}
+
+class CachedRoleRepository(
+    private val cacheContentConverter: CacheContentConverter<Account>,
+    private val cacheOperation: CacheOperation<String, String>,
+    private val delegate: RoleRepository
+) : RoleRepository by delegate {
 
 }
 
