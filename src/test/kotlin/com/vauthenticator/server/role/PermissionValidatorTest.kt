@@ -1,11 +1,13 @@
 package com.vauthenticator.server.role
 
+import com.vauthenticator.server.account.EMAIL
 import com.vauthenticator.server.clientapp.ClientAppFixture.aClientApp
 import com.vauthenticator.server.clientapp.ClientAppFixture.aClientAppId
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.InsufficientClientApplicationScopeException
 import com.vauthenticator.server.oauth2.clientapp.Scope
 import com.vauthenticator.server.oauth2.clientapp.Scopes
+import com.vauthenticator.server.support.SecurityFixture
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -19,6 +21,11 @@ import java.util.*
 
 @ExtendWith(MockKExtension::class)
 class PermissionValidatorTest {
+
+    private val clientAppId = aClientAppId()
+    private val scopes = Scopes.from(Scope("SCOPE"))
+    private val scopesValues = scopes.content.map { it.content }
+
 
     @MockK
     private lateinit var clientApplicationRepository: ClientApplicationRepository
@@ -35,13 +42,7 @@ class PermissionValidatorTest {
 
     @Test
     fun `when scopes are validate on client app scopes`() {
-        val clientAppId = aClientAppId()
-        val scopes = Scopes.from(Scope("SCOPE"))
-
-        every { session.getAttribute("SPRING_SECURITY_SAVED_REQUEST") } returns DefaultSavedRequest.Builder()
-            .setParameters(
-                mutableMapOf("client_id" to arrayOf(clientAppId.content))
-            ).build()
+        every { session.getAttribute("SPRING_SECURITY_SAVED_REQUEST") } returns httpSessionWithClientApp()
         every { clientApplicationRepository.findOne(clientAppId) } returns Optional.of(
             aClientApp(clientAppId).copy(
                 scopes = scopes
@@ -53,14 +54,7 @@ class PermissionValidatorTest {
 
     @Test
     fun `when scopes are not validate on client app scopes`() {
-        val clientAppId = aClientAppId()
-        val scopes = Scopes.from(Scope("SCOPE"))
-
-        every { session.getAttribute("SPRING_SECURITY_SAVED_REQUEST") } returns DefaultSavedRequest.Builder()
-            .setParameters(
-                mutableMapOf("client_id" to arrayOf(clientAppId.content))
-            ).build()
-
+        every { session.getAttribute("SPRING_SECURITY_SAVED_REQUEST") } returns httpSessionWithClientApp()
         every { clientApplicationRepository.findOne(clientAppId) } returns Optional.of(
             aClientApp(clientAppId)
         )
@@ -70,6 +64,40 @@ class PermissionValidatorTest {
 
     @Test
     fun `when scopes are validate on principal scopes`() {
-        TODO("Not yet implemented")
+        every { session.getAttribute("SPRING_SECURITY_SAVED_REQUEST") } returns emptyHttpSession()
+
+        val principal = SecurityFixture.principalFor(
+            clientAppId = clientAppId.content,
+            mail = EMAIL,
+            scopes = scopesValues
+        )
+        uut.validate(principal = principal, session = session, scopes = scopes)
     }
+
+    @Test
+    fun `when scopes are not validate on principal scopes`() {
+        every { session.getAttribute("SPRING_SECURITY_SAVED_REQUEST") } returns emptyHttpSession()
+
+        val principal = SecurityFixture.principalFor(
+            clientAppId = clientAppId.content,
+            mail = EMAIL,
+            scopes = emptyList()
+        )
+        assertThrows(InsufficientClientApplicationScopeException::class.java) {
+            uut.validate(
+                principal = principal,
+                session = session,
+                scopes = scopes
+            )
+        }
+    }
+
+    private fun httpSessionWithClientApp(): DefaultSavedRequest =
+        DefaultSavedRequest.Builder()
+            .setParameters(
+                mutableMapOf("client_id" to arrayOf(clientAppId.content))
+            ).build()
+
+    private fun emptyHttpSession(): DefaultSavedRequest =
+        DefaultSavedRequest.Builder().build()
 }
