@@ -14,6 +14,10 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import java.util.*
 
+private val caceh_content = "roles-junit-content"
+
+private const val cache_key = "roles"
+
 @ExtendWith(MockKExtension::class)
 class CachedRoleRepositoryTest {
 
@@ -36,51 +40,51 @@ class CachedRoleRepositoryTest {
 
     @Test
     internal fun `when a role is not found into the cache then it is loaded from database and loaded into the cache`() {
-        every { cacheOperation.get("roles") } returns Optional.empty()
+        every { cacheOperation.get(cache_key) } returns Optional.empty()
         every { delegate.findAll() } returns roles
-        every { roleCacheContentConverter.loadableContentIntoCacheFor(roles) } returns "roles-junit-content"
-        every { cacheOperation.put("roles", "roles-junit-content") } just runs
+        every { roleCacheContentConverter.loadableContentIntoCacheFor(roles) } returns caceh_content
+        every { cacheOperation.put(cache_key, caceh_content) } just runs
 
         underTest.findAll()
 
-        verify { cacheOperation.get("roles")}
+        verify { cacheOperation.get(cache_key)}
         verify { delegate.findAll() }
         verify { roleCacheContentConverter.loadableContentIntoCacheFor(roles)}
-        verify { cacheOperation.put("roles", "roles-junit-content") }
+        verify { cacheOperation.put(cache_key, caceh_content) }
     }
 
     @Test
     internal fun `when an account is found from the cache `() {
-        every { cacheOperation.get("roles") } returns Optional.of("roles-junit-content")
-        every { roleCacheContentConverter.getObjectFromCacheContentFor("roles-junit-content") } returns roles
+        every { cacheOperation.get(cache_key) } returns Optional.of(caceh_content)
+        every { roleCacheContentConverter.getObjectFromCacheContentFor(caceh_content) } returns roles
 
         underTest.findAll()
 
-        verify { cacheOperation.get("roles") }
+        verify { cacheOperation.get(cache_key) }
         verify(exactly = 0) { delegate.findAll() }
-        verify { roleCacheContentConverter.getObjectFromCacheContentFor("roles-junit-content") }
-        verify(exactly = 0) { cacheOperation.put("roles", "roles-junit-content") }
+        verify { roleCacheContentConverter.getObjectFromCacheContentFor(caceh_content) }
+        verify(exactly = 0) { cacheOperation.put(cache_key, caceh_content) }
     }
 
 
     @Test
     fun `when an account is updated`() {
-        every { cacheOperation.evict("roles") } just runs
+        every { cacheOperation.evict(cache_key) } just runs
         every { delegate.save(defaultRole) } just runs
 
         underTest.save(defaultRole)
 
-        verify { cacheOperation.evict("roles") }
+        verify { cacheOperation.evict(cache_key) }
         verify { delegate.save(defaultRole) }
     }
     @Test
     fun `when an account is deleted`() {
-        every { cacheOperation.evict("roles") } just runs
+        every { cacheOperation.evict(cache_key) } just runs
         every { delegate.delete(adminRole.name) } just runs
 
         underTest.delete(adminRole.name)
 
-        verify { cacheOperation.evict("roles") }
+        verify { cacheOperation.evict(cache_key) }
         verify { delegate.delete(adminRole.name) }
     }
 }
