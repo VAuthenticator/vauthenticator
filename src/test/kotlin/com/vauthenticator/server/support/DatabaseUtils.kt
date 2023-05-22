@@ -12,7 +12,6 @@ object DatabaseUtils {
     const val dynamoClientApplicationTableName: String = "TESTING_VAuthenticator_ClientApplication"
     const val dynamoAccountTableName: String = "TESTING_VAuthenticator_Account"
     const val dynamoRoleTableName: String = "TESTING_VAuthenticator_Role"
-    const val dynamoAccountRoleTableName: String = "TESTING_VAuthenticator_Account_Role"
     const val dynamoSignatureKeysTableName: String = "TESTING_VAuthenticator_Signature_Keys"
     const val dynamoMfaKeysTableName: String = "TESTING_VAuthenticator_Mfa_Keys"
     const val dynamoTicketTableName: String = "TESTING_VAuthenticator_ticket"
@@ -61,11 +60,6 @@ object DatabaseUtils {
             )
             dynamoDbClient.deleteTable(
                 DeleteTableRequest.builder()
-                    .tableName(dynamoAccountRoleTableName)
-                    .build()
-            )
-            dynamoDbClient.deleteTable(
-                DeleteTableRequest.builder()
                     .tableName(dynamoSignatureKeysTableName)
                     .build()
             )
@@ -90,7 +84,6 @@ object DatabaseUtils {
             createDynamoClientApplicationTable()
             createDynamoAccountTable()
             createDynamoRoleTable()
-            createDynamoAccountRoleTable()
             createDynamoSignatureKeysTable()
             createDynamoMfaKeysTable()
             createDynamoTicketTable()
@@ -121,35 +114,6 @@ object DatabaseUtils {
                         .build(),
                     AttributeDefinition.builder()
                         .attributeName("mfa_method")
-                        .attributeType(ScalarAttributeType.S)
-                        .build()
-                )
-                .billingMode(BillingMode.PAY_PER_REQUEST)
-                .build()
-        );
-    }
-
-    private fun createDynamoAccountRoleTable() {
-        dynamoDbClient.createTable(
-            CreateTableRequest.builder()
-                .tableName(dynamoAccountRoleTableName)
-                .keySchema(
-                    KeySchemaElement.builder()
-                        .attributeName("user_name")
-                        .keyType(KeyType.HASH)
-                        .build(),
-                    KeySchemaElement.builder()
-                        .attributeName("role_name")
-                        .keyType(KeyType.RANGE)
-                        .build()
-                )
-                .attributeDefinitions(
-                    AttributeDefinition.builder()
-                        .attributeName("user_name")
-                        .attributeType(ScalarAttributeType.S)
-                        .build(),
-                    AttributeDefinition.builder()
-                        .attributeName("role_name")
                         .attributeType(ScalarAttributeType.S)
                         .build()
                 )
