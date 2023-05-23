@@ -14,12 +14,13 @@ import software.amazon.awssdk.services.dynamodb.model.ScanRequest
 
 interface RoleRepository {
 
-    fun defaultRole(): Role
     fun findAll(): List<Role>
     fun save(role: Role)
     fun delete(role: String)
 
 }
+
+private const val ROLES_CACHE_KEY = "roles"
 
 class CachedRoleRepository(
     private val cacheContentConverter: CacheContentConverter<List<Role>>,
@@ -28,12 +29,12 @@ class CachedRoleRepository(
 ) : RoleRepository by delegate {
 
     override fun findAll(): List<Role> {
-        return cacheOperation.get("roles")
+        return cacheOperation.get(ROLES_CACHE_KEY)
             .map { cacheContentConverter.getObjectFromCacheContentFor(it) }
             .orElseGet {
                 val loadedRoles = delegate.findAll()
                 cacheOperation.put(
-                    "roles",
+                    ROLES_CACHE_KEY,
                     cacheContentConverter.loadableContentIntoCacheFor(loadedRoles)
                 )
                 loadedRoles
@@ -41,21 +42,21 @@ class CachedRoleRepository(
     }
 
     override fun save(role: Role) {
-        cacheOperation.evict("roles")
+        cacheOperation.evict(ROLES_CACHE_KEY)
         delegate.save(role)
     }
 
     override fun delete(role: String) {
-        cacheOperation.evict("roles")
+        cacheOperation.evict(ROLES_CACHE_KEY)
         delegate.delete(role)
     }
 }
 
 class DynamoDbRoleRepository(
+    private val protectedRoleFromDeletion : List<String>,
     private val dynamoDbClient: DynamoDbClient,
     private val tableName: String
 ) : RoleRepository {
-    override fun defaultRole() = Role("ROLE_USER", "Default User Role")
 
     override fun findAll() =
         dynamoDbClient.scan(findAllRequestFor(tableName))
@@ -67,7 +68,7 @@ class DynamoDbRoleRepository(
             .let { }
 
     override fun delete(roleName: String) =
-        if (roleName == defaultRole().name) {
+        if (protectedRoleFromDeletion.contains(roleName)) {
             throw DefaultRoleDeleteException("the role $roleName is not allowed to be deleted")
         } else {
             dynamoDbClient.deleteItem(deleteRoleRequestFor(roleName, tableName))
