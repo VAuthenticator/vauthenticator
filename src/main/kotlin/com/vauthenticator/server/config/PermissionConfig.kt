@@ -33,12 +33,13 @@ class PermissionConfig {
         mapper: ObjectMapper,
         roleCacheOperation: RedisCacheOperation<String, String>,
         dynamoDbClient: DynamoDbClient,
-        @Value("\${vauthenticator.dynamo-db.role.table-name}") roleTableName: String
+        @Value("\${vauthenticator.dynamo-db.role.table-name}") roleTableName: String,
+        @Value("\${vauthenticator.dynamo-db.role.protected-from-delete}") protectedRoleFromDeletion: List<String>
     ) =
         CachedRoleRepository(
             RoleCacheContentConverter(mapper),
             roleCacheOperation,
-            DynamoDbRoleRepository(dynamoDbClient, roleTableName)
+            DynamoDbRoleRepository(protectedRoleFromDeletion, dynamoDbClient, roleTableName)
         )
 
     @Bean
