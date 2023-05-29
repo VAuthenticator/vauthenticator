@@ -1,5 +1,7 @@
 package com.vauthenticator.server.role
 
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.noContent
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.web.bind.annotation.*
@@ -9,7 +11,7 @@ class RoleEndPoint(private val roleRepository: RoleRepository) {
 
     @GetMapping("/api/roles")
     fun findAllRole() =
-            ok().body(roleRepository.findAll())
+        ok().body(roleRepository.findAll())
 
     @PutMapping("/api/roles")
     fun saveRole(@RequestBody role: Role) = run {
@@ -23,4 +25,7 @@ class RoleEndPoint(private val roleRepository: RoleRepository) {
         noContent().build<Unit>()
     }
 
+    @ExceptionHandler(ProtectedRoleFromDeletionException::class)
+    fun defaultRoleDeleteExceptionHandler() =
+        ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build<Unit>()
 }

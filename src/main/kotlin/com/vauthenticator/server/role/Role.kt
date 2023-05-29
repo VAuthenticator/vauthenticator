@@ -6,7 +6,7 @@ import com.vauthenticator.server.cache.CacheContentConverter
 
 data class Role(val name: String, val description: String)
 
-class DefaultRoleDeleteException(message: String) : RuntimeException(message)
+class ProtectedRoleFromDeletionException(message: String) : RuntimeException(message)
 
 class RoleCacheContentConverter(private val objectMapper: ObjectMapper) : CacheContentConverter<List<Role>> {
     override fun getObjectFromCacheContentFor(cacheContent: String): List<Role> {

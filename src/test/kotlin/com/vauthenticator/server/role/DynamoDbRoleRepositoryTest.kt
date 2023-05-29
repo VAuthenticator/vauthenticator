@@ -55,6 +55,6 @@ internal class DynamoDbRoleRepositoryTest {
 
     @Test
     fun `when default role is attempted to be deleted`() {
-        assertThrows(DefaultRoleDeleteException::class.java) { roleRepository.delete("ROLE_USER") }
+        assertThrows(ProtectedRoleFromDeletionException::class.java) { roleRepository.delete("ROLE_USER") }
     }
 }
