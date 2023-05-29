@@ -61,13 +61,15 @@ class WebSecurityConfig(
         mfaAuthorizationManager: AuthorizationManager<RequestAuthorizationContext>,
         accountUserDetailsService: AccountUserDetailsService
     ): SecurityFilterChain {
-        http.csrf().disable().headers().frameOptions().disable()
+        http.csrf { it.disable() }
+        http.headers { it.frameOptions { it.disable() } }
 
-        http.formLogin()
-            .successHandler(MfaAuthenticationHandler(clientApplicationRepository, "/mfa-challenge/send"))
-            .loginProcessingUrl(LOG_IN_URL_PAGE)
-            .loginPage(LOG_IN_URL_PAGE)
-            .permitAll()
+        http.formLogin {
+            it.successHandler(MfaAuthenticationHandler(clientApplicationRepository, "/mfa-challenge/send"))
+                .loginProcessingUrl(LOG_IN_URL_PAGE)
+                .loginPage(LOG_IN_URL_PAGE)
+                .permitAll()
+        }
 
         http.exceptionHandling {
             it.withObjectPostProcessor(object : ObjectPostProcessor<ExceptionTranslationFilter> {
@@ -79,12 +81,19 @@ class WebSecurityConfig(
         }
             .securityContext { it.requireExplicitSave(false) };
 
-        http.logout()
-            .addLogoutHandler(ClearSessionStateLogoutHandler(SessionManagementFactory(providerSettings), redisTemplate))
-            .invalidateHttpSession(true)
+        http.logout {
+            it.addLogoutHandler(
+                ClearSessionStateLogoutHandler(
+                    SessionManagementFactory(providerSettings),
+                    redisTemplate
+                )
+            )
+                .invalidateHttpSession(true)
+
+        }
 
         http.userDetailsService(accountUserDetailsService)
-        http.oauth2ResourceServer().jwt()
+        http.oauth2ResourceServer { it.jwt {} }
         http.securityMatcher(*WHITE_LIST, "/api/**", "/mfa-challenge/**")
             .authorizeHttpRequests { authz ->
                 authz
@@ -92,10 +101,11 @@ class WebSecurityConfig(
                     .requestMatchers("/mfa-challenge").access(mfaAuthorizationManager)
                     .requestMatchers(*WHITE_LIST).permitAll()
                     .requestMatchers("/api/accounts").permitAll()
-                    .requestMatchers(HttpMethod.PUT,"/api/sign-up/mail/{mail}/welcome").hasAnyAuthority(Scope.WELCOME.content)
-                    .requestMatchers(HttpMethod.PUT,"/api/mail/{mail}/verify-challenge").hasAnyAuthority(Scope.MAIL_VERIFY.content)
-                    .requestMatchers(HttpMethod.PUT,"/api/mail/{mail}/reset-password-challenge").permitAll()
-                    .requestMatchers(HttpMethod.PUT,"/api/reset-password/{ticket}").permitAll()
+                    .requestMatchers(HttpMethod.PUT, "/api/sign-up/mail/welcome").hasAnyAuthority(Scope.WELCOME.content)
+                    .requestMatchers(HttpMethod.PUT, "/api/mail/verify-challenge")
+                    .hasAnyAuthority(Scope.MAIL_VERIFY.content)
+                    .requestMatchers(HttpMethod.PUT, "/api/mail/reset-password-challenge").permitAll()
+                    .requestMatchers(HttpMethod.PUT, "/api/reset-password/{ticket}").permitAll()
 
                     .requestMatchers(HttpMethod.GET, "/api/mail-template")
                     .hasAnyAuthority(Scope.MAIL_TEMPLATE_READER.content)
