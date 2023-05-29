@@ -29,6 +29,7 @@ import java.util.*
 
 @ExtendWith(MockKExtension::class)
 internal class ResetPasswordEndPointTest {
+    private val objectMapper = ObjectMapper()
 
     lateinit var mokMvc: MockMvc
 
@@ -68,7 +69,9 @@ internal class ResetPasswordEndPointTest {
         every { sendResetPasswordMailChallenge.sendResetPasswordMailFor(EMAIL) } just runs
 
         mokMvc.perform(
-            put("/api/mail/{mail}/reset-password-challenge", EMAIL)
+            put("/api/reset-password-challenge")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(mapOf("mail" to EMAIL)))
                 .principal(principal)
         )
             .andExpect(status().isNoContent)
@@ -77,17 +80,24 @@ internal class ResetPasswordEndPointTest {
     @Test
     internal fun `when a password is reset as anonymous but starting from ui`() {
         every { sendResetPasswordMailChallenge.sendResetPasswordMailFor(EMAIL) } just runs
-        every { clientApplicationRepository.findOne(clientAppId) } returns Optional.of(aClientApp(ClientAppId(A_CLIENT_APP_ID)))
+        every { clientApplicationRepository.findOne(clientAppId) } returns Optional.of(
+            aClientApp(
+                ClientAppId(
+                    A_CLIENT_APP_ID
+                )
+            )
+        )
 
         mokMvc.perform(
-            put("/api/mail/{mail}/reset-password-challenge", EMAIL)
+            put("/api/reset-password-challenge")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(mapOf("mail" to EMAIL)))
                 .sessionAttr("clientId", A_CLIENT_APP_ID)
         ).andExpect(status().isNoContent)
     }
 
     @Test
     internal fun `when a password is reset`() {
-        val objectMapper = ObjectMapper()
         val request = ResetPasswordRequest("A_NEW_PSWD")
         val ticket = "A_TICKET"
 

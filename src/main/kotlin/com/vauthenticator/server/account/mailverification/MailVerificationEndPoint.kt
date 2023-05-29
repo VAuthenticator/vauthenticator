@@ -9,10 +9,7 @@ import org.springframework.http.ResponseEntity.*
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 class MailVerificationEndPoint(
@@ -20,14 +17,14 @@ class MailVerificationEndPoint(
     private val sendVerifyMailChallenge: SendVerifyMailChallenge
 ) {
 
-    @PutMapping("/api/mail/{mail}/verify-challenge")
+    @PutMapping("/api/verify-challenge")
     fun sendVerifyMail(
-        @PathVariable mail: String,
+        @RequestBody request : Map<String,String>,
         httpSession: HttpSession,
         principal: JwtAuthenticationToken
     ): ResponseEntity<Unit> {
         permissionValidator.validate(principal, httpSession, Scopes.from(Scope.MAIL_VERIFY))
-        sendVerifyMailChallenge.sendVerifyMail(mail)
+        sendVerifyMailChallenge.sendVerifyMail(request["mail"]!!)
         return noContent().build()
     }
 

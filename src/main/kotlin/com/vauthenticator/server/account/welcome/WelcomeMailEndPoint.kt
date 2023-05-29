@@ -7,10 +7,7 @@ import com.vauthenticator.server.role.PermissionValidator
 import jakarta.servlet.http.HttpSession
 import org.springframework.http.ResponseEntity
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
-import org.springframework.web.bind.annotation.ExceptionHandler
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 class WelcomeMailEndPoint(
@@ -18,10 +15,13 @@ class WelcomeMailEndPoint(
     private val sayWelcome: SayWelcome
 ) {
 
-    @PutMapping("/api/sign-up/mail/{mail}/welcome")
-    fun welcome(@PathVariable mail: String, session: HttpSession, principal: JwtAuthenticationToken): ResponseEntity<Unit> {
+    @PutMapping("/api/sign-up/welcome")
+    fun welcome(
+        @RequestBody request: Map<String, String>,
+        session: HttpSession, principal: JwtAuthenticationToken
+    ): ResponseEntity<Unit> {
         permissionValidator.validate(principal, session, Scopes.from(Scope.WELCOME))
-        sayWelcome.welcome(mail)
+        sayWelcome.welcome(request["mail"]!!)
         return ResponseEntity.noContent().build()
     }
 

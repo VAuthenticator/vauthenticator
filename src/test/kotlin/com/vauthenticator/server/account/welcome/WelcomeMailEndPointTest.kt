@@ -1,5 +1,6 @@
 package com.vauthenticator.server.account.welcome
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.account.AccountNotFoundException
 import com.vauthenticator.server.account.EMAIL
 import com.vauthenticator.server.clientapp.A_CLIENT_APP_ID
@@ -17,6 +18,7 @@ import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -26,6 +28,8 @@ import java.util.*
 
 @ExtendWith(MockKExtension::class)
 internal class WelcomeMailEndPointTest {
+    private val objectMapper = ObjectMapper()
+
     lateinit var mokMvc: MockMvc
 
     @MockK
@@ -57,7 +61,9 @@ internal class WelcomeMailEndPointTest {
         every { sayWelcome.welcome(EMAIL) } just runs
 
         mokMvc.perform(
-            put("/api/sign-up/mail/email@domain.com/welcome")
+            put("/api/sign-up/welcome")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(mapOf("mail" to EMAIL)))
                 .principal(principal)
         )
             .andExpect(status().isNoContent)
@@ -70,7 +76,9 @@ internal class WelcomeMailEndPointTest {
         every { sayWelcome.welcome(EMAIL) } throws AccountNotFoundException("")
 
         mokMvc.perform(
-            put("/api/sign-up/mail/email@domain.com/welcome")
+            put("/api/sign-up/welcome")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(mapOf("mail" to EMAIL)))
                 .principal(principal)
         )
             .andExpect(status().isNotFound)
