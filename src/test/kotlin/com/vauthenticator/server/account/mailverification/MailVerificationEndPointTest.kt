@@ -1,5 +1,6 @@
 package com.vauthenticator.server.account.mailverification
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.account.EMAIL
 import com.vauthenticator.server.clientapp.A_CLIENT_APP_ID
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.http.MediaType
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.test.web.servlet.MockMvc
@@ -26,6 +28,7 @@ import java.time.Instant
 
 @ExtendWith(MockKExtension::class)
 internal class MailVerificationEndPointTest {
+    private val objectMapper = ObjectMapper()
 
     lateinit var mokMvc: MockMvc
 
@@ -37,8 +40,13 @@ internal class MailVerificationEndPointTest {
 
     @BeforeEach
     internal fun setUp() {
-        mokMvc = MockMvcBuilders.standaloneSetup(MailVerificationEndPoint(PermissionValidator(cientApplicationRepository), sendVerifyMailChallenge))
-                .build()
+        mokMvc = MockMvcBuilders.standaloneSetup(
+            MailVerificationEndPoint(
+                PermissionValidator(cientApplicationRepository),
+                sendVerifyMailChallenge
+            )
+        )
+            .build()
     }
 
     @Test
@@ -46,11 +54,23 @@ internal class MailVerificationEndPointTest {
         every { sendVerifyMailChallenge.sendVerifyMail(EMAIL) } just runs
 
         val signedJWT = signedJWTFor(A_CLIENT_APP_ID, EMAIL, listOf(Scope.MAIL_VERIFY.content))
-        val principal = JwtAuthenticationToken(Jwt(SecurityFixture.simpleJwtFor(A_CLIENT_APP_ID), Instant.now(), Instant.now().plusSeconds(100), signedJWT.header.toJSONObject(), signedJWT.payload.toJSONObject()))
+        val principal = JwtAuthenticationToken(
+            Jwt(
+                SecurityFixture.simpleJwtFor(A_CLIENT_APP_ID),
+                Instant.now(),
+                Instant.now().plusSeconds(100),
+                signedJWT.header.toJSONObject(),
+                signedJWT.payload.toJSONObject()
+            )
+        )
 
-        mokMvc.perform(put("/api/mail/{mail}/verify-challenge", EMAIL)
-                .principal(principal))
-                .andExpect(status().isNoContent)
+        mokMvc.perform(
+            put("/api/verify-challenge")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(mapOf("mail" to EMAIL)))
+                .principal(principal)
+        )
+            .andExpect(status().isNoContent)
     }
 
 

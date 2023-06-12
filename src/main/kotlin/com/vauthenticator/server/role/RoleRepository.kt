@@ -69,7 +69,7 @@ class DynamoDbRoleRepository(
 
     override fun delete(roleName: String) =
         if (protectedRoleFromDeletion.contains(roleName)) {
-            throw DefaultRoleDeleteException("the role $roleName is not allowed to be deleted")
+            throw ProtectedRoleFromDeletionException("the role $roleName is not allowed to be deleted")
         } else {
             dynamoDbClient.deleteItem(deleteRoleRequestFor(roleName, tableName))
                 .let { }

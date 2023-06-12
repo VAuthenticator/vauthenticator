@@ -9,12 +9,17 @@ import Separator from "../component/Separator";
 import FormButton from "../component/FormButton";
 
 
-const ResetPasswordChallengeSender = (props) => {
+const ResetPasswordChallengeSender = () => {
     const [email, setEmail] = React.useState("")
 
     const sentResetPasswordChallenge = (email) => {
-        return fetch(`/api/mail/${email}/reset-password-challenge`, {
+        return fetch(`/api/reset-password-challenge`, {
             method: "PUT",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({"mail": email}),
             credentials: 'same-origin'
         }).then(r => {
             if (r.status === 204) {

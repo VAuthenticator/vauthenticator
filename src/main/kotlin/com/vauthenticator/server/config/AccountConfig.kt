@@ -33,7 +33,7 @@ class AccountConfig {
         mapper: ObjectMapper,
         dynamoDbClient: DynamoDbClient,
         accountCacheOperation: CacheOperation<String, String>,
-        roleRepository : RoleRepository,
+        roleRepository: RoleRepository,
         @Value("\${vauthenticator.dynamo-db.account.table-name}") accountTableName: String,
         @Value("\${vauthenticator.dynamo-db.account.role.table-name}") accountRoleTableName: String
     ) =
@@ -42,7 +42,6 @@ class AccountConfig {
             accountCacheOperation,
             DynamoDbAccountRepository(dynamoDbClient, accountTableName, roleRepository),
         )
-
 
     @Bean
     fun accountCacheOperation(

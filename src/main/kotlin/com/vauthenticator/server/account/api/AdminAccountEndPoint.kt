@@ -21,13 +21,10 @@ class AdminAccountEndPoint(
                 .map { AccountConverter.fromDomainToAccountApiRepresentation(it) }
         )
 
-    @PutMapping("/api/admin/accounts/{email}/email")
-    fun saveAccount(
-        @PathVariable email: String,
-        @RequestBody representation: AdminAccountApiRepresentation
-    ) =
+    @PutMapping("/api/admin/accounts")
+    fun saveAccount(@RequestBody representation: AdminAccountApiRepresentation) =
         changeAccountEnabling.execute(
-            email,
+            representation.email,
             representation.accountLocked,
             representation.enabled,
             representation.authorities
