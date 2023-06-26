@@ -19,8 +19,8 @@ class CacheConfig(private val documentRepository: DocumentRepository) {
     private val logger = LoggerFactory.getLogger(StaticController::class.java)
 
     @Bean
-    @ConditionalOnProperty("asset-server.on-s3.enabled", havingValue = "true", matchIfMissing = true)
-    fun staticContentLocalCache(@Value("\${asset-server.on-s3.cache.ttl:1m}") ttl: Duration): CaffeineCache {
+    @ConditionalOnProperty("embedded-asset-cdn.enabled", havingValue = "true", matchIfMissing = true)
+    fun staticContentLocalCache(@Value("\${embedded-asset-cdn.cache.ttl:1m}") ttl: Duration): CaffeineCache {
         return CaffeineCache(
             "static-content-local-cache", Caffeine.newBuilder()
                 .refreshAfterWrite(ttl)
