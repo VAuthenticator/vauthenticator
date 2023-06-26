@@ -18,7 +18,6 @@ class S3DocumentRepository(
             contentType = response.response().contentType(),
             content = response.readAllBytes()
         )
-
     }
 
 
@@ -33,5 +32,4 @@ class S3DocumentRepository(
         )
     }
 
-    private fun documentKeyFor(type: String, path: String) = "$type/$path"
 }

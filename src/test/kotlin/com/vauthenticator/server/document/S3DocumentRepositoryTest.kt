@@ -1,6 +1,5 @@
 package com.vauthenticator.server.document
 
-import com.vauthenticator.server.mail.MailType
 import com.vauthenticator.server.support.DocumentUtils.documentBucket
 import com.vauthenticator.server.support.DocumentUtils.initDocumentTests
 import com.vauthenticator.server.support.DocumentUtils.s3Client
@@ -30,7 +29,7 @@ internal class S3DocumentRepositoryTest {
 
         val documentRepository = S3DocumentRepository(s3Client, documentBucket)
 
-        documentRepository.saveDocument(MailType.RESET_PASSWORD.name, document)
+        documentRepository.saveDocument(DocumentType.MAIL.content, document)
 
         val actual = documentRepository.loadDocument("mail", "templates/welcome.html")
         assertEquals(actual, document)
