@@ -34,12 +34,8 @@
     <dependencies>
         <dependency>
             <groupId>com.vauthenticator</groupId>
-            <artifactId>document-repository</artifactId>
+            <artifactId>document-repository-starter</artifactId>
             <version>${document-repository.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.ben-manes.caffeine</groupId>
-            <artifactId>caffeine</artifactId>
         </dependency>
         <!--        MFA dependencies-->
         <dependency>

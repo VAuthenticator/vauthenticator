@@ -2,7 +2,7 @@ package com.vauthenticator.server.mail
 
 import com.vauthenticator.document.repository.Document
 import com.vauthenticator.document.repository.DocumentRepository
-import com.vauthenticator.server.document.DocumentType
+import com.vauthenticator.document.repository.DocumentType
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*

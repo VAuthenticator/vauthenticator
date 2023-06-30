@@ -3,7 +3,7 @@ package com.vauthenticator.server.mail
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.document.repository.Document
 import com.vauthenticator.document.repository.DocumentRepository
-import com.vauthenticator.server.document.DocumentType
+import com.vauthenticator.document.repository.DocumentType
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
