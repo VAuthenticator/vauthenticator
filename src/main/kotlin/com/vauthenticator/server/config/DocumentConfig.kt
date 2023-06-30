@@ -1,7 +1,7 @@
 package com.vauthenticator.server.config
 
-import com.vauthenticator.server.document.FileSystemDocumentRepository
-import com.vauthenticator.server.document.S3DocumentRepository
+import com.vauthenticator.document.repository.FileSystemDocumentRepository
+import com.vauthenticator.document.repository.S3DocumentRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean

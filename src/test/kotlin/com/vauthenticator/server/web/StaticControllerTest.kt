@@ -1,6 +1,6 @@
 package com.vauthenticator.server.web
 
-import com.vauthenticator.server.document.Document
+import com.vauthenticator.document.repository.Document
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension

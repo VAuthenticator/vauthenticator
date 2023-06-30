@@ -1,7 +1,7 @@
 package com.vauthenticator.server.config
 
 import com.github.benmanes.caffeine.cache.Caffeine
-import com.vauthenticator.server.document.DocumentRepository
+import com.vauthenticator.document.repository.DocumentRepository
 import com.vauthenticator.server.document.DocumentType
 import com.vauthenticator.server.web.StaticController
 import org.slf4j.LoggerFactory

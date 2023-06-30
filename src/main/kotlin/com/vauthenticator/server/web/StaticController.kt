@@ -1,6 +1,6 @@
 package com.vauthenticator.server.web
 
-import com.vauthenticator.server.document.Document
+import com.vauthenticator.document.repository.Document
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.cache.caffeine.CaffeineCache
 import org.springframework.web.bind.annotation.GetMapping
