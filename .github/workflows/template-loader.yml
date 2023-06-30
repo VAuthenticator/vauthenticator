@@ -25,5 +25,5 @@ jobs:
           done
           cd src/main/frontend/dist/asset
           for i in *.js; do
-            aws s3 cp $i s3://${{ secrets.VAUTHENTICATOR_BUCKET }}/static-auth-server/content/asset/$i
+            aws s3 cp $i s3://${{ secrets.VAUTHENTICATOR_BUCKET }}/static-asset/content/asset/$i
           done
