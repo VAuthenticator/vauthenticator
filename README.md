@@ -42,7 +42,7 @@ In order to make simple the ui assets build for local development take in consid
 ```yaml
   document:
     engine: file-system
-    fs-base-path: dist/asset
+    fs-base-path: dist
 ```
 
 in order to be sure to have the asset files in the correct path execute this script:
@@ -50,7 +50,7 @@ in order to be sure to have the asset files in the correct path execute this scr
 ```shell
 rm -rf dist
 
-mkdir -p dist/asset/static-auth-server/content/asset/
+mkdir -p dist/static-asset/content/asset/
 
 cd src/main/frontend
 npm install
@@ -58,6 +58,6 @@ npm run-script build
 
 cd dist/asset
 
-cp * ../../../../../dist/asset/static-auth-server/content/asset/
+cp * ../../../../../dist/static-asset/content/asset/
 
 ```

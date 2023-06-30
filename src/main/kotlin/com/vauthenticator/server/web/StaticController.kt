@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @ConditionalOnProperty("embedded-asset-cdn.enabled", havingValue = "true", matchIfMissing = true)
-class StaticController(private val staticContentLocalCache: CaffeineCache) {
+class StaticController(private val staticAssetDocumentLocalCache: CaffeineCache) {
 
     @GetMapping("/static/content/asset/{assetName}")
     fun assetContent(@PathVariable assetName: String): ByteArray {
-        return staticContentLocalCache.get(assetName, Document::class.java)!!.content
+        return staticAssetDocumentLocalCache.get(assetName, Document::class.java)!!.content
     }
 }
