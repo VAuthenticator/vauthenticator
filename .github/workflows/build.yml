@@ -61,13 +61,6 @@ jobs:
         run: |
           mvn install -q
 
-      - name: load to S3
-        run: |
-          cd src/main/frontend/dist/asset
-          for i in *.js; do
-          aws s3 cp $i s3://${{ secrets.VAUTHENTICATOR_BUCKET }}/static-asset/content/asset/$i
-          done
-
       - name: docker push
         run: |
           docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
@@ -118,7 +111,7 @@ jobs:
           cd src/main/frontend/dist/asset
           ls *.js | while read line
           do 
-            aws s3 cp $line s3://${{ secrets.VAUTHENTICATOR_BUCKET }}/static/content/asset/$line
+            aws s3 cp $line s3://${{ secrets.VAUTHENTICATOR_BUCKET }}/static-asset/content/asset/$line
           done
       
 
