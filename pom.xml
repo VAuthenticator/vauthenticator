@@ -22,7 +22,7 @@
         <kotlin.version>1.8.21</kotlin.version>
         <snakeyaml.version>2.0</snakeyaml.version>
 
-        <document-repository.version>0.6-SNAPSHOT</document-repository.version>
+        <vauthenticator-starters.version>0.6</vauthenticator-starters.version>
         <io.mockk.version>1.13.4</io.mockk.version>
         <aws.sdk.version>2.18.24</aws.sdk.version>
         <greenmail.version>2.0.0</greenmail.version>
@@ -35,7 +35,7 @@
         <dependency>
             <groupId>com.vauthenticator</groupId>
             <artifactId>document-repository-starter</artifactId>
-            <version>${document-repository.version}</version>
+            <version>${vauthenticator-starters.version}</version>
         </dependency>
         <!--        MFA dependencies-->
         <dependency>
@@ -248,16 +248,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <repositories>
-        <repository>
-            <id>maven-snapshots</id>
-            <name>Maven Snapshots</name>
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository>
-    </repositories>
-
 </project>
