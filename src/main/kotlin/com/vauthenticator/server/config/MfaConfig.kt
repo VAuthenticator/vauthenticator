@@ -1,8 +1,8 @@
 package com.vauthenticator.server.config
 
 import com.hubspot.jinjava.Jinjava
+import com.vauthenticator.document.repository.DocumentRepository
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.document.DocumentRepository
 import com.vauthenticator.server.keys.KeyDecrypter
 import com.vauthenticator.server.keys.KeyRepository
 import com.vauthenticator.server.keys.MasterKid

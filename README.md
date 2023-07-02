@@ -37,5 +37,27 @@ Right now it is based, as said before to the latest version on spring oauth2/ope
 VAuthenticator implements front_channel single logout openid connect specification session management
 
 ### ui local environment
-In order to install ui assets for local development as first think go under `src/main/frontend` path and use the command `npm run-script build`.
-Then run the command  `docker-compose up` and you will have a local nginx with all the needed assets on http://localhost:3000/assets url
+In order to make simple the ui assets build for local development take in consideration to enable the following spring configuration properties:
+
+```yaml
+  document:
+    engine: file-system
+    fs-base-path: dist
+```
+
+in order to be sure to have the asset files in the correct path execute this script:
+
+```shell
+rm -rf dist
+
+mkdir -p dist/static-asset/content/asset/
+
+cd src/main/frontend
+npm install
+npm run-script build
+
+cd dist/asset
+
+cp * ../../../../../dist/static-asset/content/asset/
+
+```

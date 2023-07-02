@@ -1,12 +1,12 @@
 package com.vauthenticator.server.config
 
 import com.hubspot.jinjava.Jinjava
+import com.vauthenticator.document.repository.DocumentRepository
 import com.vauthenticator.server.account.mailverification.SendVerifyMailChallenge
 import com.vauthenticator.server.account.mailverification.VerifyMailChallengeSent
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.account.tiket.TicketRepository
 import com.vauthenticator.server.account.tiket.VerificationTicketFactory
-import com.vauthenticator.server.document.DocumentRepository
 import com.vauthenticator.server.mail.*
 import com.vauthenticator.server.mfa.MfaMethodsEnrolmentAssociation
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository

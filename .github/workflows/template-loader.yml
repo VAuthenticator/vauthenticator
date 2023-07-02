@@ -18,12 +18,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
       - run: |
-          TEMPLATES=("welcome.html" "mail-verify-challenge.html" "reset-password.html" "successful-mail-verify.html" "mfa-challenge.html")
+          TEMPLATES=("welcome.html" "mail-verify-challenge.html" "reset-password.html" "mfa-challenge.html")
           for TEMPLATE in ${TEMPLATES[@]}
           do
             aws s3 cp communication/default/mail/$TEMPLATE s3://${{ secrets.VAUTHENTICATOR_BUCKET }}/mail/templates/$TEMPLATE
           done
-          cd src/main/frontend/dist/asset
-          for i in *.js; do
-            aws s3 cp $i s3://${{ secrets.VAUTHENTICATOR_BUCKET }}/static-auth-server/content/asset/$i
-          done
+         
