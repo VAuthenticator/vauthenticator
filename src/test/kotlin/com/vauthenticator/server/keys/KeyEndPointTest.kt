@@ -78,4 +78,15 @@ internal class KeyEndPointTest {
         )
             .andExpect(status().isNoContent)
     }
+    @Test
+    internal fun `when we are not able to delete a new key`() {
+        every { keyRepository.deleteKeyFor( Kid("A_KID"), KeyPurpose.SIGNATURE) } throws KeyDeletionException("")
+
+        mokMvc.perform(
+            delete("/api/keys")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(deletePayload))
+        )
+            .andExpect(status().isBadRequest)
+    }
 }
