@@ -71,6 +71,11 @@ open class AwsKeyRepository(
         }
 
     override fun deleteKeyFor(kid: Kid, keyPurpose: KeyPurpose) {
+        val keys = signatureKeys().keys
+        if (keyPurpose == KeyPurpose.SIGNATURE && keys.size <= 1) {
+            throw KeyDeletionException("at least one signature key is mandatory")
+        }
+
         val tableName = tableNameBasedOn(keyPurpose)
         dynamoDbClient.deleteItem(
             DeleteItemRequest.builder().tableName(tableName).key(
@@ -79,6 +84,7 @@ open class AwsKeyRepository(
                 )
             ).build()
         )
+
     }
 
     override fun signatureKeys(): Keys {
