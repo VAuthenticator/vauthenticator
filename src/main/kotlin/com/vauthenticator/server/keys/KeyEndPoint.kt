@@ -28,4 +28,6 @@ class KeyEndPoint(
         keyRepository.deleteKeyFor(Kid(body["kid"]!!), KeyPurpose.valueOf(body["key_purpose"]!!))
             .let { ResponseEntity.noContent().build<Unit>() }
 
+    @ExceptionHandler(KeyDeletionException::class)
+    fun keyDeletionExceptionHandler(ex: KeyDeletionException) = ResponseEntity.badRequest().body(ex.message);
 }

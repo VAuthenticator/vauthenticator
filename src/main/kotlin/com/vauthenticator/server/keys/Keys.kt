@@ -18,6 +18,7 @@ value class MasterKid(private val content: String) {
     fun content() = content
 }
 
+class KeyDeletionException(message: String) : RuntimeException(message)
 
 enum class KeyType { SYMMETRIC, ASYMMETRIC }
 enum class KeyPurpose { SIGNATURE, MFA }

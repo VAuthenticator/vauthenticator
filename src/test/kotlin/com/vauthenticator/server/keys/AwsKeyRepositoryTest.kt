@@ -14,17 +14,19 @@ import com.vauthenticator.server.support.KeysUtils.aNewMasterKey
 import com.vauthenticator.server.support.KeysUtils.kmsClient
 import com.vauthenticator.server.support.KmsClientWrapper
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
+import java.util.*
 
 internal class AwsKeyRepositoryTest {
 
     private lateinit var keyRepository: KeyRepository
     private lateinit var wrapper: KmsClientWrapper
 
-    private val kidGenerator = { "KID" }
+    private val kidGenerator = { UUID.randomUUID().toString() }
 
     @BeforeEach
     internal fun setUp() {
@@ -43,12 +45,11 @@ internal class AwsKeyRepositoryTest {
     @Test
     internal fun `when create a new data key pair`() {
         val masterKid = aNewMasterKey()
-        val kid = kidGenerator.invoke()
 
-        keyRepository.createKeyFrom(masterKid, ASYMMETRIC)
+        val kid = keyRepository.createKeyFrom(masterKid, ASYMMETRIC)
 
-        val actual = getActual(Kid(kid), dynamoSignatureKeysTableName)
-        assertEquals(kid, actual.valueAsStringFor("key_id"))
+        val actual = getActual(kid, dynamoSignatureKeysTableName)
+        assertEquals(kid.content(), actual.valueAsStringFor("key_id"))
         assertEquals(masterKid.content(), actual.valueAsStringFor("master_key_id"))
         assertEquals(
             encoder.encode(wrapper.generateDataKeyPairRecorder.get().privateKeyCiphertextBlob().asByteArray())
@@ -63,12 +64,10 @@ internal class AwsKeyRepositoryTest {
     @Test
     internal fun `when create a new data key`() {
         val masterKid = aNewMasterKey()
-        val kid = kidGenerator.invoke()
+        val kid = keyRepository.createKeyFrom(masterKid, SYMMETRIC)
 
-        keyRepository.createKeyFrom(masterKid, SYMMETRIC)
-
-        val actual = getActual(Kid(kid), dynamoSignatureKeysTableName)
-        assertEquals(kid, actual.valueAsStringFor("key_id"))
+        val actual = getActual(kid, dynamoSignatureKeysTableName)
+        assertEquals(kid.content(), actual.valueAsStringFor("key_id"))
         assertEquals(masterKid.content(), actual.valueAsStringFor("master_key_id"))
         assertEquals(
             encoder.encode(wrapper.generateDataKeyRecorder.get().ciphertextBlob().asByteArray())
@@ -79,12 +78,10 @@ internal class AwsKeyRepositoryTest {
     @Test
     internal fun `when create a new data key for mfa`() {
         val masterKid = aNewMasterKey()
-        val kid = kidGenerator.invoke()
+        val kid = keyRepository.createKeyFrom(masterKid, SYMMETRIC, MFA)
 
-        keyRepository.createKeyFrom(masterKid, SYMMETRIC, MFA)
-
-        val actual = getActual(Kid(kid), dynamoMfaKeysTableName)
-        assertEquals(kid, actual.valueAsStringFor("key_id"))
+        val actual = getActual(kid, dynamoMfaKeysTableName)
+        assertEquals(kid.content(), actual.valueAsStringFor("key_id"))
         assertEquals(masterKid.content(), actual.valueAsStringFor("master_key_id"))
         assertEquals(
             encoder.encode(wrapper.generateDataKeyRecorder.get().ciphertextBlob().asByteArray())
@@ -94,11 +91,21 @@ internal class AwsKeyRepositoryTest {
 
     @Test
     internal fun `when a signature key is deleted`() {
-        val kid = Kid(kidGenerator.invoke())
+        val masterKid = aNewMasterKey()
+        val kid = keyRepository.createKeyFrom(masterKid)
+        keyRepository.createKeyFrom(masterKid)
         keyRepository.deleteKeyFor(kid, KeyPurpose.SIGNATURE)
 
         val actual = getActual(kid, dynamoSignatureKeysTableName)
         assertEquals(emptyMap<String, AttributeValue>(), actual)
+    }
+
+    @Test
+    internal fun `when a signature key deletion goes in error`() {
+        val masterKid = aNewMasterKey()
+        val kid = keyRepository.createKeyFrom(masterKid)
+
+        assertThrows(KeyDeletionException::class.java) { keyRepository.deleteKeyFor(kid, KeyPurpose.SIGNATURE) }
     }
 
     @Test
@@ -110,17 +117,6 @@ internal class AwsKeyRepositoryTest {
         assertEquals(emptyMap<String, AttributeValue>(), actual)
     }
 
-    @Test
-    internal fun `when a key is deleted after a brand new insert`() {
-        val masterKid = aNewMasterKey()
-        val kid = Kid(kidGenerator.invoke())
-
-        keyRepository.createKeyFrom(masterKid)
-        keyRepository.deleteKeyFor(kid, KeyPurpose.SIGNATURE)
-
-        val actual = getActual(kid, dynamoSignatureKeysTableName)
-        assertEquals(emptyMap<String, AttributeValue>(), actual)
-    }
 
     private fun getActual(kid: Kid, tableName: String): MutableMap<String, AttributeValue> =
         dynamoDbClient.getItem(
@@ -136,9 +132,7 @@ internal class AwsKeyRepositoryTest {
     @Test
     internal fun `when a key is found by id and purpose`() {
         val masterKid = aNewMasterKey()
-        val kid = Kid(kidGenerator.invoke())
-
-        keyRepository.createKeyFrom(masterKid, SYMMETRIC, MFA)
+        val kid = keyRepository.createKeyFrom(masterKid, SYMMETRIC, MFA)
 
         val actual = keyRepository.keyFor(kid, MFA)
         val expected = Key(
