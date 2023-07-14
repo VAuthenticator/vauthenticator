@@ -33,9 +33,9 @@ jobs:
         run: |
           git config --global user.email "${{ secrets.GIT_EMAIL }}"
           git config --global user.name "${{ secrets.GIT_USERNAME }}"
-          
+
           mvn versions:set -DnewVersion=${{github.event.inputs.version}}
-          git commit -am "[skip-ci] new version release ${{github.event.inputs.newversion}}"
+          git commit -am "[skip-ci] new version release ${{github.event.inputs.version}}"
           git push
 
       - name: Create tag
@@ -43,6 +43,15 @@ jobs:
         with:
           bodyFile: changelog/${{github.event.inputs.version}}.md
           tag: ${{github.event.inputs.version}}
+
+      - name: set the Next Development version
+        run: |
+          git config --global user.email "${{ secrets.GIT_EMAIL }}"
+          git config --global user.name "${{ secrets.GIT_USERNAME }}"
+
+          mvn versions:set -DnewVersion=${{github.event.inputs.newversion}}
+          git commit -am "[skip-ci] new version release ${{github.event.inputs.newversion}}"
+          git push
 
   build-backend:
     runs-on: ubuntu-20.04
