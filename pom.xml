@@ -12,7 +12,7 @@
 
     <groupId>com.vauthenticator</groupId>
     <artifactId>vauthenticator</artifactId>
-    <version>0.6-SNAPSHOT</version>
+    <version>0.6</version>
 
     <name>vauthenticator</name>
     <description>OpenId Connect/OAuth2 Authorization Server for VAuthenticator Opensource Product</description>
