@@ -11,6 +11,7 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings
 import java.time.Duration
+import java.util.*
 
 class ClientAppRegisteredClientRepository(
     private val storeClientApplication: StoreClientApplication,
@@ -26,7 +27,8 @@ class ClientAppRegisteredClientRepository(
                 clientAppId = ClientAppId(registeredClient.clientId),
                 authorities = Authorities.empty(),
                 logoutUri = LogoutUri(""),
-                postLogoutRedirectUri = PostLogoutRedirectUri(registeredClient.postLogoutRedirectUris.first()),
+                postLogoutRedirectUri = PostLogoutRedirectUri(
+                    Optional.ofNullable(registeredClient.postLogoutRedirectUris.firstOrNull()).orElseGet { "" }),
                 scopes = Scopes(registeredClient.scopes.map { Scope(it) }.toSet()),
                 accessTokenValidity = TokenTimeToLive(registeredClient.tokenSettings.accessTokenTimeToLive.toSeconds()),
                 refreshTokenValidity = TokenTimeToLive(registeredClient.tokenSettings.refreshTokenTimeToLive.toSeconds()),
@@ -63,11 +65,9 @@ class ClientAppRegisteredClientRepository(
                         )
                     })
                 }
-                .clientAuthenticationMethods {
-                    ClientAuthenticationMethod.NONE
-                    ClientAuthenticationMethod.CLIENT_SECRET_BASIC
-                    ClientAuthenticationMethod.CLIENT_SECRET_POST
-                }
+                .clientAuthenticationMethod(ClientAuthenticationMethod.NONE)
+                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
                 .scopes { scopes -> scopes.addAll(clientApp.scopes.content.map { it.content }) }
                 .redirectUri(clientApp.webServerRedirectUri.content)
                 .clientSettings(
