@@ -63,6 +63,11 @@ class ClientAppRegisteredClientRepository(
                         )
                     })
                 }
+                .clientAuthenticationMethods {
+                    ClientAuthenticationMethod.NONE
+                    ClientAuthenticationMethod.CLIENT_SECRET_BASIC
+                    ClientAuthenticationMethod.CLIENT_SECRET_POST
+                }
                 .scopes { scopes -> scopes.addAll(clientApp.scopes.content.map { it.content }) }
                 .redirectUri(clientApp.webServerRedirectUri.content)
                 .clientSettings(
@@ -76,17 +81,6 @@ class ClientAppRegisteredClientRepository(
                         .build()
                 )
 
-            if (clientApp.withPkce.content) {
-                registeredClientAppDefinition.clientAuthenticationMethods {
-                    ClientAuthenticationMethod.NONE
-                }
-            } else {
-                registeredClientAppDefinition
-                    .clientAuthenticationMethods {
-                        ClientAuthenticationMethod.CLIENT_SECRET_BASIC
-                        ClientAuthenticationMethod.CLIENT_SECRET_POST
-                    }
-            }
             registeredClientAppDefinition.build()
         }.orElseThrow {
             logger.error("Application with id or client_id: $id not found")
