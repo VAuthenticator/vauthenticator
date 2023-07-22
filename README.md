@@ -61,8 +61,6 @@ cd dist/asset
 
 cp * ../../../../../dist/static-asset/content/asset/
 
-cd ../../../../../communication/default/mail
-ls -la 
+cd ../../../../../communication/default/mail 
 cp *  ../../../dist/mail/templates
-
 ```
