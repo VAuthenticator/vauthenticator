@@ -4,7 +4,7 @@ const BUID_DIR = path.resolve(__dirname + "/dist");
 
 module.exports = {
     entry: {
-        "default_error": path.resolve(__dirname, './app/errors/DefaultErrorPage.js'),
+        "default_error": path.resolve(__dirname, './app/errors/DefaultGenericErrorPage.tsx'),
         "404_error": path.resolve(__dirname, './app/errors/400ErrorPage.js'),
         "400_error": path.resolve(__dirname, './app/errors/404ErrorPage.js'),
         "500_error": path.resolve(__dirname, './app/errors/500ErrorPage.js'),
@@ -34,7 +34,7 @@ module.exports = {
                 exclude: /node_modules$/,
             },
             {
-                test: path.join(__dirname, "."),
+                test: /\.js$/,
                 exclude: path.resolve(__dirname, "node_modules"),
                 use: {
                     loader: "babel-loader",

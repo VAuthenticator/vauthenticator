@@ -2,12 +2,7 @@
   "name": "vautehenticator-asset",
   "version": "0.7",
   "description": "VAuthenticator UI Asset library",
-  "babel": {
-    "presets": [
-      "@babel/react",
-      "@babel/env"
-    ]
-  },
+
   "scripts": {
     "build": "webpack --config webpack.config.js --mode=development",
     "production-build": "webpack --config webpack.config.js --mode=production",
@@ -28,6 +23,9 @@
     "webpack-cli": "5.1.4"
   },
   "dependencies": {
+    "@types/node": "^20.5.8",
+    "@types/react": "^18.2.21",
+    "@types/react-dom": "^18.2.7",
     "typescript": "^5.2.2",
     "@date-io/moment": "^2.17.0",
     "@emotion/react": "^11.11.1",
