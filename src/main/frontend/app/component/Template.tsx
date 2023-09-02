@@ -4,7 +4,7 @@ import {Breakpoint} from "@mui/system/createTheme/createBreakpoints";
 
 interface TemplateProps {
     maxWidth: Breakpoint
-    children: any
+    children: React.ReactNode;
 }
 
 const Template: React.FC<TemplateProps> = ({maxWidth, children}) => {

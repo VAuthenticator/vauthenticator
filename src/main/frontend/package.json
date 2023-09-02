@@ -2,7 +2,6 @@
   "name": "vautehenticator-asset",
   "version": "0.7",
   "description": "VAuthenticator UI Asset library",
-
   "scripts": {
     "build": "webpack --config webpack.config.js --mode=development",
     "production-build": "webpack --config webpack.config.js --mode=production",
@@ -11,34 +10,35 @@
   "author": "mrFlick72",
   "license": "ISC",
   "devDependencies": {
-    "ts-loader": "^9.4.4",
     "@babel/core": "7.22.11",
     "@babel/preset-env": "7.22.14",
     "@babel/preset-react": "7.22.5",
+    "@types/moment": "^2.13.0",
     "clean-webpack-plugin": "4.0.0",
     "css-loader": "6.8.1",
     "html-webpack-plugin": "5.5.3",
     "style-loader": "3.3.3",
+    "ts-loader": "^9.4.4",
     "webpack": "5.88.2",
     "webpack-cli": "5.1.4"
   },
   "dependencies": {
-    "@types/node": "^20.5.8",
-    "@types/react": "^18.2.21",
-    "@types/react-dom": "^18.2.7",
-    "typescript": "^5.2.2",
     "@date-io/moment": "^2.17.0",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.7",
     "@mui/material": "^5.14.7",
     "@mui/x-date-pickers": "^6.12.1",
+    "@types/node": "^20.5.8",
+    "@types/react": "^18.2.21",
+    "@types/react-dom": "^18.2.7",
     "babel-loader": "9.1.3",
     "moment": "2.29.4",
     "prop-types": "15.8.1",
     "react": "18.2.0",
     "react-datetime": "3.2.0",
     "react-dom": "18.2.0",
-    "react-imask": "^7.1.3"
+    "react-imask": "^7.1.3",
+    "typescript": "^5.2.2"
   }
 }
