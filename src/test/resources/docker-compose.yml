@@ -1,20 +1,12 @@
 version: '3.8'
 services:
-  dynamodb-local:
-    command: "-jar DynamoDBLocal.jar -sharedDb -optimizeDbBeforeStartup -dbPath ./data"
-    image: "amazon/dynamodb-local:1.20.0"
-    ports:
-      - "8000:8000"
-    volumes:
-      - "./docker/dynamodb:/home/dynamodblocal/data"
-    working_dir: /home/dynamodblocal
   localstack:
     #    container_name: "${LOCALSTACK_DOCKER_NAME-localstack_main}"
     image: localstack/localstack:jvm-2022-11-03
     ports:
       - "4566-4599:4566-4599"
     environment:
-      - SERVICES=s3,kms
+      - SERVICES=s3,kms,dynamodb
   redis:
     image: redis
     ports:
