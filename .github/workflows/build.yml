@@ -63,10 +63,6 @@ jobs:
           - "8000:8000"
         volumes:
           - "./docker/dynamodb:/home/dynamodblocal/data"
-        options: >-
-          --sharedDb
-          --optimizeDbBeforeStartup 
-          --dbPath ./data
       localstack:
         image: localstack/localstack:jvm-2022-11-03
         ports:
