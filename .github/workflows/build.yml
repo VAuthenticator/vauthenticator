@@ -7,10 +7,11 @@ on:
       version:
         description: 'make a tag'
         required: false
+        type: string
 
       newversion:
         description: 'Next desired version'
-        required: true
+        required: false
         type: string
 
 jobs:
