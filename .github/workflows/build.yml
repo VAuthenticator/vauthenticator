@@ -66,6 +66,12 @@ jobs:
           java-version: 17
           distribution: 'corretto'
 
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
       - name: build testing environment
         run: |
           export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -139,30 +145,3 @@ jobs:
           do 
             aws s3 cp $line s3://${{ secrets.VAUTHENTICATOR_BUCKET }}/static-asset/content/asset/$line
           done
-      
-
-      - name: docker push
-        run: |
-          cd src/main/frontend
-          docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
-          
-          if [[ ${GITHUB_REF##*/} == 'master' ]]
-          then
-            DOCKER_TAG="latest"
-          else
-            DOCKER_TAG="${GITHUB_REF##*/}"
-          fi
-          
-          echo "$DOCKER_TAG"
-          docker build . -t mrflick72/vauthenticator-assets-k8s:$DOCKER_TAG
-          docker push mrflick72/vauthenticator-assets-k8s:$DOCKER_TAG
-
-      - name: Docker tag
-        if: github.event.inputs.version != '' || github.event.inputs.version != ' '
-
-        run: |
-          cd src/main/frontend
-          
-          DOCKER_TAG="${{github.event.inputs.version}}"
-          docker build . -t mrflick72/vauthenticator-assets-k8s:$DOCKER_TAG
-          docker push mrflick72/vauthenticator-assets-k8s:$DOCKER_TAG
