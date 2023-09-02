@@ -57,18 +57,12 @@ jobs:
   build-backend:
     runs-on: ubuntu-20.04
     services:
-      dynamodb-local:
-        image: "amazon/dynamodb-local:1.20.0"
-        ports:
-          - "8000:8000"
-        volumes:
-          - "./docker/dynamodb:/home/dynamodblocal/data"
       localstack:
         image: localstack/localstack:jvm-2022-11-03
         ports:
           - "4566-4599:4566-4599"
         env:
-          SERVICES: s3,kms
+          SERVICES: s3,kms,dynamo
       redis:
         image: redis
         ports:
