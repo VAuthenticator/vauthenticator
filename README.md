@@ -51,6 +51,7 @@ in order to be sure to have the asset files in the correct path execute this scr
 rm -rf dist
 
 mkdir -p dist/static-asset/content/asset/
+mkdir -p dist/mail/templates
 
 cd src/main/frontend
 npm install
@@ -60,4 +61,6 @@ cd dist/asset
 
 cp * ../../../../../dist/static-asset/content/asset/
 
+cd ../../../../../communication/default/mail 
+cp *  ../../../dist/mail/templates
 ```

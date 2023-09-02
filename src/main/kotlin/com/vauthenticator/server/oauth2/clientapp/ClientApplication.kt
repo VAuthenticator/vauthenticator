@@ -4,6 +4,7 @@ data class ClientApplication(
     val clientAppId: ClientAppId,
     val secret: Secret,
     val scopes: Scopes,
+    val withPkce: WithPkce = WithPkce.disabled,
     val authorizedGrantTypes: AuthorizedGrantTypes,
     val webServerRedirectUri: CallbackUri,
     val authorities: Authorities,
@@ -14,6 +15,14 @@ data class ClientApplication(
     val postLogoutRedirectUri: PostLogoutRedirectUri,
     val logoutUri: LogoutUri,
 )
+
+@JvmInline
+value class WithPkce(val content: Boolean) {
+    companion object {
+        val enabled = WithPkce(true)
+        val disabled = WithPkce(false)
+    }
+}
 
 data class AutoApprove(val content: Boolean) {
     companion object {

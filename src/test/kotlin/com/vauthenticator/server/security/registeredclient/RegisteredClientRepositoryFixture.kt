@@ -15,6 +15,7 @@ object RegisteredClientRepositoryFixture {
         .clientSecret("A_SECRET")
         .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
         .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
+        .clientAuthenticationMethod(ClientAuthenticationMethod.NONE)
         .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
         .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
         .scope("A_SCOPE")

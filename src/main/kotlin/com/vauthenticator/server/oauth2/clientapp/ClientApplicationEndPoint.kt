@@ -60,6 +60,7 @@ class ClientApplicationEndPoint(
 data class ClientAppRepresentation(
     var clientAppName: String,
     var secret: String,
+    var withPkce: Boolean,
     var storePassword: Boolean,
     var scopes: List<String>,
     var authorizedGrantTypes: List<String>,
@@ -76,6 +77,7 @@ data class ClientAppRepresentation(
                 clientAppName = clientApplication.clientAppId.content,
                 secret = clientApplication.secret.content,
                 storePassword = storePassword,
+                withPkce = clientApplication.withPkce.content,
                 scopes = clientApplication.scopes.content.map { it.content },
                 authorizedGrantTypes = clientApplication.authorizedGrantTypes.content.map { it.name.lowercase() },
                 webServerRedirectUri = clientApplication.webServerRedirectUri.content,
@@ -90,6 +92,7 @@ data class ClientAppRepresentation(
             ClientApplication(
                 clientAppId = ClientAppId(clientAppId),
                 secret = Secret(representation.secret),
+                withPkce = WithPkce(representation.withPkce),
                 scopes = Scopes(representation.scopes.map { Scope(it) }.toSet()),
                 authorizedGrantTypes = AuthorizedGrantTypes(representation.authorizedGrantTypes.map { it.uppercase() }
                     .map { AuthorizedGrantType.valueOf(it) }),
