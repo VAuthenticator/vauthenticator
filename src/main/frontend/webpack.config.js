@@ -5,9 +5,9 @@ const BUID_DIR = path.resolve(__dirname + "/dist");
 module.exports = {
     entry: {
         "default_error": path.resolve(__dirname, './app/errors/DefaultGenericErrorPage.tsx'),
-        "404_error": path.resolve(__dirname, './app/errors/400ErrorPage.js'),
-        "400_error": path.resolve(__dirname, './app/errors/404ErrorPage.js'),
-        "500_error": path.resolve(__dirname, './app/errors/500ErrorPage.js'),
+        "404_error": path.resolve(__dirname, './app/errors/DefaultGenericErrorPage.tsx'),
+        "400_error": path.resolve(__dirname, './app/errors/DefaultGenericErrorPage.tsx'),
+        "500_error": path.resolve(__dirname, './app/errors/DefaultGenericErrorPage.tsx'),
         login: path.resolve(__dirname, './app/login/LoginPage.js'),
         mfa: path.resolve(__dirname, './app/mfa/index.js'),
         signup: path.resolve(__dirname, './app/signup/SignUpPage.js'),
