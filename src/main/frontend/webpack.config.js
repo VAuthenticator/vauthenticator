@@ -4,7 +4,6 @@ const BUID_DIR = path.resolve(__dirname + "/dist");
 
 module.exports = {
     entry: {
-        healthz: path.resolve(__dirname, './app/healthz/healthz.js'),
         "default_error": path.resolve(__dirname, './app/errors/DefaultErrorPage.js'),
         "404_error": path.resolve(__dirname, './app/errors/400ErrorPage.js'),
         "400_error": path.resolve(__dirname, './app/errors/404ErrorPage.js'),
