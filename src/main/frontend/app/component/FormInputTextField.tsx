@@ -5,12 +5,12 @@ interface FormInputTextFieldProps {
     id: string
     label: string
     type: string
-    required: boolean
-    autoFocus: boolean
-    disabled: boolean
-    suffix: string
-    value: string
-    handler: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>
+    required?:boolean
+    autoFocus?: boolean
+    disabled?: boolean
+    suffix: any
+    value?: string
+    handler?: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>
 }
 
 const FormInputTextField: React.FC<FormInputTextFieldProps>

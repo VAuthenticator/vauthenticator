@@ -2,11 +2,11 @@ import {Button, Grid} from "@mui/material";
 import React, {MouseEventHandler} from "react";
 
 interface FormButtonProps {
-    labelPrefix: any,
+    labelPrefix?: any,
     label: string,
     type: any,
-    onClickHandler: MouseEventHandler<HTMLButtonElement>,
-    direction: string
+    onClickHandler?: MouseEventHandler<HTMLButtonElement>,
+    direction?: string
 }
 
 const FormButton: React.FC<FormButtonProps> = ({labelPrefix, label, type, onClickHandler, direction}) => {
@@ -17,7 +17,7 @@ const FormButton: React.FC<FormButtonProps> = ({labelPrefix, label, type, onClic
                     type={type || "button"}
                     variant="outlined"
                     color="primary"
-                    onClick={onClickHandler || {}}
+                    onClick={onClickHandler}
                     style={{textTransform: "none"}}>
                     {labelPrefix} {label}
                 </Button>

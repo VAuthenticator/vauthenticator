@@ -6,6 +6,7 @@ import {ThemeProvider, Typography} from "@mui/material";
 import theme from "../component/styles";
 import Template from "../component/Template";
 import {SentimentVeryDissatisfied} from "@mui/icons-material";
+import getDataFromDomUtils from "../utils/getDataFromDomUtils";
 
 interface DefaultGenericErrorPageProps {
     messages: string
@@ -29,12 +30,6 @@ const DefaultGenericErrorPage: React.FC<DefaultGenericErrorPageProps> = ({messag
 }
 
 if (document.getElementById('app')) {
-    let errors: string = "{}"
-    let htmlElement = document.getElementById('errors');
-
-    if (htmlElement) {
-        errors = htmlElement.innerHTML || "{}"
-    }
-
+    let errors: string = getDataFromDomUtils('errors')
     ReactDOM.render(<DefaultGenericErrorPage messages={errors}/>, document.getElementById('app'));
 }
