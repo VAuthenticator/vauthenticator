@@ -8,7 +8,7 @@ interface FormInputTextFieldProps {
     required?:boolean
     autoFocus?: boolean
     disabled?: boolean
-    suffix: any
+    suffix?: any
     value?: string
     handler?: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>
 }

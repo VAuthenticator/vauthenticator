@@ -1,20 +1,30 @@
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import React from 'react';
-import ReactDOM from 'react-dom';
 import Template from "../component/Template";
 import FormInputTextField from "../component/FormInputTextField";
 import Separator from "../component/Separator";
 import FormButton from "../component/FormButton";
-import {Divider, Grid, Paper, ThemeProvider, Typography} from "@mui/material";
-import {Person, VpnKey} from "@mui/icons-material";
+import { Divider, Grid, Paper, ThemeProvider, Typography } from "@mui/material";
+import { Person, VpnKey } from "@mui/icons-material";
 import theme from "../component/styles";
-
-
-const ResetPasswordPage = (props) => {
-    const {metadata} = props;
-    const [password, setPassword] = React.useState("")
-
-    const resetPassword = (ticket, password) => {
-        return fetch(`/api/reset-password/${ticket}`, {
+import getDataFromDomUtils from "../utils/getDataFromDomUtils";
+import ComponentInitializer from "../utils/ComponentInitializer";
+var ResetPasswordPage = function (_a) {
+    var metadata = _a.metadata;
+    var _b = React.useState(""), password = _b[0], setPassword = _b[1];
+    var resetPassword = function (ticket, password) {
+        return fetch("/api/reset-password/".concat(ticket), {
             method: "PUT",
             credentials: 'same-origin',
             headers: {
@@ -24,47 +34,17 @@ const ResetPasswordPage = (props) => {
             body: JSON.stringify({
                 newPassword: password
             })
-        }).then(r => {
-            console.log("send reset password")
+        }).then(function (r) {
+            console.log("send reset password");
             if (r.status === 204) {
-                window.document.location.href = "/reset-password/successful-password-reset"
+                window.document.location.href = "/reset-password/successful-password-reset";
             }
-        })
-    }
-
-    return (
-        <ThemeProvider theme={theme}>
-            <Template maxWidth="sm">
-                <Typography variant="h3" component="h3">
-                    <VpnKey fontSize="large"/> Reset your password
-                </Typography>
-
-                <Grid style={{marginTop: '10px'}}>
-                    <Divider/>
-                </Grid>
-
-                <Paper>
-                    <FormInputTextField id="newPassword"
-                                        label="New Password"
-                                        type="Password"
-                                        required={true}
-                                        handler={(value) => {
-                                            setPassword(value.target.value)
-                                        }}
-                                        value={password || ""}
-                                        suffix={<Person fontSize="large"/>}/>
-
-                    <Separator/>
-
-                    <FormButton type="button" label="Reset passwrd"
-                                onClickHandler={() => resetPassword(JSON.parse(metadata)["ticket"], password)}/>
-                </Paper>
-            </Template>
-        </ThemeProvider>
-    )
-}
-
-if (document.getElementById('app')) {
-    let metadata = document.getElementById('metadata').innerHTML
-    ReactDOM.render(<ResetPasswordPage metadata={metadata}/>, document.getElementById('app'));
-}
+        });
+    };
+    return (_jsx(ThemeProvider, __assign({ theme: theme }, { children: _jsxs(Template, __assign({ maxWidth: "sm" }, { children: [_jsxs(Typography, __assign({ variant: "h3", component: "h3" }, { children: [_jsx(VpnKey, { fontSize: "large" }), " Reset your password"] })), _jsx(Grid, __assign({ style: { marginTop: '10px' } }, { children: _jsx(Divider, {}) })), _jsxs(Paper, { children: [_jsx(FormInputTextField, { id: "newPassword", label: "New Password", type: "Password", required: true, handler: function (value) {
+                                setPassword(value.target.value);
+                            }, value: password || "", suffix: _jsx(Person, { fontSize: "large" }) }), _jsx(Separator, {}), _jsx(FormButton, { type: "button", label: "Reset passwrd", onClickHandler: function () { return resetPassword(JSON.parse(metadata)["ticket"], password); } })] })] })) })));
+};
+var metadata = getDataFromDomUtils('metadata');
+var page = _jsx(ResetPasswordPage, { metadata: metadata });
+ComponentInitializer(page);

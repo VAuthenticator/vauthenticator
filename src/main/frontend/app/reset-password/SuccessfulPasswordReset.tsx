@@ -1,12 +1,13 @@
-import ReactDOM from "react-dom";
-import React from "react";
+import React from 'react';
+import ReactDOM from 'react-dom';
 import {Divider, Grid, ThemeProvider, Typography} from "@mui/material";
 import theme from "../component/styles";
 import Template from "../component/Template";
 import {VpnKey} from "@mui/icons-material";
+import getDataFromDomUtils from "../utils/getDataFromDomUtils";
+import ComponentInitializer from "../utils/ComponentInitializer";
 
-
-const SuccessfulResetPasswordMailChallenge = () => {
+const ResetPasswordMainPage = () => {
     return (
         <ThemeProvider theme={theme}>
             <Template maxWidth="lg">
@@ -18,17 +19,14 @@ const SuccessfulResetPasswordMailChallenge = () => {
                     <Divider/>
                 </Grid>
 
-                <Typography variant="h3" component="h3">
-                    We are sent an email on your account inbox please follow the instruction on the mail to reset your
-                    password
+                <Typography variant="h3" component="h2">
+                    Password reset suceeded
                 </Typography>
             </Template>
         </ThemeProvider>
     )
 }
 
+let page = <ResetPasswordMainPage/>;
 
-if (document.getElementById('app')) {
-    let features = document.getElementById('features').innerHTML
-    ReactDOM.render(<SuccessfulResetPasswordMailChallenge rawFeatures={features}/>, document.getElementById('app'));
-}
+ComponentInitializer(page)

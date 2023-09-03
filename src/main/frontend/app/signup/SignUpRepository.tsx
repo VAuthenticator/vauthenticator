@@ -1,4 +1,13 @@
-export function signUp(account) {
+type Account = {
+    email: string
+    password: string
+    firstName: string
+    lastName: string
+    phone: string
+    birthDate: string
+}
+
+export default function signUp(account: Account) {
     return fetch("/api/accounts",
         {
             method: "POST",

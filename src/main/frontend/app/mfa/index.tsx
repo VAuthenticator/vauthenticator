@@ -60,4 +60,5 @@ const MfaChallengePage: React.FC<MfaChallengePageProps> = ({rawErrors}) => {
 
 let errors = getDataFromDomUtils('errors')
 let page = <MfaChallengePage rawErrors={errors}/>;
+
 ComponentInitializer(page)

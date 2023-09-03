@@ -8,7 +8,7 @@ import moment from 'moment';
 interface FormDatePickerProps {
     label: string
     value: string
-    onClickHandler: () => void
+    onClickHandler: (value: any) => void
     pattern: string
 }
 
