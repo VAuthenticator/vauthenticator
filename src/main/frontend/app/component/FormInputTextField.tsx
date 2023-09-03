@@ -4,7 +4,7 @@ import React, {ChangeEventHandler} from "react";
 interface FormInputTextFieldProps {
     id: string
     label: string
-    type: string
+    type?: string
     required?:boolean
     autoFocus?: boolean
     disabled?: boolean

@@ -1,10 +1,10 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import {Divider, Grid, ThemeProvider, Typography} from "@mui/material";
 import theme from "../component/styles";
 import Template from "../component/Template";
 import {Mail} from "@mui/icons-material";
 import getDataFromDomUtils from "../utils/getDataFromDomUtils";
+import ComponentInitializer from "../utils/ComponentInitializer";
 
 interface SuccessfulMailVerifyPageProps {
     rawFeatures: string
@@ -30,11 +30,7 @@ const SuccessfulMailVerifyPage: React.FC<SuccessfulMailVerifyPageProps> = ({rawF
     )
 }
 
-if (document.getElementById('SuccessfulMailVerifyPage')) {
-    let features = getDataFromDomUtils('features')
-    let htmlElement = document.getElementById('app');
-    if (htmlElement) {
-        ReactDOM.render(<SuccessfulMailVerifyPage rawFeatures={features}/>, htmlElement);
-    }
+let features = getDataFromDomUtils('features')
+let page = <SuccessfulMailVerifyPage rawFeatures={features}/>;
 
-}
+ComponentInitializer(page)

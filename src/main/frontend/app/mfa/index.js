@@ -52,10 +52,6 @@ const MfaChallengePage = ({rawErrors}) => {
 
     )
 }
-
-
-if (document.getElementById('app')) {
-    let errors = document.getElementById('errors').innerHTML
-    let features = document.getElementById('features').innerHTML
-    ReactDOM.render(<MfaChallengePage rawFeatures={features} rawErrors={errors}/>, document.getElementById('app'));
-}
+let errors = document.getElementById('errors').innerHTML
+let features = document.getElementById('features').innerHTML
+ReactDOM.render(<MfaChallengePage rawFeatures={features} rawErrors={errors}/>, document.getElementById('app'));

@@ -6,9 +6,9 @@ import FormInputTextField from "../component/FormInputTextField";
 import Separator from "../component/Separator";
 import FormButton from "../component/FormButton";
 import React from "react";
-import ReactDOM from "react-dom";
 import ErrorBanner from "../component/ErrorBanner";
 import getDataFromDomUtils from "../utils/getDataFromDomUtils";
+import ComponentInitializer from "../utils/ComponentInitializer";
 
 interface MfaChallengePageProps {
     rawErrors: string
@@ -58,12 +58,6 @@ const MfaChallengePage: React.FC<MfaChallengePageProps> = ({rawErrors}) => {
     )
 }
 
-
-if (document.getElementById('app')) {
-    let errors = getDataFromDomUtils('errors')
-    let htmlElement = document.getElementById('app');
-    if (htmlElement) {
-        ReactDOM.render(<MfaChallengePage rawErrors={errors}/>, htmlElement);
-    }
-
-}
+let errors = getDataFromDomUtils('errors')
+let page = <MfaChallengePage rawErrors={errors}/>;
+ComponentInitializer(page)

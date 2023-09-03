@@ -147,8 +147,9 @@ const Login = ({rawFeatures, rawErrors}) => {
     )
 }
 
-if (document.getElementById('app')) {
-    let features = document.getElementById('features').innerHTML
-    let errors = document.getElementById('errors').innerHTML
-    ReactDOM.render(<Login rawFeatures={features} rawErrors={errors}/>, document.getElementById('app'));
+let features = document.getElementById('features').innerHTML
+let errors = document.getElementById('errors').innerHTML
+let htmlElement = document.getElementById('app');
+if (htmlElement) {
+    ReactDOM.render(<Login rawFeatures={features} rawErrors={errors}/>, htmlElement);
 }

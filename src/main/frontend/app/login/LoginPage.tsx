@@ -1,4 +1,3 @@
-import ReactDOM from "react-dom";
 import React from "react";
 import {Box, Divider, Grid, ThemeProvider} from "@mui/material";
 import theme from "../component/styles";
@@ -9,6 +8,7 @@ import Separator from "../component/Separator";
 import FormButton from "../component/FormButton";
 import ErrorBanner from "../component/ErrorBanner";
 import getDataFromDomUtils from "../utils/getDataFromDomUtils";
+import ComponentInitializer from "../utils/ComponentInitializer";
 
 
 const VAuthenticatorTitle = () => {
@@ -153,8 +153,9 @@ const Login: React.FC<LoginProps> = ({rawFeatures, rawErrors}) => {
     )
 }
 
-if (document.getElementById('app')) {
-    let features = getDataFromDomUtils('features')
-    let errors = getDataFromDomUtils('errors')
-    ReactDOM.render(<Login rawFeatures={features} rawErrors={errors}/>, document.getElementById('app'));
-}
+let features = getDataFromDomUtils('features')
+let errors = getDataFromDomUtils('errors')
+
+let page = <Login rawFeatures={features} rawErrors={errors}/>;
+
+ComponentInitializer(page)
