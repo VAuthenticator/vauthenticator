@@ -26,19 +26,14 @@ InputMask.propTypes = {
     onChange: PropTypes.func.isRequired,
 };
 
-export default function FormInputMask({id, label, required, autoFocus, disabled, suffix, value, handler}) {
+export default function FormInputMask({id, label, required, value, handler}) {
     return <Grid container spacing={8} alignItems="flex-end">
-        {suffix && <Grid item>
-            {suffix}
-        </Grid>}
         <Grid item md={true} sm={true} xs={true}>
             <TextField
                 fullWidth
                 label={label}
                 variant="outlined"
                 required={required}
-                autoFocus={autoFocus}
-                disabled={disabled}
                 value={value}
                 onChange={handler}
                 name={id}

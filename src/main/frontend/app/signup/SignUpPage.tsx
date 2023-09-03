@@ -78,14 +78,14 @@ const SignUpPage = () => {
                     label="Birth Date"/>
 
 
-                {/*        <FormInputMask id="phone"
+                <FormInputMask id="phone"
                                label="Phone"
                                required={false}
-                               handler={(value) => {
+                               handler={(value: any) => {
                                    setPhone(value.target.value)
                                }}
                                value={phone || ""}/>
-*/}
+
                 <Grid style={{marginTop: '10px'}}>
                     <Divider/>
                 </Grid>
