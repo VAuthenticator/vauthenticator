@@ -8,15 +8,15 @@ module.exports = {
         "404_error": path.resolve(__dirname, './app/errors/DefaultGenericErrorPage.tsx'),
         "400_error": path.resolve(__dirname, './app/errors/DefaultGenericErrorPage.tsx'),
         "500_error": path.resolve(__dirname, './app/errors/DefaultGenericErrorPage.tsx'),
-        login: path.resolve(__dirname, './app/login/LoginPage.js'),
-        mfa: path.resolve(__dirname, './app/mfa/index.js'),
-        signup: path.resolve(__dirname, './app/signup/SignUpPage.js'),
-        successfulSignUp: path.resolve(__dirname, './app/signup/SuccessfulSignUpPage.js'),
-        successfulMailVerify: path.resolve(__dirname, './app/mail-verify/SuccessfulMailVerifyPage.js'),
-        resetPasswordChallengeSender: path.resolve(__dirname, './app/reset-password/ResetPasswordChallengeSenderPage.js'),
-        successfulResetPasswordMailChallenge: path.resolve(__dirname, './app/reset-password/SuccessfulResetPasswordMailChallengePage.js'),
-        resetPassword: path.resolve(__dirname, './app/reset-password/ResetPasswordPage.js'),
-        successfulPasswordReset: path.resolve(__dirname, './app/reset-password/SuccessfulPasswordReset.js')
+        login: path.resolve(__dirname, './app/login/LoginPage.tsx'),
+        mfa: path.resolve(__dirname, './app/mfa/index.tsx'),
+        signup: path.resolve(__dirname, './app/signup/SignUpPage.tsx'),
+        successfulSignUp: path.resolve(__dirname, './app/signup/SuccessfulSignUpPage.tsx'),
+        successfulMailVerify: path.resolve(__dirname, './app/mail-verify/SuccessfulMailVerifyPage.tsx'),
+        resetPasswordChallengeSender: path.resolve(__dirname, './app/reset-password/ResetPasswordChallengeSenderPage.tsx'),
+        successfulResetPasswordMailChallenge: path.resolve(__dirname, './app/reset-password/SuccessfulResetPasswordMailChallengePage.tsx'),
+        resetPassword: path.resolve(__dirname, './app/reset-password/ResetPasswordPage.tsx'),
+        successfulPasswordReset: path.resolve(__dirname, './app/reset-password/SuccessfulPasswordReset.tsx')
     },
     resolve: {
         extensions: ['.tsx', '.ts', ".js", ".jsx"]
@@ -32,17 +32,6 @@ module.exports = {
                 test: /\.tsx?$/,
                 use: ['ts-loader'],
                 exclude: /node_modules$/,
-            },
-            {
-                test: /\.js$/,
-                exclude: path.resolve(__dirname, "node_modules"),
-                use: {
-                    loader: "babel-loader",
-                    options: {
-                        presets: ['@babel/env', '@babel/react']
-                    }
-                }
-
             }
         ]
     },
