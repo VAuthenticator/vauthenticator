@@ -14,11 +14,11 @@ interface FormDatePickerProps {
 
 const FormDatePicker: React.FC<FormDatePickerProps> = ({label, value, onClickHandler, pattern}) => {
     let val = value && moment(value, pattern)
-    console.log("val: " + val)
     return <Grid container alignItems="flex-end">
         <Grid item md={true} sm={true} xs={true}>
             <LocalizationProvider dateAdapter={AdapterMoment}>
                 <DesktopDatePicker
+                    slotProps={{ textField: { fullWidth: true } }}
                     label={label}
                     format={FormDateFormatPattern}
                     onChange={onClickHandler || {}}
