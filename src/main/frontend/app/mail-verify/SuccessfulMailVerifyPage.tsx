@@ -3,14 +3,10 @@ import {Divider, Grid, ThemeProvider, Typography} from "@mui/material";
 import theme from "../component/styles";
 import Template from "../component/Template";
 import {Mail} from "@mui/icons-material";
-import getDataFromDomUtils from "../utils/getDataFromDomUtils";
 import ComponentInitializer from "../utils/ComponentInitializer";
 
-interface SuccessfulMailVerifyPageProps {
-    rawFeatures: string
-}
 
-const SuccessfulMailVerifyPage: React.FC<SuccessfulMailVerifyPageProps> = ({rawFeatures}) => {
+const SuccessfulMailVerifyPage = () => {
     return (
         <ThemeProvider theme={theme}>
             <Template maxWidth="lg">
@@ -30,7 +26,4 @@ const SuccessfulMailVerifyPage: React.FC<SuccessfulMailVerifyPageProps> = ({rawF
     )
 }
 
-let features = getDataFromDomUtils('features')
-let page = <SuccessfulMailVerifyPage rawFeatures={features}/>;
-
-ComponentInitializer(page)
+ComponentInitializer(<SuccessfulMailVerifyPage/>)

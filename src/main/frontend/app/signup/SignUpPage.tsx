@@ -10,6 +10,8 @@ import {GroupAdd, VpnKey} from "@mui/icons-material";
 import theme from "../component/styles";
 import FormInputMask from "../component/FormInputMask";
 import {createRoot} from "react-dom/client";
+import getDataFromDomUtils from "../utils/getDataFromDomUtils";
+import ComponentInitializer from "../utils/ComponentInitializer";
 
 const SignUpPage = () => {
     const [email, setEmail] = React.useState("")
@@ -112,8 +114,5 @@ const SignUpPage = () => {
         </ThemeProvider>
     )
 }
-const container = document.getElementById('app');
-if (container) {
-    const root = createRoot(container);
-    root.render(<SignUpPage/>);
-}
+
+ComponentInitializer(<SignUpPage/>)

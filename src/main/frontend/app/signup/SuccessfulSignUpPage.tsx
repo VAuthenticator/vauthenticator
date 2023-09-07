@@ -4,6 +4,7 @@ import {Divider, Grid, ThemeProvider, Typography} from "@mui/material";
 import {VpnKey} from "@mui/icons-material";
 import theme from "../component/styles";
 import {createRoot} from "react-dom/client";
+import ComponentInitializer from "../utils/ComponentInitializer";
 
 const SuccessfulSignUpPage = () => {
     return (
@@ -25,8 +26,4 @@ const SuccessfulSignUpPage = () => {
     )
 }
 
-const container = document.getElementById('app');
-if (container) {
-    const root = createRoot(container);
-    root.render(<SuccessfulSignUpPage/>);
-}
+ComponentInitializer(<SuccessfulSignUpPage/>)

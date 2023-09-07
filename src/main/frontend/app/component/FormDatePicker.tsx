@@ -22,7 +22,7 @@ const FormDatePicker: React.FC<FormDatePickerProps> = ({label, value, onClickHan
                     label={label}
                     format={FormDateFormatPattern}
                     onChange={onClickHandler || {}}
-                    value={val}
+                    value={val || moment()}
                 />
             </LocalizationProvider>
         </Grid>
