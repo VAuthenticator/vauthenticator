@@ -3,13 +3,15 @@ import Template from "../component/Template";
 import FormInputTextField from "../component/FormInputTextField";
 import FormButton from "../component/FormButton";
 
-import {signUp} from "./SignUpRepository";
+import signUp from "./SignUpRepository";
 import FormDatePicker, {ApiDateFormatPattern} from "../component/FormDatePicker";
 import {Divider, Grid, ThemeProvider, Typography} from "@mui/material";
 import {GroupAdd, VpnKey} from "@mui/icons-material";
 import theme from "../component/styles";
 import FormInputMask from "../component/FormInputMask";
 import {createRoot} from "react-dom/client";
+import getDataFromDomUtils from "../utils/getDataFromDomUtils";
+import ComponentInitializer from "../utils/ComponentInitializer";
 
 const SignUpPage = () => {
     const [email, setEmail] = React.useState("")
@@ -65,7 +67,6 @@ const SignUpPage = () => {
 
                 <FormDatePicker
                     value={birthDate}
-                    required ={false}
                     pattern={ApiDateFormatPattern}
                     onClickHandler={(value) => {
                         let date = "";
@@ -82,7 +83,7 @@ const SignUpPage = () => {
                 <FormInputMask id="phone"
                                label="Phone"
                                required={false}
-                               handler={(value) => {
+                               handler={(value: any) => {
                                    setPhone(value.target.value)
                                }}
                                value={phone || ""}/>
@@ -94,16 +95,16 @@ const SignUpPage = () => {
                 <FormButton type="button"
                             onClickHandler={() => {
                                 signUp({
-                                    "email": email,
-                                    "password": password,
-                                    "firstName": firstName,
-                                    "lastName": lastName,
-                                    "phone": phone,
-                                    "birthDate": birthDate
+                                    email: email,
+                                    password: password,
+                                    firstName: firstName,
+                                    lastName: lastName,
+                                    phone: phone,
+                                    birthDate: birthDate
                                 })
                                     .then(r => {
                                         if (r.status === 201) {
-                                            window.location.href="/sign-up/succeeded";
+                                            window.location.href = "/sign-up/succeeded";
                                         }
                                     })
                             }}
@@ -114,9 +115,4 @@ const SignUpPage = () => {
     )
 }
 
-if (document.getElementById('app')) {
-    let features = document.getElementById('features').innerHTML
-    const container = document.getElementById('app');
-    const root = createRoot(container);
-    root.render(<SignUpPage features={features}/>);
-}
+ComponentInitializer(<SignUpPage/>)

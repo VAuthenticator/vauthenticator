@@ -6,10 +6,15 @@ import FormInputTextField from "../component/FormInputTextField";
 import Separator from "../component/Separator";
 import FormButton from "../component/FormButton";
 import React from "react";
-import ReactDOM from "react-dom";
 import ErrorBanner from "../component/ErrorBanner";
+import getDataFromDomUtils from "../utils/getDataFromDomUtils";
+import ComponentInitializer from "../utils/ComponentInitializer";
 
-const MfaChallengePage = ({rawErrors}) => {
+interface MfaChallengePageProps {
+    rawErrors: string
+}
+
+const MfaChallengePage: React.FC<MfaChallengePageProps> = ({rawErrors}) => {
     let sendAgainMfaCode = () => {
         fetch("/mfa-challenge/send", {
             method: 'PUT', // *GET, POST, PUT, DELETE, etc.
@@ -53,9 +58,7 @@ const MfaChallengePage = ({rawErrors}) => {
     )
 }
 
+let errors = getDataFromDomUtils('errors')
+let page = <MfaChallengePage rawErrors={errors}/>;
 
-if (document.getElementById('app')) {
-    let errors = document.getElementById('errors').innerHTML
-    let features = document.getElementById('features').innerHTML
-    ReactDOM.render(<MfaChallengePage rawFeatures={features} rawErrors={errors}/>, document.getElementById('app'));
-}
+ComponentInitializer(page)

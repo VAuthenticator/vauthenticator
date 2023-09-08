@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import Template from "../component/Template";
 import FormInputTextField from "../component/FormInputTextField";
 import Separator from "../component/Separator";
@@ -7,13 +6,17 @@ import FormButton from "../component/FormButton";
 import {Divider, Grid, Paper, ThemeProvider, Typography} from "@mui/material";
 import {Person, VpnKey} from "@mui/icons-material";
 import theme from "../component/styles";
+import getDataFromDomUtils from "../utils/getDataFromDomUtils";
+import ComponentInitializer from "../utils/ComponentInitializer";
 
+interface ResetPasswordPageProps {
+    metadata: string
+}
 
-const ResetPasswordPage = (props) => {
-    const {metadata} = props;
+const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({metadata}) => {
     const [password, setPassword] = React.useState("")
 
-    const resetPassword = (ticket, password) => {
+    const resetPassword = (ticket: string, password: string) => {
         return fetch(`/api/reset-password/${ticket}`, {
             method: "PUT",
             credentials: 'same-origin',
@@ -64,7 +67,7 @@ const ResetPasswordPage = (props) => {
     )
 }
 
-if (document.getElementById('app')) {
-    let metadata = document.getElementById('metadata').innerHTML
-    ReactDOM.render(<ResetPasswordPage metadata={metadata}/>, document.getElementById('app'));
-}
+let metadata = getDataFromDomUtils('metadata')
+let page = <ResetPasswordPage metadata={metadata}/>;
+
+ComponentInitializer(page)

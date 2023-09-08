@@ -4,23 +4,22 @@ const BUID_DIR = path.resolve(__dirname + "/dist");
 
 module.exports = {
     entry: {
-        healthz: path.resolve(__dirname, './app/healthz/healthz.js'),
-        "default_error": path.resolve(__dirname, './app/errors/DefaultErrorPage.js'),
-        "404_error": path.resolve(__dirname, './app/errors/400ErrorPage.js'),
-        "400_error": path.resolve(__dirname, './app/errors/404ErrorPage.js'),
-        "500_error": path.resolve(__dirname, './app/errors/500ErrorPage.js'),
-        login: path.resolve(__dirname, './app/login/LoginPage.js'),
-        mfa: path.resolve(__dirname, './app/mfa/index.js'),
-        signup: path.resolve(__dirname, './app/signup/SignUpPage.js'),
-        successfulSignUp: path.resolve(__dirname, './app/signup/SuccessfulSignUpPage.js'),
-        successfulMailVerify: path.resolve(__dirname, './app/mail-verify/SuccessfulMailVerifyPage.js'),
-        resetPasswordChallengeSender: path.resolve(__dirname, './app/reset-password/ResetPasswordChallengeSenderPage.js'),
-        successfulResetPasswordMailChallenge: path.resolve(__dirname, './app/reset-password/SuccessfulResetPasswordMailChallengePage.js'),
-        resetPassword: path.resolve(__dirname, './app/reset-password/ResetPasswordPage.js'),
-        successfulPasswordReset: path.resolve(__dirname, './app/reset-password/SuccessfulPasswordReset.js')
+        "default_error": path.resolve(__dirname, './app/errors/DefaultGenericErrorPage.tsx'),
+        "404_error": path.resolve(__dirname, './app/errors/DefaultGenericErrorPage.tsx'),
+        "400_error": path.resolve(__dirname, './app/errors/DefaultGenericErrorPage.tsx'),
+        "500_error": path.resolve(__dirname, './app/errors/DefaultGenericErrorPage.tsx'),
+        login: path.resolve(__dirname, './app/login/LoginPage.tsx'),
+        mfa: path.resolve(__dirname, './app/mfa/index.tsx'),
+        signup: path.resolve(__dirname, './app/signup/SignUpPage.tsx'),
+        successfulSignUp: path.resolve(__dirname, './app/signup/SuccessfulSignUpPage.tsx'),
+        successfulMailVerify: path.resolve(__dirname, './app/mail-verify/SuccessfulMailVerifyPage.tsx'),
+        resetPasswordChallengeSender: path.resolve(__dirname, './app/reset-password/ResetPasswordChallengeSenderPage.tsx'),
+        successfulResetPasswordMailChallenge: path.resolve(__dirname, './app/reset-password/SuccessfulResetPasswordMailChallengePage.tsx'),
+        resetPassword: path.resolve(__dirname, './app/reset-password/ResetPasswordPage.tsx'),
+        successfulPasswordReset: path.resolve(__dirname, './app/reset-password/SuccessfulPasswordReset.tsx')
     },
     resolve: {
-        extensions: [".js", ".jsx"]
+        extensions: ['.tsx', '.ts', ".js", ".jsx"]
     },
     plugins: [],
     module: {
@@ -30,15 +29,9 @@ module.exports = {
                 use: ['style-loader', 'css-loader']
             },
             {
-                test: path.join(__dirname, "."),
-                exclude: path.resolve(__dirname, "node_modules"),
-                use: {
-                    loader: "babel-loader",
-                    options: {
-                        presets: ['@babel/env', '@babel/react']
-                    }
-                }
-
+                test: /\.tsx?$/,
+                use: ['ts-loader'],
+                exclude: /node_modules$/,
             }
         ]
     },

@@ -1,16 +1,17 @@
 import React from "react";
-import Template from "../component/Template";
 import {Divider, Grid, ThemeProvider, Typography} from "@mui/material";
-import {VpnKey} from "@mui/icons-material";
 import theme from "../component/styles";
-import {createRoot} from "react-dom/client";
+import Template from "../component/Template";
+import {VpnKey} from "@mui/icons-material";
+import ComponentInitializer from "../utils/ComponentInitializer";
 
-const SuccessfulSignUpPage = () => {
+
+const SuccessfulResetPasswordMailChallenge = () => {
     return (
         <ThemeProvider theme={theme}>
             <Template maxWidth="lg">
                 <Typography variant="h3" component="h3">
-                    <VpnKey fontSize="large"/> Sign Up on VAuthenticator
+                    <VpnKey fontSize="large"/> Reset Password
                 </Typography>
 
                 <Grid style={{marginTop: '10px'}}>
@@ -18,7 +19,8 @@ const SuccessfulSignUpPage = () => {
                 </Grid>
 
                 <Typography variant="h3" component="h3">
-                    Sign Up on VAuthenticator succeeded
+                    We are sent an email on your account inbox please follow the instruction on the mail to reset your
+                    password
                 </Typography>
             </Template>
         </ThemeProvider>
@@ -26,9 +28,6 @@ const SuccessfulSignUpPage = () => {
 }
 
 
-if (document.getElementById('app')) {
-    let features = document.getElementById('features').innerHTML
-    const container = document.getElementById('app');
-    const root = createRoot(container);
-    root.render(<SuccessfulSignUpPage features={features}/>);
-}
+const page = <SuccessfulResetPasswordMailChallenge/>
+
+ComponentInitializer(page)

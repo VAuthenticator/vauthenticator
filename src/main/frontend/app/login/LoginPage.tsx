@@ -1,4 +1,3 @@
-import ReactDOM from "react-dom";
 import React from "react";
 import {Box, Divider, Grid, ThemeProvider} from "@mui/material";
 import theme from "../component/styles";
@@ -8,6 +7,8 @@ import {Fingerprint, Person} from "@mui/icons-material";
 import Separator from "../component/Separator";
 import FormButton from "../component/FormButton";
 import ErrorBanner from "../component/ErrorBanner";
+import getDataFromDomUtils from "../utils/getDataFromDomUtils";
+import ComponentInitializer from "../utils/ComponentInitializer";
 
 
 const VAuthenticatorTitle = () => {
@@ -89,7 +90,12 @@ c-111 1 -132 4 -194 28 -38 15 -96 43 -128 62 -32 19 -64 35 -70 35 -7 0 -30
     </svg>
 }
 
-const Login = ({rawFeatures, rawErrors}) => {
+interface LoginProps {
+    rawFeatures: string
+    rawErrors: string
+}
+
+const Login: React.FC<LoginProps> = ({rawFeatures, rawErrors}) => {
     let signUpLink = <div>
         <h3>are you not registered? if you want you can register <a href="/sign-up">here</a></h3>
     </div>
@@ -147,8 +153,9 @@ const Login = ({rawFeatures, rawErrors}) => {
     )
 }
 
-if (document.getElementById('app')) {
-    let features = document.getElementById('features').innerHTML
-    let errors = document.getElementById('errors').innerHTML
-    ReactDOM.render(<Login rawFeatures={features} rawErrors={errors}/>, document.getElementById('app'));
-}
+let features = getDataFromDomUtils('features')
+let errors = getDataFromDomUtils('errors')
+
+let page = <Login rawFeatures={features} rawErrors={errors}/>;
+
+ComponentInitializer(page)
