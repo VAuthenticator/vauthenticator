@@ -1,8 +1,12 @@
 package com.vauthenticator.server.account.changepassword
 
+import com.vauthenticator.server.account.AccountNotFoundException
+import com.vauthenticator.server.password.PasswordPolicyViolation
 import org.springframework.http.ResponseEntity
+import org.springframework.http.ResponseEntity.internalServerError
 import org.springframework.http.ResponseEntity.noContent
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
+import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
@@ -19,5 +23,9 @@ class ChangePasswordEndPoint(val changePassword: ChangePassword) {
         return noContent().build()
     }
 
+    @ExceptionHandler(AccountNotFoundException::class, PasswordPolicyViolation::class)
+    fun exceptionHandler(): ResponseEntity<Unit> {
+        return internalServerError().build()
+    }
 }
 
