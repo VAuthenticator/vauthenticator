@@ -1,4 +1,4 @@
-package com.vauthenticator.server.account.changepassword
+package com.vauthenticator.server.password.changepassword
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.account.AccountNotFoundException

@@ -3,14 +3,14 @@ package com.vauthenticator.server.config
 import com.hubspot.jinjava.Jinjava
 import com.vauthenticator.document.repository.DocumentRepository
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.account.resetpassword.ResetAccountPassword
-import com.vauthenticator.server.account.resetpassword.SendResetPasswordMailChallenge
 import com.vauthenticator.server.account.tiket.TicketRepository
 import com.vauthenticator.server.account.tiket.VerificationTicketFactory
 import com.vauthenticator.server.mail.*
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
 import com.vauthenticator.server.password.PasswordPolicy
 import com.vauthenticator.server.password.VAuthenticatorPasswordEncoder
+import com.vauthenticator.server.password.resetpassword.ResetAccountPassword
+import com.vauthenticator.server.password.resetpassword.SendResetPasswordMailChallenge
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

@@ -1,4 +1,4 @@
-package com.vauthenticator.server.account.resetpassword
+package com.vauthenticator.server.password.resetpassword
 
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.account.tiket.InvalidTicketException
