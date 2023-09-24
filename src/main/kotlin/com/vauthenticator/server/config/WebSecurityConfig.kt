@@ -110,7 +110,7 @@ class WebSecurityConfig(
                     .requestMatchers(HttpMethod.PUT, "/api/mail/verify-challenge")
                     .hasAnyAuthority(Scope.MAIL_VERIFY.content)
 
-                    .requestMatchers(HttpMethod.PUT, "//api/password")
+                    .requestMatchers(HttpMethod.PUT, "/api/password")
                     .hasAnyAuthority(Scope.CHANGE_PASSWORD.content)
 
                     .requestMatchers(HttpMethod.PUT, "/api/reset-password-challenge").permitAll()
