@@ -67,6 +67,7 @@ data class Scope(val content: String) {
         val WELCOME = Scope("admin:welcome")
         val MAIL_VERIFY = Scope("admin:mail-verify")
         val RESET_PASSWORD = Scope("admin:reset-password")
+        val CHANGE_PASSWORD = Scope("admin:change-password")
 
         val MAIL_TEMPLATE_READER = Scope("admin:mail-template-reader")
         val MAIL_TEMPLATE_WRITER = Scope("admin:mail-template-writer")
@@ -77,22 +78,23 @@ data class Scope(val content: String) {
         val MFA_ALWAYS = Scope("mfa:always")
 
         val AVAILABLE_SCOPES = listOf(
-            Scope("openid"),
-            Scope("profile"),
-            Scope("email"),
+            OPEN_ID,
+            PROFILE,
+            EMAIL,
 
-            Scope("admin:signup"),
-            Scope("admin:welcome"),
-            Scope("admin:mail-verify"),
-            Scope("admin:reset-password"),
+            SIGN_UP,
+            WELCOME,
+            MAIL_VERIFY,
+            RESET_PASSWORD,
+            CHANGE_PASSWORD,
 
-            Scope("admin:key-reader"),
-            Scope("admin:key-editor"),
+            KEY_READER,
+            KEY_EDITOR,
 
-            Scope("admin:mail-template-reader"),
-            Scope("admin:mail-template-writer"),
+            MAIL_TEMPLATE_READER,
+            MAIL_TEMPLATE_WRITER,
 
-            Scope("mfa:always")
+            MFA_ALWAYS
         )
 
     }

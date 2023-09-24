@@ -1,4 +1,4 @@
-package com.vauthenticator.server.account.resetpassword
+package com.vauthenticator.server.password.resetpassword
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.BeforeEach
