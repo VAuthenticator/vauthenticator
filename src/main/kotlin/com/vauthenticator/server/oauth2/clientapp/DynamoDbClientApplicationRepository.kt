@@ -1,7 +1,7 @@
 package com.vauthenticator.server.oauth2.clientapp
 
 import com.vauthenticator.server.extentions.asDynamoAttribute
-import com.vauthenticator.server.extentions.filterEmptyAccountMetadata
+import com.vauthenticator.server.extentions.filterEmptyMetadata
 import com.vauthenticator.server.oauth2.clientapp.DynamoClientApplicationConverter.fromDomainToDynamo
 import com.vauthenticator.server.oauth2.clientapp.DynamoClientApplicationConverter.fromDynamoToDomain
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
@@ -31,7 +31,7 @@ class DynamoDbClientApplicationRepository(
                 )
                     .item()
             }
-            .flatMap { it.filterEmptyAccountMetadata() }
+            .flatMap { it.filterEmptyMetadata() }
             .map { fromDynamoToDomain(it) }
     }
 

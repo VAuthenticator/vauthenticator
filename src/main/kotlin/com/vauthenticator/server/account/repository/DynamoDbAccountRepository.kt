@@ -4,7 +4,7 @@ import com.vauthenticator.server.account.Account
 import com.vauthenticator.server.account.repository.DynamoAccountConverter.fromDynamoToDomain
 import com.vauthenticator.server.account.repository.DynamoAccountQueryFactory.findAccountQueryForUserName
 import com.vauthenticator.server.account.repository.DynamoAccountQueryFactory.storeAccountQueryFor
-import com.vauthenticator.server.extentions.filterEmptyAccountMetadata
+import com.vauthenticator.server.extentions.filterEmptyMetadata
 import com.vauthenticator.server.role.RoleRepository
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.ConditionalCheckFailedException
@@ -19,7 +19,7 @@ class DynamoDbAccountRepository(
 
     override fun accountFor(username: String): Optional<Account> =
         ofNullable(findAccountFor(username))
-            .flatMap { it.filterEmptyAccountMetadata() }
+            .flatMap { it.filterEmptyMetadata() }
             .map(::fromDynamoToDomain)
             .map(::stealRoleCleanUpFor)
 
