@@ -2,6 +2,7 @@ package com.vauthenticator.server.password
 
 import com.vauthenticator.server.account.Email
 import com.vauthenticator.server.extentions.asDynamoAttribute
+import com.vauthenticator.server.extentions.valueAsStringFor
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest
@@ -43,9 +44,12 @@ class DynamoPasswordHistoryRepository(
 
     override fun load(email: Email, until: Long): List<Password> {
         return dynamoDbClient.query(
-            QueryRequest.builder().build()
+            QueryRequest.builder()
+                .tableName(dynamoPasswordHistoryTableName)
+                .keyConditionExpression("user_name=:email")
+                .expressionAttributeValues(mapOf(":email" to email.content.asDynamoAttribute()))                .build()
         ).items()
-            .map { Password(it["password"] as String) }
+            .map { Password(it.valueAsStringFor("password")) }
     }
 
 }
