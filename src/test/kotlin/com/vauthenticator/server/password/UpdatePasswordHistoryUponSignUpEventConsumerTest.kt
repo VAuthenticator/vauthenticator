@@ -13,8 +13,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import java.time.Instant
 
-private const val A_USERNAME = "A_USERNAME"
-
 @ExtendWith(MockKExtension::class)
 class UpdatePasswordHistoryUponSignUpEventConsumerTest {
 
@@ -24,14 +22,15 @@ class UpdatePasswordHistoryUponSignUpEventConsumerTest {
     @Test
     fun `when upon a sign up event the password history is updated`() {
         val password = Password("A_PASSWORD")
-        val event = SignUpEvent(Email("AN_EMAIL"), ClientAppFixture.aClientAppId(), Instant.now(), password)
+        val userName = Email("AN_EMAIL")
+        val event = SignUpEvent(userName, ClientAppFixture.aClientAppId(), Instant.now(), password)
 
         val uut = UpdatePasswordHistoryUponSignUpEventConsumer(passwordHistoryRepository)
 
-        every { passwordHistoryRepository.store(A_USERNAME, password) } just runs
+        every { passwordHistoryRepository.store(userName.content, password) } just runs
 
         uut.accept(event)
 
-        verify { passwordHistoryRepository.store(A_USERNAME,password) }
+        verify { passwordHistoryRepository.store(userName.content, password) }
     }
 }
