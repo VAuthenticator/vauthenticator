@@ -16,8 +16,8 @@ class ResetAccountPassword(
     private val ticketRepository: TicketRepository
 ) {
     fun resetPasswordFromMailChallenge(verificationTicket: VerificationTicket, request: ResetPasswordRequest) {
-        passwordPolicy.accept(request.newPassword)
         ticketRepository.loadFor(verificationTicket).map {
+            passwordPolicy.accept(it.email, request.newPassword)
             passwordResetFor(it, request)
             ticketRepository.delete(verificationTicket)
         }

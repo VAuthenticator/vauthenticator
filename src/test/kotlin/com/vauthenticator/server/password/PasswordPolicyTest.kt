@@ -27,29 +27,29 @@ internal class PasswordPolicyTest {
     @Test
     internal fun `when a password has no special character`() {
         val underTest = SpecialCharacterPasswordPolicy(2)
-        assertThrows(PasswordPolicyViolation::class.java) { underTest.accept("aPassword") }
+        assertThrows(PasswordPolicyViolation::class.java) { underTest.accept("A_USERNAME","aPassword") }
     }
 
     @Test
     internal fun `when a password has enoguht special  character`() {
         val underTest = SpecialCharacterPasswordPolicy(2)
-        underTest.accept("aPa!%ssword")
+        underTest.accept("A_USERNAME","aPa!%ssword")
     }
 
     @Test
     internal fun `when a password has not allowed special character`() {
         val underTest = MinimumCharacterPasswordPolicy(8)
-        assertThrows(PasswordPolicyViolation::class.java) { underTest.accept("1245789") }
+        assertThrows(PasswordPolicyViolation::class.java) { underTest.accept("A_USERNAME","1245789") }
     }
 
     @Test
     internal fun `when a set of password policies are invoked`() {
         val underTest = CompositePasswordPolicy(setOf(firstPolicy, secondPolicy))
 
-        every { firstPolicy.accept("1245789") } just runs
-        every { secondPolicy.accept("1245789") } throws PasswordPolicyViolation("")
+        every { firstPolicy.accept("A_USERNAME","1245789") } just runs
+        every { secondPolicy.accept("A_USERNAME","1245789") } throws PasswordPolicyViolation("")
 
-        assertThrows(PasswordPolicyViolation::class.java) { underTest.accept("1245789") }
+        assertThrows(PasswordPolicyViolation::class.java) { underTest.accept("A_USERNAME","1245789") }
     }
 
     @Test
@@ -69,6 +69,6 @@ internal class PasswordPolicyTest {
         every { passwordEncoder.encode(password) } returns password
         every { passwordHistoryRepository.load() } returns passwordHistory
 
-        assertThrows(PasswordPolicyViolation::class.java) { uut.accept(password) }
+        assertThrows(PasswordPolicyViolation::class.java) { uut.accept("A_USERNAME",password) }
     }
 }

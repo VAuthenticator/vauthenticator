@@ -1,6 +1,7 @@
 package com.vauthenticator.server.config
 
 import com.vauthenticator.server.events.*
+import com.vauthenticator.server.password.UpdatePasswordHistoryUponSignUpEventConsumer
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -17,9 +18,18 @@ class EventsConfig(private val eventConsumerConfig: EventConsumerConfig) {
         VAuthenticatorEventsDispatcher(publisher)
 
     @Bean
-    fun eventsCollector() =
+    fun eventsCollector(
+        updatePasswordHistoryUponSignUpEventConsumer: UpdatePasswordHistoryUponSignUpEventConsumer,
+        loggerEventConsumer: EventConsumer
+    ) =
         SpringEventsCollector(
-            listOf(LoggerEventConsumer(eventConsumerConfig))
+            listOf(
+                loggerEventConsumer,
+                updatePasswordHistoryUponSignUpEventConsumer
+            )
         )
+
+    @Bean
+    fun loggerEventConsumer() = LoggerEventConsumer(eventConsumerConfig)
 
 }

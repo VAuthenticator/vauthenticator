@@ -62,14 +62,14 @@ internal class ChangePasswordTest {
             listOf(Scope.RESET_PASSWORD.content)
         )
 
-        every { passwordPolicy.accept("it is a new password") } just runs
+        every { passwordPolicy.accept(EMAIL, "it is a new password") } just runs
         every { accountRepository.accountFor(principal.name) } returns Optional.of(account)
         every { passwordEncoder.encode("it is a new password") } returns "it is a encoded new password"
         every { accountRepository.save(account.copy(password = "it is a encoded new password")) } just runs
 
         underTest.resetPasswordFor(principal, ChangePasswordRequest("it is a new password"))
 
-        verify { passwordPolicy.accept("it is a new password") }
+        verify { passwordPolicy.accept(EMAIL, "it is a new password") }
         verify { accountRepository.accountFor(principal.name) }
         verify { passwordEncoder.encode("it is a new password") }
         verify { accountRepository.save(account.copy(password = "it is a encoded new password")) }
@@ -84,7 +84,7 @@ internal class ChangePasswordTest {
             listOf(Scope.RESET_PASSWORD.content)
         )
 
-        every { passwordPolicy.accept("it is a new password") } just runs
+        every { passwordPolicy.accept(EMAIL,"it is a new password") } just runs
         every { accountRepository.accountFor(principal.name) } returns Optional.empty()
 
 
@@ -95,7 +95,7 @@ internal class ChangePasswordTest {
             )
         }
 
-        verify { passwordPolicy.accept("it is a new password") }
+        verify { passwordPolicy.accept(EMAIL,"it is a new password") }
         verify { accountRepository.accountFor(principal.name) }
     }
 
