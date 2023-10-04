@@ -15,7 +15,7 @@ class DynamoPasswordHistoryRepositoryTest {
     private val account = anAccount()
 
     @BeforeEach
-    fun setUp(){
+    fun setUp() {
         resetDatabase()
     }
 
@@ -29,5 +29,25 @@ class DynamoPasswordHistoryRepositoryTest {
         val history = uut.load(email, 10)
 
         Assertions.assertEquals(1, history.size)
+    }
+
+    @Test
+    fun `when store a new password in an non empty the history`() {
+        val uut = DynamoPasswordHistoryRepository(Clock.systemUTC(), dynamoPasswordHistoryTableName, dynamoDbClient)
+
+        val email = Email(account.email)
+
+        uut.store(email, Password("A_PASSWORD 3"))
+        uut.store(email, Password("A_PASSWORD 1"))
+        uut.store(email, Password("A_PASSWORD 2"))
+        val history = uut.load(email, 10)
+
+        println(history)
+        val expected = listOf(
+            Password("A_PASSWORD 2"),
+            Password("A_PASSWORD 1"),
+            Password("A_PASSWORD 3")
+        )
+        Assertions.assertEquals(expected, history)
     }
 }

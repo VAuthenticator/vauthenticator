@@ -46,6 +46,7 @@ class DynamoPasswordHistoryRepository(
         return dynamoDbClient.query(
             QueryRequest.builder()
                 .tableName(dynamoPasswordHistoryTableName)
+                .scanIndexForward(false)
                 .keyConditionExpression("user_name=:email")
                 .expressionAttributeValues(mapOf(":email" to email.content.asDynamoAttribute()))                .build()
         ).items()
