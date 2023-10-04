@@ -1,6 +1,5 @@
 package com.vauthenticator.server.password
 
-import com.vauthenticator.server.password.*
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -19,12 +18,19 @@ internal class PasswordPolicyTest {
     @MockK
     private lateinit var secondPolicy: PasswordPolicy
 
+    @MockK
+    private lateinit var passwordHistoryRepository: PasswordHistoryRepository
+
+    @MockK
+    private lateinit var passwordEncoder: VAuthenticatorPasswordEncoder
+
     @Test
     internal fun `when a password has no special character`() {
         val underTest = SpecialCharacterPasswordPolicy(2)
         assertThrows(PasswordPolicyViolation::class.java) { underTest.accept("aPassword") }
     }
-   @Test
+
+    @Test
     internal fun `when a password has enoguht special  character`() {
         val underTest = SpecialCharacterPasswordPolicy(2)
         underTest.accept("aPa!%ssword")
@@ -44,6 +50,25 @@ internal class PasswordPolicyTest {
         every { secondPolicy.accept("1245789") } throws PasswordPolicyViolation("")
 
         assertThrows(PasswordPolicyViolation::class.java) { underTest.accept("1245789") }
+    }
 
+    @Test
+    fun `when a password is used too early`() {
+        val password = "A_PASSWORD"
+        val passwordHistory = listOf(
+            Password("A_PASSWORD"),
+            Password("A_PASSWORD_1"),
+            Password("A_PASSWORD_2")
+        )
+
+        val uut = ReusePreventionPasswordPolicy(
+            passwordEncoder,
+            passwordHistoryRepository
+        )
+
+        every { passwordEncoder.encode(password) } returns password
+        every { passwordHistoryRepository.load() } returns passwordHistory
+
+        assertThrows(PasswordPolicyViolation::class.java) { uut.accept(password) }
     }
 }

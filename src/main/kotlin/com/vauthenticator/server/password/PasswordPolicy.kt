@@ -34,6 +34,19 @@ class MinimumCharacterPasswordPolicy(private val size: Int) : PasswordPolicy {
     }
 }
 
+class ReusePreventionPasswordPolicy(
+    private val passwordEncoder: VAuthenticatorPasswordEncoder,
+    private val passwordHistoryRepository: PasswordHistoryRepository
+) : PasswordPolicy {
+    override fun accept(password: String) {
+        val passwordHistory = passwordHistoryRepository.load()
+        val passwordToCheck = Password(passwordEncoder.encode(password))
+        if (passwordHistory.contains(passwordToCheck)) {
+            throw PasswordPolicyViolation("the password is already used in the past please consider to change password")
+        }
+    }
+}
+
 
 class CompositePasswordPolicy(private val passwordPolicies: Set<PasswordPolicy>) : PasswordPolicy {
     override fun accept(password: String) {
