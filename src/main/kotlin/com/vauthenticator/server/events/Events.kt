@@ -2,6 +2,7 @@ package com.vauthenticator.server.events
 
 import com.vauthenticator.server.account.Email
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
+import com.vauthenticator.server.password.Password
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.security.authentication.event.AbstractAuthenticationEvent
 import java.time.Instant
@@ -17,7 +18,7 @@ interface EventsCollector {
 
 interface EventConsumer {
     fun accept(event: VAuthenticatorEvent)
-    fun handleable(): Boolean
+    fun handleable(event: VAuthenticatorEvent): Boolean
 
 }
 
@@ -38,6 +39,22 @@ class VAuthenticatorAuthEvent(
     timeStamp: Instant,
     payload: AbstractAuthenticationEvent
 ) : VAuthenticatorEvent(userName, clientAppId, timeStamp, payload) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return javaClass.hashCode()
+    }
+}
+
+class SignUpEvent(
+    userName: Email,
+    clientAppId: ClientAppId,
+    timeStamp: Instant,
+    password : Password) : VAuthenticatorEvent(userName, clientAppId, timeStamp, password) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

@@ -50,7 +50,7 @@ internal class ResetAccountPasswordTest {
         val verificationTicket = VerificationTicket("A_TICKET")
         val ticket = TicketFixture.ticketFor(verificationTicket.content, email, "")
 
-        every { passwordPolicy.accept("NEW_PSWD") } just runs
+        every { passwordPolicy.accept(email,"NEW_PSWD") } just runs
         every { ticketRepository.loadFor(verificationTicket) } returns Optional.of(ticket)
         every { ticketRepository.delete(verificationTicket) } just runs
         every { accountRepository.accountFor(email) } returns Optional.of(anAccount)
@@ -64,7 +64,7 @@ internal class ResetAccountPasswordTest {
     internal fun `when a ticket was revoked`() {
         val verificationTicket = VerificationTicket("A_TICKET")
 
-        every { passwordPolicy.accept("NEW_PSWD") } just runs
+        every { passwordPolicy.accept("A_USERNAME", "NEW_PSWD") } just runs
         every { ticketRepository.loadFor(verificationTicket) } returns Optional.empty()
 
         assertThrows(InvalidTicketException::class.java) {

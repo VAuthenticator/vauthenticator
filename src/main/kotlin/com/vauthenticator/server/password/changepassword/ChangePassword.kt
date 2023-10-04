@@ -12,7 +12,7 @@ class ChangePassword(
     private val accountRepository: AccountRepository
 ) {
     fun resetPasswordFor(principal: Principal, request: ChangePasswordRequest) {
-        passwordPolicy.accept(request.newPassword)
+        passwordPolicy.accept(principal.name, request.newPassword)
         accountRepository.accountFor(principal.name)
             .map { account ->
                 val newEncodedPassword = passwordEncoder.encode(request.newPassword)

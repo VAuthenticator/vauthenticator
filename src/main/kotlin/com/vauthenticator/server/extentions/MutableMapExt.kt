@@ -21,7 +21,7 @@ fun MutableMap<String, AttributeValue>.valueAsStringSetFor(key: String): Set<Str
 fun MutableMap<String, AttributeValue>.valueAsLongFor(key: String): Long =
         this[key]?.n()!!.toLong()
 
-fun MutableMap<String, AttributeValue>.filterEmptyAccountMetadata() =
+fun MutableMap<String, AttributeValue>.filterEmptyMetadata() =
         if (this.isEmpty()) {
             Optional.empty()
         } else {

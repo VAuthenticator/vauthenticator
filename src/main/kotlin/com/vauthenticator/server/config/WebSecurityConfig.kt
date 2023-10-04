@@ -197,4 +197,5 @@ class WebSecurityConfig(
     fun failureHandler(): AuthenticationFailureHandler {
         return SimpleUrlAuthenticationFailureHandler("/login?error")
     }
+
 }

@@ -9,6 +9,7 @@ import java.net.URI
 
 
 object DatabaseUtils {
+    const val dynamoPasswordHistoryTableName: String = "TESTING_VAuthenticator_PasswordHistory"
     const val dynamoClientApplicationTableName: String = "TESTING_VAuthenticator_ClientApplication"
     const val dynamoAccountTableName: String = "TESTING_VAuthenticator_Account"
     const val dynamoRoleTableName: String = "TESTING_VAuthenticator_Role"
@@ -43,6 +44,11 @@ object DatabaseUtils {
 
     fun resetDatabase() {
         try {
+            dynamoDbClient.deleteTable(
+                DeleteTableRequest.builder()
+                    .tableName(dynamoPasswordHistoryTableName)
+                    .build()
+            )
             dynamoDbClient.deleteTable(
                 DeleteTableRequest.builder()
                     .tableName(dynamoClientApplicationTableName)
@@ -81,6 +87,7 @@ object DatabaseUtils {
         } catch (e: java.lang.Exception) {
         }
         try {
+            createDynamoPasswordHistoryTable()
             createDynamoClientApplicationTable()
             createDynamoAccountTable()
             createDynamoRoleTable()
@@ -91,6 +98,37 @@ object DatabaseUtils {
         } catch (e: java.lang.Exception) {
         }
 
+    }
+
+    private fun createDynamoPasswordHistoryTable() {
+
+        dynamoDbClient.createTable(
+            CreateTableRequest.builder()
+                .tableName(dynamoPasswordHistoryTableName)
+                .keySchema(
+                    KeySchemaElement.builder()
+                        .attributeName("user_name")
+                        .keyType(KeyType.HASH)
+                        .build(),
+                    KeySchemaElement.builder()
+                        .attributeName("created_at")
+                        .keyType(KeyType.RANGE)
+                        .build()
+                )
+                .attributeDefinitions(
+                    AttributeDefinition.builder()
+                        .attributeName("user_name")
+                        .attributeType(ScalarAttributeType.S)
+                        .build(),
+                    AttributeDefinition.builder()
+                        .attributeName("created_at")
+                        .attributeType(ScalarAttributeType.N)
+
+                        .build()
+                )
+                .billingMode(BillingMode.PAY_PER_REQUEST)
+                .build()
+        );
     }
 
     private fun createDynamoMfaAccountMethodsTable() {
@@ -119,7 +157,7 @@ object DatabaseUtils {
                 )
                 .billingMode(BillingMode.PAY_PER_REQUEST)
                 .build()
-        );
+        )
     }
 
     private fun createDynamoRoleTable() {

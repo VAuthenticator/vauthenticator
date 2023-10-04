@@ -1,7 +1,7 @@
 package com.vauthenticator.server.account.tiket
 
 import com.vauthenticator.server.extentions.asDynamoAttribute
-import com.vauthenticator.server.extentions.filterEmptyAccountMetadata
+import com.vauthenticator.server.extentions.filterEmptyMetadata
 import com.vauthenticator.server.extentions.valueAsLongFor
 import com.vauthenticator.server.extentions.valueAsStringFor
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
@@ -46,7 +46,7 @@ class DynamoDbTicketRepository(private val dynamoDbClient: DynamoDbClient,
                                 .build()
                 ).item()
         )
-                .flatMap { it.filterEmptyAccountMetadata() }
+                .flatMap { it.filterEmptyMetadata() }
                 .map {
                     Ticket(
                             VerificationTicket(it.valueAsStringFor("ticket")),
