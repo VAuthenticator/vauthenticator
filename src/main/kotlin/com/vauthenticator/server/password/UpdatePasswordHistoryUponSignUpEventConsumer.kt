@@ -10,7 +10,7 @@ class UpdatePasswordHistoryUponSignUpEventConsumer(
     private val passwordHistoryRepository: PasswordHistoryRepository
 ) : EventConsumer {
     override fun accept(event: VAuthenticatorEvent) {
-        passwordHistoryRepository.store(event.payload as Password)
+        passwordHistoryRepository.store(event.userName.content, event.payload as Password)
     }
 
     override fun handleable(event: VAuthenticatorEvent): Boolean =

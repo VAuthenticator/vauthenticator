@@ -38,7 +38,7 @@ class ReusePreventionPasswordPolicy(
 
 
     override fun accept(userName: String, password: String) {
-        val passwordHistory = passwordHistoryRepository.load()
+        val passwordHistory = passwordHistoryRepository.load(userName)
         val passwordToCheck = Password(passwordEncoder.encode(password))
         if (passwordHistory.contains(passwordToCheck)) {
             throw PasswordPolicyViolation("the password is already used in the past please consider to change password")

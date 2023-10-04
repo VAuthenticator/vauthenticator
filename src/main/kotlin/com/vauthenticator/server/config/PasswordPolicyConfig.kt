@@ -1,6 +1,5 @@
 package com.vauthenticator.server.config
 
-import com.vauthenticator.server.AuthenticationUserNameRepository
 import com.vauthenticator.server.password.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -43,12 +42,10 @@ class PasswordPolicyConfig {
 
     @Bean
     fun passwordHistoryRepository(
-        authenticationUserNameRepository: AuthenticationUserNameRepository,
         @Value("\${vauthenticator.dynamo-db.password-history.table-name}") dynamoPasswordHistoryTableName: String,
         dynamoDbClient: DynamoDbClient
     ): DynamoPasswordHistoryRepository {
         val passwordHistoryRepository = DynamoPasswordHistoryRepository(
-            authenticationUserNameRepository,
             Clock.systemUTC(),
             dynamoPasswordHistoryTableName,
             dynamoDbClient

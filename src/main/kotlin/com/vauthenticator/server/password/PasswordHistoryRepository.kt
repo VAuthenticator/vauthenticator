@@ -1,6 +1,5 @@
 package com.vauthenticator.server.password
 
-import com.vauthenticator.server.AuthenticationUserNameRepository
 import com.vauthenticator.server.extentions.asDynamoAttribute
 import com.vauthenticator.server.extentions.valueAsStringFor
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
@@ -12,19 +11,17 @@ import java.time.ZoneOffset
 
 interface PasswordHistoryRepository {
 
-    fun store(password: Password)
-    fun load(): List<Password>
+    fun store(userName : String, password: Password)
+    fun load(userName : String, ): List<Password>
 
 }
 
 class DynamoPasswordHistoryRepository(
-    private val authenticationUserNameRepository: AuthenticationUserNameRepository,
     private val clock: Clock,
     private val dynamoPasswordHistoryTableName: String,
     private val dynamoDbClient: DynamoDbClient
 ) : PasswordHistoryRepository {
-    override fun store(password: Password) {
-        val userName = authenticationUserNameRepository.getCurrentAuthenticatedUserName()
+    override fun store(userName : String, password: Password) {
         dynamoDbClient.putItem(
             PutItemRequest.builder()
                 .tableName(dynamoPasswordHistoryTableName)
@@ -44,9 +41,7 @@ class DynamoPasswordHistoryRepository(
             .toInstant(ZoneOffset.UTC)
             .toEpochMilli()
 
-    override fun load(): List<Password> {
-        val userName = authenticationUserNameRepository.getCurrentAuthenticatedUserName()
-
+    override fun load(userName : String, ): List<Password> {
         return dynamoDbClient.query(
             QueryRequest.builder()
                 .tableName(dynamoPasswordHistoryTableName)

@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import java.time.Instant
 
+private const val A_USERNAME = "A_USERNAME"
+
 @ExtendWith(MockKExtension::class)
 class UpdatePasswordHistoryUponSignUpEventConsumerTest {
 
@@ -26,10 +28,10 @@ class UpdatePasswordHistoryUponSignUpEventConsumerTest {
 
         val uut = UpdatePasswordHistoryUponSignUpEventConsumer(passwordHistoryRepository)
 
-        every { passwordHistoryRepository.store(password) } just runs
+        every { passwordHistoryRepository.store(A_USERNAME, password) } just runs
 
         uut.accept(event)
 
-        verify { passwordHistoryRepository.store(password) }
+        verify { passwordHistoryRepository.store(A_USERNAME,password) }
     }
 }
