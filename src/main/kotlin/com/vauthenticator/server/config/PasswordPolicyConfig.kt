@@ -44,12 +44,9 @@ class PasswordPolicyConfig {
     fun passwordHistoryRepository(
         @Value("\${vauthenticator.dynamo-db.password-history.table-name}") dynamoPasswordHistoryTableName: String,
         dynamoDbClient: DynamoDbClient
-    ): DynamoPasswordHistoryRepository {
-        val passwordHistoryRepository = DynamoPasswordHistoryRepository(
-            Clock.systemUTC(),
-            dynamoPasswordHistoryTableName,
-            dynamoDbClient
-        )
-        return passwordHistoryRepository
-    }
+    ): DynamoPasswordHistoryRepository = DynamoPasswordHistoryRepository(
+        Clock.systemUTC(),
+        dynamoPasswordHistoryTableName,
+        dynamoDbClient
+    )
 }
