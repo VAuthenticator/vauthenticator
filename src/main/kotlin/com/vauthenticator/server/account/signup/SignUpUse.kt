@@ -28,7 +28,6 @@ open class SignUpUse(
                 accountRepository.create(registeredAccount)
                 sayWelcome.welcome(registeredAccount.email)
                 sendVerifyMailChallenge.sendVerifyMail(account.email)
-
             }
     }
 }

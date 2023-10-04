@@ -34,19 +34,25 @@ class PasswordPolicyConfig {
     @Bean
     fun reusePreventionPasswordPolicy(
         passwordEncoder: VAuthenticatorPasswordEncoder,
+        passwordHistoryRepository: PasswordHistoryRepository
+    ) = ReusePreventionPasswordPolicy(
+        passwordEncoder,
+        passwordHistoryRepository
+    )
+
+
+    @Bean
+    fun passwordHistoryRepository(
         authenticationUserNameRepository: AuthenticationUserNameRepository,
         @Value("\${vauthenticator.dynamo-db.password-history.table-name}") dynamoPasswordHistoryTableName: String,
         dynamoDbClient: DynamoDbClient
-    ): ReusePreventionPasswordPolicy {
+    ): DynamoPasswordHistoryRepository {
         val passwordHistoryRepository = DynamoPasswordHistoryRepository(
             authenticationUserNameRepository,
             Clock.systemUTC(),
             dynamoPasswordHistoryTableName,
             dynamoDbClient
         )
-        return ReusePreventionPasswordPolicy(
-            passwordEncoder,
-            passwordHistoryRepository
-        )
+        return passwordHistoryRepository
     }
 }

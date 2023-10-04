@@ -1,5 +1,6 @@
 package com.vauthenticator.server.config
 
+import com.vauthenticator.server.AuthenticationUserNameRepository
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.login.userdetails.AccountUserDetailsService
 import com.vauthenticator.server.mfa.MfaAuthentication
@@ -197,4 +198,7 @@ class WebSecurityConfig(
     fun failureHandler(): AuthenticationFailureHandler {
         return SimpleUrlAuthenticationFailureHandler("/login?error")
     }
+
+    @Bean
+    fun authenticationUserNameRepository() = AuthenticationUserNameRepository()
 }
