@@ -3,6 +3,8 @@ package com.vauthenticator.server.password
 import com.vauthenticator.server.extentions.asDynamoAttribute
 import com.vauthenticator.server.extentions.valueAsStringFor
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue
+import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest
 import java.time.Clock
@@ -43,15 +45,30 @@ class DynamoPasswordHistoryRepository(
             .toEpochMilli()
 
     override fun load(userName: String): List<Password> {
-        return dynamoDbClient.query(
+        val items = dynamoDbClient.query(
             QueryRequest.builder()
                 .tableName(dynamoPasswordHistoryTableName)
                 .scanIndexForward(false)
-                .limit(historyEvaluationLimit)
                 .keyConditionExpression("user_name=:email")
                 .expressionAttributeValues(mapOf(":email" to userName.asDynamoAttribute())).build()
         ).items()
-            .map { Password(it.valueAsStringFor("password")) }
+
+        val windowed =
+            items.windowed(size = historyEvaluationLimit, step = historyEvaluationLimit, partialWindows = true)
+        windowed.drop(1)
+            .flatten()
+            .forEach(::deleteUselessPasswordHistory)
+
+        return windowed[0].map { Password(it.valueAsStringFor("password")) }
+    }
+
+    private fun deleteUselessPasswordHistory(itemToDelete: Map<String, AttributeValue>) {
+        dynamoDbClient.deleteItem(
+            DeleteItemRequest.builder()
+                .tableName(dynamoPasswordHistoryTableName)
+                .key(itemToDelete.filterKeys { it != "password" })
+                .build()
+        )
     }
 
 }
