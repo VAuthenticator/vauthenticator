@@ -20,6 +20,7 @@ class DynamoPasswordHistoryRepositoryTest {
     @BeforeEach
     fun setUp() {
         uut = DynamoPasswordHistoryRepository(
+            2,
             Clock.systemUTC(),
             dynamoPasswordHistoryTableName,
             dynamoDbClient
@@ -48,7 +49,6 @@ class DynamoPasswordHistoryRepositoryTest {
         val expected = listOf(
             Password("A_PASSWORD 2"),
             Password("A_PASSWORD 1"),
-            Password("A_PASSWORD 3")
         )
         Assertions.assertEquals(expected, history)
     }

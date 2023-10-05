@@ -11,17 +11,18 @@ import java.time.ZoneOffset
 
 interface PasswordHistoryRepository {
 
-    fun store(userName : String, password: Password)
-    fun load(userName : String, ): List<Password>
+    fun store(userName: String, password: Password)
+    fun load(userName: String): List<Password>
 
 }
 
 class DynamoPasswordHistoryRepository(
+    private val historyEvaluationLimit: Int,
     private val clock: Clock,
     private val dynamoPasswordHistoryTableName: String,
     private val dynamoDbClient: DynamoDbClient
 ) : PasswordHistoryRepository {
-    override fun store(userName : String, password: Password) {
+    override fun store(userName: String, password: Password) {
         dynamoDbClient.putItem(
             PutItemRequest.builder()
                 .tableName(dynamoPasswordHistoryTableName)
@@ -41,11 +42,12 @@ class DynamoPasswordHistoryRepository(
             .toInstant(ZoneOffset.UTC)
             .toEpochMilli()
 
-    override fun load(userName : String, ): List<Password> {
+    override fun load(userName: String): List<Password> {
         return dynamoDbClient.query(
             QueryRequest.builder()
                 .tableName(dynamoPasswordHistoryTableName)
                 .scanIndexForward(false)
+                .limit(historyEvaluationLimit)
                 .keyConditionExpression("user_name=:email")
                 .expressionAttributeValues(mapOf(":email" to userName.asDynamoAttribute())).build()
         ).items()
