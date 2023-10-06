@@ -30,9 +30,7 @@ class SingUpConfig {
             passwordPolicy,
             clientAccountRepository,
             accountRepository,
-            sendVerifyMailChallenge,
             vAuthenticatorPasswordEncoder,
-            sayWelcome,
             vAuthenticatorEventsDispatcher
         )
 

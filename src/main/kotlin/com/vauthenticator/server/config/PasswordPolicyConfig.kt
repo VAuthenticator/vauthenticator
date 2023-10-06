@@ -42,9 +42,13 @@ class PasswordPolicyConfig {
 
     @Bean
     fun passwordHistoryRepository(
+        @Value("\${vauthenticator.dynamo-db.password-history.history-evaluation-limit}") historyEvaluationLimit: Int,
+        @Value("\${vauthenticator.dynamo-db.password-history.max-history-allowed-size}") maxHistoryAllowedSize: Int,
         @Value("\${vauthenticator.dynamo-db.password-history.table-name}") dynamoPasswordHistoryTableName: String,
         dynamoDbClient: DynamoDbClient
     ): DynamoPasswordHistoryRepository = DynamoPasswordHistoryRepository(
+        historyEvaluationLimit,
+        maxHistoryAllowedSize,
         Clock.systemUTC(),
         dynamoPasswordHistoryTableName,
         dynamoDbClient

@@ -3,6 +3,8 @@ package com.vauthenticator.server.password
 import com.vauthenticator.server.extentions.asDynamoAttribute
 import com.vauthenticator.server.extentions.valueAsStringFor
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue
+import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest
 import java.time.Clock
@@ -11,17 +13,19 @@ import java.time.ZoneOffset
 
 interface PasswordHistoryRepository {
 
-    fun store(userName : String, password: Password)
-    fun load(userName : String, ): List<Password>
+    fun store(userName: String, password: Password)
+    fun load(userName: String): List<Password>
 
 }
 
 class DynamoPasswordHistoryRepository(
+    private val historyEvaluationLimit: Int,
+    private val maxHistoryAllowedSize: Int,
     private val clock: Clock,
     private val dynamoPasswordHistoryTableName: String,
     private val dynamoDbClient: DynamoDbClient
 ) : PasswordHistoryRepository {
-    override fun store(userName : String, password: Password) {
+    override fun store(userName: String, password: Password) {
         dynamoDbClient.putItem(
             PutItemRequest.builder()
                 .tableName(dynamoPasswordHistoryTableName)
@@ -41,15 +45,33 @@ class DynamoPasswordHistoryRepository(
             .toInstant(ZoneOffset.UTC)
             .toEpochMilli()
 
-    override fun load(userName : String, ): List<Password> {
-        return dynamoDbClient.query(
+    override fun load(userName: String): List<Password> {
+        val items = dynamoDbClient.query(
             QueryRequest.builder()
                 .tableName(dynamoPasswordHistoryTableName)
                 .scanIndexForward(false)
                 .keyConditionExpression("user_name=:email")
                 .expressionAttributeValues(mapOf(":email" to userName.asDynamoAttribute())).build()
         ).items()
-            .map { Password(it.valueAsStringFor("password")) }
+
+        val allowedPassword = items.take(historyEvaluationLimit)
+
+        deleteUselessPasswordHistory(items)
+        return allowedPassword.map { Password(it.valueAsStringFor("password")) }
     }
 
+    private fun deleteUselessPasswordHistory(itemsInTheHistory: List<Map<String, AttributeValue>>) {
+        val leftoverSize = itemsInTheHistory.size - maxHistoryAllowedSize
+        if (leftoverSize > 0) {
+            itemsInTheHistory.takeLast(leftoverSize)
+                .forEach { itemToDelete ->
+                    dynamoDbClient.deleteItem(
+                        DeleteItemRequest.builder()
+                            .tableName(dynamoPasswordHistoryTableName)
+                            .key(itemToDelete.filterKeys { it != "password" })
+                            .build()
+                    )
+                }
+        }
+    }
 }

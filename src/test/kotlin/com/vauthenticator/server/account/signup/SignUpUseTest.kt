@@ -2,9 +2,7 @@ package com.vauthenticator.server.account.signup
 
 import com.vauthenticator.server.account.AccountTestFixture.anAccount
 import com.vauthenticator.server.account.Email
-import com.vauthenticator.server.account.mailverification.SendVerifyMailChallenge
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.account.welcome.SayWelcome
 import com.vauthenticator.server.clientapp.ClientAppFixture.aClientApp
 import com.vauthenticator.server.events.SignUpEvent
 import com.vauthenticator.server.events.VAuthenticatorEventsDispatcher
@@ -40,13 +38,7 @@ internal class SignUpUseTest {
     lateinit var passwordPolicy: PasswordPolicy
 
     @MockK
-    lateinit var sayWelcome: SayWelcome
-
-    @MockK
     lateinit var vAuthenticatorPasswordEncoder: VAuthenticatorPasswordEncoder
-
-    @MockK
-    lateinit var sendVerifyMailChallenge: SendVerifyMailChallenge
 
     @MockK
     lateinit var vAuthenticatorEventsDispatcher: VAuthenticatorEventsDispatcher
@@ -59,9 +51,7 @@ internal class SignUpUseTest {
             passwordPolicy,
             clientAccountRepository,
             accountRepository,
-            sendVerifyMailChallenge,
             vAuthenticatorPasswordEncoder,
-            sayWelcome,
             vAuthenticatorEventsDispatcher
         )
     }
@@ -79,8 +69,6 @@ internal class SignUpUseTest {
         every { clientAccountRepository.findOne(clientAppId) } returns Optional.of(aClientApp)
         every { vAuthenticatorPasswordEncoder.encode("secret") } returns "encrypted_secret"
         every { accountRepository.create(account) } just runs
-        every { sayWelcome.welcome(account.email) } just runs
-        every { sendVerifyMailChallenge.sendVerifyMail("email@domain.com") } just runs
         every { vAuthenticatorEventsDispatcher.dispatch(signUpEvent) } just runs
 
 
@@ -90,8 +78,6 @@ internal class SignUpUseTest {
         verify { clientAccountRepository.findOne(clientAppId) }
         verify { vAuthenticatorPasswordEncoder.encode("secret") }
         verify { accountRepository.create(account) }
-        verify { sayWelcome.welcome(account.email) }
-        verify { sendVerifyMailChallenge.sendVerifyMail("email@domain.com") }
         verify { vAuthenticatorEventsDispatcher.dispatch(signUpEvent) }
     }
 
