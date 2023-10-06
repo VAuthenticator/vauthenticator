@@ -3,6 +3,7 @@ package com.vauthenticator.server.config
 import com.hubspot.jinjava.Jinjava
 import com.vauthenticator.document.repository.DocumentRepository
 import com.vauthenticator.server.account.mailverification.SendVerifyMailChallenge
+import com.vauthenticator.server.account.mailverification.SendVerifyMailChallengeUponSignUpEventConsumer
 import com.vauthenticator.server.account.mailverification.VerifyMailChallengeSent
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.account.tiket.TicketRepository
@@ -19,34 +20,50 @@ import org.springframework.mail.javamail.JavaMailSender
 class MailVerificationConfig {
 
     @Bean
-    fun sendVerifyMailChallenge(clientAccountRepository: ClientApplicationRepository,
-                                accountRepository: AccountRepository,
-                                verificationTicketFactory: VerificationTicketFactory,
-                                verificationMailSender: MailSenderService,
-                                @Value("\${vauthenticator.host}") frontChannelBaseUrl: String) =
-            SendVerifyMailChallenge(
-                accountRepository,
-                verificationTicketFactory,
-                verificationMailSender,
-                frontChannelBaseUrl
-            )
-
-    @Bean
-    fun verifyMailChallengeSent(accountRepository: AccountRepository,
-                                ticketRepository: TicketRepository,
-                                mfaMethodsEnrolmentAssociation : MfaMethodsEnrolmentAssociation
+    fun sendVerifyMailChallenge(
+        clientAccountRepository: ClientApplicationRepository,
+        accountRepository: AccountRepository,
+        verificationTicketFactory: VerificationTicketFactory,
+        verificationMailSender: MailSenderService,
+        @Value("\${vauthenticator.host}") frontChannelBaseUrl: String
     ) =
-            VerifyMailChallengeSent(
-                accountRepository,
-                ticketRepository,
-                mfaMethodsEnrolmentAssociation
-            )
+        SendVerifyMailChallenge(
+            accountRepository,
+            verificationTicketFactory,
+            verificationMailSender,
+            frontChannelBaseUrl
+        )
 
     @Bean
-    fun verificationMailSender(javaMailSender: JavaMailSender, documentRepository: DocumentRepository, noReplyMailConfiguration: NoReplyMailConfiguration) =
-            JavaMailSenderService(documentRepository,
-                    javaMailSender,
-                    JinjavaMailTemplateResolver(Jinjava()),
-                    SimpleMailMessageFactory(noReplyMailConfiguration.from, noReplyMailConfiguration.welcomeMailSubject, MailType.EMAIL_VERIFICATION)
+    fun verifyMailChallengeSent(
+        accountRepository: AccountRepository,
+        ticketRepository: TicketRepository,
+        mfaMethodsEnrolmentAssociation: MfaMethodsEnrolmentAssociation
+    ) =
+        VerifyMailChallengeSent(
+            accountRepository,
+            ticketRepository,
+            mfaMethodsEnrolmentAssociation
+        )
+
+    @Bean
+    fun verificationMailSender(
+        javaMailSender: JavaMailSender,
+        documentRepository: DocumentRepository,
+        noReplyMailConfiguration: NoReplyMailConfiguration
+    ) =
+        JavaMailSenderService(
+            documentRepository,
+            javaMailSender,
+            JinjavaMailTemplateResolver(Jinjava()),
+            SimpleMailMessageFactory(
+                noReplyMailConfiguration.from,
+                noReplyMailConfiguration.welcomeMailSubject,
+                MailType.EMAIL_VERIFICATION
             )
+        )
+
+    @Bean
+    fun sendVerifyMailChallengeUponSignUpEventConsumer(mailChallenge: SendVerifyMailChallenge) =
+        SendVerifyMailChallengeUponSignUpEventConsumer(mailChallenge)
 }
