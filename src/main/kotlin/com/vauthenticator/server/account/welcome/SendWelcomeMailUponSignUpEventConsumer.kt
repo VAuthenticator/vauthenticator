@@ -1,4 +1,4 @@
-package com.vauthenticator.server.password
+package com.vauthenticator.server.account.welcome
 
 import com.vauthenticator.server.events.EventConsumer
 import com.vauthenticator.server.events.SignUpEvent
@@ -6,12 +6,13 @@ import com.vauthenticator.server.events.VAuthenticatorEvent
 import org.springframework.stereotype.Service
 
 @Service
-class UpdatePasswordHistoryUponSignUpEventConsumer(
-    private val passwordHistoryRepository: PasswordHistoryRepository
+class SendWelcomeMailUponSignUpEventConsumer(
+    private val sayWelcome: SayWelcome
 ) : EventConsumer {
     override fun accept(event: VAuthenticatorEvent) {
-        passwordHistoryRepository.store(event.userName.content, event.payload as Password)
+        sayWelcome.welcome(event.userName.content)
     }
 
     override fun handleable(event: VAuthenticatorEvent): Boolean = event is SignUpEvent
+
 }

@@ -20,6 +20,7 @@ interface PasswordHistoryRepository {
 
 class DynamoPasswordHistoryRepository(
     private val historyEvaluationLimit: Int,
+    private val maxHistoryAllowedSize: Int,
     private val clock: Clock,
     private val dynamoPasswordHistoryTableName: String,
     private val dynamoDbClient: DynamoDbClient
@@ -53,22 +54,24 @@ class DynamoPasswordHistoryRepository(
                 .expressionAttributeValues(mapOf(":email" to userName.asDynamoAttribute())).build()
         ).items()
 
-        val windowed =
-            items.windowed(size = historyEvaluationLimit, step = historyEvaluationLimit, partialWindows = true)
-        windowed.drop(1)
-            .flatten()
-            .forEach(::deleteUselessPasswordHistory)
+        val allowedPassword = items.take(historyEvaluationLimit)
 
-        return windowed[0].map { Password(it.valueAsStringFor("password")) }
+        deleteUselessPasswordHistory(items)
+        return allowedPassword.map { Password(it.valueAsStringFor("password")) }
     }
 
-    private fun deleteUselessPasswordHistory(itemToDelete: Map<String, AttributeValue>) {
-        dynamoDbClient.deleteItem(
-            DeleteItemRequest.builder()
-                .tableName(dynamoPasswordHistoryTableName)
-                .key(itemToDelete.filterKeys { it != "password" })
-                .build()
-        )
+    private fun deleteUselessPasswordHistory(itemsInTheHistory: List<Map<String, AttributeValue>>) {
+        val leftoverSize = itemsInTheHistory.size - maxHistoryAllowedSize
+        if (leftoverSize > 0) {
+            itemsInTheHistory.takeLast(leftoverSize)
+                .forEach { itemToDelete ->
+                    dynamoDbClient.deleteItem(
+                        DeleteItemRequest.builder()
+                            .tableName(dynamoPasswordHistoryTableName)
+                            .key(itemToDelete.filterKeys { it != "password" })
+                            .build()
+                    )
+                }
+        }
     }
-
 }

@@ -59,9 +59,7 @@ internal class SignUpUseTest {
             passwordPolicy,
             clientAccountRepository,
             accountRepository,
-            sendVerifyMailChallenge,
             vAuthenticatorPasswordEncoder,
-            sayWelcome,
             vAuthenticatorEventsDispatcher
         )
     }

@@ -9,16 +9,15 @@ class LoggerEventConsumer(private val eventConsumerConfig: EventConsumerConfig) 
     private val logger = LoggerFactory.getLogger(LoggerEventConsumer::class.java)
 
     override fun accept(event: VAuthenticatorEvent) {
-        if (handleable(event)) {
-            val logLine = """
+        val logLine = """
             The user ${event.userName.content}
             with the client id ${event.clientAppId.content}
             has done an ${event.payload::class.simpleName} event
             event at ${event.timeStamp.epochSecond}
             event payload: ${event.payload}
      """.trimIndent()
-            logger.info(logLine)
-        }
+        logger.info(logLine)
+
     }
 
     override fun handleable(event: VAuthenticatorEvent) = eventConsumerConfig.enable[LOGGER_EVENT_CONSUMER] ?: false

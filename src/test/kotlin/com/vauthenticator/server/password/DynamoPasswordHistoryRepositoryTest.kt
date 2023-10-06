@@ -24,6 +24,7 @@ class DynamoPasswordHistoryRepositoryTest {
     fun setUp() {
         uut = DynamoPasswordHistoryRepository(
             2,
+            3,
             Clock.systemUTC(),
             dynamoPasswordHistoryTableName,
             dynamoDbClient
@@ -59,7 +60,19 @@ class DynamoPasswordHistoryRepositoryTest {
             Password("A_PASSWORD 32"),
         )
         Assertions.assertEquals(expected, history)
-        Assertions.assertEquals(2, loadActualDynamoSizeFor(A_USERNAME).size)
+        Assertions.assertEquals(3, loadActualDynamoSizeFor(A_USERNAME).size)
+    }
+    @Test
+    fun `when store a new password in an non empty the history with less item then requested as limit`() {
+        uut.store(A_USERNAME, Password("A_PASSWORD 3"))
+        val history = uut.load(A_USERNAME)
+
+        println(history)
+        val expected = listOf(
+            Password("A_PASSWORD 3"),
+        )
+        Assertions.assertEquals(expected, history)
+        Assertions.assertEquals(1, loadActualDynamoSizeFor(A_USERNAME).size)
     }
 
     private fun loadActualDynamoSizeFor(userName: String): MutableList<MutableMap<String, AttributeValue>> {

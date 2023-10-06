@@ -6,6 +6,12 @@ class SpringEventsCollector(private val eventConsumers: List<EventConsumer>) : E
 
     @EventListener
     override fun accept(event: VAuthenticatorEvent) {
-        eventConsumers.forEach { it.accept(event) }
+        eventConsumers.forEach {
+            println(it::class.java)
+            println(it.handleable(event))
+            if(it.handleable(event)){
+                it.accept(event)
+            }
+        }
     }
 }

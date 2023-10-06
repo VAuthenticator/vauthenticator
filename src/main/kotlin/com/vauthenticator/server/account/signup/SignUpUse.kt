@@ -2,9 +2,7 @@ package com.vauthenticator.server.account.signup
 
 import com.vauthenticator.server.account.Account
 import com.vauthenticator.server.account.Email
-import com.vauthenticator.server.account.mailverification.SendVerifyMailChallenge
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.account.welcome.SayWelcome
 import com.vauthenticator.server.events.SignUpEvent
 import com.vauthenticator.server.events.VAuthenticatorEventsDispatcher
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
@@ -18,9 +16,7 @@ open class SignUpUse(
     private val passwordPolicy: PasswordPolicy,
     private val clientAccountRepository: ClientApplicationRepository,
     private val accountRepository: AccountRepository,
-    private val sendVerifyMailChallenge: SendVerifyMailChallenge,
     private val vAuthenticatorPasswordEncoder: VAuthenticatorPasswordEncoder,
-    private val sayWelcome: SayWelcome,
     private val eventsDispatcher: VAuthenticatorEventsDispatcher
 ) {
     open fun execute(clientAppId: ClientAppId, account: Account) {
@@ -33,16 +29,9 @@ open class SignUpUse(
                     password = encodedPassword
                 )
                 accountRepository.create(registeredAccount)
-                sayWelcome.welcome(registeredAccount.email)
-                sendVerifyMailChallenge.sendVerifyMail(account.email)
 
                 eventsDispatcher.dispatch(
-                    SignUpEvent(
-                        Email(account.email),
-                        clientAppId,
-                        Instant.now(),
-                        Password(encodedPassword)
-                    )
+                    SignUpEvent(Email(account.email), clientAppId, Instant.now(), Password(encodedPassword))
                 )
             }
     }
