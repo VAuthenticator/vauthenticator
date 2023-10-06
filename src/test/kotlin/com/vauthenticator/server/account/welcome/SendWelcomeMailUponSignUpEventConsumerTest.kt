@@ -2,6 +2,7 @@ package com.vauthenticator.server.account.welcome
 
 import com.vauthenticator.server.events.EventFixture.signUpEvent
 import io.mockk.every
+import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
@@ -9,12 +10,11 @@ import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.Mock
 
 @ExtendWith(MockKExtension::class)
 class SendWelcomeMailUponSignUpEventConsumerTest {
 
-    @Mock
+    @MockK
     lateinit var sayWelcome: SayWelcome
 
     @Test
