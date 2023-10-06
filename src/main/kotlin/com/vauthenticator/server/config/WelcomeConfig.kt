@@ -4,6 +4,7 @@ import com.hubspot.jinjava.Jinjava
 import com.vauthenticator.document.repository.DocumentRepository
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.account.welcome.SayWelcome
+import com.vauthenticator.server.account.welcome.SendWelcomeMailUponSignUpEventConsumer
 import com.vauthenticator.server.mail.*
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -34,4 +35,8 @@ class WelcomeConfig {
                 MailType.WELCOME
             )
         )
+
+    @Bean
+    fun sendWelcomeMailUponSignUpEventConsumer(sayWelcome: SayWelcome) =
+        SendWelcomeMailUponSignUpEventConsumer(sayWelcome)
 }
