@@ -17,20 +17,8 @@ object AccountTestFixture {
         birthDate = Date.empty(),
         phone = Phone.empty(),
         locale = UserLocale.empty(),
-        mandatoryActions = listOf(AccountMandatoryAction.NO_ACTION)
+        mandatoryAction = AccountMandatoryAction.NO_ACTION
     )
 
-    fun anAccount(roles: Set<Role>) = Account(
-        enabled = true,
-        username = EMAIL,
-        password = "secret",
-        authorities = roles.map { it.name }.toSet(),
-        email = EMAIL,
-        firstName = "A First Name",
-        lastName = "A Last Name",
-        birthDate = Date.empty(),
-        phone = Phone.empty(),
-        locale = UserLocale.empty(),
-        mandatoryActions = listOf(AccountMandatoryAction.NO_ACTION)
-    )
+    fun anAccount(roles: Set<Role>) = anAccount().copy(authorities = roles.map { it.name }.toSet())
 }

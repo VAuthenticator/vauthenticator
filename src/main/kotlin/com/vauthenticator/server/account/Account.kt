@@ -27,7 +27,7 @@ data class Account(
     val birthDate: Optional<Date>,
     val phone: Optional<Phone>,
     val locale: Optional<UserLocale>,
-    val mandatoryActions: List<AccountMandatoryAction> = listOf(NO_ACTION)
+    val mandatoryAction: AccountMandatoryAction =NO_ACTION
 ) {
     val sub: String
         get() = email.toSha256()
