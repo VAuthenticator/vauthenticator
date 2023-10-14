@@ -48,7 +48,7 @@ internal class DynamoDbAccountRepositoryTest {
         accountRepository.save(account)
         val findByUsername: Account = accountRepository.accountFor(account.username).orElseThrow()
 
-        assertEquals(findByUsername, account)
+        assertEquals(account, findByUsername)
     }
 
     @Test

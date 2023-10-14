@@ -1,13 +1,7 @@
 package com.vauthenticator.server.account.repository
 
-import com.vauthenticator.server.account.Account
-import com.vauthenticator.server.account.Date
-import com.vauthenticator.server.account.Phone
-import com.vauthenticator.server.account.UserLocale
-import com.vauthenticator.server.extentions.asDynamoAttribute
-import com.vauthenticator.server.extentions.valueAsBoolFor
-import com.vauthenticator.server.extentions.valueAsStringFor
-import com.vauthenticator.server.extentions.valueAsStringSetFor
+import com.vauthenticator.server.account.*
+import com.vauthenticator.server.extentions.*
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 
 object DynamoAccountConverter {
@@ -27,7 +21,9 @@ object DynamoAccountConverter {
         authorities = dynamoPayload.valueAsStringSetFor("authorities"),
         birthDate = Date.isoDateFor(dynamoPayload.valueAsStringFor("birthDate")),
         phone = Phone.phoneFor(dynamoPayload.valueAsStringFor("phone")),
-        locale = UserLocale.localeFrom(dynamoPayload.valueAsStringFor("locale"))
+        locale = UserLocale.localeFrom(dynamoPayload.valueAsStringFor("locale")),
+        mandatoryActions = dynamoPayload.valuesAsListOfStringFor("mandatory_actions")
+            .map(AccountMandatoryAction::valueOf)
     )
 
     fun fromDomainToDynamo(account: Account) =
@@ -45,6 +41,7 @@ object DynamoAccountConverter {
             "lastName" to account.lastName.asDynamoAttribute(),
             "birthDate" to account.birthDate.map { it.asDynamoAttribute() }.orElse("".asDynamoAttribute()),
             "phone" to account.phone.map { it.asDynamoAttribute() }.orElse("".asDynamoAttribute()),
-            "locale" to account.locale.map { it.formattedLocale().asDynamoAttribute() }.orElse("".asDynamoAttribute())
+            "locale" to account.locale.map { it.formattedLocale().asDynamoAttribute() }.orElse("".asDynamoAttribute()),
+            "mandatory_actions" to account.mandatoryActions.map { it.name }.toSet().asDynamoAttribute()
         )
 }

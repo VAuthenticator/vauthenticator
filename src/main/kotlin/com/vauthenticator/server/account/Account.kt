@@ -1,6 +1,7 @@
 package com.vauthenticator.server.account
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.vauthenticator.server.account.AccountMandatoryAction.NO_ACTION
 import com.vauthenticator.server.cache.CacheContentConverter
 import com.vauthenticator.server.extentions.toSha256
 import java.time.LocalDate
@@ -25,10 +26,17 @@ data class Account(
 
     val birthDate: Optional<Date>,
     val phone: Optional<Phone>,
-    val locale: Optional<UserLocale>
+    val locale: Optional<UserLocale>,
+    val mandatoryActions: List<AccountMandatoryAction> = listOf(NO_ACTION)
 ) {
     val sub: String
         get() = email.toSha256()
+}
+
+enum class AccountMandatoryAction {
+
+    NO_ACTION,
+    RESET_PASSWORD
 }
 
 @JvmInline

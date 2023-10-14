@@ -16,7 +16,7 @@ class SignUpController {
         return "template"
     }
     @GetMapping("/sign-up/succeeded")
-    fun SuccessfulSignUp(@ModelAttribute("features") features: List<String>, model: Model): String {
+    fun successfulSignUp(@ModelAttribute("features") features: List<String>, model: Model): String {
         model.addAttribute("assetBundle", "successfulSignUp_bundle.js")
         return "template"
     }

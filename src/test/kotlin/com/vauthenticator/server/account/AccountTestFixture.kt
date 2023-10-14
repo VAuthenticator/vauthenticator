@@ -16,7 +16,8 @@ object AccountTestFixture {
         lastName = "A Last Name",
         birthDate = Date.empty(),
         phone = Phone.empty(),
-        locale = UserLocale.empty()
+        locale = UserLocale.empty(),
+        mandatoryActions = listOf(AccountMandatoryAction.NO_ACTION)
     )
 
     fun anAccount(roles: Set<Role>) = Account(
@@ -29,6 +30,7 @@ object AccountTestFixture {
         lastName = "A Last Name",
         birthDate = Date.empty(),
         phone = Phone.empty(),
-        locale = UserLocale.empty()
+        locale = UserLocale.empty(),
+        mandatoryActions = listOf(AccountMandatoryAction.NO_ACTION)
     )
 }
