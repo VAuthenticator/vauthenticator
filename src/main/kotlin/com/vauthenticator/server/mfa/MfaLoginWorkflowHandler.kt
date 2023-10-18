@@ -8,7 +8,7 @@ import com.vauthenticator.server.oauth2.clientapp.Scope
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 
-class MfaAuthenticationHandler(
+class MfaLoginWorkflowHandler(
     private val clientApplicationRepository: ClientApplicationRepository,
     private val url: String
 ) : LoginWorkflowHandler {

@@ -17,12 +17,11 @@ import java.util.*
 class MfaController(
     private val publisher: ApplicationEventPublisher,
     private val objectMapper: ObjectMapper,
-    private val successHandler: AuthenticationSuccessHandler,
+    private val nextHopeLoginWorkflowSuccessHandler: AuthenticationSuccessHandler,
     private val mfaFailureHandler: AuthenticationFailureHandler,
     private val otpMfaSender: OtpMfaSender,
     private val otpMfaVerifier: OtpMfaVerifier
 ) {
-
     private val logger = LoggerFactory.getLogger(MfaController::class.java)
 
     @GetMapping("/mfa-challenge/send")
@@ -62,9 +61,8 @@ class MfaController(
     ) {
         try {
             otpMfaVerifier.verifyMfaChallengeFor(authentication.name, MfaChallenge(mfaCode))
-
             publisher.publishEvent(MfaSuccessEvent( authentication))
-            successHandler.onAuthenticationSuccess(request, response, authentication)
+            nextHopeLoginWorkflowSuccessHandler.onAuthenticationSuccess(request, response, authentication)
         } catch (e: Exception) {
             logger.error(e.message, e)
             val mfaException = MfaException("Invalid mfa code")

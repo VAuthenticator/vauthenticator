@@ -40,15 +40,28 @@ class CompositeLoginWorkflowEngine(
 
     override fun workflowsNextHop(session: HttpSession): LoginWorkflowHandler {
         val index = ofNullable(session.getAttribute("CompositeLoginWorkflowEngine_index")).getOrElse { 0 } as Int
-        val nextHandler = index + 1
-        session.setAttribute("CompositeLoginWorkflowEngine_index", nextHandler)
-        return handlers[index]
+        val nextHandlerIndex = index + 1
+
+        return if (nextHandlerIndex > handlers.size) {
+            DefaultLoginWorkflowHandler
+        } else {
+            session.setAttribute("CompositeLoginWorkflowEngine_index", nextHandlerIndex)
+            handlers[index]
+        }
+
     }
 
 }
 
 interface LoginWorkflowEngine {
     fun workflowsNextHop(session: HttpSession): LoginWorkflowHandler
+}
+
+object DefaultLoginWorkflowHandler : LoginWorkflowHandler {
+    override fun view() = ""
+
+    override fun canHandle(request: HttpServletRequest, response: HttpServletResponse) = false
+
 }
 
 interface LoginWorkflowHandler {
@@ -58,13 +71,16 @@ interface LoginWorkflowHandler {
 
 }
 
+const val LOGIN_ENGINE_BROKER_PAGE = "/login-workflow"
+
 @Controller
 class LoginWorkflowEngineController(private val engine: LoginWorkflowEngine) {
+
 
     val defaultNextHope = SavedRequestAwareAuthenticationSuccessHandler()
     private val redirectStrategy: RedirectStrategy = DefaultRedirectStrategy()
 
-    @GetMapping("/login-workflow")
+    @GetMapping(LOGIN_ENGINE_BROKER_PAGE)
     fun view(
         modelAndView: ModelAndView,
         session: HttpSession,

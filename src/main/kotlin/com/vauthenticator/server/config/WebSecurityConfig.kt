@@ -2,14 +2,15 @@ package com.vauthenticator.server.config
 
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.login.CompositeLoginWorkflowEngine
+import com.vauthenticator.server.login.LOGIN_ENGINE_BROKER_PAGE
 import com.vauthenticator.server.login.userdetails.AccountUserDetailsService
-import com.vauthenticator.server.mfa.MfaAuthenticationHandler
+import com.vauthenticator.server.mfa.MfaLoginWorkflowHandler
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.Scope
 import com.vauthenticator.server.oidc.logout.ClearSessionStateLogoutHandler
 import com.vauthenticator.server.oidc.sessionmanagement.SessionManagementFactory
 import com.vauthenticator.server.password.BcryptVAuthenticatorPasswordEncoder
-import com.vauthenticator.server.password.changepassword.ChangePasswordAfterFirstLoginWorkflowHandler
+import com.vauthenticator.server.password.changepassword.ChangePasswordLoginWorkflowHandler
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
@@ -25,10 +26,7 @@ import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter
 import org.springframework.security.web.SecurityFilterChain
-import org.springframework.security.web.authentication.AuthenticationFailureHandler
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler
-import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler
+import org.springframework.security.web.authentication.*
 
 
 const val adminRole = "VAUTHENTICATOR_ADMIN"
@@ -127,10 +125,10 @@ class WebSecurityConfig(
     @Bean
     fun loginWorkflowEngine(clientApplicationRepository: ClientApplicationRepository) =
         CompositeLoginWorkflowEngine(
-            "/login-workflow",
+            LOGIN_ENGINE_BROKER_PAGE,
             listOf(
-                ChangePasswordAfterFirstLoginWorkflowHandler("/change-password"),
-                MfaAuthenticationHandler(clientApplicationRepository, "/mfa-challenge/send")
+                MfaLoginWorkflowHandler(clientApplicationRepository, "/mfa-challenge/send"),
+                ChangePasswordLoginWorkflowHandler("/change-password")
             )
         )
 
@@ -174,10 +172,18 @@ class WebSecurityConfig(
     fun successHandler(): AuthenticationSuccessHandler {
         return SavedRequestAwareAuthenticationSuccessHandler()
     }
+    @Bean
+    fun nextHopeLoginWorkflowSuccessHandler(): AuthenticationSuccessHandler {
+        return SimpleUrlAuthenticationSuccessHandler(LOGIN_ENGINE_BROKER_PAGE)
+    }
 
     @Bean
     fun mfaFailureHandler(): AuthenticationFailureHandler {
         return SimpleUrlAuthenticationFailureHandler("/mfa-challenge?error")
+    }
+   @Bean
+    fun changePasswordFailureHandler(): AuthenticationFailureHandler {
+        return SimpleUrlAuthenticationFailureHandler("/change-password?error")
     }
 
     @Bean

@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler
 
-class ChangePasswordAfterFirstLoginWorkflowHandler(val url: String) :
+class ChangePasswordLoginWorkflowHandler(val url: String) :
     LoginWorkflowHandler {
 
     private val handler = SimpleUrlAuthenticationSuccessHandler(url)
