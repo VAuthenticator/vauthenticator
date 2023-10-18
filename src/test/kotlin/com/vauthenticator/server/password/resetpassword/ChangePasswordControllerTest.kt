@@ -8,7 +8,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
-internal class ResetPasswordControllerTest {
+internal class ChangePasswordControllerTest {
     lateinit var mokMvc: MockMvc
 
     val objectMapper = ObjectMapper()

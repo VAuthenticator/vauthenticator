@@ -2,7 +2,6 @@ package com.vauthenticator.server.mfa
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.account.AccountTestFixture.anAccount
-import com.vauthenticator.server.support.SecurityFixture.mfaPrincipalFor
 import com.vauthenticator.server.support.SecurityFixture.principalFor
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -17,8 +16,10 @@ import org.springframework.context.ApplicationEventPublisher
 import org.springframework.security.web.authentication.AuthenticationFailureHandler
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.view
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
 @ExtendWith(MockKExtension::class)
@@ -76,9 +77,8 @@ internal class MfaControllerTest {
     internal fun `when an mfa challenge is verified`() {
         every { otpMfaVerifier.verifyMfaChallengeFor(account.email, MfaChallenge("AN_MFA_CHALLENGE_CODE")) } just runs
 
-        val mfaAuthentication = mfaPrincipalFor(account.email)
-        val authentication = mfaAuthentication.delegate
-        every { successHandler.onAuthenticationSuccess(any(), any(), authentication) } just runs
+        val mfaAuthentication = principalFor(account.email)
+        every { successHandler.onAuthenticationSuccess(any(), any(), mfaAuthentication) } just runs
 
         mokMvc.perform(
             post("/mfa-challenge")

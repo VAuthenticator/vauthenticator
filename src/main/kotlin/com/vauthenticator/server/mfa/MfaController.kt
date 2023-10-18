@@ -6,8 +6,6 @@ import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.security.core.Authentication
-import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.web.authentication.AuthenticationEntryPointFailureHandler
 import org.springframework.security.web.authentication.AuthenticationFailureHandler
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
 import org.springframework.stereotype.Controller
@@ -58,20 +56,19 @@ class MfaController(
     @PostMapping("/mfa-challenge")
     fun processSecondFactor(
         @RequestParam("mfa-code") mfaCode: String,
-        authentication: MfaAuthentication,
+        authentication: Authentication,
         request: HttpServletRequest,
         response: HttpServletResponse
     ) {
         try {
             otpMfaVerifier.verifyMfaChallengeFor(authentication.name, MfaChallenge(mfaCode))
 
-            SecurityContextHolder.getContext().authentication = authentication.delegate
-            publisher.publishEvent(MfaSuccessEvent( authentication.delegate))
-            successHandler.onAuthenticationSuccess(request, response, authentication.delegate)
+            publisher.publishEvent(MfaSuccessEvent( authentication))
+            successHandler.onAuthenticationSuccess(request, response, authentication)
         } catch (e: Exception) {
             logger.error(e.message, e)
             val mfaException = MfaException("Invalid mfa code")
-            publisher.publishEvent(MfaFailureEvent(authentication.delegate, mfaException))
+            publisher.publishEvent(MfaFailureEvent(authentication, mfaException))
             mfaFailureHandler.onAuthenticationFailure(request, response, mfaException)
         }
     }

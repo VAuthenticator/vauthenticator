@@ -10,6 +10,7 @@ module.exports = {
         "500_error": path.resolve(__dirname, './app/errors/DefaultGenericErrorPage.tsx'),
         login: path.resolve(__dirname, './app/login/LoginPage.tsx'),
         mfa: path.resolve(__dirname, './app/mfa/index.tsx'),
+        changePassword: path.resolve(__dirname, './app/change-password/index.tsx'),
         signup: path.resolve(__dirname, './app/signup/SignUpPage.tsx'),
         successfulSignUp: path.resolve(__dirname, './app/signup/SuccessfulSignUpPage.tsx'),
         successfulMailVerify: path.resolve(__dirname, './app/mail-verify/SuccessfulMailVerifyPage.tsx'),
