@@ -4,8 +4,6 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 
 
-const val LOGIN_ENGINE_BROKER_PAGE = "/login-workflow"
-
 interface LoginWorkflowHandler {
 
     fun view(): String

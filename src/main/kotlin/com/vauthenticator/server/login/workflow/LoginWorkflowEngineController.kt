@@ -11,8 +11,12 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 
+const val LOGIN_ENGINE_BROKER_PAGE = "/login-workflow"
+
 @Controller
-class LoginWorkflowEngineController(private val engine: LoginWorkflowEngine) {
+class LoginWorkflowEngineController(
+    private val engine: LoginWorkflowEngine
+) {
 
     private val logger = LoggerFactory.getLogger(LoginWorkflowEngineController::class.java)
 

@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.http.HttpSession
 import org.springframework.security.core.Authentication
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
 import java.util.*
 import kotlin.jvm.optionals.getOrElse
@@ -23,7 +22,6 @@ class CompositeLoginWorkflowEngine(
         response: HttpServletResponse,
         authentication: Authentication
     ) {
-        SecurityContextHolder.getContext().authentication = authentication
         this.defaultSuccessHandler.onAuthenticationSuccess(request, response, authentication)
     }
 
