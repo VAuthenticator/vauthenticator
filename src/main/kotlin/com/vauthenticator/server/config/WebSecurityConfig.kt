@@ -77,9 +77,10 @@ class WebSecurityConfig(
 
         http.userDetailsService(accountUserDetailsService)
         http.oauth2ResourceServer { it.jwt {} }
-        http.securityMatcher(*WHITE_LIST, "/api/**", "/mfa-challenge/**", "/change-password")
+        http.securityMatcher(*WHITE_LIST, "/api/**", "/mfa-challenge/**", "/change-password", LOGIN_ENGINE_BROKER_PAGE)
             .authorizeHttpRequests { authz ->
                 authz
+                    .requestMatchers(LOGIN_ENGINE_BROKER_PAGE).permitAll()
                     .requestMatchers("/mfa-challenge/send").permitAll()
                     .requestMatchers(HttpMethod.GET, "/mfa-challenge").permitAll()
                     .requestMatchers(HttpMethod.POST, "/mfa-challenge").authenticated()
@@ -95,7 +96,7 @@ class WebSecurityConfig(
                     .requestMatchers(HttpMethod.PUT, "/api/mail/verify-challenge")
                     .hasAnyAuthority(Scope.MAIL_VERIFY.content)
 
-                    .requestMatchers(HttpMethod.PUT, "/api/password")
+                    .requestMatchers(HttpMethod.PUT, "/api/accounts/password")
                     .hasAnyAuthority(Scope.CHANGE_PASSWORD.content)
 
                     .requestMatchers(HttpMethod.PUT, "/api/reset-password-challenge").permitAll()
