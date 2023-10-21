@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class ChangePasswordEndPoint(val changePassword: ChangePassword) {
 
-    @PutMapping("/api/account/password")
+    @PutMapping("/api/accounts/password")
     fun sendVerifyMail(
         @RequestBody request: Map<String, String>,
         principal: JwtAuthenticationToken
