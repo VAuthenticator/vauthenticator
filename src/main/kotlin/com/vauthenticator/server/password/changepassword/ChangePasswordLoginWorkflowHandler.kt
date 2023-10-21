@@ -23,7 +23,7 @@ class ChangePasswordLoginWorkflowHandler(
     ): Boolean {
         val username = SecurityContextHolder.getContext().authentication.name
         return accountRepository.accountFor(username)
-            .map { account -> account.mandatoryAction == AccountMandatoryAction.RESET_PASSWORD }
+            .map { account -> account.mandatoryAction === AccountMandatoryAction.RESET_PASSWORD }
             .orElseGet { false }
     }
 

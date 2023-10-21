@@ -12,5 +12,6 @@
   "lastName": "A Last Name",
   "birthDate": "",
   "phone": "",
-  "locale": ""
+  "locale": "",
+  "mandatory_action": "NO_ACTION"
 }

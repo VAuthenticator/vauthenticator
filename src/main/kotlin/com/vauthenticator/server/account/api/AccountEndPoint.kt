@@ -1,6 +1,7 @@
 package com.vauthenticator.server.account.api
 
 import com.vauthenticator.server.account.*
+import com.vauthenticator.server.account.AccountMandatoryAction.NO_ACTION
 import com.vauthenticator.server.account.Date
 import com.vauthenticator.server.account.api.SignUpAccountConverter.fromRepresentationToSignedUpAccount
 import com.vauthenticator.server.account.signup.SignUpUse
@@ -16,7 +17,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.status
-import org.springframework.security.core.context.SecurityContextHolder.*
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.web.bind.annotation.*
 import java.util.*
@@ -99,5 +99,6 @@ object SignUpAccountConverter {
             birthDate = Date.isoDateFor(representation.birthDate),
             phone = Phone.phoneFor(representation.phone),
             locale = UserLocale.localeFrom(representation.locale),
+            mandatoryAction = NO_ACTION
         )
 }

@@ -1,7 +1,6 @@
 package com.vauthenticator.server.account
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.vauthenticator.server.account.AccountMandatoryAction.NO_ACTION
 import com.vauthenticator.server.cache.CacheContentConverter
 import com.vauthenticator.server.extentions.toSha256
 import java.time.LocalDate
@@ -27,7 +26,7 @@ data class Account(
     val birthDate: Optional<Date>,
     val phone: Optional<Phone>,
     val locale: Optional<UserLocale>,
-    val mandatoryAction: AccountMandatoryAction = NO_ACTION
+    val mandatoryAction: AccountMandatoryAction
 ) {
     val sub: String
         get() = email.toSha256()
@@ -141,7 +140,8 @@ class AccountCacheContentConverter(private val objectMapper: ObjectMapper) : Cac
                     lastName = it["lastName"] as String,
                     birthDate = Date.isoDateFor(it["birthDate"] as String),
                     phone = Phone.phoneFor(it["phone"] as String),
-                    locale = UserLocale.localeFrom((it["locale"] as String))
+                    locale = UserLocale.localeFrom((it["locale"] as String)),
+                    mandatoryAction = AccountMandatoryAction.valueOf(it["mandatory_action"] as String)
                 )
             }
 
@@ -161,7 +161,8 @@ class AccountCacheContentConverter(private val objectMapper: ObjectMapper) : Cac
             "lastName" to source.lastName,
             "birthDate" to source.birthDate.map { it.iso8601FormattedDate() }.orElseGet { "" },
             "phone" to source.phone.map { it.formattedPhone() }.orElseGet { "" },
-            "locale" to source.locale.map { it.formattedLocale() }.orElseGet { "" }
+            "locale" to source.locale.map { it.formattedLocale() }.orElseGet { "" },
+            "mandatory_action" to source.mandatoryAction.name
         ))
 
 }
