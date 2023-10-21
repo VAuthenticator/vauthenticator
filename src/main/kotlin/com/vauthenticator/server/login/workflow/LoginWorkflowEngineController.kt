@@ -28,7 +28,7 @@ class LoginWorkflowEngineController(
         session: HttpSession,
         request: HttpServletRequest,
         response: HttpServletResponse,
-        authentication: Authentication?
+        authentication: Authentication
     ) {
         val workflowsNextHop = engine.workflowsNextHop(session)
         logger.debug("workflowsNextHop: $workflowsNextHop")
