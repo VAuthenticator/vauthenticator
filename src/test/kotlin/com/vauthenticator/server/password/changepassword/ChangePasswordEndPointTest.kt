@@ -56,7 +56,7 @@ internal class ChangePasswordEndPointTest {
         every { changePassword.resetPasswordFor(principal, ChangePasswordRequest("it is a new password")) } just runs
 
         mokMvc.perform(
-            put("/api/password")
+            put("/api/accounts/password")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsBytes(mapOf("pwd" to "it is a new password")))
                 .principal(principal)
@@ -77,7 +77,7 @@ internal class ChangePasswordEndPointTest {
         every { changePassword.resetPasswordFor(principal, ChangePasswordRequest("it is a new password")) } throws AccountNotFoundException("")
 
         mokMvc.perform(
-            put("/api/password")
+            put("/api/accounts/password")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsBytes(mapOf("pwd" to "it is a new password")))
                 .principal(principal)
@@ -98,7 +98,7 @@ internal class ChangePasswordEndPointTest {
         every { changePassword.resetPasswordFor(principal, ChangePasswordRequest("it is a new password")) } throws PasswordPolicyViolation("")
 
         mokMvc.perform(
-            put("/api/password")
+            put("/api/accounts/password")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsBytes(mapOf("pwd" to "it is a new password")))
                 .principal(principal)
