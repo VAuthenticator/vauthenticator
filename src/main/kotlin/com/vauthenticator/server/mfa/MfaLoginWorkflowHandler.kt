@@ -1,7 +1,7 @@
 package com.vauthenticator.server.mfa
 
 import com.vauthenticator.server.extentions.hasEnoughScopes
-import com.vauthenticator.server.login.LoginWorkflowHandler
+import com.vauthenticator.server.login.workflow.LoginWorkflowHandler
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.Scope

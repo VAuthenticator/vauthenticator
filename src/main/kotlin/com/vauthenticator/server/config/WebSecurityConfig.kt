@@ -1,15 +1,16 @@
 package com.vauthenticator.server.config
 
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.login.CompositeLoginWorkflowEngine
-import com.vauthenticator.server.login.LOGIN_ENGINE_BROKER_PAGE
 import com.vauthenticator.server.login.userdetails.AccountUserDetailsService
+import com.vauthenticator.server.login.workflow.CompositeLoginWorkflowEngine
+import com.vauthenticator.server.login.workflow.LOGIN_ENGINE_BROKER_PAGE
 import com.vauthenticator.server.mfa.MfaLoginWorkflowHandler
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.Scope
 import com.vauthenticator.server.oidc.logout.ClearSessionStateLogoutHandler
 import com.vauthenticator.server.oidc.sessionmanagement.SessionManagementFactory
 import com.vauthenticator.server.password.BcryptVAuthenticatorPasswordEncoder
+import com.vauthenticator.server.password.changepassword.CHANGE_PASSWORD_URL
 import com.vauthenticator.server.password.changepassword.ChangePasswordLoginWorkflowHandler
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -123,13 +124,19 @@ class WebSecurityConfig(
     }
 
     @Bean
-    fun loginWorkflowEngine(clientApplicationRepository: ClientApplicationRepository) =
+    fun loginWorkflowEngine(
+        accountRepository: AccountRepository,
+        clientApplicationRepository: ClientApplicationRepository
+    ) =
         CompositeLoginWorkflowEngine(
-            LOGIN_ENGINE_BROKER_PAGE,
             listOf(
                 MfaLoginWorkflowHandler(clientApplicationRepository, "/mfa-challenge/send"),
-                ChangePasswordLoginWorkflowHandler("/change-password")
-            )
+                ChangePasswordLoginWorkflowHandler(
+                    accountRepository,
+                    SimpleUrlAuthenticationSuccessHandler(CHANGE_PASSWORD_URL)
+                )
+            ),
+            SimpleUrlAuthenticationSuccessHandler(LOGIN_ENGINE_BROKER_PAGE)
         )
 
 
@@ -172,6 +179,7 @@ class WebSecurityConfig(
     fun successHandler(): AuthenticationSuccessHandler {
         return SavedRequestAwareAuthenticationSuccessHandler()
     }
+
     @Bean
     fun nextHopeLoginWorkflowSuccessHandler(): AuthenticationSuccessHandler {
         return SimpleUrlAuthenticationSuccessHandler(LOGIN_ENGINE_BROKER_PAGE)
@@ -181,7 +189,8 @@ class WebSecurityConfig(
     fun mfaFailureHandler(): AuthenticationFailureHandler {
         return SimpleUrlAuthenticationFailureHandler("/mfa-challenge?error")
     }
-   @Bean
+
+    @Bean
     fun changePasswordFailureHandler(): AuthenticationFailureHandler {
         return SimpleUrlAuthenticationFailureHandler("/change-password?error")
     }

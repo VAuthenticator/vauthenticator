@@ -1,26 +1,30 @@
 package com.vauthenticator.server.password.changepassword
 
-import com.vauthenticator.server.login.LoginWorkflowHandler
+import com.vauthenticator.server.account.AccountMandatoryAction
+import com.vauthenticator.server.account.repository.AccountRepository
+import com.vauthenticator.server.login.workflow.LoginWorkflowHandler
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler
 
-class ChangePasswordLoginWorkflowHandler(val url: String) :
-    LoginWorkflowHandler {
+const val CHANGE_PASSWORD_URL = "/change-password"
 
-    private val handler = SimpleUrlAuthenticationSuccessHandler(url)
+class ChangePasswordLoginWorkflowHandler(
+    val accountRepository: AccountRepository,
+    val handler: AuthenticationSuccessHandler
+) : LoginWorkflowHandler {
 
-    init {
-        handler.setAlwaysUseDefaultTargetUrl(true)
-    }
-
-    override fun view(): String = "/change-password"
+    override fun view(): String = CHANGE_PASSWORD_URL
 
     override fun canHandle(
         request: HttpServletRequest,
         response: HttpServletResponse,
     ): Boolean {
-        return true
+        val username = SecurityContextHolder.getContext().authentication.name
+        return accountRepository.accountFor(username)
+            .map { account -> account.mandatoryAction == AccountMandatoryAction.RESET_PASSWORD }
+            .orElseGet { false }
     }
 
 }
