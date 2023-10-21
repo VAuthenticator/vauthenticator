@@ -9,7 +9,6 @@ import com.nimbusds.jose.jwk.ECKey
 import com.nimbusds.jose.jwk.gen.ECKeyGenerator
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
-import com.vauthenticator.server.mfa.MfaAuthentication
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames
@@ -76,8 +75,4 @@ object SecurityFixture {
     fun principalFor(mail: String, authorities: List<String> = emptyList()) =
         UsernamePasswordAuthenticationToken.authenticated(mail, "", authorities.map(::SimpleGrantedAuthority))
 
-    fun mfaPrincipalFor(mail: String, authorities: List<String> = emptyList()) =
-        MfaAuthentication(
-            UsernamePasswordAuthenticationToken.authenticated(mail, "", authorities.map(::SimpleGrantedAuthority))
-        )
 }

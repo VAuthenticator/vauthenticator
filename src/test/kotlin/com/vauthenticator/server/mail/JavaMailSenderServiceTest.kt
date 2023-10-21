@@ -9,7 +9,6 @@ import com.vauthenticator.server.account.AccountTestFixture.anAccount
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.springframework.mail.javamail.JavaMailSenderImpl
@@ -40,7 +39,6 @@ internal class JavaMailSenderServiceTest {
     private fun simpleMailMessageFactoryFor(mailType: MailType) = SimpleMailMessageFactory(mail, subject, mailType)
 
     @Test
-    @Disabled
     internal fun `when a welcome mail is sent`() {
         val account = anAccount().copy(firstName = "Jhon", lastName = "Miller")
         val mailTemplateContent =
@@ -65,7 +63,6 @@ internal class JavaMailSenderServiceTest {
 
 
     @Test
-    @Disabled
     internal fun `when a mail verification mail is sent`() {
         val account = anAccount().copy(firstName = "Jhon", lastName = "Miller")
         val mailTemplateContent =
@@ -94,7 +91,6 @@ internal class JavaMailSenderServiceTest {
     }
 
     @Test
-    @Disabled
     internal fun `when a reset password mail is sent`() {
         val account = anAccount().copy(firstName = "Jhon", lastName = "Miller")
         val mailTemplateContent =

@@ -1,6 +1,7 @@
 package com.vauthenticator.server.account.repository
 
 import com.vauthenticator.server.account.Account
+import com.vauthenticator.server.account.AccountMandatoryAction.RESET_PASSWORD
 import com.vauthenticator.server.account.AccountTestFixture.anAccount
 import com.vauthenticator.server.role.*
 import com.vauthenticator.server.support.DatabaseUtils.dynamoAccountTableName
@@ -48,7 +49,16 @@ internal class DynamoDbAccountRepositoryTest {
         accountRepository.save(account)
         val findByUsername: Account = accountRepository.accountFor(account.username).orElseThrow()
 
-        assertEquals(findByUsername, account)
+        assertEquals(account, findByUsername)
+    }
+
+    @Test
+    fun `find an account by email with reset password as mandatory action`() {
+        val account = account.copy(mandatoryAction = RESET_PASSWORD)
+        accountRepository.save(account)
+        val actual: Account = accountRepository.accountFor(account.username).orElseThrow()
+
+        assertEquals(actual, account)
     }
 
     @Test
@@ -109,6 +119,5 @@ internal class DynamoDbAccountRepositoryTest {
             accountRepository.create(account)
             accountRepository.create(account)
         }
-
     }
 }

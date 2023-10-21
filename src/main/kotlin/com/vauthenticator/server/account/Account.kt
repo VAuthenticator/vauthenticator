@@ -25,10 +25,17 @@ data class Account(
 
     val birthDate: Optional<Date>,
     val phone: Optional<Phone>,
-    val locale: Optional<UserLocale>
+    val locale: Optional<UserLocale>,
+    val mandatoryAction: AccountMandatoryAction
 ) {
     val sub: String
         get() = email.toSha256()
+}
+
+enum class AccountMandatoryAction {
+
+    NO_ACTION,
+    RESET_PASSWORD
 }
 
 @JvmInline
@@ -133,7 +140,8 @@ class AccountCacheContentConverter(private val objectMapper: ObjectMapper) : Cac
                     lastName = it["lastName"] as String,
                     birthDate = Date.isoDateFor(it["birthDate"] as String),
                     phone = Phone.phoneFor(it["phone"] as String),
-                    locale = UserLocale.localeFrom((it["locale"] as String))
+                    locale = UserLocale.localeFrom((it["locale"] as String)),
+                    mandatoryAction = AccountMandatoryAction.valueOf(it["mandatory_action"] as String)
                 )
             }
 
@@ -153,7 +161,8 @@ class AccountCacheContentConverter(private val objectMapper: ObjectMapper) : Cac
             "lastName" to source.lastName,
             "birthDate" to source.birthDate.map { it.iso8601FormattedDate() }.orElseGet { "" },
             "phone" to source.phone.map { it.formattedPhone() }.orElseGet { "" },
-            "locale" to source.locale.map { it.formattedLocale() }.orElseGet { "" }
+            "locale" to source.locale.map { it.formattedLocale() }.orElseGet { "" },
+            "mandatory_action" to source.mandatoryAction.name
         ))
 
 }

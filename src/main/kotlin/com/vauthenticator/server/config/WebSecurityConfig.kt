@@ -2,26 +2,24 @@ package com.vauthenticator.server.config
 
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.login.userdetails.AccountUserDetailsService
-import com.vauthenticator.server.mfa.MfaAuthentication
-import com.vauthenticator.server.mfa.MfaAuthenticationHandler
-import com.vauthenticator.server.mfa.MfaTrustResolver
+import com.vauthenticator.server.login.workflow.CompositeLoginWorkflowEngine
+import com.vauthenticator.server.login.workflow.LOGIN_ENGINE_BROKER_PAGE
+import com.vauthenticator.server.mfa.MfaLoginWorkflowHandler
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.Scope
 import com.vauthenticator.server.oidc.logout.ClearSessionStateLogoutHandler
 import com.vauthenticator.server.oidc.sessionmanagement.SessionManagementFactory
 import com.vauthenticator.server.password.BcryptVAuthenticatorPasswordEncoder
+import com.vauthenticator.server.password.changepassword.CHANGE_PASSWORD_URL
+import com.vauthenticator.server.password.changepassword.ChangePasswordLoginWorkflowHandler
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.http.HttpMethod
-import org.springframework.security.authorization.AuthorizationDecision
-import org.springframework.security.authorization.AuthorizationManager
-import org.springframework.security.config.annotation.ObjectPostProcessor
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -29,13 +27,7 @@ import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter
 import org.springframework.security.web.SecurityFilterChain
-import org.springframework.security.web.access.ExceptionTranslationFilter
-import org.springframework.security.web.access.intercept.RequestAuthorizationContext
-import org.springframework.security.web.authentication.AuthenticationFailureHandler
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler
-import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler
-import java.util.function.Supplier
+import org.springframework.security.web.authentication.*
 
 
 const val adminRole = "VAUTHENTICATOR_ADMIN"
@@ -57,29 +49,20 @@ class WebSecurityConfig(
     @Bean
     fun defaultSecurityFilterChain(
         http: HttpSecurity,
+        loginWorkflowEngine: AuthenticationSuccessHandler,
         clientApplicationRepository: ClientApplicationRepository,
-        mfaAuthorizationManager: AuthorizationManager<RequestAuthorizationContext>,
         accountUserDetailsService: AccountUserDetailsService
     ): SecurityFilterChain {
         http.csrf { it.disable() }
         http.headers { it.frameOptions { it.disable() } }
 
         http.formLogin {
-            it.successHandler(MfaAuthenticationHandler(clientApplicationRepository, "/mfa-challenge/send"))
+            it.successHandler(loginWorkflowEngine)
                 .loginProcessingUrl(LOG_IN_URL_PAGE)
                 .loginPage(LOG_IN_URL_PAGE)
                 .permitAll()
         }
 
-        http.exceptionHandling {
-            it.withObjectPostProcessor(object : ObjectPostProcessor<ExceptionTranslationFilter> {
-                override fun <O : ExceptionTranslationFilter?> postProcess(filter: O): O {
-                    filter!!.setAuthenticationTrustResolver(MfaTrustResolver())
-                    return filter
-                }
-            })
-        }
-            .securityContext { it.requireExplicitSave(false) };
 
         http.logout {
             it.addLogoutHandler(
@@ -94,12 +77,15 @@ class WebSecurityConfig(
 
         http.userDetailsService(accountUserDetailsService)
         http.oauth2ResourceServer { it.jwt {} }
-        http.securityMatcher(*WHITE_LIST, "/api/**", "/mfa-challenge/**")
+        http.securityMatcher(*WHITE_LIST, "/api/**", "/mfa-challenge/**", "/change-password", LOGIN_ENGINE_BROKER_PAGE)
             .authorizeHttpRequests { authz ->
                 authz
+                    .requestMatchers(LOGIN_ENGINE_BROKER_PAGE).permitAll()
                     .requestMatchers("/mfa-challenge/send").permitAll()
-                    .requestMatchers("/mfa-challenge")
-                    .access(mfaAuthorizationManager)
+                    .requestMatchers(HttpMethod.GET, "/mfa-challenge").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/mfa-challenge").authenticated()
+
+                    .requestMatchers("/change-password").permitAll()
 
                     .requestMatchers(*WHITE_LIST).permitAll()
                     .requestMatchers("/api/accounts").permitAll()
@@ -110,7 +96,7 @@ class WebSecurityConfig(
                     .requestMatchers(HttpMethod.PUT, "/api/mail/verify-challenge")
                     .hasAnyAuthority(Scope.MAIL_VERIFY.content)
 
-                    .requestMatchers(HttpMethod.PUT, "/api/password")
+                    .requestMatchers(HttpMethod.PUT, "/api/accounts/password")
                     .hasAnyAuthority(Scope.CHANGE_PASSWORD.content)
 
                     .requestMatchers(HttpMethod.PUT, "/api/reset-password-challenge").permitAll()
@@ -139,13 +125,20 @@ class WebSecurityConfig(
     }
 
     @Bean
-    fun mfaAuthorizationManager(): AuthorizationManager<RequestAuthorizationContext> {
-        return AuthorizationManager { authentication: Supplier<Authentication>, _: RequestAuthorizationContext ->
-            AuthorizationDecision(
-                authentication.get() is MfaAuthentication
-            )
-        }
-    }
+    fun loginWorkflowEngine(
+        accountRepository: AccountRepository,
+        clientApplicationRepository: ClientApplicationRepository
+    ) =
+        CompositeLoginWorkflowEngine(
+            listOf(
+                MfaLoginWorkflowHandler(clientApplicationRepository, "/mfa-challenge/send"),
+                ChangePasswordLoginWorkflowHandler(
+                    accountRepository,
+                    SimpleUrlAuthenticationSuccessHandler(CHANGE_PASSWORD_URL)
+                )
+            ),
+            SimpleUrlAuthenticationSuccessHandler(LOGIN_ENGINE_BROKER_PAGE)
+        )
 
 
     @Bean
@@ -189,8 +182,18 @@ class WebSecurityConfig(
     }
 
     @Bean
+    fun nextHopeLoginWorkflowSuccessHandler(): AuthenticationSuccessHandler {
+        return SimpleUrlAuthenticationSuccessHandler(LOGIN_ENGINE_BROKER_PAGE)
+    }
+
+    @Bean
     fun mfaFailureHandler(): AuthenticationFailureHandler {
         return SimpleUrlAuthenticationFailureHandler("/mfa-challenge?error")
+    }
+
+    @Bean
+    fun changePasswordFailureHandler(): AuthenticationFailureHandler {
+        return SimpleUrlAuthenticationFailureHandler("/change-password?error")
     }
 
     @Bean
