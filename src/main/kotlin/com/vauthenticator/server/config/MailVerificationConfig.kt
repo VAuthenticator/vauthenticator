@@ -6,8 +6,8 @@ import com.vauthenticator.server.account.mailverification.SendVerifyMailChalleng
 import com.vauthenticator.server.account.mailverification.SendVerifyMailChallengeUponSignUpEventConsumer
 import com.vauthenticator.server.account.mailverification.VerifyMailChallengeSent
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.account.tiket.TicketRepository
-import com.vauthenticator.server.account.tiket.VerificationTicketFactory
+import com.vauthenticator.server.account.ticket.TicketRepository
+import com.vauthenticator.server.account.ticket.VerificationTicketFactory
 import com.vauthenticator.server.mail.*
 import com.vauthenticator.server.mfa.MfaMethodsEnrolmentAssociation
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository

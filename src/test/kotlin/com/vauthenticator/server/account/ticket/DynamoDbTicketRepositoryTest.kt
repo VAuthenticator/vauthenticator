@@ -1,4 +1,4 @@
-package com.vauthenticator.server.account.tiket
+package com.vauthenticator.server.account.ticket
 
 import com.vauthenticator.server.account.EMAIL
 import com.vauthenticator.server.clientapp.A_CLIENT_APP_ID
@@ -7,7 +7,7 @@ import com.vauthenticator.server.support.DatabaseUtils
 import com.vauthenticator.server.support.DatabaseUtils.dynamoTicketTableName
 import com.vauthenticator.server.support.DatabaseUtils.resetDatabase
 import io.mockk.junit5.MockKExtension
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

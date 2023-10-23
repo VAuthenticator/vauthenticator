@@ -1,4 +1,4 @@
-package com.vauthenticator.server.account.tiket
+package com.vauthenticator.server.account.ticket
 
 import java.time.Duration
 

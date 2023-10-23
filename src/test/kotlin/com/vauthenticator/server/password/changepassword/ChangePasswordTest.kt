@@ -5,6 +5,8 @@ import com.vauthenticator.server.account.AccountTestFixture.anAccount
 import com.vauthenticator.server.account.EMAIL
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.clientapp.A_CLIENT_APP_ID
+import com.vauthenticator.server.events.ChangePasswordEvent
+import com.vauthenticator.server.events.VAuthenticatorEventsDispatcher
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.oauth2.clientapp.Scope
 import com.vauthenticator.server.password.PasswordPolicy
@@ -31,7 +33,6 @@ internal class ChangePasswordTest {
 
     val clientAppId = ClientAppId(A_CLIENT_APP_ID)
 
-
     private lateinit var underTest: ChangePassword
 
     @MockK
@@ -43,9 +44,13 @@ internal class ChangePasswordTest {
     @MockK
     lateinit var passwordEncoder: VAuthenticatorPasswordEncoder
 
+    @MockK
+    lateinit var eventsDispatcher: VAuthenticatorEventsDispatcher
+
     @BeforeEach
     internal fun setUp() {
         underTest = ChangePassword(
+            eventsDispatcher,
             passwordPolicy,
             passwordEncoder,
             accountRepository
@@ -66,6 +71,7 @@ internal class ChangePasswordTest {
         every { accountRepository.accountFor(principal.name) } returns Optional.of(account)
         every { passwordEncoder.encode("it is a new password") } returns "it is a encoded new password"
         every { accountRepository.save(account.copy(password = "it is a encoded new password")) } just runs
+        every { eventsDispatcher.dispatch(any<ChangePasswordEvent>()) } just runs
 
         underTest.resetPasswordFor(principal, ChangePasswordRequest("it is a new password"))
 
@@ -73,6 +79,7 @@ internal class ChangePasswordTest {
         verify { accountRepository.accountFor(principal.name) }
         verify { passwordEncoder.encode("it is a new password") }
         verify { accountRepository.save(account.copy(password = "it is a encoded new password")) }
+        verify { eventsDispatcher.dispatch(any<ChangePasswordEvent>()) }
     }
 
     @Test
@@ -84,7 +91,7 @@ internal class ChangePasswordTest {
             listOf(Scope.RESET_PASSWORD.content)
         )
 
-        every { passwordPolicy.accept(EMAIL,"it is a new password") } just runs
+        every { passwordPolicy.accept(EMAIL, "it is a new password") } just runs
         every { accountRepository.accountFor(principal.name) } returns Optional.empty()
 
 
@@ -95,7 +102,7 @@ internal class ChangePasswordTest {
             )
         }
 
-        verify { passwordPolicy.accept(EMAIL,"it is a new password") }
+        verify { passwordPolicy.accept(EMAIL, "it is a new password") }
         verify { accountRepository.accountFor(principal.name) }
     }
 

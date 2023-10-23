@@ -1,9 +1,9 @@
 package com.vauthenticator.server.config
 
-import com.vauthenticator.server.account.tiket.DynamoDbTicketRepository
-import com.vauthenticator.server.account.tiket.TicketRepository
-import com.vauthenticator.server.account.tiket.VerificationTicketFactory
-import com.vauthenticator.server.account.tiket.VerificationTicketFeatures
+import com.vauthenticator.server.account.ticket.DynamoDbTicketRepository
+import com.vauthenticator.server.account.ticket.TicketRepository
+import com.vauthenticator.server.account.ticket.VerificationTicketFactory
+import com.vauthenticator.server.account.ticket.VerificationTicketFeatures
 import com.vauthenticator.server.time.UtcClocker
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean

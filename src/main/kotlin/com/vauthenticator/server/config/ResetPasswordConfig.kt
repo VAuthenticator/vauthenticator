@@ -3,8 +3,9 @@ package com.vauthenticator.server.config
 import com.hubspot.jinjava.Jinjava
 import com.vauthenticator.document.repository.DocumentRepository
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.account.tiket.TicketRepository
-import com.vauthenticator.server.account.tiket.VerificationTicketFactory
+import com.vauthenticator.server.account.ticket.TicketRepository
+import com.vauthenticator.server.account.ticket.VerificationTicketFactory
+import com.vauthenticator.server.events.VAuthenticatorEventsDispatcher
 import com.vauthenticator.server.mail.*
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
 import com.vauthenticator.server.password.PasswordPolicy
@@ -36,12 +37,13 @@ class ResetPasswordConfig {
 
     @Bean
     fun resetPasswordChallengeSent(
+        eventsDispatcher: VAuthenticatorEventsDispatcher,
         accountRepository: AccountRepository,
         vAuthenticatorPasswordEncoder: VAuthenticatorPasswordEncoder,
         passwordPolicy: PasswordPolicy,
         ticketRepository: TicketRepository
     ) =
-        ResetAccountPassword(accountRepository, vAuthenticatorPasswordEncoder,passwordPolicy, ticketRepository)
+        ResetAccountPassword(eventsDispatcher, accountRepository, vAuthenticatorPasswordEncoder,passwordPolicy, ticketRepository)
 
     @Bean
     fun resetPasswordMailSender(
