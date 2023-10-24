@@ -1,5 +1,7 @@
 package com.vauthenticator.server.password.changepassword
 
+import com.vauthenticator.server.account.AccountMandatoryAction
+import com.vauthenticator.server.account.repository.AccountRepository
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam
 
 @Controller
 class ChangePasswordController(
+    private val accountRepository: AccountRepository,
     private val publisher: ApplicationEventPublisher,
     private val changePassword: ChangePassword,
     private val nextHopeLoginWorkflowSuccessHandler: AuthenticationSuccessHandler,
@@ -37,8 +40,7 @@ class ChangePasswordController(
         response: HttpServletResponse
     ) {
         try {
-            changePassword.resetPasswordFor(authentication, ChangePasswordRequest(newPassword))
-            publisher.publishEvent(ChangePasswordSuccessEvent(authentication))
+            changePasswordFor(authentication, newPassword)
             nextHopeLoginWorkflowSuccessHandler.onAuthenticationSuccess(request, response, authentication)
         } catch (e: Exception) {
             logger.error(e.message, e)
@@ -47,5 +49,21 @@ class ChangePasswordController(
             changePasswordFailureHandler.onAuthenticationFailure(request, response, changePasswordException)
         }
 
+    }
+
+    private fun changePasswordFor(authentication: Authentication, newPassword: String) {
+        changePassword.resetPasswordFor(authentication, ChangePasswordRequest(newPassword))
+        publisher.publishEvent(ChangePasswordSuccessEvent(authentication))
+        resetMandatoryActionToNoAction(authentication)
+    }
+
+    private fun resetMandatoryActionToNoAction(authentication: Authentication) {
+        accountRepository.accountFor(authentication.name)
+            .map {
+                accountRepository.save(
+                    it.copy(mandatoryAction = AccountMandatoryAction.NO_ACTION)
+                )
+
+            }
     }
 }

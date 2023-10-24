@@ -1,4 +1,4 @@
-package com.vauthenticator.server.account.tiket
+package com.vauthenticator.server.account.ticket
 
 import com.vauthenticator.server.account.Account
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId

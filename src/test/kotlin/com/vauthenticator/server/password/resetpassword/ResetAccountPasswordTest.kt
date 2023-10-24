@@ -2,9 +2,11 @@ package com.vauthenticator.server.password.resetpassword
 
 import com.vauthenticator.server.account.AccountTestFixture.anAccount
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.account.tiket.InvalidTicketException
-import com.vauthenticator.server.account.tiket.TicketRepository
-import com.vauthenticator.server.account.tiket.VerificationTicket
+import com.vauthenticator.server.account.ticket.InvalidTicketException
+import com.vauthenticator.server.account.ticket.TicketRepository
+import com.vauthenticator.server.account.ticket.VerificationTicket
+import com.vauthenticator.server.events.ResetPasswordEvent
+import com.vauthenticator.server.events.VAuthenticatorEventsDispatcher
 import com.vauthenticator.server.password.PasswordPolicy
 import com.vauthenticator.server.password.VAuthenticatorPasswordEncoder
 import com.vauthenticator.server.support.TicketFixture
@@ -36,10 +38,13 @@ internal class ResetAccountPasswordTest {
     @MockK
     lateinit var vAuthenticatorPasswordEncoder: VAuthenticatorPasswordEncoder
 
+    @MockK
+    lateinit var eventsDispatcher : VAuthenticatorEventsDispatcher
+
     @BeforeEach
     internal fun setUp() {
         underTest =
-            ResetAccountPassword(accountRepository, vAuthenticatorPasswordEncoder, passwordPolicy, ticketRepository)
+            ResetAccountPassword(eventsDispatcher,accountRepository, vAuthenticatorPasswordEncoder, passwordPolicy, ticketRepository)
     }
 
     @Test
@@ -56,6 +61,7 @@ internal class ResetAccountPasswordTest {
         every { accountRepository.accountFor(email) } returns Optional.of(anAccount)
         every { accountRepository.save(anAccount.copy(password = "NEW_PSWD")) } just runs
         every { vAuthenticatorPasswordEncoder.encode("NEW_PSWD") } returns "NEW_PSWD"
+        every { eventsDispatcher.dispatch(any<ResetPasswordEvent>()) } just runs
 
         underTest.resetPasswordFromMailChallenge(verificationTicket, ResetPasswordRequest("NEW_PSWD"))
     }

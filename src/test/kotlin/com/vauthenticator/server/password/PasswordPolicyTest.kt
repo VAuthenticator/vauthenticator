@@ -68,7 +68,7 @@ internal class PasswordPolicyTest {
             passwordHistoryRepository
         )
 
-        every { passwordEncoder.encode(password) } returns password
+        every { passwordEncoder.matches(password, password) } returns true
         every { passwordHistoryRepository.load(A_USERNAME) } returns passwordHistory
 
         assertThrows(PasswordPolicyViolation::class.java) { uut.accept(A_USERNAME,password) }

@@ -2,10 +2,10 @@ package com.vauthenticator.server.account.mailverification
 
 import com.vauthenticator.server.account.Account
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.account.tiket.InvalidTicketException
-import com.vauthenticator.server.account.tiket.Ticket
-import com.vauthenticator.server.account.tiket.TicketRepository
-import com.vauthenticator.server.account.tiket.VerificationTicket
+import com.vauthenticator.server.account.ticket.InvalidTicketException
+import com.vauthenticator.server.account.ticket.Ticket
+import com.vauthenticator.server.account.ticket.TicketRepository
+import com.vauthenticator.server.account.ticket.VerificationTicket
 import com.vauthenticator.server.mfa.MfaMethod
 import com.vauthenticator.server.mfa.MfaMethodsEnrolmentAssociation
 

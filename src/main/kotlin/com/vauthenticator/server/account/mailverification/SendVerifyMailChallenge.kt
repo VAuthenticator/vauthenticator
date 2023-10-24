@@ -2,8 +2,8 @@ package com.vauthenticator.server.account.mailverification
 
 import com.vauthenticator.server.account.AccountNotFoundException
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.account.tiket.VerificationTicket
-import com.vauthenticator.server.account.tiket.VerificationTicketFactory
+import com.vauthenticator.server.account.ticket.VerificationTicket
+import com.vauthenticator.server.account.ticket.VerificationTicketFactory
 import com.vauthenticator.server.mail.MailSenderService
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import org.slf4j.LoggerFactory

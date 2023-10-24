@@ -65,3 +65,35 @@ class SignUpEvent(
         return javaClass.hashCode()
     }
 }
+
+class ChangePasswordEvent(
+    userName: Email,
+    clientAppId: ClientAppId,
+    timeStamp: Instant,
+    password : Password) : VAuthenticatorEvent(userName, clientAppId, timeStamp, password) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return javaClass.hashCode()
+    }
+}
+
+class ResetPasswordEvent(
+    userName: Email,
+    clientAppId: ClientAppId,
+    timeStamp: Instant,
+    password : Password) : VAuthenticatorEvent(userName, clientAppId, timeStamp, password) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return javaClass.hashCode()
+    }
+}

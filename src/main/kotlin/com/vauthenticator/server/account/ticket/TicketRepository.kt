@@ -1,4 +1,4 @@
-package com.vauthenticator.server.account.tiket
+package com.vauthenticator.server.account.ticket
 
 import com.vauthenticator.server.extentions.asDynamoAttribute
 import com.vauthenticator.server.extentions.filterEmptyMetadata

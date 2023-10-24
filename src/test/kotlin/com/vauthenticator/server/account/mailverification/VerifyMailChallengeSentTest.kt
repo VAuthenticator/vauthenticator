@@ -1,12 +1,12 @@
 package com.vauthenticator.server.account.mailverification
 
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.account.tiket.InvalidTicketException
-import com.vauthenticator.server.account.tiket.TicketRepository
-import com.vauthenticator.server.account.tiket.VerificationTicket
+import com.vauthenticator.server.account.ticket.InvalidTicketException
+import com.vauthenticator.server.account.ticket.TicketRepository
+import com.vauthenticator.server.account.ticket.VerificationTicket
 import com.vauthenticator.server.mfa.MfaMethod
 import com.vauthenticator.server.mfa.MfaMethodsEnrolmentAssociation
-import com.vauthenticator.server.oauth2.clientapp.*
+import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.support.TicketFixture
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -14,7 +14,7 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

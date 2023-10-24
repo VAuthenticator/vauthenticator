@@ -1,6 +1,7 @@
 package com.vauthenticator.server.config
 
 import com.vauthenticator.server.account.repository.AccountRepository
+import com.vauthenticator.server.events.VAuthenticatorEventsDispatcher
 import com.vauthenticator.server.password.PasswordPolicy
 import com.vauthenticator.server.password.VAuthenticatorPasswordEncoder
 import com.vauthenticator.server.password.changepassword.ChangePassword
@@ -12,9 +13,10 @@ class ChangePasswordConfig {
 
     @Bean
     fun changePassword(
+        eventsDispatcher: VAuthenticatorEventsDispatcher,
         passwordPolicy: PasswordPolicy,
         passwordEncoder: VAuthenticatorPasswordEncoder,
         accountRepository: AccountRepository
     ) =
-        ChangePassword(passwordPolicy, passwordEncoder, accountRepository)
+        ChangePassword(eventsDispatcher,passwordPolicy, passwordEncoder, accountRepository)
 }
