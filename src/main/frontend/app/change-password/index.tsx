@@ -14,12 +14,7 @@ interface ChangePasswordPageProps {
 }
 
 const ResetChangePasswordPage: React.FC<ChangePasswordPageProps> = ({metadata}) => {
-    let sendAgainMfaCode = () => {
-        fetch("/change-password", {
-            method: 'PUT', // *GET, POST, PUT, DELETE, etc.
-            credentials: 'same-origin', // include, *same-origin, omit
-        });
-    }
+
     return (
         <ThemeProvider theme={theme}>
             <Template maxWidth="sm">
