@@ -14,6 +14,7 @@ import com.vauthenticator.server.password.changepassword.CHANGE_PASSWORD_URL
 import com.vauthenticator.server.password.changepassword.ChangePasswordLoginWorkflowHandler
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.redis.core.RedisTemplate
@@ -21,6 +22,7 @@ import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.crypto.argon2.Argon2PasswordEncoder
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.jwt.Jwt
@@ -167,9 +169,16 @@ class WebSecurityConfig(
     fun bcryptAccountPasswordEncoder(passwordEncoder: PasswordEncoder) =
         BcryptVAuthenticatorPasswordEncoder(passwordEncoder)
 
-    @Bean
-    fun passwordEncoder(): PasswordEncoder {
+    @Bean("passwordEncoder")
+    @ConditionalOnProperty(prefix = "password-encoder.implementation", name = ["bcrypt"], matchIfMissing = true)
+    fun bcryptPasswordEncoder(): PasswordEncoder {
         return BCryptPasswordEncoder(12)
+    }
+
+    @Bean("passwordEncoder")
+    @ConditionalOnProperty(prefix = "password-encoder.implementation", name = ["argon2"], matchIfMissing = false)
+    fun argon2PasswordEncoder(): PasswordEncoder {
+        return Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8()
     }
 
     @Bean
