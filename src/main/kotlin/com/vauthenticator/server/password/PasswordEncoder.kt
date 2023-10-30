@@ -16,3 +16,11 @@ class BcryptVAuthenticatorPasswordEncoder(private val passwordEncoder: PasswordE
         passwordEncoder.matches(password, encodedPassword)
 
 }
+class Argon2PasswordEncoderVAuthenticatorPasswordEncoder(private val passwordEncoder: PasswordEncoder) :
+    VAuthenticatorPasswordEncoder {
+
+    override fun encode(password: String): String = passwordEncoder.encode(password)
+    override fun matches(password: String, encodedPassword: String): Boolean =
+        passwordEncoder.matches(password, encodedPassword)
+
+}
