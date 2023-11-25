@@ -89,6 +89,13 @@ class WebSecurityConfig(
 
                     .requestMatchers("/change-password").permitAll()
 
+                    .requestMatchers(HttpMethod.POST, "/api/password")
+                    .hasAnyAuthority(Scope.GENERATE_PASSWORD.content)
+
+
+                    .requestMatchers(HttpMethod.PUT, "/api/reset-password-challenge").permitAll()
+                    .requestMatchers(HttpMethod.PUT, "/api/reset-password/{ticket}").permitAll()
+
                     .requestMatchers(*WHITE_LIST).permitAll()
                     .requestMatchers("/api/accounts").permitAll()
 
@@ -100,9 +107,6 @@ class WebSecurityConfig(
 
                     .requestMatchers(HttpMethod.PUT, "/api/accounts/password")
                     .hasAnyAuthority(Scope.CHANGE_PASSWORD.content)
-
-                    .requestMatchers(HttpMethod.PUT, "/api/reset-password-challenge").permitAll()
-                    .requestMatchers(HttpMethod.PUT, "/api/reset-password/{ticket}").permitAll()
 
                     .requestMatchers(HttpMethod.GET, "/api/mail-template")
                     .hasAnyAuthority(Scope.MAIL_TEMPLATE_READER.content)
