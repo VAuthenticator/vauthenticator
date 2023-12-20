@@ -1,4 +1,4 @@
-FROM amazoncorretto:21
+FROM arm64v8/amazoncorretto
 
 ADD target/vauthenticator.jar /usr/local/vauthenticator/
 
