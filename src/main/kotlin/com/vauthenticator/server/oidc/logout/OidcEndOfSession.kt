@@ -12,8 +12,7 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
-import java.util.*
-import java.util.Optional.*
+import java.util.Optional.ofNullable
 
 @Controller
 class FrontChannelLogoutController(@Value("\${auth.oidcIss:}") private val authServerBaseUrl: String) {
@@ -32,7 +31,6 @@ class FrontChannelLogoutController(@Value("\${auth.oidcIss:}") private val authS
 }
 
 
-//todo
 class ClearSessionStateLogoutHandler(
     private val sessionFactory: SessionManagementFactory,
     private val redisTemplate: RedisTemplate<String, String?>

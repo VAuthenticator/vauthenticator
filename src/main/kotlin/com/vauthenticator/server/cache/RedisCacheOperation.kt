@@ -13,12 +13,12 @@ class RedisCacheOperation<K, O>(
     override fun get(key: K): Optional<O> {
         val keyAsString = getKeyAsStringFor(key)
         val valueFromRedis = redisTemplate.opsForHash<String, O>().get(keyAsString, keyAsString.toSha256())
-        return Optional.ofNullable(valueFromRedis)
+        return Optional.ofNullable(valueFromRedis) as Optional<O>
     }
 
     override fun put(key: K, value: O) {
         val keyAsString = getKeyAsStringFor(key)
-        redisTemplate.opsForHash<String, O>().put(keyAsString, keyAsString.toSha256(), value)
+        redisTemplate.opsForHash<String, O>().put(keyAsString, keyAsString.toSha256(), value!!)
         redisTemplate.opsForHash<String, O>().operations.expire(keyAsString, ttl)
     }
 
