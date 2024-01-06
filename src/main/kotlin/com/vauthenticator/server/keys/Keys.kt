@@ -6,7 +6,6 @@ import com.vauthenticator.server.extentions.encoder
 import java.security.KeyPair
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
-import java.time.Duration
 import java.util.*
 import kotlin.random.Random
 
@@ -41,7 +40,7 @@ data class Keys(val keys: List<Key>) {
     fun validKeys(): Keys = Keys(this.keys.filter { it.enabled })
     fun peekOnAtRandom(): Key {
         val validKeys = validKeys().keys
-        val index = Random.nextInt(validKeys.size + 1)
+        val index = Random.nextInt(validKeys.size)
         return validKeys[index]
     }
 
@@ -54,7 +53,7 @@ data class Key(
     val enabled: Boolean = true,
     val type: KeyType,
     val keyPurpose: KeyPurpose,
-    val ttl: Duration = Duration.ofSeconds(0)
+    val expirationDateTimestamp : Long
 )
 
 data class DataKey(val encryptedPrivateKey: ByteArray, val publicKey: Optional<ByteArray>) {

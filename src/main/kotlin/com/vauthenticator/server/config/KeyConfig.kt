@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.kms.KmsClient
+import java.time.Clock
 import java.util.*
 
 @Configuration(proxyBeanMethods = false)
@@ -19,6 +20,7 @@ class KeyConfig {
 
     @Bean
     fun keyRepository(
+        clock: Clock,
         keyGenerator: KeyGenerator,
         keyDecrypter: KeyDecrypter,
         dynamoDbClient: DynamoDbClient,
@@ -26,6 +28,7 @@ class KeyConfig {
         @Value("\${vauthenticator.dynamo-db.keys.mfa.table-name}") mfaTableName: String
     ): KeyRepository =
         AwsKeyRepository(
+            clock,
             { UUID.randomUUID().toString() },
             signatureTableName,
             mfaTableName,

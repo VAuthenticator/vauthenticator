@@ -4,9 +4,12 @@ import com.vauthenticator.server.extentions.asDynamoAttribute
 import com.vauthenticator.server.extentions.valueAsBoolFor
 import com.vauthenticator.server.extentions.valueAsLongFor
 import com.vauthenticator.server.extentions.valueAsStringFor
+import org.slf4j.LoggerFactory
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.*
+import java.time.Clock
 import java.time.Duration
+import java.time.Instant
 
 private val DELETE_NOW = Duration.ofSeconds(0)
 
@@ -26,12 +29,15 @@ interface KeyRepository {
 
 
 open class AwsKeyRepository(
+    private val clock: Clock,
     private val kidGenerator: () -> String,
     private val signatureTableName: String,
     private val mfaTableName: String,
     private val keyGenerator: KeyGenerator,
     private val dynamoDbClient: DynamoDbClient
 ) : KeyRepository {
+
+    private val logger = LoggerFactory.getLogger(AwsKeyRepository::class.java)
 
     override fun createKeyFrom(masterKid: MasterKid, keyType: KeyType, keyPurpose: KeyPurpose): Kid {
         val dataKey = keyPairFor(masterKid, keyType)
@@ -64,7 +70,7 @@ open class AwsKeyRepository(
                         "key_purpose" to keyPurpose.name.asDynamoAttribute(),
                         "key_type" to keyType.name.asDynamoAttribute(),
                         "enabled" to true.asDynamoAttribute(),
-                        "key_ttl" to Duration.ofSeconds(0).toSeconds().asDynamoAttribute()
+                        "key_expiration_date_timestamp" to Duration.ofSeconds(0).toSeconds().asDynamoAttribute()
 
                     )
                 ).build()
@@ -87,31 +93,42 @@ open class AwsKeyRepository(
         val tableName = tableNameBasedOn(keyPurpose)
 
         if (ttl.isZero) {
-            dynamoDbClient.deleteItem(
-                DeleteItemRequest.builder().tableName(tableName).key(
-                    mapOf(
-                        "key_id" to kid.content().asDynamoAttribute(),
-                    )
-                ).build()
-            )
+            justDeleteKey(kid, tableName)
         } else {
+            keyDeleteJodPlannedFor(kid, ttl, tableName)
+        }
+    }
+
+    private fun keyDeleteJodPlannedFor(kid: Kid, ttl: Duration, tableName: String) {
+        try {
             dynamoDbClient.updateItem(
                 UpdateItemRequest.builder().tableName(tableName).key(
                     mapOf(
                         "key_id" to kid.content().asDynamoAttribute(),
                     )
-                ).updateExpression("set enabled=:enabled, key_ttl=:ttl")
+                ).updateExpression("set enabled=:enabled, key_expiration_date_timestamp=:timestamp")
                     .expressionAttributeValues(
                         mapOf(
                             ":enabled" to false.asDynamoAttribute(),
-                            ":ttl" to ttl.toSeconds().asDynamoAttribute()
+                            ":timestamp" to ttl.plus(Duration.ofSeconds(Instant.now(clock).epochSecond)).seconds.asDynamoAttribute()
                         )
                     )
+                    .conditionExpression("key_expiration_date_timestamp <> :timestamp")
                     .build()
             )
+        } catch (e: ConditionalCheckFailedException) {
+            logger.info("The key ${kid.content()} delete request is ignored... key is already disabled")
         }
+    }
 
-
+    private fun justDeleteKey(kid: Kid, tableName: String) {
+        dynamoDbClient.deleteItem(
+            DeleteItemRequest.builder().tableName(tableName).key(
+                mapOf(
+                    "key_id" to kid.content().asDynamoAttribute(),
+                )
+            ).build()
+        )
     }
 
     override fun signatureKeys(): Keys {
@@ -153,7 +170,7 @@ open class AwsKeyRepository(
         it.valueAsBoolFor("enabled"),
         KeyType.valueOf(it.valueAsStringFor("key_type")),
         KeyPurpose.valueOf(it.valueAsStringFor("key_purpose")),
-        Duration.ofSeconds(it.valueAsLongFor("key_ttl", 0))
+        it.valueAsLongFor("key_expiration_date_timestamp", 0)
     )
 
 }

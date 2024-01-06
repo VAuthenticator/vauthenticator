@@ -20,7 +20,10 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
+import java.time.Clock
 import java.time.Duration
+import java.time.Instant
+import java.time.ZoneId
 import java.util.*
 
 internal class AwsKeyRepositoryTest {
@@ -29,6 +32,7 @@ internal class AwsKeyRepositoryTest {
     private lateinit var wrapper: KmsClientWrapper
 
     private val kidGenerator = { UUID.randomUUID().toString() }
+    private val now = Instant.now()
 
     @BeforeEach
     internal fun setUp() {
@@ -36,6 +40,7 @@ internal class AwsKeyRepositoryTest {
         wrapper = KmsClientWrapper(kmsClient)
         keyRepository =
             AwsKeyRepository(
+                Clock.fixed(now, ZoneId.systemDefault()),
                 kidGenerator,
                 dynamoSignatureKeysTableName,
                 dynamoMfaKeysTableName,
@@ -100,8 +105,25 @@ internal class AwsKeyRepositoryTest {
         keyRepository.deleteKeyFor(kid, SIGNATURE, ttl)
 
         val actual = getActual(kid, dynamoSignatureKeysTableName)
+        val expectedTTl = now.epochSecond + 1
         assertEquals(false, (actual["enabled"] as AttributeValue).bool())
-        assertEquals(ttl.seconds, (actual["key_ttl"] as AttributeValue).n().toLong())
+        assertEquals(expectedTTl, (actual["key_expiration_date_timestamp"] as AttributeValue).n().toLong())
+    }
+
+    @Test
+    internal fun `when a signature key deleted request is ignored`() {
+        val masterKid = aNewMasterKey()
+        val kid = keyRepository.createKeyFrom(masterKid)
+        keyRepository.createKeyFrom(masterKid)
+        val ttl = Duration.ofSeconds(1)
+        keyRepository.deleteKeyFor(kid, SIGNATURE, ttl)
+
+        val actual = getActual(kid, dynamoSignatureKeysTableName)
+        val expectedTTl = now.epochSecond + 1
+        keyRepository.deleteKeyFor(kid, SIGNATURE, ttl)
+
+        assertEquals(false, (actual["enabled"] as AttributeValue).bool())
+        assertEquals(expectedTTl, (actual["key_expiration_date_timestamp"] as AttributeValue).n().toLong())
     }
 
     @Test
@@ -149,7 +171,8 @@ internal class AwsKeyRepositoryTest {
             kid,
             true,
             SYMMETRIC,
-            MFA
+            MFA,
+            0L
         )
 
         assertEquals(expected, actual)

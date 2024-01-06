@@ -1,7 +1,6 @@
 package com.vauthenticator.server.keys
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.vauthenticator.server.keys.*
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -15,7 +14,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.test.web.servlet.setup.MockMvcBuilders.*
+import org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup
 import java.security.KeyPairGenerator
 
 @ExtendWith(MockKExtension::class)
@@ -28,7 +27,7 @@ internal class KeyEndPointTest {
 
     private val mapper = ObjectMapper()
     private val payload = mapOf("masterKey" to "A_MASTER_KEY", "kid" to "A_KID")
-    private val deletePayload = mapOf( "kid" to "A_KID", "key_purpose" to "SIGNATURE")
+    private val deletePayload = mapOf( "kid" to "A_KID", "key_purpose" to "SIGNATURE", "key_ttl" to 0L)
 
     @BeforeEach
     internal fun setUp() {
@@ -48,7 +47,8 @@ internal class KeyEndPointTest {
                     Kid("A_KID"),
                     true,
                     KeyType.ASYMMETRIC,
-                    KeyPurpose.SIGNATURE
+                    KeyPurpose.SIGNATURE,
+                    0L
                 )
             )
         )

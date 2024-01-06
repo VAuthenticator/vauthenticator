@@ -3,12 +3,11 @@ package com.vauthenticator.server.mfa
 import com.vauthenticator.server.account.AccountTestFixture.anAccount
 import com.vauthenticator.server.extentions.decoder
 import com.vauthenticator.server.keys.*
-import com.vauthenticator.server.mfa.*
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import org.apache.commons.codec.binary.Hex
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -38,7 +37,8 @@ class TaimosOtpMfaTest {
             Kid("A_KID"),
             true,
             KeyType.SYMMETRIC,
-            KeyPurpose.MFA
+            KeyPurpose.MFA,
+            0L
         )
         every { mfaAccountMethodsRepository.findAll(email) } returns mapOf(
             MfaMethod.EMAIL_MFA_METHOD to MfaAccountMethod(email, Kid("A_KID"), MfaMethod.EMAIL_MFA_METHOD)
