@@ -35,4 +35,7 @@ class KeyConfig {
             keyGenerator,
             dynamoDbClient
         )
+
+    @Bean
+    fun signatureKeyRotation(keyRepository: KeyRepository) = SignatureKeyRotation(keyRepository)
 }

@@ -10,7 +10,8 @@ import java.time.Duration
 @RestController
 class KeyEndPoint(
     @Value("\${key.master-key}") private val masterKey: String,
-    private val keyRepository: KeyRepository
+    private val keyRepository: KeyRepository,
+    private val signatureKeyRotation: SignatureKeyRotation
 ) {
 
     @GetMapping("/api/keys")
@@ -24,6 +25,11 @@ class KeyEndPoint(
     fun createKey() =
         keyRepository.createKeyFrom(MasterKid(masterKey))
             .let { ResponseEntity.status(HttpStatus.CREATED).build<Unit>() }
+
+    @PostMapping("/api/keys/rotate")
+    fun rotateKey(@RequestBody body: RotateKeyRequest) =
+        signatureKeyRotation.rotate(MasterKid(masterKey), Kid(body.kid), Duration.ofSeconds(body.keyTtl))
+            .let { ResponseEntity.status(HttpStatus.NO_CONTENT).build<Unit>() }
 
     @DeleteMapping("/api/keys")
     fun deleteKey(@RequestBody body: DeleteKeyRequest) =
@@ -41,5 +47,12 @@ class KeyEndPoint(
 data class DeleteKeyRequest(
     val kid: String,
     @JsonProperty("key_purpose") val keyPurpose: KeyPurpose,
+    @JsonProperty("key_ttl") val keyTtl: Long
+)
+
+data class RotateKeyRequest(
+    @JsonProperty("master_kid")
+    val masterKid: String,
+    val kid: String,
     @JsonProperty("key_ttl") val keyTtl: Long
 )
