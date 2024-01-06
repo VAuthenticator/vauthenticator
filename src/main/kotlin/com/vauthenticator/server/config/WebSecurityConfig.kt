@@ -120,6 +120,9 @@ class WebSecurityConfig(
                     .requestMatchers(HttpMethod.POST, "/api/keys")
                     .hasAnyAuthority(Scope.KEY_EDITOR.content)
 
+                    .requestMatchers(HttpMethod.POST, "/api/keys/rotate")
+                    .hasAnyAuthority(Scope.KEY_EDITOR.content)
+
                     .requestMatchers(HttpMethod.DELETE, "/api/keys")
                     .hasAnyAuthority(Scope.KEY_EDITOR.content)
 
