@@ -1,15 +1,11 @@
 package com.vauthenticator.server.keys
 
-import com.vauthenticator.server.extentions.asDynamoAttribute
-import com.vauthenticator.server.extentions.valueAsBoolFor
-import com.vauthenticator.server.extentions.valueAsLongFor
-import com.vauthenticator.server.extentions.valueAsStringFor
+import com.vauthenticator.server.extentions.*
 import org.slf4j.LoggerFactory
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.*
 import java.time.Clock
 import java.time.Duration
-import java.time.Instant
 
 private val DELETE_NOW = Duration.ofSeconds(0)
 
@@ -90,13 +86,24 @@ open class AwsKeyRepository(
             throw KeyDeletionException("at least one signature key is mandatory")
         }
 
+        val noTtl = ttl.isZero
         val tableName = tableNameBasedOn(keyPurpose)
 
-        if (ttl.isZero) {
+        if (noTtl) {
             justDeleteKey(kid, tableName)
         } else {
             keyDeleteJodPlannedFor(kid, ttl, tableName)
         }
+    }
+
+    private fun justDeleteKey(kid: Kid, tableName: String) {
+        dynamoDbClient.deleteItem(
+            DeleteItemRequest.builder().tableName(tableName).key(
+                mapOf(
+                    "key_id" to kid.content().asDynamoAttribute(),
+                )
+            ).build()
+        )
     }
 
     private fun keyDeleteJodPlannedFor(kid: Kid, ttl: Duration, tableName: String) {
@@ -110,7 +117,7 @@ open class AwsKeyRepository(
                     .expressionAttributeValues(
                         mapOf(
                             ":enabled" to false.asDynamoAttribute(),
-                            ":timestamp" to ttl.plus(Duration.ofSeconds(Instant.now(clock).epochSecond)).seconds.asDynamoAttribute()
+                            ":timestamp" to ttl.expirationTimeStampInSecondFromNow(clock).asDynamoAttribute()
                         )
                     )
                     .conditionExpression("key_expiration_date_timestamp <> :timestamp")
@@ -119,16 +126,6 @@ open class AwsKeyRepository(
         } catch (e: ConditionalCheckFailedException) {
             logger.info("The key ${kid.content()} delete request is ignored... key is already disabled")
         }
-    }
-
-    private fun justDeleteKey(kid: Kid, tableName: String) {
-        dynamoDbClient.deleteItem(
-            DeleteItemRequest.builder().tableName(tableName).key(
-                mapOf(
-                    "key_id" to kid.content().asDynamoAttribute(),
-                )
-            ).build()
-        )
     }
 
     override fun signatureKeys(): Keys {

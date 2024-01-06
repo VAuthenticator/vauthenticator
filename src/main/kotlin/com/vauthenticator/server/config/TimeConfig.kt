@@ -8,5 +8,5 @@ import java.time.Clock
 class TimeConfig {
 
     @Bean
-    fun clock() = Clock.systemUTC()
+    fun clock(): Clock = Clock.systemUTC()
 }

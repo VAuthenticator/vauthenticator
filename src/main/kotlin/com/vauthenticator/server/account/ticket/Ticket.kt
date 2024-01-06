@@ -3,9 +3,9 @@ package com.vauthenticator.server.account.ticket
 import java.time.Duration
 
 data class Ticket(val verificationTicket: VerificationTicket,
-                  val features: VerificationTicketFeatures,
                   val email: String,
-                  val clientAppId: String
+                  val clientAppId: String,
+                  val ttl : Long
 )
 data class VerificationTicket(val content: String)
 

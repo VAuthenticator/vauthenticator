@@ -1,5 +1,6 @@
 package com.vauthenticator.server.keys
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -15,7 +16,7 @@ class KeyEndPoint(
     @GetMapping("/api/keys")
     fun loadAllKeys() =
         keyRepository.signatureKeys()
-            .keys.map { mapOf("masterKey" to it.masterKid, "kid" to it.kid, "ttl" to it.expirationDateTimestamp)}
+            .keys.map { mapOf("masterKey" to it.masterKid, "kid" to it.kid, "ttl" to it.expirationDateTimestamp) }
             .let { ResponseEntity.ok(it) }
 
 
@@ -28,8 +29,8 @@ class KeyEndPoint(
     fun deleteKey(@RequestBody body: DeleteKeyRequest) =
         keyRepository.deleteKeyFor(
             Kid(body.kid),
-            body.key_purpose,
-            Duration.ofSeconds(body.key_ttl)
+            body.keyPurpose,
+            Duration.ofSeconds(body.keyTtl)
         )
             .let { ResponseEntity.noContent().build<Unit>() }
 
@@ -37,4 +38,8 @@ class KeyEndPoint(
     fun keyDeletionExceptionHandler(ex: KeyDeletionException) = ResponseEntity.badRequest().body(ex.message);
 }
 
-data class DeleteKeyRequest(val kid: String, val key_purpose: KeyPurpose, val key_ttl: Long)
+data class DeleteKeyRequest(
+    val kid: String,
+    @JsonProperty("key_purpose") val keyPurpose: KeyPurpose,
+    @JsonProperty("key_ttl") val keyTtl: Long
+)

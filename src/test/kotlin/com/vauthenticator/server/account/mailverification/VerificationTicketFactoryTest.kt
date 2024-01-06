@@ -38,7 +38,12 @@ internal class VerificationTicketFactoryTest {
     @BeforeEach
     internal fun setUp() {
         val clock = Clock.fixed(Instant.ofEpochSecond(100), ZoneId.systemDefault())
-        underTest = VerificationTicketFactory(ticketGenerator, clock, ticketRepository, VerificationTicketFeatures(Duration.ofSeconds(100)))
+        underTest = VerificationTicketFactory(
+            ticketGenerator,
+            clock,
+            ticketRepository,
+            VerificationTicketFeatures(Duration.ofSeconds(100))
+        )
     }
 
     @Test

@@ -16,15 +16,21 @@ import java.util.*
 class TicketConfig {
 
     @Bean
-    fun ticketRepository(@Value("\${vauthenticator.dynamo-db.ticket.table-name}") tableName: String, dynamoDbClient: DynamoDbClient) =
-            DynamoDbTicketRepository(dynamoDbClient, tableName)
+    fun ticketRepository(
+        @Value("\${vauthenticator.dynamo-db.ticket.table-name}") tableName: String,
+        dynamoDbClient: DynamoDbClient
+    ) =
+        DynamoDbTicketRepository(dynamoDbClient, tableName)
 
 
     @Bean
-    fun verificationTicketFactory(clock : Clock, ticketRepository: TicketRepository) =
-            VerificationTicketFactory({ UUID.randomUUID().toString() }, clock, ticketRepository,
-                    VerificationTicketFeatures(Duration.ofMinutes(5))
-            )
+    fun verificationTicketFactory(clock: Clock, ticketRepository: TicketRepository) =
+        VerificationTicketFactory(
+            { UUID.randomUUID().toString() },
+            clock,
+            ticketRepository,
+            VerificationTicketFeatures(Duration.ofMinutes(5))
+        )
 
 
 }
