@@ -4,6 +4,7 @@ import com.vauthenticator.server.extentions.asDynamoAttribute
 import com.vauthenticator.server.extentions.encoder
 import com.vauthenticator.server.extentions.valueAsStringFor
 import com.vauthenticator.server.keys.KeyPurpose.MFA
+import com.vauthenticator.server.keys.KeyPurpose.SIGNATURE
 import com.vauthenticator.server.keys.KeyType.ASYMMETRIC
 import com.vauthenticator.server.keys.KeyType.SYMMETRIC
 import com.vauthenticator.server.support.DatabaseUtils.dynamoDbClient
@@ -19,6 +20,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
+import java.time.Duration
 import java.util.*
 
 internal class AwsKeyRepositoryTest {
@@ -94,10 +96,12 @@ internal class AwsKeyRepositoryTest {
         val masterKid = aNewMasterKey()
         val kid = keyRepository.createKeyFrom(masterKid)
         keyRepository.createKeyFrom(masterKid)
-        keyRepository.deleteKeyFor(kid, KeyPurpose.SIGNATURE)
+        val ttl = Duration.ofSeconds(1)
+        keyRepository.deleteKeyFor(kid, SIGNATURE, ttl)
 
         val actual = getActual(kid, dynamoSignatureKeysTableName)
-        assertEquals(emptyMap<String, AttributeValue>(), actual)
+        assertEquals(false, (actual["enabled"] as AttributeValue).bool())
+        assertEquals(ttl.seconds, (actual["key_ttl"] as AttributeValue).n().toLong())
     }
 
     @Test
@@ -105,7 +109,7 @@ internal class AwsKeyRepositoryTest {
         val masterKid = aNewMasterKey()
         val kid = keyRepository.createKeyFrom(masterKid)
 
-        assertThrows(KeyDeletionException::class.java) { keyRepository.deleteKeyFor(kid, KeyPurpose.SIGNATURE) }
+        assertThrows(KeyDeletionException::class.java) { keyRepository.deleteKeyFor(kid, SIGNATURE) }
     }
 
     @Test

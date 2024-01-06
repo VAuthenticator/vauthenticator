@@ -7,7 +7,10 @@ import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jose.jwk.source.JWKSource
 import com.nimbusds.jose.proc.SecurityContext
 
-class KeysJWKSource(private val keyDecrypter: KeyDecrypter, private val keyRepository: KeyRepository) : JWKSource<SecurityContext?> {
+class KeysJWKSource(
+    private val keyDecrypter: KeyDecrypter,
+    private val keyRepository: KeyRepository
+) : JWKSource<SecurityContext?> {
     override fun get(jwkSelector: JWKSelector, context: SecurityContext?): MutableList<JWK> {
         val rsaKey: List<RSAKey> = keyRepository.signatureKeys().generateRsas(keyDecrypter)
         val jwkSet = JWKSet(rsaKey)

@@ -6,7 +6,9 @@ import com.vauthenticator.server.extentions.encoder
 import java.security.KeyPair
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
+import java.time.Duration
 import java.util.*
+import kotlin.random.Random
 
 @JvmInline
 value class Kid(private val content: String) {
@@ -36,15 +38,23 @@ data class Keys(val keys: List<Key>) {
                 .build()
         }
 
+    fun validKeys(): Keys = Keys(this.keys.filter { it.enabled })
+    fun peekOnAtRandom(): Key {
+        val validKeys = validKeys().keys
+        val index = Random.nextInt(validKeys.size + 1)
+        return validKeys[index]
+    }
+
 }
 
 data class Key(
     val dataKey: DataKey,
     val masterKid: MasterKid,
     val kid: Kid,
-    val enabled: Boolean,
+    val enabled: Boolean = true,
     val type: KeyType,
-    val keyPurpose: KeyPurpose
+    val keyPurpose: KeyPurpose,
+    val ttl: Duration = Duration.ofSeconds(0)
 )
 
 data class DataKey(val encryptedPrivateKey: ByteArray, val publicKey: Optional<ByteArray>) {

@@ -56,12 +56,17 @@ class AuthorizationServerConfig {
     fun nimbusJwsEncoder(jwkSource: JWKSource<SecurityContext?>?): JwtEncoder {
         return NimbusJwtEncoder(jwkSource)
     }
-
     @Bean
-    fun jwtCustomizer(clientApplicationRepository: ClientApplicationRepository): OAuth2TokenCustomizer<JwtEncodingContext> {
+    fun jwtDecoder(jwkSource: JWKSource<SecurityContext?>?): JwtDecoder {
+        return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource)
+    }
+    @Bean
+    fun jwtCustomizer(
+        keyRepository: KeyRepository,
+        clientApplicationRepository: ClientApplicationRepository): OAuth2TokenCustomizer<JwtEncodingContext> {
         return OAuth2TokenCustomizer { context: JwtEncodingContext ->
-            OAuth2TokenEnhancer(clientApplicationRepository).customize(context)
-            IdTokenEnhancer().customize(context)
+            OAuth2TokenEnhancer(keyRepository, clientApplicationRepository).customize(context)
+            IdTokenEnhancer(keyRepository).customize(context)
         }
     }
 
@@ -91,7 +96,7 @@ class AuthorizationServerConfig {
         http: HttpSecurity
     ): SecurityFilterChain {
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http)
-        http.csrf().disable().headers().frameOptions().disable()
+        http.csrf { it.disable() }.headers { it.frameOptions { it.disable() } }
 
         val userInfoEnhancer = UserInfoEnhancer(accountRepository)
 
@@ -119,15 +124,9 @@ class AuthorizationServerConfig {
             )
         }
         http.exceptionHandling { it.authenticationEntryPoint(LoginUrlAuthenticationEntryPoint("/login")) }
-            .oauth2ResourceServer().jwt()
+            .oauth2ResourceServer { it.jwt {} }
 
         return http.build()
-    }
-
-
-    @Bean
-    fun jwtDecoder(jwkSource: JWKSource<SecurityContext?>?): JwtDecoder {
-        return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource)
     }
 
 }

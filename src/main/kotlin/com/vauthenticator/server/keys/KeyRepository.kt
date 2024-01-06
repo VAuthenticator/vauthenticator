@@ -2,9 +2,13 @@ package com.vauthenticator.server.keys
 
 import com.vauthenticator.server.extentions.asDynamoAttribute
 import com.vauthenticator.server.extentions.valueAsBoolFor
+import com.vauthenticator.server.extentions.valueAsLongFor
 import com.vauthenticator.server.extentions.valueAsStringFor
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.*
+import java.time.Duration
+
+private val DELETE_NOW = Duration.ofSeconds(0)
 
 interface KeyRepository {
     fun createKeyFrom(
@@ -13,8 +17,10 @@ interface KeyRepository {
         keyPurpose: KeyPurpose = KeyPurpose.SIGNATURE
     ): Kid
 
-    fun deleteKeyFor(kid: Kid, keyPurpose: KeyPurpose)
+    fun deleteKeyFor(kid: Kid, keyPurpose: KeyPurpose, ttl: Duration = DELETE_NOW)
+
     fun signatureKeys(): Keys
+
     fun keyFor(kid: Kid, mfa: KeyPurpose): Key
 }
 
@@ -57,7 +63,9 @@ open class AwsKeyRepository(
                         "public_key" to dataKey.publicKeyAsString().asDynamoAttribute(),
                         "key_purpose" to keyPurpose.name.asDynamoAttribute(),
                         "key_type" to keyType.name.asDynamoAttribute(),
-                        "enabled" to true.asDynamoAttribute()
+                        "enabled" to true.asDynamoAttribute(),
+                        "key_ttl" to Duration.ofSeconds(0).toSeconds().asDynamoAttribute()
+
                     )
                 ).build()
         )
@@ -70,20 +78,39 @@ open class AwsKeyRepository(
             keyGenerator.dataKeyFor(masterKid)
         }
 
-    override fun deleteKeyFor(kid: Kid, keyPurpose: KeyPurpose) {
+    override fun deleteKeyFor(kid: Kid, keyPurpose: KeyPurpose, ttl: Duration) {
         val keys = signatureKeys().keys
         if (keyPurpose == KeyPurpose.SIGNATURE && keys.size <= 1) {
             throw KeyDeletionException("at least one signature key is mandatory")
         }
 
         val tableName = tableNameBasedOn(keyPurpose)
-        dynamoDbClient.deleteItem(
-            DeleteItemRequest.builder().tableName(tableName).key(
-                mapOf(
-                    "key_id" to kid.content().asDynamoAttribute(),
-                )
-            ).build()
-        )
+
+        if (ttl.isZero) {
+            dynamoDbClient.deleteItem(
+                DeleteItemRequest.builder().tableName(tableName).key(
+                    mapOf(
+                        "key_id" to kid.content().asDynamoAttribute(),
+                    )
+                ).build()
+            )
+        } else {
+            dynamoDbClient.updateItem(
+                UpdateItemRequest.builder().tableName(tableName).key(
+                    mapOf(
+                        "key_id" to kid.content().asDynamoAttribute(),
+                    )
+                ).updateExpression("set enabled=:enabled, key_ttl=:ttl")
+                    .expressionAttributeValues(
+                        mapOf(
+                            ":enabled" to false.asDynamoAttribute(),
+                            ":ttl" to ttl.toSeconds().asDynamoAttribute()
+                        )
+                    )
+                    .build()
+            )
+        }
+
 
     }
 
@@ -125,7 +152,8 @@ open class AwsKeyRepository(
         Kid(it.valueAsStringFor("key_id")),
         it.valueAsBoolFor("enabled"),
         KeyType.valueOf(it.valueAsStringFor("key_type")),
-        KeyPurpose.valueOf(it.valueAsStringFor("key_purpose"))
+        KeyPurpose.valueOf(it.valueAsStringFor("key_purpose")),
+        Duration.ofSeconds(it.valueAsLongFor("key_ttl", 0))
     )
 
 }
