@@ -6,22 +6,23 @@ import com.vauthenticator.server.extentions.asDynamoAttribute
 import com.vauthenticator.server.support.DatabaseUtils
 import com.vauthenticator.server.support.DatabaseUtils.dynamoTicketTableName
 import com.vauthenticator.server.support.DatabaseUtils.resetDatabase
+import com.vauthenticator.server.support.TicketFixture.ticketFor
 import io.mockk.junit5.MockKExtension
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
-import java.time.Duration
 import java.util.*
 
 @ExtendWith(MockKExtension::class)
 internal class DynamoDbTicketRepositoryTest {
-    private val ticket = UUID.randomUUID().toString()
-    private val ticketGenerator = { ticket }
+    private val ticketValue = UUID.randomUUID().toString()
+    private val ticketGenerator = { ticketValue }
 
 
     private lateinit var underTest: DynamoDbTicketRepository
+    private val ticket = ticketFor(ticketGenerator.invoke(), EMAIL, A_CLIENT_APP_ID)
 
     @BeforeEach
     internal fun setUp() {
@@ -31,12 +32,6 @@ internal class DynamoDbTicketRepositoryTest {
 
     @Test
     internal fun `when a ticket is stored`() {
-        val ticket = Ticket(
-            VerificationTicket(ticketGenerator.invoke()),
-            VerificationTicketFeatures(Duration.ofSeconds(100)),
-            EMAIL,
-            A_CLIENT_APP_ID
-        )
         underTest.store(ticket)
 
         val item = DatabaseUtils.dynamoDbClient.getItem(
@@ -54,19 +49,14 @@ internal class DynamoDbTicketRepositoryTest {
         val ticketTTLFromDynamo = item["ttl"]!!.n()
 
         assertEquals(ticketFromDynamo, ticket.verificationTicket.content)
-        assertEquals(ticketTTLFromDynamo, "100")
+        assertEquals(ticketTTLFromDynamo, "200")
     }
 
 
     @Test
     internal fun `when a ticket is retrieved`() {
         val verificationTicket = VerificationTicket(ticketGenerator.invoke())
-        val expected = Ticket(
-            verificationTicket,
-            VerificationTicketFeatures(Duration.ofSeconds(200)),
-            EMAIL,
-            A_CLIENT_APP_ID
-        )
+        val expected = ticket
 
         underTest.store(expected)
 
@@ -85,12 +75,7 @@ internal class DynamoDbTicketRepositoryTest {
     @Test
     internal fun `when a ticket is delete`() {
         val verificationTicket = VerificationTicket(ticketGenerator.invoke())
-        val expected = Ticket(
-            verificationTicket,
-            VerificationTicketFeatures(Duration.ofSeconds(200)),
-            EMAIL,
-            A_CLIENT_APP_ID
-        )
+        val expected = ticket
 
         underTest.store(expected)
 

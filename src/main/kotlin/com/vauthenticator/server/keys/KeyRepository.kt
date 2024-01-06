@@ -1,10 +1,13 @@
 package com.vauthenticator.server.keys
 
-import com.vauthenticator.server.extentions.asDynamoAttribute
-import com.vauthenticator.server.extentions.valueAsBoolFor
-import com.vauthenticator.server.extentions.valueAsStringFor
+import com.vauthenticator.server.extentions.*
+import org.slf4j.LoggerFactory
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.*
+import java.time.Clock
+import java.time.Duration
+
+private val DELETE_NOW = Duration.ofSeconds(0)
 
 interface KeyRepository {
     fun createKeyFrom(
@@ -13,19 +16,24 @@ interface KeyRepository {
         keyPurpose: KeyPurpose = KeyPurpose.SIGNATURE
     ): Kid
 
-    fun deleteKeyFor(kid: Kid, keyPurpose: KeyPurpose)
+    fun deleteKeyFor(kid: Kid, keyPurpose: KeyPurpose, ttl: Duration = DELETE_NOW)
+
     fun signatureKeys(): Keys
+
     fun keyFor(kid: Kid, mfa: KeyPurpose): Key
 }
 
 
 open class AwsKeyRepository(
+    private val clock: Clock,
     private val kidGenerator: () -> String,
     private val signatureTableName: String,
     private val mfaTableName: String,
     private val keyGenerator: KeyGenerator,
     private val dynamoDbClient: DynamoDbClient
 ) : KeyRepository {
+
+    private val logger = LoggerFactory.getLogger(AwsKeyRepository::class.java)
 
     override fun createKeyFrom(masterKid: MasterKid, keyType: KeyType, keyPurpose: KeyPurpose): Kid {
         val dataKey = keyPairFor(masterKid, keyType)
@@ -57,7 +65,9 @@ open class AwsKeyRepository(
                         "public_key" to dataKey.publicKeyAsString().asDynamoAttribute(),
                         "key_purpose" to keyPurpose.name.asDynamoAttribute(),
                         "key_type" to keyType.name.asDynamoAttribute(),
-                        "enabled" to true.asDynamoAttribute()
+                        "enabled" to true.asDynamoAttribute(),
+                        "key_expiration_date_timestamp" to Duration.ofSeconds(0).toSeconds().asDynamoAttribute()
+
                     )
                 ).build()
         )
@@ -70,13 +80,23 @@ open class AwsKeyRepository(
             keyGenerator.dataKeyFor(masterKid)
         }
 
-    override fun deleteKeyFor(kid: Kid, keyPurpose: KeyPurpose) {
+    override fun deleteKeyFor(kid: Kid, keyPurpose: KeyPurpose, ttl: Duration) {
         val keys = signatureKeys().keys
         if (keyPurpose == KeyPurpose.SIGNATURE && keys.size <= 1) {
             throw KeyDeletionException("at least one signature key is mandatory")
         }
 
+        val noTtl = ttl.isZero
         val tableName = tableNameBasedOn(keyPurpose)
+
+        if (noTtl) {
+            justDeleteKey(kid, tableName)
+        } else {
+            keyDeleteJodPlannedFor(kid, ttl, tableName)
+        }
+    }
+
+    private fun justDeleteKey(kid: Kid, tableName: String) {
         dynamoDbClient.deleteItem(
             DeleteItemRequest.builder().tableName(tableName).key(
                 mapOf(
@@ -84,7 +104,28 @@ open class AwsKeyRepository(
                 )
             ).build()
         )
+    }
 
+    private fun keyDeleteJodPlannedFor(kid: Kid, ttl: Duration, tableName: String) {
+        try {
+            dynamoDbClient.updateItem(
+                UpdateItemRequest.builder().tableName(tableName).key(
+                    mapOf(
+                        "key_id" to kid.content().asDynamoAttribute(),
+                    )
+                ).updateExpression("set enabled=:enabled, key_expiration_date_timestamp=:timestamp")
+                    .expressionAttributeValues(
+                        mapOf(
+                            ":enabled" to false.asDynamoAttribute(),
+                            ":timestamp" to ttl.expirationTimeStampInSecondFromNow(clock).asDynamoAttribute()
+                        )
+                    )
+                    .conditionExpression("key_expiration_date_timestamp <> :timestamp")
+                    .build()
+            )
+        } catch (e: ConditionalCheckFailedException) {
+            logger.info("The key ${kid.content()} delete request is ignored... key is already disabled")
+        }
     }
 
     override fun signatureKeys(): Keys {
@@ -125,7 +166,8 @@ open class AwsKeyRepository(
         Kid(it.valueAsStringFor("key_id")),
         it.valueAsBoolFor("enabled"),
         KeyType.valueOf(it.valueAsStringFor("key_type")),
-        KeyPurpose.valueOf(it.valueAsStringFor("key_purpose"))
+        KeyPurpose.valueOf(it.valueAsStringFor("key_purpose")),
+        it.valueAsLongFor("key_expiration_date_timestamp", 0)
     )
 
 }
