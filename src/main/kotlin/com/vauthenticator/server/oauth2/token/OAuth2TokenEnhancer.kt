@@ -1,6 +1,7 @@
 package com.vauthenticator.server.oauth2.token
 
 import com.vauthenticator.server.keys.KeyRepository
+import com.vauthenticator.server.keys.Kid
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
 import org.springframework.security.core.Authentication
@@ -11,13 +12,15 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
 import java.util.stream.Collectors
 
 class OAuth2TokenEnhancer(
+    private val assignedKeys: MutableSet<Kid>,
     private val keyRepository: KeyRepository,
-    private val clientApplicationRepository: ClientApplicationRepository) : OAuth2TokenCustomizer<JwtEncodingContext> {
+    private val clientApplicationRepository: ClientApplicationRepository
+) : OAuth2TokenCustomizer<JwtEncodingContext> {
     override fun customize(context: JwtEncodingContext) {
         val tokenType = context.tokenType.value
         if ("access_token" == tokenType ) {
 
-            val signatureKey = keyRepository.signatureKeys().peekOnAtRandom()
+            val signatureKey = keyRepository.signatureKeys().peekOneAtRandomWithout(assignedKeys)
             if(context.authorizationGrantType.equals(AuthorizationGrantType.CLIENT_CREDENTIALS)){
                 val clientId = context.registeredClient.clientId
                 val findOne = clientApplicationRepository.findOne(ClientAppId(clientId))

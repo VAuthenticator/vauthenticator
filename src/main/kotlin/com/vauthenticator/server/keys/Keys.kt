@@ -38,10 +38,13 @@ data class Keys(val keys: List<Key>) {
         }
 
     fun validKeys(): Keys = Keys(this.keys.filter { it.enabled })
-    fun peekOnAtRandom(): Key {
+    fun peekOneAtRandomWithout(notAvailableKeys: MutableSet<Kid>): Key {
         val validKeys = validKeys().keys
-        val index = Random.nextInt(validKeys.size)
-        return validKeys[index]
+        val filteredValidKeys = validKeys.filter { key -> !notAvailableKeys.contains(key.kid) }
+        val index = Random.nextInt(filteredValidKeys.size)
+        val key = filteredValidKeys[index]
+        notAvailableKeys.add(key.kid)
+        return key
     }
 
 }
@@ -53,7 +56,7 @@ data class Key(
     val enabled: Boolean = true,
     val type: KeyType,
     val keyPurpose: KeyPurpose,
-    val expirationDateTimestamp : Long
+    val expirationDateTimestamp: Long
 )
 
 data class DataKey(val encryptedPrivateKey: ByteArray, val publicKey: Optional<ByteArray>) {
