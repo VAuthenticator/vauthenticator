@@ -6,6 +6,7 @@ import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.keys.KeyDecrypter
 import com.vauthenticator.server.keys.KeyRepository
 import com.vauthenticator.server.keys.KeysJWKSource
+import com.vauthenticator.server.keys.Kid
 import com.vauthenticator.server.oauth2.authorizationservice.RedisOAuth2AuthorizationService
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.Scope.Companion.AVAILABLE_SCOPES
@@ -65,8 +66,9 @@ class AuthorizationServerConfig {
         keyRepository: KeyRepository,
         clientApplicationRepository: ClientApplicationRepository): OAuth2TokenCustomizer<JwtEncodingContext> {
         return OAuth2TokenCustomizer { context: JwtEncodingContext ->
-            OAuth2TokenEnhancer(keyRepository, clientApplicationRepository).customize(context)
-            IdTokenEnhancer(keyRepository).customize(context)
+            val assignedKeys = mutableSetOf<Kid>()
+            OAuth2TokenEnhancer(assignedKeys, keyRepository, clientApplicationRepository).customize(context)
+            IdTokenEnhancer(assignedKeys, keyRepository).customize(context)
         }
     }
 

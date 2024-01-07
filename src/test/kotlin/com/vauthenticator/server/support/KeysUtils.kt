@@ -1,6 +1,6 @@
 package com.vauthenticator.server.support
 
-import com.vauthenticator.server.keys.MasterKid
+import com.vauthenticator.server.keys.*
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
 import software.amazon.awssdk.regions.Region
@@ -50,6 +50,16 @@ object KeysUtils {
                 .policy(policy)
                 .build()
         ).keyMetadata().keyId()
+    )
+
+    fun aKeyFor(masterKey: String, kid: String) = Key(
+        DataKey(ByteArray(0), Optional.empty<ByteArray>()),
+        MasterKid(masterKey),
+        Kid(kid),
+        true,
+        KeyType.ASYMMETRIC,
+        KeyPurpose.SIGNATURE,
+        0L
     )
 }
 
