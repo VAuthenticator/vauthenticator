@@ -2,7 +2,8 @@ package com.vauthenticator.server.account.repository
 
 import com.vauthenticator.server.account.Account
 import com.vauthenticator.server.extentions.asDynamoAttribute
-import software.amazon.awssdk.services.dynamodb.model.*
+import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
+import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
 
 object DynamoAccountQueryFactory {
 

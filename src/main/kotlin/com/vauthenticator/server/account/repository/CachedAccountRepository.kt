@@ -4,7 +4,7 @@ import com.vauthenticator.server.account.Account
 import com.vauthenticator.server.cache.CacheContentConverter
 import com.vauthenticator.server.cache.CacheOperation
 import java.util.*
-import java.util.Optional.*
+import java.util.Optional.of
 
 class CachedAccountRepository(
     private val cacheContentConverter: CacheContentConverter<Account>,
