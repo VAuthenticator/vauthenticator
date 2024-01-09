@@ -7,7 +7,10 @@ import com.vauthenticator.server.role.PermissionValidator
 import jakarta.servlet.http.HttpSession
 import org.springframework.http.ResponseEntity
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class WelcomeMailEndPoint(

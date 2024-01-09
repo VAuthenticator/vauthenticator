@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 import java.util.*
-import java.util.Arrays.*
+import java.util.Arrays.stream
 
 fun sendAuthorizationResponse(
     redisTemplate: RedisTemplate<String, String?>,
@@ -74,10 +74,12 @@ class SessionManagementFactory(private val providerSettings: AuthorizationServer
         request: HttpServletRequest,
         authentication: OAuth2AuthorizationCodeRequestAuthenticationToken
     ): String {
+        val userName = authentication.name
         val clientId = authentication.clientId
         val issuer = providerSettings.issuer
         val salt = saltFor(request)
 
+        println("userName $userName")
         return "$clientId $issuer ${opbsStateValue(request)} $salt".toSha256() + ".$salt"
     }
 

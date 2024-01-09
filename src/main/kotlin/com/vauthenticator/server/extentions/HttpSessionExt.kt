@@ -4,7 +4,8 @@ import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import jakarta.servlet.http.HttpSession
 import org.springframework.security.web.savedrequest.DefaultSavedRequest
 import java.util.*
-import java.util.Optional.*
+import java.util.Optional.empty
+import java.util.Optional.ofNullable
 
 fun HttpSession.oauth2ClientId(): Optional<ClientAppId> =
      ofNullable(getAttribute("SPRING_SECURITY_SAVED_REQUEST"))

@@ -21,6 +21,7 @@ object RegisteredClientRepositoryFixture {
         .scope("A_SCOPE")
         .scope("ANOTHER_SCOPE")
         .redirectUri("http://a_call_back")
+        .postLogoutRedirectUri("http://post_logout_redirect_uri")
         .tokenSettings(
             TokenSettings.builder()
                 .accessTokenTimeToLive(Duration.ofSeconds(100))

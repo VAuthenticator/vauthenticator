@@ -5,7 +5,7 @@ import com.vauthenticator.server.oauth2.clientapp.Scopes
 import com.vauthenticator.server.role.PermissionValidator
 import jakarta.servlet.http.HttpSession
 import org.springframework.http.ResponseEntity
-import org.springframework.http.ResponseEntity.*
+import org.springframework.http.ResponseEntity.noContent
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model

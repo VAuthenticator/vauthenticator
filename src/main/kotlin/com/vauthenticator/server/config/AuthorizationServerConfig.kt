@@ -40,6 +40,7 @@ import org.springframework.security.web.DefaultRedirectStrategy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint
 
+
 @Configuration(proxyBeanMethods = false)
 class AuthorizationServerConfig {
 
@@ -57,14 +58,17 @@ class AuthorizationServerConfig {
     fun nimbusJwsEncoder(jwkSource: JWKSource<SecurityContext?>?): JwtEncoder {
         return NimbusJwtEncoder(jwkSource)
     }
+
     @Bean
     fun jwtDecoder(jwkSource: JWKSource<SecurityContext?>?): JwtDecoder {
         return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource)
     }
+
     @Bean
     fun jwtCustomizer(
         keyRepository: KeyRepository,
-        clientApplicationRepository: ClientApplicationRepository): OAuth2TokenCustomizer<JwtEncodingContext> {
+        clientApplicationRepository: ClientApplicationRepository
+    ): OAuth2TokenCustomizer<JwtEncodingContext> {
         return OAuth2TokenCustomizer { context: JwtEncodingContext ->
             val assignedKeys = mutableSetOf<Kid>()
             OAuth2TokenEnhancer(assignedKeys, keyRepository, clientApplicationRepository).customize(context)
@@ -115,16 +119,17 @@ class AuthorizationServerConfig {
                         .filter { it != OPEN_ID }
                         .forEach { providerConfiguration.scope(it.content) }
                 }
-            }
-        }.authorizationEndpoint {
-            it.authorizationResponseHandler(
-                sendAuthorizationResponse(
-                    redisTemplate,
-                    SessionManagementFactory(providerSettings),
-                    DefaultRedirectStrategy()
-                )
-            )
+            }.logoutEndpoint {}
         }
+            .authorizationEndpoint {
+                it.authorizationResponseHandler(
+                    sendAuthorizationResponse(
+                        redisTemplate,
+                        SessionManagementFactory(providerSettings),
+                        DefaultRedirectStrategy()
+                    )
+                )
+            }
         http.exceptionHandling { it.authenticationEntryPoint(LoginUrlAuthenticationEntryPoint("/login")) }
             .oauth2ResourceServer { it.jwt {} }
 

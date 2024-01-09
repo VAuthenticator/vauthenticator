@@ -70,6 +70,7 @@ class ClientAppRegisteredClientRepository(
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
                 .scopes { scopes -> scopes.addAll(clientApp.scopes.content.map { it.content }) }
                 .redirectUri(clientApp.webServerRedirectUri.content)
+                .postLogoutRedirectUri(clientApp.postLogoutRedirectUri.content)
                 .clientSettings(
                     ClientSettings.builder().requireProofKey(clientApp.withPkce.content).build()
                 )
