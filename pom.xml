@@ -19,7 +19,7 @@
 
     <properties>
         <java.version>21</java.version>
-        <kotlin.version>1.9.2</kotlin.version>
+        <kotlin.version>1.9.22</kotlin.version>
 
         <vauthenticator-starters.version>0.6</vauthenticator-starters.version>
         <io.mockk.version>1.13.9</io.mockk.version>
