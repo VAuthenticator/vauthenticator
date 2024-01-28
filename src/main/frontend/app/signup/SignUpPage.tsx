@@ -10,8 +10,15 @@ import {GroupAdd, VpnKey} from "@mui/icons-material";
 import theme from "../component/styles";
 import FormInputMask from "../component/FormInputMask";
 import ComponentInitializer from "../utils/ComponentInitializer";
+import getDataFromDomUtils from "../utils/getDataFromDomUtils";
 
-const SignUpPage = () => {
+interface SignUpProps {
+    rawI18nMessages: string
+}
+
+const SignUpPage: React.FC<SignUpProps> = ({rawI18nMessages}) => {
+    let i18nMessages = JSON.parse(rawI18nMessages);
+
     const [email, setEmail] = React.useState("")
     const [password, setPassword] = React.useState("")
     const [firstName, setFirstName] = React.useState("")
@@ -23,7 +30,7 @@ const SignUpPage = () => {
         <ThemeProvider theme={theme}>
             <Template maxWidth="sm">
                 <Typography variant="h3" component="h3">
-                    <VpnKey fontSize="large"/> Sign Up on VAuthenticator
+                    <VpnKey fontSize="large"/> {i18nMessages["pageTitleText"]} VAuthenticator
                 </Typography>
 
                 <Grid style={{marginTop: '10px'}}>
@@ -31,7 +38,7 @@ const SignUpPage = () => {
                 </Grid>
 
                 <FormInputTextField id="email"
-                                    label="Email"
+                                    label={i18nMessages["emailPlaceholderText"]}
                                     required={true}
                                     handler={(value) => {
                                         setEmail(value.target.value)
@@ -39,7 +46,7 @@ const SignUpPage = () => {
                                     value={email || ""}/>
 
                 <FormInputTextField id="password"
-                                    label="Password"
+                                    label={i18nMessages["passwordPlaceholderText"]}
                                     type="Password"
                                     required={true}
                                     handler={(value) => {
@@ -48,7 +55,7 @@ const SignUpPage = () => {
                                     value={password || ""}/>
 
                 <FormInputTextField id="firstName"
-                                    label="First Name"
+                                    label={i18nMessages["firstNamePlaceholderText"]}
                                     required={true}
                                     handler={(value) => {
                                         setFirstName(value.target.value)
@@ -56,7 +63,7 @@ const SignUpPage = () => {
                                     value={firstName || ""}/>
 
                 <FormInputTextField id="lastName"
-                                    label="Last Name"
+                                    label={i18nMessages["lastNamePlaceholderText"]}
                                     required={true}
                                     handler={(value) => {
                                         setLastName(value.target.value)
@@ -75,11 +82,11 @@ const SignUpPage = () => {
                             console.error(e)
                         }
                     }}
-                    label="Birth Date"/>
+                    label={i18nMessages["birthDatePlaceholderText"]}/>
 
 
                 <FormInputMask id="phone"
-                               label="Phone"
+                               label={i18nMessages["phonePlaceholderText"]}
                                required={false}
                                handler={(value: any) => {
                                    setPhone(value.target.value)
@@ -107,10 +114,11 @@ const SignUpPage = () => {
                                     })
                             }}
                             labelPrefix={<GroupAdd fontSize="large"/>}
-                            label={"Sign Up"}/>
+                            label={i18nMessages["submitButtonText"]}/>
             </Template>
         </ThemeProvider>
     )
 }
+let i18nMessages = getDataFromDomUtils('i18nMessages')
 
-ComponentInitializer(<SignUpPage/>)
+ComponentInitializer(<SignUpPage rawI18nMessages={i18nMessages}/>)
