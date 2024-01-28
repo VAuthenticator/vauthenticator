@@ -3,7 +3,6 @@ import Template from "../component/Template";
 import {Divider, Grid, ThemeProvider, Typography} from "@mui/material";
 import {VpnKey} from "@mui/icons-material";
 import theme from "../component/styles";
-import {createRoot} from "react-dom/client";
 import ComponentInitializer from "../utils/ComponentInitializer";
 
 const SuccessfulSignUpPage = () => {

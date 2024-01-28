@@ -10,6 +10,8 @@ value class I18nMessages(val content: Map<I18nMessageKey, I18nMessageValue>){
     }
 }
 
-enum class I18nScope (val path : String){
-    LOGIN_PAGE("/i18n/login_page")
+enum class I18nScope (val prefix : String){
+    LOGIN_PAGE("login_page"),
+    SIGN_UP_PAGE("/i18n/sign_up_page"),
+    SUCCESSFUL_SIGN_UP_PAGE("/i18n/successful_sign_up_page"),
 }
