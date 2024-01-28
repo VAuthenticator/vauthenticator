@@ -93,20 +93,21 @@ c-111 1 -132 4 -194 28 -38 15 -96 43 -128 62 -32 19 -64 35 -70 35 -7 0 -30
 interface LoginProps {
     rawFeatures: string
     rawErrors: string
+    rawI18nMessages: string
 }
 
-const Login: React.FC<LoginProps> = ({rawFeatures, rawErrors}) => {
-    let signUpLink = <div>
-        <h3>are you not registered? if you want you can register <a href="/sign-up">here</a></h3>
-    </div>
-    let resetPasswordLink = <div>
-        <h3>do you have forgot your password? please click
-            <a href='/reset-password/reset-password-challenge-sender'>here</a> to recover your password
-        </h3>
-    </div>
+const Login: React.FC<LoginProps> = ({rawFeatures, rawErrors, rawI18nMessages}) => {
     let features = JSON.parse(rawFeatures);
     let errorMessage = JSON.parse(rawErrors)["login"];
+    let i18nMessages = JSON.parse(rawI18nMessages);
     const errorsBanner = <ErrorBanner errorMessage={errorMessage}/>
+
+    let signUpLink = <div>
+        <h3>{i18nMessages["signUpText"]} <a href="/sign-up">{i18nMessages["linkText"]}</a></h3>
+    </div>
+    let resetPasswordLink = <div>
+        <h3>{i18nMessages["recoveryPasswordTextBeforeLink"]} <a href='/reset-password/reset-password-challenge-sender'>{i18nMessages["linkText"]}</a> {i18nMessages["recoveryPasswordTextAfterLink"]}</h3>
+    </div>
 
     return (
         <ThemeProvider theme={theme}>
@@ -122,18 +123,18 @@ const Login: React.FC<LoginProps> = ({rawFeatures, rawErrors}) => {
                 {<form action="login" method="post">
                     <Box>
                         <FormInputTextField id="username"
-                                            label="Username"
+                                            label={i18nMessages["userNamePlaceholderText"]}
                                             type="email"
                                             suffix={<Person fontSize="large"/>}/>
 
                         <FormInputTextField id="password"
-                                            label="password"
+                                            label={i18nMessages["passwordPlaceholderText"]}
                                             type="password"
                                             suffix={<Fingerprint fontSize="large"/>}/>
 
                         <Separator/>
 
-                        <FormButton type="submit" label="Login"/>
+                        <FormButton type="submit" label={i18nMessages["submitButtonText"]}/>
                     </Box>
 
 
@@ -155,7 +156,8 @@ const Login: React.FC<LoginProps> = ({rawFeatures, rawErrors}) => {
 
 let features = getDataFromDomUtils('features')
 let errors = getDataFromDomUtils('errors')
+let i18nMessages = getDataFromDomUtils('i18nMessages')
 
-let page = <Login rawFeatures={features} rawErrors={errors}/>;
+let page = <Login rawFeatures={features} rawErrors={errors} rawI18nMessages={i18nMessages}/>;
 
 ComponentInitializer(page)

@@ -3,6 +3,8 @@ package com.vauthenticator.server.login
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.extentions.hasEnoughScopes
 import com.vauthenticator.server.extentions.oauth2ClientId
+import com.vauthenticator.server.i18n.I18nMessageInjector
+import com.vauthenticator.server.i18n.I18nScope
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationFeatures
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
@@ -21,6 +23,7 @@ import java.util.*
 @Controller
 @SessionAttributes("clientId", "features")
 class LoginPageController(
+    val i18nMessageInjector : I18nMessageInjector,
     val clientApplicationRepository: ClientApplicationRepository,
     val objectMapper: ObjectMapper
 ) {
@@ -38,6 +41,8 @@ class LoginPageController(
         model.addAttribute("errors", objectMapper.writeValueAsString(errors))
         model.addAttribute("features", objectMapper.writeValueAsString(features))
         model.addAttribute("assetBundle", "login_bundle.js")
+
+        i18nMessageInjector.setMessagedFor(I18nScope.LOGIN_PAGE, model)
 
         return "template"
     }
