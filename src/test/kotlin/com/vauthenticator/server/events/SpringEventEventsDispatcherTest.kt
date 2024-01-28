@@ -2,6 +2,7 @@ package com.vauthenticator.server.events
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.events.EventFixture.vauthenticatorAuthEvent
+import com.vauthenticator.server.i18n.I18nMessageInjector
 import com.vauthenticator.server.login.LoginPageController
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
 import io.mockk.every
@@ -27,12 +28,14 @@ class SpringEventEventsDispatcherTest {
 
     @MockK
     lateinit var clientApplicationRepository: ClientApplicationRepository
+    @MockK
+    lateinit var  i18nMessageInjector : I18nMessageInjector
 
     @BeforeEach
     internal fun setUp() {
         mokMvc =
             MockMvcBuilders.standaloneSetup(
-                LoginPageController(clientApplicationRepository, ObjectMapper())
+                LoginPageController(i18nMessageInjector, clientApplicationRepository, ObjectMapper())
             ).build()
     }
 
