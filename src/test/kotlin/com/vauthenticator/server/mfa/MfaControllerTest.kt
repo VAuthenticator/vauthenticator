@@ -2,6 +2,8 @@ package com.vauthenticator.server.mfa
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.account.AccountTestFixture.anAccount
+import com.vauthenticator.server.i18n.I18nMessageInjector
+import com.vauthenticator.server.i18n.I18nScope
 import com.vauthenticator.server.support.SecurityFixture.principalFor
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -36,6 +38,9 @@ internal class MfaControllerTest {
     private lateinit var publisher: ApplicationEventPublisher
 
     @MockK
+    private lateinit var i18nMessageInjector: I18nMessageInjector
+
+    @MockK
     private lateinit var otpMfaSender: OtpMfaSender
 
     @MockK
@@ -46,6 +51,7 @@ internal class MfaControllerTest {
     internal fun setUp() {
         mokMvc = MockMvcBuilders.standaloneSetup(
             MfaController(
+                i18nMessageInjector,
                 publisher,
                 ObjectMapper(),
                 successHandler, failureHandler,
@@ -67,10 +73,14 @@ internal class MfaControllerTest {
 
     @Test
     internal fun `when an mfa challenge is rendered`() {
+        every { i18nMessageInjector.setMessagedFor(I18nScope.MFA_PAGE, any()) } just runs
+
         mokMvc.perform(
             get("/mfa-challenge")
                 .principal(principalFor(account.email))
         ).andExpect(view().name("template"))
+
+        verify { i18nMessageInjector.setMessagedFor(I18nScope.MFA_PAGE, any()) }
     }
 
     @Test

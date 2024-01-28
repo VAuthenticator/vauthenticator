@@ -12,9 +12,10 @@ import ComponentInitializer from "../utils/ComponentInitializer";
 
 interface MfaChallengePageProps {
     rawErrors: string
+    rawI18nMessages: string
 }
 
-const MfaChallengePage: React.FC<MfaChallengePageProps> = ({rawErrors}) => {
+const MfaChallengePage: React.FC<MfaChallengePageProps> = ({rawErrors,rawI18nMessages}) => {
     let sendAgainMfaCode = () => {
         fetch("/mfa-challenge/send", {
             method: 'PUT', // *GET, POST, PUT, DELETE, etc.
@@ -23,6 +24,8 @@ const MfaChallengePage: React.FC<MfaChallengePageProps> = ({rawErrors}) => {
     }
 
     let errorMessage = JSON.parse(rawErrors)["mfa-challenge"];
+    let i18nMessages = JSON.parse(rawI18nMessages)
+
     const errorsBanner = <ErrorBanner errorMessage={errorMessage}/>
 
     return (
@@ -30,7 +33,7 @@ const MfaChallengePage: React.FC<MfaChallengePageProps> = ({rawErrors}) => {
 
             <Template maxWidth="sm">
                 <Typography variant="h3" component="h3">
-                    <VpnKey fontSize="large"/> VAuthenticator MFA module
+                    <VpnKey fontSize="large"/> {i18nMessages["pageTitleText"]}
                 </Typography>
 
                 <Grid style={{marginTop: '10px'}}>
@@ -41,15 +44,15 @@ const MfaChallengePage: React.FC<MfaChallengePageProps> = ({rawErrors}) => {
                 {<form action="mfa-challenge" method="post">
                     <Box>
                         <FormInputTextField id="mfa-code"
-                                            label="mfa-code"
+                                            label={i18nMessages["mfaPlaceholderText"]}
                                             type="text"
                                             suffix={<Person fontSize="large"/>}/>
 
                         <Separator/>
 
-                        <FormButton type="submit" label="Login"/>
+                        <FormButton type="submit" label={i18nMessages["submitButtonText"]}/>
 
-                        <FormButton type="button" label="Send again code" onClickHandler={() => sendAgainMfaCode()}/>
+                        <FormButton type="button" label={i18nMessages["sendAgainButtonText"]} onClickHandler={() => sendAgainMfaCode()}/>
                     </Box>
                 </form>}
             </Template>
@@ -59,6 +62,8 @@ const MfaChallengePage: React.FC<MfaChallengePageProps> = ({rawErrors}) => {
 }
 
 let errors = getDataFromDomUtils('errors')
-let page = <MfaChallengePage rawErrors={errors}/>;
+let i18nMessages = getDataFromDomUtils('i18nMessages')
+
+let page = <MfaChallengePage rawErrors={errors} rawI18nMessages={i18nMessages}/>;
 
 ComponentInitializer(page)
