@@ -4,14 +4,20 @@ import theme from "../component/styles";
 import Template from "../component/Template";
 import {Mail} from "@mui/icons-material";
 import ComponentInitializer from "../utils/ComponentInitializer";
+import getDataFromDomUtils from "../utils/getDataFromDomUtils";
 
+interface SuccessfulMailVerifyPagePageProps {
+    rawI18nMessages: string
+}
 
-const SuccessfulMailVerifyPage = () => {
+const SuccessfulMailVerifyPage: React.FC<SuccessfulMailVerifyPagePageProps> = ({rawI18nMessages}) => {
+    let i18nMessages = JSON.parse(rawI18nMessages);
+
     return (
         <ThemeProvider theme={theme}>
             <Template maxWidth="lg">
                 <Typography variant="h3" component="h3">
-                    <Mail fontSize="large"/> Confirmation of your email verification
+                    <Mail fontSize="large"/> {i18nMessages["pageTitleText"]}
                 </Typography>
 
                 <Grid style={{marginTop: '10px'}}>
@@ -19,11 +25,13 @@ const SuccessfulMailVerifyPage = () => {
                 </Grid>
 
                 <Typography variant="h3" component="h2">
-                    Your email has been successful verified.
+                    {i18nMessages["pageSuccessfulMessageText"]}
                 </Typography>
             </Template>
         </ThemeProvider>
     )
 }
 
-ComponentInitializer(<SuccessfulMailVerifyPage/>)
+const i18nMessages = getDataFromDomUtils('i18nMessages')
+
+ComponentInitializer(<SuccessfulMailVerifyPage rawI18nMessages={i18nMessages}/>)

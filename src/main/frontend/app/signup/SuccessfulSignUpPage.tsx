@@ -1,17 +1,24 @@
 import React from "react";
+
 import Template from "../component/Template";
 import {Divider, Grid, ThemeProvider, Typography} from "@mui/material";
 import {VpnKey} from "@mui/icons-material";
 import theme from "../component/styles";
-import {createRoot} from "react-dom/client";
 import ComponentInitializer from "../utils/ComponentInitializer";
+import getDataFromDomUtils from "../utils/getDataFromDomUtils";
 
-const SuccessfulSignUpPage = () => {
+interface SuccessfulSignUpProps {
+    rawI18nMessages: string
+}
+
+const SuccessfulSignUpPage: React.FC<SuccessfulSignUpProps> = ({rawI18nMessages}) => {
+    const i18nMessages = JSON.parse(rawI18nMessages);
+
     return (
         <ThemeProvider theme={theme}>
             <Template maxWidth="lg">
                 <Typography variant="h3" component="h3">
-                    <VpnKey fontSize="large"/> Sign Up on VAuthenticator
+                    <VpnKey fontSize="large"/> {i18nMessages["pageTitleText"]} VAuthenticator
                 </Typography>
 
                 <Grid style={{marginTop: '10px'}}>
@@ -19,11 +26,13 @@ const SuccessfulSignUpPage = () => {
                 </Grid>
 
                 <Typography variant="h3" component="h3">
-                    Sign Up on VAuthenticator succeeded
+                    {i18nMessages["successfulSignUpMessage"]}
                 </Typography>
             </Template>
         </ThemeProvider>
     )
 }
 
-ComponentInitializer(<SuccessfulSignUpPage/>)
+const i18nMessages = getDataFromDomUtils('i18nMessages')
+
+ComponentInitializer(<SuccessfulSignUpPage rawI18nMessages={i18nMessages}/>)

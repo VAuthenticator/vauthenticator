@@ -10,12 +10,15 @@ import getDataFromDomUtils from "../utils/getDataFromDomUtils";
 import ComponentInitializer from "../utils/ComponentInitializer";
 
 interface ResetPasswordPageProps {
-    metadata: string
+    rawMetadata: string
+    rawI18nMessages: string
 }
 
-const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({metadata}) => {
-    const [password, setPassword] = React.useState("")
+const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({rawMetadata, rawI18nMessages}) => {
+    const i18nMessages = JSON.parse(rawI18nMessages);
+    const metadata = JSON.parse(rawMetadata);
 
+    const [password, setPassword] = React.useState("")
     const resetPassword = (ticket: string, password: string) => {
         return fetch(`/api/reset-password/${ticket}`, {
             method: "PUT",
@@ -33,13 +36,13 @@ const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({metadata}) => {
                 window.document.location.href = "/reset-password/successful-password-reset"
             }
         })
-    }
 
+    }
     return (
         <ThemeProvider theme={theme}>
             <Template maxWidth="sm">
                 <Typography variant="h3" component="h3">
-                    <VpnKey fontSize="large"/> Reset your password
+                    <VpnKey fontSize="large"/> {i18nMessages["pageTitleText"]}
                 </Typography>
 
                 <Grid style={{marginTop: '10px'}}>
@@ -48,8 +51,8 @@ const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({metadata}) => {
 
                 <Paper>
                     <FormInputTextField id="newPassword"
-                                        label="New Password"
-                                        type="Password"
+                                        label={i18nMessages["passwordPlaceholderText"]}
+                                        type="password"
                                         required={true}
                                         handler={(value) => {
                                             setPassword(value.target.value)
@@ -59,15 +62,15 @@ const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({metadata}) => {
 
                     <Separator/>
 
-                    <FormButton type="button" label="Reset passwrd"
-                                onClickHandler={() => resetPassword(JSON.parse(metadata)["ticket"], password)}/>
+                    <FormButton type="button" label={i18nMessages["submitButtonTextReset"]}
+                                onClickHandler={() => resetPassword(metadata["ticket"], password)}/>
                 </Paper>
             </Template>
         </ThemeProvider>
     )
 }
 
-let metadata = getDataFromDomUtils('metadata')
-let page = <ResetPasswordPage metadata={metadata}/>;
+const metadata = getDataFromDomUtils('metadata')
+const i18nMessages = getDataFromDomUtils('i18nMessages')
 
-ComponentInitializer(page)
+ComponentInitializer(<ResetPasswordPage rawMetadata={metadata} rawI18nMessages={i18nMessages}/>)

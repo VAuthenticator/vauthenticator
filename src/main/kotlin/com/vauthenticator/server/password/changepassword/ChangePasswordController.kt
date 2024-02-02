@@ -2,6 +2,8 @@ package com.vauthenticator.server.password.changepassword
 
 import com.vauthenticator.server.account.AccountMandatoryAction
 import com.vauthenticator.server.account.repository.AccountRepository
+import com.vauthenticator.server.i18n.I18nMessageInjector
+import com.vauthenticator.server.i18n.I18nScope
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam
 
 @Controller
 class ChangePasswordController(
+    private val i18nMessageInjector: I18nMessageInjector,
     private val accountRepository: AccountRepository,
     private val publisher: ApplicationEventPublisher,
     private val changePassword: ChangePassword,
@@ -28,6 +31,7 @@ class ChangePasswordController(
 
     @GetMapping("/change-password")
     fun view(model: Model): String {
+        i18nMessageInjector.setMessagedFor(I18nScope.CHANGE_PASSWORD_PAGE, model)
         model.addAttribute("assetBundle", "changePassword_bundle.js")
         return "template"
     }

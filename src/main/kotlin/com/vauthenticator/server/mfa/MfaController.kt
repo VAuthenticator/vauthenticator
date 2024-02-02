@@ -1,6 +1,8 @@
 package com.vauthenticator.server.mfa
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.vauthenticator.server.i18n.I18nMessageInjector
+import com.vauthenticator.server.i18n.I18nScope
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
@@ -15,6 +17,7 @@ import java.util.*
 
 @Controller
 class MfaController(
+    private val i18nMessageInjector : I18nMessageInjector,
     private val publisher: ApplicationEventPublisher,
     private val objectMapper: ObjectMapper,
     private val nextHopeLoginWorkflowSuccessHandler: AuthenticationSuccessHandler,
@@ -39,6 +42,8 @@ class MfaController(
         val errors = errorMessageFor(httpServletRequest)
         model.addAttribute("errors", objectMapper.writeValueAsString(errors))
         model.addAttribute("assetBundle", "mfa_bundle.js")
+        i18nMessageInjector.setMessagedFor(I18nScope.MFA_PAGE, model)
+
         return "template"
     }
 
