@@ -15,16 +15,16 @@ interface MfaChallengePageProps {
     rawI18nMessages: string
 }
 
-const MfaChallengePage: React.FC<MfaChallengePageProps> = ({rawErrors,rawI18nMessages}) => {
-    let sendAgainMfaCode = () => {
+const MfaChallengePage: React.FC<MfaChallengePageProps> = ({rawErrors, rawI18nMessages}) => {
+    const sendAgainMfaCode = () => {
         fetch("/mfa-challenge/send", {
             method: 'PUT', // *GET, POST, PUT, DELETE, etc.
             credentials: 'same-origin', // include, *same-origin, omit
         });
     }
 
-    let errorMessage = JSON.parse(rawErrors)["mfa-challenge"];
-    let i18nMessages = JSON.parse(rawI18nMessages)
+    const errorMessage = JSON.parse(rawErrors)["mfa-challenge"];
+    const i18nMessages = JSON.parse(rawI18nMessages)
 
     const errorsBanner = <ErrorBanner errorMessage={errorMessage}/>
 
@@ -52,7 +52,8 @@ const MfaChallengePage: React.FC<MfaChallengePageProps> = ({rawErrors,rawI18nMes
 
                         <FormButton type="submit" label={i18nMessages["submitButtonText"]}/>
 
-                        <FormButton type="button" label={i18nMessages["sendAgainButtonText"]} onClickHandler={() => sendAgainMfaCode()}/>
+                        <FormButton type="button" label={i18nMessages["sendAgainButtonText"]}
+                                    onClickHandler={() => sendAgainMfaCode()}/>
                     </Box>
                 </form>}
             </Template>
@@ -61,9 +62,7 @@ const MfaChallengePage: React.FC<MfaChallengePageProps> = ({rawErrors,rawI18nMes
     )
 }
 
-let errors = getDataFromDomUtils('errors')
-let i18nMessages = getDataFromDomUtils('i18nMessages')
+const errors = getDataFromDomUtils('errors')
+const i18nMessages = getDataFromDomUtils('i18nMessages')
 
-let page = <MfaChallengePage rawErrors={errors} rawI18nMessages={i18nMessages}/>;
-
-ComponentInitializer(page)
+ComponentInitializer(<MfaChallengePage rawErrors={errors} rawI18nMessages={i18nMessages}/>)

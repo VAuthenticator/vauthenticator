@@ -7,9 +7,14 @@ import FormInputTextField from "../component/FormInputTextField";
 import Separator from "../component/Separator";
 import FormButton from "../component/FormButton";
 import ComponentInitializer from "../utils/ComponentInitializer";
+import getDataFromDomUtils from "../utils/getDataFromDomUtils";
 
+interface ResetPasswordChallengeSenderPageProps {
+    rawI18nMessages: string
+}
 
-const ResetPasswordChallengeSender = () => {
+const ResetPasswordChallengeSender: React.FC<ResetPasswordChallengeSenderPageProps> = ({rawI18nMessages}) => {
+    const i18nMessages = JSON.parse(rawI18nMessages)
     const [email, setEmail] = React.useState("")
 
     const sentResetPasswordChallenge = (email: string) => {
@@ -32,7 +37,7 @@ const ResetPasswordChallengeSender = () => {
         <ThemeProvider theme={theme}>
             <Template maxWidth="sm">
                 <Typography variant="h3" component="h3">
-                    <VpnKey fontSize="large"/> Reset your password
+                    <VpnKey fontSize="large"/> {i18nMessages["pageTitleText"]}
                 </Typography>
 
                 <Grid style={{marginTop: '10px'}}>
@@ -52,7 +57,7 @@ const ResetPasswordChallengeSender = () => {
 
                     <Separator/>
 
-                    <FormButton type="button" label="Reset passwrd" onClickHandler={() => {
+                    <FormButton type="button" label={i18nMessages["submitButtonText"]} onClickHandler={() => {
                         sentResetPasswordChallenge(email)
                     }}/>
 
@@ -63,4 +68,6 @@ const ResetPasswordChallengeSender = () => {
     )
 }
 
-ComponentInitializer(<ResetPasswordChallengeSender/>)
+const i18nMessages = getDataFromDomUtils('i18nMessages')
+
+ComponentInitializer(<ResetPasswordChallengeSender rawI18nMessages={i18nMessages}/>)

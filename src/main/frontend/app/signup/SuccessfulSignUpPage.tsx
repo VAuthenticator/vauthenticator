@@ -11,8 +11,8 @@ interface SuccessfulSignUpProps {
     rawI18nMessages: string
 }
 
-const SuccessfulSignUpPage : React.FC<SuccessfulSignUpProps> = ({rawI18nMessages}) => {
-    let i18nMessages = JSON.parse(rawI18nMessages);
+const SuccessfulSignUpPage: React.FC<SuccessfulSignUpProps> = ({rawI18nMessages}) => {
+    const i18nMessages = JSON.parse(rawI18nMessages);
 
     return (
         <ThemeProvider theme={theme}>
@@ -32,6 +32,7 @@ const SuccessfulSignUpPage : React.FC<SuccessfulSignUpProps> = ({rawI18nMessages
         </ThemeProvider>
     )
 }
-let i18nMessages = getDataFromDomUtils('i18nMessages')
+
+const i18nMessages = getDataFromDomUtils('i18nMessages')
 
 ComponentInitializer(<SuccessfulSignUpPage rawI18nMessages={i18nMessages}/>)

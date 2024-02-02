@@ -1,5 +1,7 @@
 package com.vauthenticator.server.account.mailverification
 
+import com.vauthenticator.server.i18n.I18nMessageInjector
+import com.vauthenticator.server.i18n.I18nScope
 import com.vauthenticator.server.oauth2.clientapp.Scope
 import com.vauthenticator.server.oauth2.clientapp.Scopes
 import com.vauthenticator.server.role.PermissionValidator
@@ -19,7 +21,7 @@ class MailVerificationEndPoint(
 
     @PutMapping("/api/verify-challenge")
     fun sendVerifyMail(
-        @RequestBody request : Map<String,String>,
+        @RequestBody request: Map<String, String>,
         httpSession: HttpSession,
         principal: JwtAuthenticationToken
     ): ResponseEntity<Unit> {
@@ -32,11 +34,16 @@ class MailVerificationEndPoint(
 }
 
 @Controller
-class MailVerificationController(private val verifyMailChallengeSent: VerifyMailChallengeSent) {
+class MailVerificationController(
+    private val i18nMessageInjector: I18nMessageInjector,
+    private val verifyMailChallengeSent: VerifyMailChallengeSent
+) {
 
     @GetMapping("/mail-verify/{ticket}")
-    fun verifyMail(@PathVariable ticket: String, model : Model): String {
+    fun verifyMail(@PathVariable ticket: String, model: Model): String {
         verifyMailChallengeSent.verifyMail(ticket)
+
+        i18nMessageInjector.setMessagedFor(I18nScope.SUCCESSFUL_MAIL_VERIFY_PAGE, model)
         model.addAttribute("assetBundle", "successfulMailVerify_bundle.js")
         return "template"
     }

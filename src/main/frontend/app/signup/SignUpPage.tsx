@@ -17,7 +17,7 @@ interface SignUpProps {
 }
 
 const SignUpPage: React.FC<SignUpProps> = ({rawI18nMessages}) => {
-    let i18nMessages = JSON.parse(rawI18nMessages);
+    const i18nMessages = JSON.parse(rawI18nMessages);
 
     const [email, setEmail] = React.useState("")
     const [password, setPassword] = React.useState("")
@@ -119,6 +119,7 @@ const SignUpPage: React.FC<SignUpProps> = ({rawI18nMessages}) => {
         </ThemeProvider>
     )
 }
-let i18nMessages = getDataFromDomUtils('i18nMessages')
+
+const  i18nMessages = getDataFromDomUtils('i18nMessages')
 
 ComponentInitializer(<SignUpPage rawI18nMessages={i18nMessages}/>)

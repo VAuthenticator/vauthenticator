@@ -97,16 +97,18 @@ interface LoginProps {
 }
 
 const Login: React.FC<LoginProps> = ({rawFeatures, rawErrors, rawI18nMessages}) => {
-    let features = JSON.parse(rawFeatures);
-    let errorMessage = JSON.parse(rawErrors)["login"];
-    let i18nMessages = JSON.parse(rawI18nMessages);
+    const features = JSON.parse(rawFeatures);
+    const errorMessage = JSON.parse(rawErrors)["login"];
+    const i18nMessages = JSON.parse(rawI18nMessages);
     const errorsBanner = <ErrorBanner errorMessage={errorMessage}/>
 
-    let signUpLink = <div>
+    const signUpLink = <div>
         <h3>{i18nMessages["signUpText"]} <a href="/sign-up">{i18nMessages["linkText"]}</a></h3>
     </div>
-    let resetPasswordLink = <div>
-        <h3>{i18nMessages["recoveryPasswordTextBeforeLink"]} <a href='/reset-password/reset-password-challenge-sender'>{i18nMessages["linkText"]}</a> {i18nMessages["recoveryPasswordTextAfterLink"]}</h3>
+    const resetPasswordLink = <div>
+        <h3>{i18nMessages["recoveryPasswordTextBeforeLink"]} <a
+            href='/reset-password/reset-password-challenge-sender'>{i18nMessages["linkText"]}</a> {i18nMessages["recoveryPasswordTextAfterLink"]}
+        </h3>
     </div>
 
     return (
@@ -154,10 +156,8 @@ const Login: React.FC<LoginProps> = ({rawFeatures, rawErrors, rawI18nMessages}) 
     )
 }
 
-let features = getDataFromDomUtils('features')
-let errors = getDataFromDomUtils('errors')
-let i18nMessages = getDataFromDomUtils('i18nMessages')
+const features = getDataFromDomUtils('features')
+const errors = getDataFromDomUtils('errors')
+const i18nMessages = getDataFromDomUtils('i18nMessages')
 
-let page = <Login rawFeatures={features} rawErrors={errors} rawI18nMessages={i18nMessages}/>;
-
-ComponentInitializer(page)
+ComponentInitializer(<Login rawFeatures={features} rawErrors={errors} rawI18nMessages={i18nMessages}/>)

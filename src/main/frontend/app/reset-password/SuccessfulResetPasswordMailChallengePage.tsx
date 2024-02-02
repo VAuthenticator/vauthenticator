@@ -4,14 +4,19 @@ import theme from "../component/styles";
 import Template from "../component/Template";
 import {VpnKey} from "@mui/icons-material";
 import ComponentInitializer from "../utils/ComponentInitializer";
+import getDataFromDomUtils from "../utils/getDataFromDomUtils";
 
+interface SuccessfulResetPasswordMailChallengePageProps {
+    rawI18nMessages: string
+}
 
-const SuccessfulResetPasswordMailChallenge = () => {
+const SuccessfulResetPasswordMailChallenge: React.FC<SuccessfulResetPasswordMailChallengePageProps> = ({rawI18nMessages}) => {
+    const i18nMessages = JSON.parse(rawI18nMessages)
     return (
         <ThemeProvider theme={theme}>
             <Template maxWidth="lg">
                 <Typography variant="h3" component="h3">
-                    <VpnKey fontSize="large"/> Reset Password
+                    <VpnKey fontSize="large"/> {i18nMessages["pageTitleText"]}
                 </Typography>
 
                 <Grid style={{marginTop: '10px'}}>
@@ -19,15 +24,13 @@ const SuccessfulResetPasswordMailChallenge = () => {
                 </Grid>
 
                 <Typography variant="h3" component="h3">
-                    We are sent an email on your account inbox please follow the instruction on the mail to reset your
-                    password
+                    {i18nMessages["pageSuccessfulMessageText"]}
                 </Typography>
             </Template>
         </ThemeProvider>
     )
 }
 
+const i18nMessages = getDataFromDomUtils('i18nMessages')
 
-const page = <SuccessfulResetPasswordMailChallenge/>
-
-ComponentInitializer(page)
+ComponentInitializer(<SuccessfulResetPasswordMailChallenge rawI18nMessages={i18nMessages}/>)
