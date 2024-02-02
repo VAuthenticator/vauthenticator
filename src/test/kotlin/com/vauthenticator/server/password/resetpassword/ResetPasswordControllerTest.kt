@@ -33,19 +33,19 @@ internal class ResetPasswordControllerTest {
     }
 
     @Test
-    internal fun `when the reset password page is shown`() {
+    internal fun `when the reset password challenge page is shown`() {
         every { i18nMessageInjector.setMessagedFor(I18nScope.RESET_PASSWORD_CHALLENGE_SENDER_PAGE, any()) } just runs
 
-        mokMvc.perform(get("/reset-password/{ticket}", "A_TICKET"))
+        mokMvc.perform(get("/reset-password/reset-password-challenge-sender"))
             .andExpect(status().isOk)
-            .andExpect(model().attribute("metadata", objectMapper.writeValueAsString(mapOf("ticket" to "A_TICKET"))))
+            .andExpect(model().attribute("assetBundle", "resetPasswordChallengeSender_bundle.js"))
             .andExpect(view().name("template"))
 
         verify { i18nMessageInjector.setMessagedFor(I18nScope.RESET_PASSWORD_CHALLENGE_SENDER_PAGE, any()) }
     }
 
     @Test
-    internal fun `when the successful reset password page is shown`() {
+    internal fun `when the successful reset password challenge page is shown`() {
         every {
             i18nMessageInjector.setMessagedFor(
                 I18nScope.SUCCESSFUL_RESET_PASSWORD_CHALLENGE_SENDER_PAGE,
@@ -53,11 +53,43 @@ internal class ResetPasswordControllerTest {
             )
         } just runs
 
-        mokMvc.perform(get("/reset-password/successful-password-reset"))
+        mokMvc.perform(get("/reset-password/successful-reset-password-mail-challenge"))
             .andExpect(status().isOk)
+            .andExpect(model().attribute("assetBundle", "successfulResetPasswordMailChallenge_bundle.js"))
             .andExpect(view().name("template"))
 
         verify { i18nMessageInjector.setMessagedFor(I18nScope.SUCCESSFUL_RESET_PASSWORD_CHALLENGE_SENDER_PAGE, any()) }
+
+    }
+
+    @Test
+    internal fun `when the reset password page is shown`() {
+        every { i18nMessageInjector.setMessagedFor(I18nScope.RESET_PASSWORD_PAGE, any()) } just runs
+
+        mokMvc.perform(get("/reset-password/{ticket}", "A_TICKET"))
+            .andExpect(status().isOk)
+            .andExpect(model().attribute("assetBundle", "resetPassword_bundle.js"))
+            .andExpect(model().attribute("metadata", objectMapper.writeValueAsString(mapOf("ticket" to "A_TICKET"))))
+            .andExpect(view().name("template"))
+
+        verify { i18nMessageInjector.setMessagedFor(I18nScope.RESET_PASSWORD_PAGE, any()) }
+    }
+
+    @Test
+    internal fun `when the successful reset password page is shown`() {
+        every {
+            i18nMessageInjector.setMessagedFor(
+                I18nScope.SUCCESSFUL_RESET_PASSWORD_PAGE,
+                any()
+            )
+        } just runs
+
+        mokMvc.perform(get("/reset-password/successful-password-reset"))
+            .andExpect(status().isOk)
+            .andExpect(model().attribute("assetBundle", "successfulPasswordReset_bundle.js"))
+            .andExpect(view().name("template"))
+
+        verify { i18nMessageInjector.setMessagedFor(I18nScope.SUCCESSFUL_RESET_PASSWORD_PAGE, any()) }
 
     }
 }
