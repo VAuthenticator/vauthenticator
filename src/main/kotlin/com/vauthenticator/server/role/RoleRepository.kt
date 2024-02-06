@@ -2,6 +2,8 @@ package com.vauthenticator.server.role
 
 import com.vauthenticator.server.cache.CacheContentConverter
 import com.vauthenticator.server.cache.CacheOperation
+import com.vauthenticator.server.extentions.asDynamoAttribute
+import com.vauthenticator.server.extentions.valueAsStringFor
 import com.vauthenticator.server.role.DynamoDbRoleMapper.deleteRoleRequestFor
 import com.vauthenticator.server.role.DynamoDbRoleMapper.findAllRequestFor
 import com.vauthenticator.server.role.DynamoDbRoleMapper.roleFor
@@ -53,7 +55,7 @@ class CachedRoleRepository(
 }
 
 class DynamoDbRoleRepository(
-    private val protectedRoleFromDeletion : List<String>,
+    private val protectedRoleFromDeletion: List<String>,
     private val dynamoDbClient: DynamoDbClient,
     private val tableName: String
 ) : RoleRepository {
@@ -88,8 +90,8 @@ object DynamoDbRoleMapper {
         .tableName(tableName)
         .item(
             mutableMapOf(
-                "role_name" to AttributeValue.builder().s(role.name).build(),
-                "description" to AttributeValue.builder().s(role.description).build()
+                "role_name" to role.name.asDynamoAttribute(),
+                "description" to role.description.asDynamoAttribute()
             )
         )
         .build()
@@ -99,15 +101,15 @@ object DynamoDbRoleMapper {
         .tableName(tableName)
         .key(
             mutableMapOf(
-                "role_name" to AttributeValue.builder().s(roleName).build()
+                "role_name" to roleName.asDynamoAttribute()
             )
         )
         .build()
 
     fun roleFor(it: MutableMap<String, AttributeValue>) =
         Role(
-            it["role_name"]?.s()!!,
-            it["description"]?.s().orEmpty()
+            it.valueAsStringFor("role_name"),
+            it.valueAsStringFor("description", "")
         )
 
 }
