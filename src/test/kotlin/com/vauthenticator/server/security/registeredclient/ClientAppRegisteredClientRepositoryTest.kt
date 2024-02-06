@@ -80,7 +80,7 @@ internal class ClientAppRegisteredClientRepositoryTest {
                 aClientApplication().get()
                     .copy(
                         postLogoutRedirectUri = PostLogoutRedirectUri("http://post_logout_redirect_uri"),
-                        logoutUri = LogoutUri(""),
+                        logoutUri = LogoutUri("http://post_logout_redirect_uri"),
                         authorities = Authorities.empty(),
                         scopes = Scopes(setOf(Scope("A_SCOPE"), Scope("ANOTHER_SCOPE")))
                     ), true
