@@ -2,7 +2,11 @@ package com.vauthenticator.server.lambdas
 
 interface LambdaFunction {
 
-    fun save(name: LambdaFunctionName, content: LambdaFunctionContent, dependencies: LambdaFunctionDependencies): LambdaFunctionId
+    fun save(
+        name: LambdaFunctionName,
+        content: LambdaFunctionContent,
+        dependencies: LambdaFunctionDependencies
+    ): LambdaFunctionId
 
     fun delete(id: LambdaFunctionId)
 
@@ -27,11 +31,4 @@ value class LambdaFunctionName(val content: String)
 
 fun interface LambdaFunctionContextFactory {
     fun newLambdaFunctionContext(): LambdaFunctionContext
-}
-
-class AccessTokenLambdaFunctionContextFactory : LambdaFunctionContextFactory {
-    override fun newLambdaFunctionContext(): LambdaFunctionContext {
-        return emptyMap()
-    }
-
 }

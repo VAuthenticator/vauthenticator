@@ -2,9 +2,6 @@ package com.vauthenticator.server.oauth2.token
 
 import com.vauthenticator.server.keys.KeyRepository
 import com.vauthenticator.server.keys.Kid
-import com.vauthenticator.server.lambdas.LambdaFunction
-import com.vauthenticator.server.lambdas.LambdaFunctionContextFactory
-import com.vauthenticator.server.lambdas.LambdaFunctionId
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
 import org.springframework.security.core.Authentication
@@ -15,8 +12,6 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
 import java.util.stream.Collectors
 
 class OAuth2TokenEnhancer(
-    private val lambdaFunction: LambdaFunction,
-    private val lambdaFunctionContextFactory: LambdaFunctionContextFactory,
     private val assignedKeys: MutableSet<Kid>,
     private val keyRepository: KeyRepository,
     private val clientApplicationRepository: ClientApplicationRepository
@@ -27,13 +22,6 @@ class OAuth2TokenEnhancer(
 
             val signatureKey = keyRepository.signatureKeys().peekOneAtRandomWithout(assignedKeys)
             context.jwsHeader.keyId(signatureKey.kid.content())
-            val newLambdaFunctionContext = lambdaFunctionContextFactory.newLambdaFunctionContext()
-            val lambdaFunctionContext =
-                lambdaFunction.execute(LambdaFunctionId("OAuth2TokenEnhancer"), newLambdaFunctionContext)
-
-            lambdaFunctionContext.map {
-                context.claims.claim(it.key, it.value)
-            }
 
             if (context.authorizationGrantType.equals(AuthorizationGrantType.CLIENT_CREDENTIALS)) {
                 val clientId = context.registeredClient.clientId
