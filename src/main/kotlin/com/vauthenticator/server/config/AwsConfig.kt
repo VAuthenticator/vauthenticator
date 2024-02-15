@@ -10,6 +10,7 @@ import software.amazon.awssdk.auth.credentials.WebIdentityTokenFileCredentialsPr
 import software.amazon.awssdk.core.client.builder.SdkClientBuilder
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.kms.KmsClient
+import software.amazon.awssdk.services.lambda.LambdaClient
 import software.amazon.awssdk.services.s3.S3Client
 import java.net.URI
 import java.util.*
@@ -59,6 +60,14 @@ class AwsConfig {
         .applyMutation { setEndPoint(endpointOverride, it) }
         .build()
 
+    @Bean
+    fun lambdaClient(
+        awsCredentialsProvider: AwsCredentialsProvider,
+        @Value("\${aws.kms.endpointOverride:}") endpointOverride: String
+    ) = LambdaClient.builder()
+        .credentialsProvider(awsCredentialsProvider)
+        .applyMutation { setEndPoint(endpointOverride, it) }
+        .build()
 
     private fun setEndPoint(
         endpointOverride: String,

@@ -15,6 +15,7 @@ class IdTokenEnhancer(
         val tokenType = context.tokenType.value
 
         if ("id_token" == tokenType && !context.authorizationGrantType.equals(AuthorizationGrantType.CLIENT_CREDENTIALS)) {
+            println("IdTokenEnhancer invoked")
             val signatureKey = keyRepository.signatureKeys().peekOneAtRandomWithout(assignedKeys)
             context.jwsHeader.keyId(signatureKey.kid.content())
 

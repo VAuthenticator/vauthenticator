@@ -15,7 +15,6 @@ open class UserInfoEnhancer(private val accountRepository: AccountRepository) {
             .map { account ->
                 val claims = mutableMapOf<String, Any>()
 
-                claims["username"] = userName(principal)
                 claims["authorities"] = authorities(principal)
 
                 OpenIdClaimsProvider(account, claims)
@@ -76,4 +75,4 @@ fun authorities(principal: OidcUserInfoAuthenticationContext) =
     principal.authorization.accessToken.claims!!["authorities"] as List<String>
 
 fun userName(principal: OidcUserInfoAuthenticationContext) =
-    principal.authorization.accessToken.claims!!["user_name"] as String
+    principal.authorization.accessToken.claims!!["sub"] as String
