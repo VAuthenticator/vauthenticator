@@ -2,10 +2,14 @@ package com.vauthenticator.server.lambdas
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.vauthenticator.server.extentions.toSha256
+import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Component
+import org.springframework.web.context.request.RequestContextHolder.currentRequestAttributes
 import software.amazon.awssdk.core.SdkBytes
 import software.amazon.awssdk.services.lambda.LambdaClient
 import software.amazon.awssdk.services.lambda.model.InvokeRequest
+import java.util.*
 
 interface LambdaFunction {
 
@@ -43,6 +47,7 @@ fun interface LambdaFunctionContextFactory<T> {
 
 @Component
 class AwsLambdaFunction(
+    private val redisTemplate: RedisTemplate<String, String>,
     private val objectMapper: ObjectMapper,
     private val client: LambdaClient
 ) : LambdaFunction {
@@ -60,14 +65,23 @@ class AwsLambdaFunction(
 
     override fun execute(id: LambdaFunctionId, context: LambdaFunctionContext): LambdaFunctionContext {
         val typeRef: TypeReference<Map<String, Any>> = object : TypeReference<Map<String, Any>>() {}
+        val sessionId = currentRequestAttributes().sessionId;
 
-        val invokeRequest: InvokeRequest = InvokeRequest.builder()
-            .functionName(id.content)
-            .payload(SdkBytes.fromUtf8String(objectMapper.writeValueAsString(context.content)))
-            .build()
+        val opsForHash = redisTemplate.opsForHash<String, String>()
+        return Optional.ofNullable(opsForHash.get(sessionId, sessionId.toSha256()))
+            .map { LambdaFunctionContext(objectMapper.readValue(it, typeRef)) }
+            .orElseGet {
+                val invokeRequest: InvokeRequest = InvokeRequest.builder()
+                    .functionName(id.content)
+                    .payload(SdkBytes.fromUtf8String(objectMapper.writeValueAsString(context.content)))
+                    .build()
 
-        val invoke = client.invoke(invokeRequest)
-        return LambdaFunctionContext(objectMapper.readValue(invoke.payload().asByteArray(), typeRef))
+                val invoke = client.invoke(invokeRequest)
+                val serializedBody = invoke.payload().asUtf8String()
+
+                opsForHash.put(sessionId, sessionId.toSha256(), serializedBody)
+                LambdaFunctionContext(objectMapper.readValue(serializedBody, typeRef))
+            }
     }
 
 }
