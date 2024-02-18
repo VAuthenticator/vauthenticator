@@ -1,36 +1,35 @@
 package com.vauthenticator.server.lambdas
 
-import org.slf4j.LoggerFactory
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer
 
+
+
 class LambdaTokenEnhancer(
+    private val enabled: Boolean,
+    private val lambdaName : String,
     private val lambdaFunction: LambdaFunction,
     private val lambdaFunctionContextFactory: LambdaFunctionContextFactory<JwtEncodingContext>
 ) : OAuth2TokenCustomizer<JwtEncodingContext> {
 
-    private val logger = LoggerFactory.getLogger(LambdaTokenEnhancer::class.java)
 
     override fun customize(context: JwtEncodingContext) {
-        val tokenType = context.tokenType.value
+        if (enabled) {
+            val tokenType = context.tokenType.value
 
-        logger.debug("LambdaTokenEnhancer executed for token type: $tokenType")
+            val lambdaFunctionId = LambdaFunctionId(lambdaName)
+            val lambdaFunctionContext = lambdaFunctionContextFactory.newLambdaFunctionContext(context)
 
+            val execute = lambdaFunction.execute(lambdaFunctionId, lambdaFunctionContext)
+            if ("id_token" === tokenType) {
+                (execute.content["id_token_claims"] as Map<String, String>)
+                    .map { claim -> context.claims.claim(claim.key, claim.value) }
 
-        val lambdaFunctionId = LambdaFunctionId("vauthenticator-token-enhancer")
-        val lambdaFunctionContext = lambdaFunctionContextFactory.newLambdaFunctionContext(context)
-
-        val execute = lambdaFunction.execute(lambdaFunctionId, lambdaFunctionContext)
-        println(execute)
-        if ("id_token" == tokenType) {
-            (execute.content["id_token_claims"] as Map<String, String>)
-                .map { claim -> context.claims.claim(claim.key, claim.value) }
-
-        } else if ("access_token" === tokenType) {
-            (execute.content["access_token_claims"] as Map<String, String>)
-                .map { claim -> context.claims.claim(claim.key, claim.value) }
+            } else if ("access_token" === tokenType) {
+                (execute.content["access_token_claims"] as Map<String, String>)
+                    .map { claim -> context.claims.claim(claim.key, claim.value) }
+            }
         }
-        println(context.claims)
     }
 }
 

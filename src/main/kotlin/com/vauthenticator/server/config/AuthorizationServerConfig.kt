@@ -70,14 +70,18 @@ class AuthorizationServerConfig {
     @Bean
     fun jwtCustomizer(
         keyRepository: KeyRepository,
+        lambdaFunction: LambdaFunction,
         clientApplicationRepository: ClientApplicationRepository,
-        lambdaFunction: LambdaFunction
-    ): OAuth2TokenCustomizer<JwtEncodingContext> {
+        @Value("\${vauthenticator.lambda.aws.enabled:false}") enabled: Boolean,
+        @Value("\${vauthenticator.lambda.aws.function-name:vauthenticator-token-enhancer}") lambdaName: String,
+
+        ): OAuth2TokenCustomizer<JwtEncodingContext> {
         return OAuth2TokenCustomizer { context: JwtEncodingContext ->
             val assignedKeys = mutableSetOf<Kid>()
             OAuth2TokenEnhancer(assignedKeys, keyRepository, clientApplicationRepository).customize(context)
             IdTokenEnhancer(assignedKeys, keyRepository).customize(context)
-            LambdaTokenEnhancer(lambdaFunction, AwsLambdaFunctionContextFactory()).customize(context)
+            LambdaTokenEnhancer(enabled, lambdaName, lambdaFunction, AwsLambdaFunctionContextFactory())
+                .customize(context)
         }
     }
 
