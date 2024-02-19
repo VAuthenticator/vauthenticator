@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.extentions.toSha256
 import org.springframework.data.redis.core.RedisTemplate
-import org.springframework.stereotype.Component
 import org.springframework.web.context.request.RequestContextHolder.currentRequestAttributes
 import software.amazon.awssdk.core.SdkBytes
 import software.amazon.awssdk.services.lambda.LambdaClient
@@ -45,7 +44,6 @@ fun interface LambdaFunctionContextFactory<T> {
     fun newLambdaFunctionContext(input: T): LambdaFunctionContext
 }
 
-@Component
 class AwsLambdaFunction(
     private val redisTemplate: RedisTemplate<String, String>,
     private val objectMapper: ObjectMapper,
