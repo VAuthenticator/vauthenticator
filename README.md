@@ -22,6 +22,7 @@ Right now it is based, as said before to the latest version on spring oauth2/ope
 - welcome mail: admin:welcome scope is required
 - email verification: admin:mail-verify scope is required
 - reset password: admin:reset-password scope is required
+- access_token/id_token customization via lambda, see [here](docs/lambda.md) for more details
 
 **Storage:**
 
