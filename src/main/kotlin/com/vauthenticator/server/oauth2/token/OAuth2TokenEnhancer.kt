@@ -18,29 +18,29 @@ class OAuth2TokenEnhancer(
 ) : OAuth2TokenCustomizer<JwtEncodingContext> {
     override fun customize(context: JwtEncodingContext) {
         val tokenType = context.tokenType.value
-        if ("access_token" == tokenType ) {
-
+        if ("access_token" == tokenType) {
+            println("OAuth2TokenEnhancer invoked")
             val signatureKey = keyRepository.signatureKeys().peekOneAtRandomWithout(assignedKeys)
-            if(context.authorizationGrantType.equals(AuthorizationGrantType.CLIENT_CREDENTIALS)){
+            context.jwsHeader.keyId(signatureKey.kid.content())
+
+            if (context.authorizationGrantType.equals(AuthorizationGrantType.CLIENT_CREDENTIALS)) {
                 val clientId = context.registeredClient.clientId
                 val findOne = clientApplicationRepository.findOne(ClientAppId(clientId))
                 findOne.ifPresent {
                     context.claims.claim("user_name", it.clientAppId.content)
                     context.claims.claim("authorities", it.authorities.content.stream().map { authority -> authority.content }.collect(Collectors.toList()))
                 }
-            }
-            else {
+            } else {
                 val attributes = context.authorization!!.attributes
                 val principal = attributes["java.security.Principal"] as Authentication
 
                 context.claims.claim("user_name", principal.name)
                 context.claims.claim("authorities", principal.authorities
-                        .stream()
-                        .map { obj: GrantedAuthority -> obj.authority }
-                        .collect(Collectors.toList()))
+                    .stream()
+                    .map { obj: GrantedAuthority -> obj.authority }
+                    .collect(Collectors.toList()))
             }
 
-            context.jwsHeader.keyId(signatureKey.kid.content())
         }
     }
 }

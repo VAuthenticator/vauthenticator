@@ -1,5 +1,6 @@
-package com.vauthenticator.server.account
+package com.vauthenticator.server.support
 
+import com.vauthenticator.server.account.*
 import com.vauthenticator.server.role.Role
 
 const val EMAIL = "email@domain.com"

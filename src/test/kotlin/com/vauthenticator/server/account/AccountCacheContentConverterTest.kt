@@ -1,7 +1,7 @@
 package com.vauthenticator.server.account
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.vauthenticator.server.account.AccountTestFixture.anAccount
+import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import com.vauthenticator.server.support.JsonUtils.prettifyInOneLineJsonFrom
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

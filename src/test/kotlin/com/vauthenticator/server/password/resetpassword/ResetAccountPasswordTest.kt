@@ -1,6 +1,5 @@
 package com.vauthenticator.server.password.resetpassword
 
-import com.vauthenticator.server.account.AccountTestFixture.anAccount
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.account.ticket.InvalidTicketException
 import com.vauthenticator.server.account.ticket.TicketRepository
@@ -9,6 +8,7 @@ import com.vauthenticator.server.events.ResetPasswordEvent
 import com.vauthenticator.server.events.VAuthenticatorEventsDispatcher
 import com.vauthenticator.server.password.PasswordPolicy
 import com.vauthenticator.server.password.VAuthenticatorPasswordEncoder
+import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import com.vauthenticator.server.support.TicketFixture
 import io.mockk.every
 import io.mockk.impl.annotations.MockK

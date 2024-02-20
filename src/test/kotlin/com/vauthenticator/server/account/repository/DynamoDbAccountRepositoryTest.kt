@@ -2,8 +2,8 @@ package com.vauthenticator.server.account.repository
 
 import com.vauthenticator.server.account.Account
 import com.vauthenticator.server.account.AccountMandatoryAction.RESET_PASSWORD
-import com.vauthenticator.server.account.AccountTestFixture.anAccount
 import com.vauthenticator.server.role.*
+import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import com.vauthenticator.server.support.DatabaseUtils.dynamoAccountTableName
 import com.vauthenticator.server.support.DatabaseUtils.dynamoDbClient
 import com.vauthenticator.server.support.DatabaseUtils.dynamoRoleTableName

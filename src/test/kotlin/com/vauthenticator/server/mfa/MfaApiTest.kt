@@ -1,5 +1,6 @@
 package com.vauthenticator.server.mfa
 
+import com.vauthenticator.server.support.AccountTestFixture
 import com.vauthenticator.server.support.SecurityFixture
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -21,7 +22,7 @@ internal class MfaApiTest {
     @MockK
     private lateinit var otpMfaSender: OtpMfaSender
 
-    private val account = com.vauthenticator.server.account.AccountTestFixture.anAccount()
+    private val account = AccountTestFixture.anAccount()
 
     @BeforeEach
     internal fun setUp() {

@@ -1,8 +1,8 @@
 package com.vauthenticator.server.password.changepassword
 
 import com.vauthenticator.server.account.AccountMandatoryAction.RESET_PASSWORD
-import com.vauthenticator.server.account.AccountTestFixture
 import com.vauthenticator.server.account.repository.AccountRepository
+import com.vauthenticator.server.support.AccountTestFixture
 import com.vauthenticator.server.support.SecurityFixture.principalFor
 import io.mockk.every
 import io.mockk.impl.annotations.MockK

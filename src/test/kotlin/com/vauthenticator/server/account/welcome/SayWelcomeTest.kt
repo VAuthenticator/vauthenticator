@@ -3,13 +3,14 @@ package com.vauthenticator.server.account.welcome
 import com.vauthenticator.server.account.AccountNotFoundException
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.mail.MailSenderService
+import com.vauthenticator.server.support.AccountTestFixture
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -34,7 +35,7 @@ internal class SayWelcomeTest {
     @Test
     internal fun `happy path`() {
         val email = "email@domain.com"
-        val anAccount = com.vauthenticator.server.account.AccountTestFixture.anAccount()
+        val anAccount = AccountTestFixture.anAccount()
         every { accountRepository.accountFor(email) } returns Optional.of(anAccount)
         every { welcomeMailSender.sendFor(anAccount) } just runs
 
@@ -46,7 +47,7 @@ internal class SayWelcomeTest {
     @Test
     internal fun `sed mail for a non registered account`() {
         val email = "email@domain.com"
-        val anAccount = com.vauthenticator.server.account.AccountTestFixture.anAccount()
+        val anAccount = AccountTestFixture.anAccount()
         every { accountRepository.accountFor(email) } returns Optional.empty()
 
         assertThrows(AccountNotFoundException::class.java) { underTest.welcome(email) }

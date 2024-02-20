@@ -26,7 +26,8 @@ class ClientAppRegisteredClientRepository(
             ClientApplication(
                 clientAppId = ClientAppId(registeredClient.clientId),
                 authorities = Authorities.empty(),
-                logoutUri = LogoutUri(""),
+                logoutUri = LogoutUri(
+                    Optional.ofNullable(registeredClient.postLogoutRedirectUris.firstOrNull()).orElseGet { "" }),
                 postLogoutRedirectUri = PostLogoutRedirectUri(
                     Optional.ofNullable(registeredClient.postLogoutRedirectUris.firstOrNull()).orElseGet { "" }),
                 scopes = Scopes(registeredClient.scopes.map { Scope(it) }.toSet()),
