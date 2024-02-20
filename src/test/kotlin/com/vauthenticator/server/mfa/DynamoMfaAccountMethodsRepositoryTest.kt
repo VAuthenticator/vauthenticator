@@ -1,7 +1,7 @@
 package com.vauthenticator.server.mfa
 
-import com.vauthenticator.server.account.AccountTestFixture.anAccount
 import com.vauthenticator.server.keys.*
+import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import com.vauthenticator.server.support.DatabaseUtils.dynamoDbClient
 import com.vauthenticator.server.support.DatabaseUtils.dynamoMfaAccountMethodsTableName
 import com.vauthenticator.server.support.DatabaseUtils.resetDatabase
@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+
 @ExtendWith(MockKExtension::class)
 class DynamoMfaAccountMethodsRepositoryTest {
 

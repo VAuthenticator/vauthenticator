@@ -1,9 +1,9 @@
 package com.vauthenticator.server.mfa
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.vauthenticator.server.account.AccountTestFixture.anAccount
 import com.vauthenticator.server.i18n.I18nMessageInjector
 import com.vauthenticator.server.i18n.I18nScope
+import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import com.vauthenticator.server.support.SecurityFixture.principalFor
 import io.mockk.every
 import io.mockk.impl.annotations.MockK

@@ -12,11 +12,13 @@ import org.springframework.security.oauth2.server.authorization.token.JwtEncodin
 @ExtendWith(MockKExtension::class)
 class LambdaTokenEnhancerTest {
 
-    private val lambdaFunctionContextFactory: LambdaFunctionContextFactory<JwtEncodingContext> =
-        AwsLambdaFunctionContextFactory()
-
     @MockK
     private lateinit var lambdaFunction: LambdaFunction
+
+    @MockK
+    private lateinit var lambdaFunctionContextFactory: LambdaFunctionContextFactory<JwtEncodingContext>
+
+    private val context = LambdaFunctionContext.empty()
 
     @Test
     fun `when the lambda is not applied`() {
@@ -31,10 +33,11 @@ class LambdaTokenEnhancerTest {
     fun `when the lambda is applied`() {
         val uut = LambdaTokenEnhancer(true, "A_LAMBDA_NAME", lambdaFunction, lambdaFunctionContextFactory)
 
-        every { lambdaFunction.execute(LambdaFunctionId("A_LAMBDA_NAME"), lambdaFunctionContextFactory.newLambdaFunctionContext(newContext)) } returns lambdaFunctionContextFactory.newLambdaFunctionContext(newContext)
+        every { lambdaFunctionContextFactory.newLambdaFunctionContext(newContext) } returns context
+        every { lambdaFunction.execute(LambdaFunctionId("A_LAMBDA_NAME"), context) } returns context
 
         uut.customize(newContext)
 
-        verify(exactly = 1) { lambdaFunction.execute(LambdaFunctionId("A_LAMBDA_NAME"), lambdaFunctionContextFactory.newLambdaFunctionContext(newContext)) }
+        verify(exactly = 1) { lambdaFunction.execute(LambdaFunctionId("A_LAMBDA_NAME"), context) }
     }
 }

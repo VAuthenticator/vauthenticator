@@ -1,6 +1,6 @@
 package com.vauthenticator.server.mail
 
-import com.vauthenticator.server.account.AccountTestFixture.anAccount
+import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 

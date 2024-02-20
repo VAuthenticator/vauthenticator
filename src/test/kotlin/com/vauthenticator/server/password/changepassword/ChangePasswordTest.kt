@@ -1,8 +1,6 @@
 package com.vauthenticator.server.password.changepassword
 
 import com.vauthenticator.server.account.AccountNotFoundException
-import com.vauthenticator.server.account.AccountTestFixture.anAccount
-import com.vauthenticator.server.account.EMAIL
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.clientapp.A_CLIENT_APP_ID
 import com.vauthenticator.server.events.ChangePasswordEvent
@@ -11,6 +9,8 @@ import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.oauth2.clientapp.Scope
 import com.vauthenticator.server.password.PasswordPolicy
 import com.vauthenticator.server.password.VAuthenticatorPasswordEncoder
+import com.vauthenticator.server.support.AccountTestFixture.anAccount
+import com.vauthenticator.server.support.EMAIL
 import com.vauthenticator.server.support.SecurityFixture.principalFor
 import com.vauthenticator.server.support.VAUTHENTICATOR_ADMIN
 import io.mockk.every

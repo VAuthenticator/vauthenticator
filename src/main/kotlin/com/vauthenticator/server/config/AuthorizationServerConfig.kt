@@ -80,7 +80,7 @@ class AuthorizationServerConfig {
             val assignedKeys = mutableSetOf<Kid>()
             OAuth2TokenEnhancer(assignedKeys, keyRepository, clientApplicationRepository).customize(context)
             IdTokenEnhancer(assignedKeys, keyRepository).customize(context)
-            LambdaTokenEnhancer(enabled, lambdaName, lambdaFunction, AwsLambdaFunctionContextFactory())
+            LambdaTokenEnhancer(enabled, lambdaName, lambdaFunction, AwsLambdaFunctionContextFactory(accountRepository))
                 .customize(context)
         }
     }

@@ -8,6 +8,7 @@ import org.springframework.web.context.request.RequestContextHolder.currentReque
 import software.amazon.awssdk.core.SdkBytes
 import software.amazon.awssdk.services.lambda.LambdaClient
 import software.amazon.awssdk.services.lambda.model.InvokeRequest
+import java.time.Duration
 import java.util.*
 
 interface LambdaFunction {
@@ -30,7 +31,23 @@ value class LambdaFunctionId(val content: String)
 typealias LambdaFunctionContent = ByteArray
 
 @JvmInline
-value class LambdaFunctionContext(val content: Map<String, Any>)
+value class LambdaFunctionContext(val content: Map<String, Any>) {
+
+    companion object {
+        fun empty() = LambdaFunctionContext(
+            mapOf(
+                "user" to emptyMap(),
+                "general_context_claims" to mapOf(
+                    "client_id" to "",
+                    "grant_flow" to "",
+                    "authorized_scope" to emptySet<String>()
+                ),
+                "access_token_claims" to emptyMap(),
+                "id_token_claims" to emptyMap()
+            )
+        )
+    }
+}
 
 data class LambdaFunctionDependency(val name: String, val version: String)
 
@@ -46,6 +63,7 @@ fun interface LambdaFunctionContextFactory<T> {
 
 class AwsLambdaFunction(
     private val redisTemplate: RedisTemplate<String, String>,
+    private val ttl: Duration,
     private val objectMapper: ObjectMapper,
     private val client: LambdaClient
 ) : LambdaFunction {
@@ -78,6 +96,7 @@ class AwsLambdaFunction(
                 val serializedBody = invoke.payload().asUtf8String()
 
                 opsForHash.put(sessionId, sessionId.toSha256(), serializedBody)
+                opsForHash.operations.expire(sessionId, ttl)
                 LambdaFunctionContext(objectMapper.readValue(serializedBody, typeRef))
             }
     }

@@ -1,8 +1,8 @@
 package com.vauthenticator.server.mfa
 
-import com.vauthenticator.server.account.AccountTestFixture.anAccount
 import com.vauthenticator.server.extentions.decoder
 import com.vauthenticator.server.keys.*
+import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension

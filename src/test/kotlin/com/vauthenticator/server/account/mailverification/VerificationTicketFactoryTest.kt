@@ -1,13 +1,13 @@
 package com.vauthenticator.server.account.mailverification
 
-import com.vauthenticator.server.account.AccountTestFixture.anAccount
-import com.vauthenticator.server.account.EMAIL
 import com.vauthenticator.server.account.ticket.TicketRepository
 import com.vauthenticator.server.account.ticket.VerificationTicket
 import com.vauthenticator.server.account.ticket.VerificationTicketFactory
 import com.vauthenticator.server.account.ticket.VerificationTicketFeatures
 import com.vauthenticator.server.clientapp.A_CLIENT_APP_ID
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
+import com.vauthenticator.server.support.AccountTestFixture.anAccount
+import com.vauthenticator.server.support.EMAIL
 import com.vauthenticator.server.support.TicketFixture.ticketFor
 import io.mockk.every
 import io.mockk.impl.annotations.MockK

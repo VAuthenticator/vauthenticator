@@ -1,11 +1,11 @@
 package com.vauthenticator.server.account.ticket
 
-import com.vauthenticator.server.account.EMAIL
 import com.vauthenticator.server.clientapp.A_CLIENT_APP_ID
 import com.vauthenticator.server.extentions.asDynamoAttribute
 import com.vauthenticator.server.support.DatabaseUtils
 import com.vauthenticator.server.support.DatabaseUtils.dynamoTicketTableName
 import com.vauthenticator.server.support.DatabaseUtils.resetDatabase
+import com.vauthenticator.server.support.EMAIL
 import com.vauthenticator.server.support.TicketFixture.ticketFor
 import io.mockk.junit5.MockKExtension
 import org.junit.jupiter.api.Assertions.assertEquals

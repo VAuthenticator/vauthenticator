@@ -1,9 +1,9 @@
 package com.vauthenticator.server.account.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.vauthenticator.server.account.AccountTestFixture
 import com.vauthenticator.server.account.ChangeAccountEnabling
 import com.vauthenticator.server.account.repository.AccountRepository
+import com.vauthenticator.server.support.AccountTestFixture
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension

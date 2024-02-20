@@ -7,6 +7,7 @@ import com.vauthenticator.server.account.ticket.VerificationTicket
 import com.vauthenticator.server.mfa.MfaMethod
 import com.vauthenticator.server.mfa.MfaMethodsEnrolmentAssociation
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
+import com.vauthenticator.server.support.AccountTestFixture
 import com.vauthenticator.server.support.TicketFixture
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -45,7 +46,7 @@ internal class VerifyMailChallengeSentTest {
 
     @Test
     internal fun `happy path`() {
-        val account = com.vauthenticator.server.account.AccountTestFixture.anAccount()
+        val account = AccountTestFixture.anAccount()
         val enabledAccount = account.copy(accountNonLocked = true, enabled = true, emailVerified = true)
         val verificationTicket = VerificationTicket("A_TICKET")
 
@@ -67,7 +68,7 @@ internal class VerifyMailChallengeSentTest {
 
     @Test
     internal fun `when the account does not exist`() {
-        val account = com.vauthenticator.server.account.AccountTestFixture.anAccount()
+        val account = AccountTestFixture.anAccount()
         val verificationTicket = VerificationTicket("A_TICKET")
 
         every { ticketRepository.loadFor(verificationTicket) } returns Optional.of(

@@ -1,8 +1,6 @@
 package com.vauthenticator.server.account.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.vauthenticator.server.account.AccountTestFixture.anAccount
-import com.vauthenticator.server.account.EMAIL
 import com.vauthenticator.server.account.Phone
 import com.vauthenticator.server.account.SaveAccount
 import com.vauthenticator.server.account.repository.AccountRepository
@@ -14,6 +12,8 @@ import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.Scope
 import com.vauthenticator.server.oauth2.clientapp.Scopes
 import com.vauthenticator.server.role.PermissionValidator
+import com.vauthenticator.server.support.AccountTestFixture.anAccount
+import com.vauthenticator.server.support.EMAIL
 import com.vauthenticator.server.support.SecurityFixture.principalFor
 import com.vauthenticator.server.support.VAUTHENTICATOR_ADMIN
 import io.mockk.every

@@ -2,11 +2,11 @@ package com.vauthenticator.server.account.welcome
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.account.AccountNotFoundException
-import com.vauthenticator.server.account.EMAIL
 import com.vauthenticator.server.clientapp.A_CLIENT_APP_ID
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.Scope
 import com.vauthenticator.server.role.PermissionValidator
+import com.vauthenticator.server.support.EMAIL
 import com.vauthenticator.server.support.SecurityFixture.principalFor
 import com.vauthenticator.server.support.VAUTHENTICATOR_ADMIN
 import io.mockk.every
@@ -23,7 +23,6 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
-import java.util.*
 
 
 @ExtendWith(MockKExtension::class)

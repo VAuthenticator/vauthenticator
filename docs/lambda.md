@@ -17,7 +17,8 @@ The expected event body scheme is like below:
 ```json
 {
   "general_context_claims" : {
-    "client_id": "your-client-app-id" 
+    "client_id": "your-client-app-id" ,
+    "grant_flow": "all supported grant flow for access_token and id_token"
   },
   "access_token_claims" : {
     ....

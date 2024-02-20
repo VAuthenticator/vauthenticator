@@ -11,9 +11,11 @@ import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.data.redis.core.HashOperations
+import org.springframework.data.redis.core.RedisOperations
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext
 import org.springframework.web.context.request.RequestContextHolder
@@ -21,6 +23,7 @@ import software.amazon.awssdk.core.SdkBytes
 import software.amazon.awssdk.services.lambda.LambdaClient
 import software.amazon.awssdk.services.lambda.model.InvokeRequest
 import software.amazon.awssdk.services.lambda.model.InvokeResponse
+import java.time.Duration
 
 @ExtendWith(MockKExtension::class)
 class AwsLambdaFunctionTest {
@@ -31,16 +34,29 @@ class AwsLambdaFunctionTest {
     @MockK
     private lateinit var hashOperations: HashOperations<String, String, String>
 
-    private val objectMapper: ObjectMapper = ObjectMapper()
-
     @MockK
     private lateinit var client: LambdaClient
 
-    private val lambdaFunctionContextFactory: LambdaFunctionContextFactory<JwtEncodingContext> =
-        AwsLambdaFunctionContextFactory()
+    @MockK
+    private lateinit var redisOperations: RedisOperations<String, Any>
+
+    @MockK
+    private lateinit var lambdaFunctionContextFactory: LambdaFunctionContextFactory<JwtEncodingContext>
+
+    private val context = LambdaFunctionContext.empty()
+
+    private val objectMapper: ObjectMapper = ObjectMapper()
+
+    private lateinit var uut: AwsLambdaFunction
+
+    @BeforeEach
+    fun setUp() {
+        uut = AwsLambdaFunction(redisTemplate, Duration.ofSeconds(1), objectMapper, client)
+    }
+
     @Test
     fun `when the lambda invocation is cached`() {
-        val context = lambdaFunctionContextFactory.newLambdaFunctionContext(newContext)
+        every { lambdaFunctionContextFactory.newLambdaFunctionContext(newContext) } returns context
 
         RequestContextHolder.setRequestAttributes(requestAttributes)
         val sessionId = requestAttributes.sessionId
@@ -53,17 +69,17 @@ class AwsLambdaFunctionTest {
             )
         } returns objectMapper.writeValueAsString(context.content)
 
-        val uut = AwsLambdaFunction(redisTemplate, objectMapper, client)
 
         val actual = uut.execute(LambdaFunctionId("A_LAMBDA_FUNCTION_ID"), context)
 
-        assertEquals(context, actual)
+        assertEquals(objectMapper.writeValueAsString(context.content), objectMapper.writeValueAsString(actual.content))
         verify(exactly = 0) { client.invoke(any<InvokeRequest>()) }
     }
 
     @Test
     fun `when the lambda invocation is NOT cached`() {
-        val context = lambdaFunctionContextFactory.newLambdaFunctionContext(newContext)
+        every { lambdaFunctionContextFactory.newLambdaFunctionContext(newContext) } returns context
+
         val stringSerializedContext = objectMapper.writeValueAsString(context.content)
         val invokeRequest: InvokeRequest = InvokeRequest.builder()
             .functionName("A_LAMBDA_FUNCTION_ID")
@@ -84,12 +100,12 @@ class AwsLambdaFunctionTest {
 
         every { client.invoke(invokeRequest) } returns invokeResponse
         every { hashOperations.put(sessionId, sessionId.toSha256(), stringSerializedContext) } just runs
-
-        val uut = AwsLambdaFunction(redisTemplate, objectMapper, client)
+        every { hashOperations.operations } returns redisOperations
+        every { redisOperations.expire(sessionId, Duration.ofSeconds(1)) } returns true
 
         val actual = uut.execute(LambdaFunctionId("A_LAMBDA_FUNCTION_ID"), context)
 
-        assertEquals(context, actual)
+        assertEquals(objectMapper.writeValueAsString(context.content), objectMapper.writeValueAsString(actual.content))
         verify(exactly = 1) { client.invoke(any<InvokeRequest>()) }
     }
 }
