@@ -16,16 +16,27 @@ The expected event body scheme is like below:
 
 ```json
 {
-  "general_context_claims" : {
-    "client_id": "your-client-app-id" ,
-    "grant_flow": "all supported grant flow for access_token and id_token"
+  "user": {
+    "sub": "",
+    "email": "",
+    "first_name": "",
+    "last_name": "",
+    "birth_date": "",
+    "phone": "",
+    "email_verified": "true|false",
+    "roles": []
   },
-  "access_token_claims" : {
+  "general_context_claims": {
+    "client_id": "your-client-app-id",
+    "grant_flow": "all supported grant flow for access_token and id_token",
+    "authorized_scope": []
+  },
+  "access_token_claims": {
     ....
   },
-  "id_token_claims" : {
+  "id_token_claims": {
     ....
-  }  
+  }
 }
 ```
 The expected lambda result has to follow the same scheme, keep in mind that `access_token_claims` is where the lambda can put the claims to add to the `access_token`, while id_token_claims is intended to do the sam but for the `id_token`.
