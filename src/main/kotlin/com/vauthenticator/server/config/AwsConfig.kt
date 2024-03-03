@@ -63,7 +63,7 @@ class AwsConfig {
     @Bean
     fun lambdaClient(
         awsCredentialsProvider: AwsCredentialsProvider,
-        @Value("\${aws.kms.endpointOverride:}") endpointOverride: String
+        @Value("\${aws.lambda.endpointOverride:}") endpointOverride: String
     ) = LambdaClient.builder()
         .credentialsProvider(awsCredentialsProvider)
         .applyMutation { setEndPoint(endpointOverride, it) }
