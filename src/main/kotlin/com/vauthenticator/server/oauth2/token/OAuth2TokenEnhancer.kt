@@ -19,7 +19,6 @@ class OAuth2TokenEnhancer(
     override fun customize(context: JwtEncodingContext) {
         val tokenType = context.tokenType.value
         if ("access_token" == tokenType) {
-            println("OAuth2TokenEnhancer invoked")
             val signatureKey = keyRepository.signatureKeys().peekOneAtRandomWithout(assignedKeys)
             context.jwsHeader.keyId(signatureKey.kid.content())
 

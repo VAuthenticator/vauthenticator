@@ -79,7 +79,6 @@ class SessionManagementFactory(private val providerSettings: AuthorizationServer
         val issuer = providerSettings.issuer
         val salt = saltFor(request)
 
-        println("userName $userName")
         return "$clientId $issuer ${opbsStateValue(request)} $salt".toSha256() + ".$salt"
     }
 
