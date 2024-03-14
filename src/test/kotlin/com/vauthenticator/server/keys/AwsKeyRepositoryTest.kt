@@ -111,19 +111,39 @@ internal class AwsKeyRepositoryTest {
     }
 
     @Test
-    internal fun `when a signature key deleted request is ignored`() {
+    internal fun `when delete a rotated signature key`() {
         val masterKid = aNewMasterKey()
         val kid = keyRepository.createKeyFrom(masterKid)
+        keyRepository.createKeyFrom(masterKid)
+        keyRepository.createKeyFrom(masterKid)
+        keyRepository.createKeyFrom(masterKid)
         keyRepository.createKeyFrom(masterKid)
         val ttl = Duration.ofSeconds(1)
         keyRepository.deleteKeyFor(kid, SIGNATURE, ttl)
 
         val actual = getActual(kid, dynamoSignatureKeysTableName)
         val expectedTTl = now.epochSecond + 1
-        keyRepository.deleteKeyFor(kid, SIGNATURE, ttl)
-
         assertEquals(false, (actual["enabled"] as AttributeValue).bool())
         assertEquals(expectedTTl, (actual["key_expiration_date_timestamp"] as AttributeValue).n().toLong())
+
+        assertThrows(KeyDeletionException::class.java) {
+            keyRepository.deleteKeyFor(kid, SIGNATURE)
+        }
+    }
+
+    @Test
+    internal fun `when a signature key deleted request is ignored due to only one valid key is left`() {
+        val masterKid = aNewMasterKey()
+        val firstKid = keyRepository.createKeyFrom(masterKid)
+        val secondKid = keyRepository.createKeyFrom(masterKid)
+
+        val ttl = Duration.ofSeconds(10)
+        keyRepository.deleteKeyFor(firstKid, SIGNATURE, ttl)
+
+        assertThrows(KeyDeletionException::class.java) {
+            keyRepository.deleteKeyFor(secondKid, SIGNATURE)
+        }
+
     }
 
     @Test
@@ -136,7 +156,8 @@ internal class AwsKeyRepositoryTest {
 
     @Test
     internal fun `when a mfa key is deleted`() {
-        val kid = Kid(kidGenerator.invoke())
+        val masterKid = aNewMasterKey()
+        val kid = keyRepository.createKeyFrom(masterKid = masterKid, keyPurpose = MFA)
         keyRepository.deleteKeyFor(kid, MFA)
 
         val actual = getActual(kid, dynamoMfaKeysTableName)

@@ -81,20 +81,29 @@ open class AwsKeyRepository(
         }
 
     override fun deleteKeyFor(kid: Kid, keyPurpose: KeyPurpose, ttl: Duration) {
-        val keys = signatureKeys().keys
-        if (keyPurpose == KeyPurpose.SIGNATURE && keys.size <= 1) {
-            throw KeyDeletionException("at least one signature key is mandatory")
+        val key = keyFor(kid, keyPurpose)
+        if (!key.enabled){
+            throw KeyDeletionException("The key with kid: $kid is a rotated key.... it can not be deleted or rotated again." +
+                    " Let's wait for the expiration time." +
+                    " This key is not enabled to sign new token, only to verify already signed token before the rotation request")
         }
+        val keys = validSignatureKeys()
 
         val noTtl = ttl.isZero
         val tableName = tableNameBasedOn(keyPurpose)
 
         if (noTtl) {
+            if (keyPurpose == KeyPurpose.SIGNATURE && keys.size <= 1) {
+                throw KeyDeletionException("at least one signature key is mandatory")
+            }
+
             justDeleteKey(kid, tableName)
         } else {
             keyDeleteJodPlannedFor(kid, ttl, tableName)
         }
     }
+
+    private fun validSignatureKeys() = Keys(signatureKeys().keys).validKeys().keys
 
     private fun justDeleteKey(kid: Kid, tableName: String) {
         dynamoDbClient.deleteItem(

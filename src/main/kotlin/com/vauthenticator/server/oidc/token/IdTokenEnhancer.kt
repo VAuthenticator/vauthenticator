@@ -21,7 +21,6 @@ class IdTokenEnhancer(
             val attributes = context.authorization!!.attributes
             val principle = attributes["java.security.Principal"] as Authentication
             context.claims.claim("email", principle.name)
-
         }
     }
 }
