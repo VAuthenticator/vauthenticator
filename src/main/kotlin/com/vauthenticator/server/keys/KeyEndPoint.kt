@@ -51,8 +51,6 @@ data class DeleteKeyRequest(
 )
 
 data class RotateKeyRequest(
-    @JsonProperty("master_kid")
-    val masterKid: String,
     val kid: String,
     @JsonProperty("key_ttl") val keyTtl: Long
 )
