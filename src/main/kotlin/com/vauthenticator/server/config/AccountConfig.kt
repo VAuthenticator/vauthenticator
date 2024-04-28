@@ -2,7 +2,7 @@ package com.vauthenticator.server.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.account.AccountCacheContentConverter
-import com.vauthenticator.server.account.ChangeAccountEnabling
+import com.vauthenticator.server.account.AccountUpdateAdminAction
 import com.vauthenticator.server.account.SaveAccount
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.account.repository.CachedAccountRepository
@@ -21,8 +21,8 @@ import java.time.Duration
 class AccountConfig {
 
     @Bean
-    fun changeAccountEnabling(accountRepository: AccountRepository): ChangeAccountEnabling =
-        ChangeAccountEnabling(accountRepository)
+    fun changeAccountEnabling(accountRepository: AccountRepository): AccountUpdateAdminAction =
+        AccountUpdateAdminAction(accountRepository)
 
     @Bean
     fun saveAccount(accountRepository: AccountRepository): SaveAccount =

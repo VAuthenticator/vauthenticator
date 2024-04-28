@@ -1,7 +1,8 @@
 package com.vauthenticator.server.account.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.vauthenticator.server.account.ChangeAccountEnabling
+import com.vauthenticator.server.account.AccountUpdateAdminAction
+import com.vauthenticator.server.account.AdminAccountApiRequest
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.support.AccountTestFixture
 import io.mockk.every
@@ -35,14 +36,14 @@ internal class AdminAccountEndPointTest {
         mokMvc = MockMvcBuilders.standaloneSetup(
             AdminAccountEndPoint(
                 accountRepository,
-                ChangeAccountEnabling(accountRepository)
+                AccountUpdateAdminAction(accountRepository)
             )
         ).build()
     }
 
     @Test
     internal fun `set an account as disabled`() {
-        val representation = AdminAccountApiRepresentation(email = "anemail@domain.com", enabled = false)
+        val representation = AdminAccountApiRequest(email = "anemail@domain.com", enabled = false)
         val masterAccount = AccountTestFixture.anAccount().copy(enabled = false)
 
         every { accountRepository.accountFor("anemail@domain.com") } returns Optional.of(AccountTestFixture.anAccount())
@@ -60,7 +61,7 @@ internal class AdminAccountEndPointTest {
 
     @Test
     internal fun `when the account is not found`() {
-        val representation = AdminAccountApiRepresentation(email = "anemail@domain.com", enabled = false)
+        val representation = AdminAccountApiRequest(email = "anemail@domain.com", enabled = false)
 
         every { accountRepository.accountFor("anemail@domain.com") } returns Optional.empty()
 

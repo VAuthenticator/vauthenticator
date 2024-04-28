@@ -54,7 +54,6 @@ class DynamoPasswordHistoryRepositoryTest {
         uut.store(A_USERNAME, Password("A_PASSWORD 42"))
         val history = uut.load(A_USERNAME)
 
-        println(history)
         val expected = listOf(
             Password("A_PASSWORD 42"),
             Password("A_PASSWORD 32"),
@@ -67,7 +66,6 @@ class DynamoPasswordHistoryRepositoryTest {
         uut.store(A_USERNAME, Password("A_PASSWORD 3"))
         val history = uut.load(A_USERNAME)
 
-        println(history)
         val expected = listOf(
             Password("A_PASSWORD 3"),
         )
