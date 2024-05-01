@@ -4,7 +4,6 @@ import com.vauthenticator.document.repository.Document
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -24,7 +23,7 @@ class StaticControllerTest {
 
     @BeforeEach
     internal fun setUp() {
-        mokMvc = MockMvcBuilders.standaloneSetup(StaticController(staticContentLocalCache)).build()
+        mokMvc = MockMvcBuilders.standaloneSetup(StaticController("",staticContentLocalCache)).build()
     }
 
     @Test
