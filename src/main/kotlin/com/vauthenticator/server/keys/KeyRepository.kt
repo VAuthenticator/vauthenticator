@@ -137,6 +137,7 @@ open class AwsKeyRepository(
         }
     }
 
+
     override fun signatureKeys(): Keys {
         val keysOnDynamo = findAllFrom(signatureTableName)
         val items = keysOnDynamo.items()

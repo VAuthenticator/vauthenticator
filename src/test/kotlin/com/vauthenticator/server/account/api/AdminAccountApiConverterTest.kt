@@ -1,6 +1,6 @@
 package com.vauthenticator.server.account.api
 
-import com.vauthenticator.server.account.api.AccountConverter.fromDomainToAccountApiRepresentation
+import com.vauthenticator.server.account.api.AdminAccountApiConverter.fromDomainToAccountApiRepresentation
 import com.vauthenticator.server.config.adminRole
 import com.vauthenticator.server.role.Role
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 
-internal class AccountConverterTest {
+internal class AdminAccountApiConverterTest {
 
     @Test
     fun whenAccountViewIsForAdmin() {
