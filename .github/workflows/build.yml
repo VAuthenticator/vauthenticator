@@ -136,7 +136,6 @@ jobs:
             aws s3 cp $line s3://${{ secrets.VAUTHENTICATOR_BUCKET }}/static-asset/content/asset/$line
           
             if [ ${UI_VERSION} ]; then
-              echo "$UI_VERSION"
-              pwd
+                 aws s3 cp $line s3://${{ secrets.VAUTHENTICATOR_BUCKET }}/static-asset/content/asset/${UI_VERSION}/$line
             fi
           done
