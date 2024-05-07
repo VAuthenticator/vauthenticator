@@ -1,0 +1,34 @@
+name: beta-tested-build
+
+on:
+  push: { }
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'make a tag'
+        required: false
+        type: string
+
+      newversion:
+        description: 'Next desired version'
+        required: false
+        type: string
+
+jobs:
+  ui-backend:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: load static file on s3
+        uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - run: |
+          if [ ! ${{github.event.inputs.version}} ]; then
+            echo "${{github.event.inputs.version}}"
+          fi
