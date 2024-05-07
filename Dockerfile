@@ -1,4 +1,4 @@
-FROM amazoncorretto:21
+FROM amazoncorretto:21-al2023
 
 ADD target/vauthenticator.jar /usr/local/vauthenticator/
 
