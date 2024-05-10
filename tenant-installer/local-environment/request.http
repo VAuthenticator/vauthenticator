@@ -1,0 +1,13 @@
+### login page
+GET {{host}}/login
+
+### well-known/openid-configuration
+GET {{host}}/.well-known/openid-configuration
+
+### gain a new access token for M2M interaction
+POST {{host}}/oauth2/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id=admin&client_secret=secret&grant_type=client_credentials&scope=admin:key-editor admin:key-reader
+
+> {% client.global.set("auth_token", response.body.access_token); %}
