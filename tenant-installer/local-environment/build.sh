@@ -4,3 +4,4 @@ docker-compose up -d
 
 sh ./setup.sh
 
+sh init.sh

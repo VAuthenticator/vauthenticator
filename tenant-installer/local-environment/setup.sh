@@ -36,6 +36,10 @@ terraform init -backend-config="bucket=$TF_STATE_BUCKET" -backend-config="region
 terraform plan -var-file=variables.tfvars
 terraform apply -var-file=variables.tfvars -auto-approve
 
+MASTER_KEY=$(grep target_key_id terraform.tfstate | awk -F ":"  '{print $2}'| sed "s/\"//g" | sed 's/ //g')
+export MASTER_KEY=$MASTER_KEY
+echo "MASTER_KEY=$MASTER_KEY"
+
 cd ../policy
 copy_tf_variables
 
@@ -48,7 +52,7 @@ if [ $IS_PRODUCITON = "False" ]
     END_POINT="--endpoint http://localhost:4566"
 fi
 
-cd ../../document/template/mail
+cd ../../../communication/default/mail
 for TEMPLATE in ${TEMPLATES[@]}
 do
   aws s3 cp $TEMPLATE s3://$VAUTHENTICATOR_BUCKET/mail/templates/$TEMPLATE $END_POINT
