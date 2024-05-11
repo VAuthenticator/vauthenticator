@@ -62,4 +62,4 @@ Here there are all the needed scripts to orchestrate all the process to configur
 
 
 - to reset all the environment you can destroy your local compose environment
-- please remember that the setup script will override the terraform.tf file in order to override aws endpoint keep in mind it  
+- please remember that the setup script will override the terraform.tf file in order to override aws endpoint keep in mind it

@@ -1,4 +1,4 @@
-source .env
+source env
 
 cd ../scripts
 ls -la

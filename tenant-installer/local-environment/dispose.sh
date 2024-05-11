@@ -9,7 +9,7 @@ function create_symbolic_linkFor() {
   cd ..
 }
 
-source .env
+source env
 
 cd ../terraform
 

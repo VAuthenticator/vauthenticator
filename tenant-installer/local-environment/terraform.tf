@@ -11,10 +11,10 @@ terraform {
 provider "aws" {
 
   endpoints {
-    iam = "http://localhost:4566"
-    s3 = "http://s3.localhost.localstack.cloud:4566"
-    kms = "http://localhost:4566"
-    dynamodb = "http://localhost:4566"
+    iam = "$IAM_ENDPOINT"
+    s3 = "$S3_ENDPOINT"
+    kms = "$KMS_ENDPOINT"
+    dynamodb = "$DYNAMO_DB_ENDPOINT"
   }
 }
 

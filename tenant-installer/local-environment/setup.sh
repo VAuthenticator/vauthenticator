@@ -2,6 +2,11 @@ function copy_tf_variables() {
   echo $ACCOUNT_ID
   sed 's/ACCOUNT_ID/'$ACCOUNT_ID'/g' ../../local-environment/variables.tfvars | sed 's/VAUTHENTICATOR_BUCKET/'$VAUTHENTICATOR_BUCKET'/g' | sed 's/VAUTHENTICATOR_MANAGEMENT_UI_BUCKET/'$VAUTHENTICATOR_MANAGEMENT_UI_BUCKET'/g' > variables.tfvars
 
+  sed 's/DYNAMO_DB_ENDPOINT/'$DYNAMO_DB_ENDPOINT'/g' ../../local-environment/terraform.tf
+  sed 's/KMS_ENDPOINT/'$KMS_ENDPOINT'/g' ../../local-environment/terraform.tf
+  sed 's/S3_ENDPOINT/'$S3_ENDPOINT'/g' ../../local-environment/terraform.tf
+  sed 's/IAM_ENDPOINT/'$IAM_ENDPOINT'/g' ../../local-environment/terraform.tf
+
 }
 
 function create_symbolic_linkFor() {
@@ -11,7 +16,7 @@ function create_symbolic_linkFor() {
   cd ..
 }
 
-source .env
+source env
 
 TEMPLATES=("welcome.html" "mail-verify-challenge.html" "reset-password.html" "mfa-challenge.html")
 
