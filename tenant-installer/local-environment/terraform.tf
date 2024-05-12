@@ -11,10 +11,10 @@ terraform {
 provider "aws" {
 
   endpoints {
-    iam = "$IAM_ENDPOINT"
-    s3 = "$S3_ENDPOINT"
-    kms = "$KMS_ENDPOINT"
-    dynamodb = "$DYNAMO_DB_ENDPOINT"
+    iam = "IAM_ENDPOINT"
+    s3 = "S3_ENDPOINT"
+    kms = "KMS_ENDPOINT"
+    dynamodb = "DYNAMO_DB_ENDPOINT"
   }
 }
 

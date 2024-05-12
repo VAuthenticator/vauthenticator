@@ -1,12 +1,6 @@
 function copy_tf_variables() {
   echo $ACCOUNT_ID
-  sed 's/ACCOUNT_ID/'$ACCOUNT_ID'/g' ../../local-environment/variables.tfvars | sed 's/VAUTHENTICATOR_BUCKET/'$VAUTHENTICATOR_BUCKET'/g' | sed 's/VAUTHENTICATOR_MANAGEMENT_UI_BUCKET/'$VAUTHENTICATOR_MANAGEMENT_UI_BUCKET'/g' > variables.tfvars
-
-  sed 's/DYNAMO_DB_ENDPOINT/'$DYNAMO_DB_ENDPOINT'/g' ../../local-environment/terraform.tf
-  sed 's/KMS_ENDPOINT/'$KMS_ENDPOINT'/g' ../../local-environment/terraform.tf
-  sed 's/S3_ENDPOINT/'$S3_ENDPOINT'/g' ../../local-environment/terraform.tf
-  sed 's/IAM_ENDPOINT/'$IAM_ENDPOINT'/g' ../../local-environment/terraform.tf
-
+  sed 's@ACCOUNT_ID@'$ACCOUNT_ID'@g' ../../local-environment/variables.tfvars | sed 's@VAUTHENTICATOR_BUCKET@'$VAUTHENTICATOR_BUCKET'@g' | sed 's@VAUTHENTICATOR_MANAGEMENT_UI_BUCKET@'$VAUTHENTICATOR_MANAGEMENT_UI_BUCKET'@g' > variables.tfvars
 }
 
 function create_symbolic_linkFor() {
@@ -16,7 +10,13 @@ function create_symbolic_linkFor() {
   cd ..
 }
 
-source env
+export $(cat env)
+
+sed -i 's@DYNAMO_DB_ENDPOINT@'$DYNAMO_DB_ENDPOINT'@g' terraform.tf
+sed -i 's@KMS_ENDPOINT@'$KMS_ENDPOINT'@g' terraform.tf
+sed -i 's@S3_ENDPOINT@'$S3_ENDPOINT'@g' terraform.tf
+sed -i 's@EC2_DB_ENDPOINT@'$EC2_DB_ENDPOINT'@g' terraform.tf
+sed -i 's@IAM_ENDPOINT@'$IAM_ENDPOINT'@g' terraform.tf
 
 TEMPLATES=("welcome.html" "mail-verify-challenge.html" "reset-password.html" "mfa-challenge.html")
 
@@ -57,7 +57,7 @@ if [ $IS_PRODUCITON = "False" ]
     END_POINT="--endpoint http://localhost:4566"
 fi
 
-cd ../../../communication/default/mail
+cd ../../communication/default/mail
 for TEMPLATE in ${TEMPLATES[@]}
 do
   aws s3 cp $TEMPLATE s3://$VAUTHENTICATOR_BUCKET/mail/templates/$TEMPLATE $END_POINT

@@ -2,7 +2,8 @@ FROM amazonlinux:2023
 
 RUN yum install -y yum-utils && \
     yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo && \
-    yum -y install terraform
+    yum -y install terraform && \
+    yum update && yum install -y python3-pip
 
 ADD . .
 

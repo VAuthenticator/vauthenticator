@@ -5,6 +5,13 @@ AWS_ACCESS_KEY_ID=xxxx
 AWS_SECRET_ACCESS_KEY=xxxx
 AWS_REGION=eu-central-1
 
+DYNAMO_DB_ENDPOINT=http://host.docker.internal:4566
+KMS_ENDPOINT=http://host.docker.internal:4566
+S3_ENDPOINT=http://s3.host.docker.internal.localstack.cloud:4566
+IAM_ENDPOINT=http://host.docker.internal:4566
+IAM_ENDPOINT=http://host.docker.internal:4566
+IAM_ENDPOINT=http://host.docker.internal:4566
+
 TABLES_SUFFIX=_Local_Staging
 
 VAUTHENTICATOR_BUCKET=vauthenticator-local-dev-document-bucket
