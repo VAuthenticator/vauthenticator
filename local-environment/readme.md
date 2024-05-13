@@ -54,3 +54,32 @@ client secret: secret
 client_id=vauthenticator-management-ui&client_secret=secret
 
 ```
+### ui and mail template local environment
+In order to make simple the ui assets build for local development take in consideration to enable the following spring configuration properties:
+
+```yaml
+  document:
+    engine: file-system
+    fs-base-path: dist
+```
+
+in order to be sure to have the asset files in the correct path execute this script:
+
+```shell
+cd ..
+rm -rf dist
+
+mkdir -p dist/static-asset/content/asset/
+mkdir -p dist/mail/templates
+
+cd src/main/frontend
+npm install
+npm run-script build
+
+cd dist/asset
+
+cp * ../../../../../dist/static-asset/content/asset/
+
+cd ../../../../../communication/default/mail 
+cp *  ../../../dist/mail/templates
+```
