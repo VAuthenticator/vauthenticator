@@ -22,5 +22,5 @@ jobs:
           fi
           
           echo "$DOCKER_TAG"
-          docker build . -t mrflick72/vauthenticator-local-tenant-installer:$DOCKER_TAG -f tenant-installer.Dockerfile .
+          docker build -t mrflick72/vauthenticator-local-tenant-installer:$DOCKER_TAG -f tenant-installer.Dockerfile .
           docker push mrflick72/vauthenticator-local-tenant-installer:$DOCKER_TAG -f tenant-installer.Dockerfile .
