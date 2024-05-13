@@ -35,11 +35,6 @@ terraform init
 terraform plan -var-file=variables.tfvars
 terraform apply -var-file=variables.tfvars -auto-approve
 
-MASTER_KEY=$(grep target_key_id terraform.tfstate | awk -F ":"  '{print $2}'| sed "s/\"//g" | sed 's/ //g')
-export MASTER_KEY=$MASTER_KEY
-echo "MASTER_KEY=$MASTER_KEY"
-
-
 #
 cd ../policy
 terraform init

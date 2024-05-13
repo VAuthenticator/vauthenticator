@@ -1,4 +1,8 @@
-source .env
+export $(cat env)
+
+MASTER_KEY=$(grep target_key_id ../local-tenant-iac/resources/terraform.tfstate | awk -F ":"  '{print $2}'| sed "s/\"//g" | sed 's/ //g')
+export MASTER_KEY=$MASTER_KEY
+echo "MASTER_KEY=$MASTER_KEY"
 
 pip3 install -r requirements.txt
 
