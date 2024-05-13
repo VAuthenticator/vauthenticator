@@ -1,4 +1,5 @@
 IS_PRODUCITON=False
+
 DYNAMO_DB_ENDPOINT=http://localhost:4566
 KMS_ENDPOINT=http://localhost:4566
 

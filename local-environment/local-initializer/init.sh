@@ -1,7 +1,5 @@
 source .env
 
-cd ../scripts
-ls -la
 pip3 install -r requirements.txt
 
 echo "MASTER_KEY: $MASTER_KEY"

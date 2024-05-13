@@ -6,7 +6,7 @@ function prepare_environment_for() {
   cd ..
 }
 
-source .env
+export $(cat env)
 
 mkdir ../local-tenant-iac
 cd ../local-tenant-iac
@@ -18,7 +18,6 @@ cp -R ../../iac/terraform/policy .
 # remove s3 stuff since that for local file system is intended to be used
 rm resources/s3.tf
 rm policy/s3.tf
-
 
 prepare_environment_for iam
 prepare_environment_for resources
@@ -35,6 +34,11 @@ cd ../resources
 terraform init
 terraform plan -var-file=variables.tfvars
 terraform apply -var-file=variables.tfvars -auto-approve
+
+MASTER_KEY=$(grep target_key_id terraform.tfstate | awk -F ":"  '{print $2}'| sed "s/\"//g" | sed 's/ //g')
+export MASTER_KEY=$MASTER_KEY
+echo "MASTER_KEY=$MASTER_KEY"
+
 
 #
 cd ../policy
