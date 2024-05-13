@@ -1,0 +1,3 @@
+boto3==1.26.78
+bcrypt==4.0.1
+load_dotenv==0.1.0

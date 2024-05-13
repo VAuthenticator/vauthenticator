@@ -23,6 +23,11 @@ Right now it is based, as said before to the latest version on spring oauth2/ope
 - email verification: admin:mail-verify scope is required
 - reset password: admin:reset-password scope is required
 - access_token/id_token customization via lambda, see [here](docs/lambda.md) for more details
+- MFA
+  - mail
+- Post login flow 
+  - force to reset password
+- back/front channel logout
 
 **Storage:**
 
@@ -33,35 +38,7 @@ Right now it is based, as said before to the latest version on spring oauth2/ope
   - distributed cache
 - RSA key pair are created from KMS Customer Master Key stored on Dynamo, private key encrypted via KMS of course stored on Dynamo.
 
-**General Feature:**
 
-VAuthenticator implements front_channel single logout openid connect specification session management
+### local environment
 
-### ui local environment
-In order to make simple the ui assets build for local development take in consideration to enable the following spring configuration properties:
-
-```yaml
-  document:
-    engine: file-system
-    fs-base-path: dist
-```
-
-in order to be sure to have the asset files in the correct path execute this script:
-
-```shell
-rm -rf dist
-
-mkdir -p dist/static-asset/content/asset/
-mkdir -p dist/mail/templates
-
-cd src/main/frontend
-npm install
-npm run-script build
-
-cd dist/asset
-
-cp * ../../../../../dist/static-asset/content/asset/
-
-cd ../../../../../communication/default/mail 
-cp *  ../../../dist/mail/templates
-```
+For more details please follow to this link [readme.md](local-environment%2Freadme.md)

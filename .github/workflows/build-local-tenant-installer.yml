@@ -1,0 +1,26 @@
+name: build VAuthenticator Local Tenant
+
+on:
+  push: { }
+  workflow_dispatch: { }
+jobs:
+  build-local-tenant-installer:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: docker push
+        run: |
+          docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
+          
+          if [[ ${GITHUB_REF##*/} == 'master' ]]
+          then
+            DOCKER_TAG="latest"
+          else
+            DOCKER_TAG="${GITHUB_REF##*/}"
+          fi
+          
+          echo "$DOCKER_TAG"
+          docker build -t mrflick72/vauthenticator-local-tenant-installer:$DOCKER_TAG -f tenant-installer.Dockerfile .
+          docker push mrflick72/vauthenticator-local-tenant-installer:$DOCKER_TAG
