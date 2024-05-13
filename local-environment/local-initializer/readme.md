@@ -1,0 +1,1 @@
+docker run -it --entrypoint bash  vauthenticator-local-tenant-installer:0.1 

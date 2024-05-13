@@ -1,7 +1,7 @@
 IS_PRODUCITON=False
 
-DYNAMO_DB_ENDPOINT=http://localhost:4566
-KMS_ENDPOINT=http://localhost:4566
+DYNAMO_DB_ENDPOINT=http://host.docker.internal:4566
+KMS_ENDPOINT=http://host.docker.internal:4566
 
 ACCOUNT_ID=000000000000
 AWS_ACCESS_KEY_ID=xxxx
