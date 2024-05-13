@@ -14,6 +14,8 @@ RUN aws --profile default configure set aws_access_key_id "xxx" && \
     aws --profile default configure set aws_secret_access_key "xxx" && \
     aws --profile default configure set region "eu-central-1"
 
+USER tenant-installer
+
 ADD iac iac
 
 WORKDIR local-environment/local-initializer
