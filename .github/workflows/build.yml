@@ -93,16 +93,16 @@ jobs:
           fi
           
           echo "$DOCKER_TAG"
-          docker build . -t mrflick72/vauthenticator-k8s:$DOCKER_TAG
-          docker push mrflick72/vauthenticator-k8s:$DOCKER_TAG
+          docker build . -t mrflick72/vauthenticator-k8s:$DOCKER_TAG -f application.Dockerfile .
+          docker push mrflick72/vauthenticator-k8s:$DOCKER_TAG -f application.Dockerfile .
 
       - name: Docker tag
         if: github.event.inputs.version != '' || github.event.inputs.version != ' '
 
         run: |               
           DOCKER_TAG="${{github.event.inputs.version}}"
-          docker build . -t mrflick72/vauthenticator-k8s:$DOCKER_TAG
-          docker push mrflick72/vauthenticator-k8s:$DOCKER_TAG
+          docker build . -t mrflick72/vauthenticator-k8s:$DOCKER_TAG -f application.Dockerfile .
+          docker push mrflick72/vauthenticator-k8s:$DOCKER_TAG -f application.Dockerfile .
   ui-backend:
     runs-on: ubuntu-20.04
 

@@ -14,10 +14,10 @@ RUN aws --profile default configure set aws_access_key_id "xxx" && \
     aws --profile default configure set aws_secret_access_key "xxx" && \
     aws --profile default configure set region "eu-central-1"
 
-ADD ../../../iac ../../../iac
+ADD iac iac
 
 WORKDIR local-environment/local-initializer
 
-ADD . .
+ADD local-environment/local-initializer .
 
 ENTRYPOINT sh ./build.sh
