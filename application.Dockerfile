@@ -6,4 +6,6 @@ VOLUME /var/log/onlyone-portal
 
 WORKDIR /usr/local/vauthenticator/
 
+USER application
+
 CMD ["java", "-jar", "vauthenticator.jar"]

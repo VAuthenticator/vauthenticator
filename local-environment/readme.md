@@ -18,7 +18,7 @@ client app for admin M2M purpose.
 In order to have all the needed infrastructure you can avail on the [docker-compose.yml](..%2Fdocker-compose.yml)`, while
 it is possible to instantiate a container to install a new tenant usable for local development using the command: 
 
-> docker run -it mrflick72/vauthenticator-local-tenant-installer:latest
+> docker run -it mrflick72/vauthenticator-local-tenant-installer:tag
 
 
 # local host config
@@ -34,7 +34,7 @@ add on your local hosts file the following configurations
 in order to configure your app to run from your preferred ide you can start your app with the option --spring.config.additional-location=[application.yml](..%2Fapplication.yml) 
 and key.master-key=`MASTER_KEY`
 
-p.s. `MASTER_KEY` is shown in the std out of the mrflick72/vauthenticator-local-tenant-installer:latest execution like below:
+p.s. `MASTER_KEY` is shown in the std out of the mrflick72/vauthenticator-local-tenant-installer:tag execution like below:
 
 ```shell
 ....
