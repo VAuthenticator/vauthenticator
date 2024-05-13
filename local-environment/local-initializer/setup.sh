@@ -13,11 +13,16 @@ cd ../local-tenant-iac
 
 cp -R ../../iac/terraform/iam .
 cp -R ../../iac/terraform/resources .
+cp -R ../../iac/terraform/policy .
+
+# remove s3 stuff since that for local file system is intended to be used
 rm resources/s3.tf
+rm policy/s3.tf
 
 
 prepare_environment_for iam
 prepare_environment_for resources
+prepare_environment_for policy
 
 # IAM
 cd iam
@@ -27,6 +32,12 @@ terraform apply --auto-approve -var-file=variables.tfvars
 
 #
 cd ../resources
+terraform init
+terraform plan -var-file=variables.tfvars
+terraform apply -var-file=variables.tfvars -auto-approve
+
+#
+cd ../policy
 terraform init
 terraform plan -var-file=variables.tfvars
 terraform apply -var-file=variables.tfvars -auto-approve
