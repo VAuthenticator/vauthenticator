@@ -1,4 +1,4 @@
-package com.vauthenticator.server.mfa
+package com.vauthenticator.server.mfa.domain
 
 import com.vauthenticator.server.keys.Kid
 import org.springframework.security.authentication.event.AbstractAuthenticationEvent

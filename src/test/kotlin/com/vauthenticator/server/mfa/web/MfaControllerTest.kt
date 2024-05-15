@@ -1,8 +1,11 @@
-package com.vauthenticator.server.mfa
+package com.vauthenticator.server.mfa.web
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.i18n.I18nMessageInjector
 import com.vauthenticator.server.i18n.I18nScope
+import com.vauthenticator.server.mfa.domain.MfaChallenge
+import com.vauthenticator.server.mfa.domain.OtpMfaSender
+import com.vauthenticator.server.mfa.domain.OtpMfaVerifier
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import com.vauthenticator.server.support.SecurityFixture.principalFor
 import io.mockk.every
@@ -20,7 +23,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.view
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
@@ -55,20 +57,9 @@ internal class MfaControllerTest {
                 publisher,
                 ObjectMapper(),
                 successHandler, failureHandler,
-                otpMfaSender, otpMfaVerifier
+                otpMfaVerifier
             )
         ).build()
-    }
-
-    @Test
-    internal fun `when an mfa challenge is sent`() {
-        every { otpMfaSender.sendMfaChallenge(account.email) } just runs
-
-        mokMvc.perform(
-            get("/mfa-challenge/send")
-                .principal(principalFor(account.email))
-        ).andExpect(redirectedUrl("/mfa-challenge"))
-        verify { otpMfaSender.sendMfaChallenge(account.email) }
     }
 
     @Test

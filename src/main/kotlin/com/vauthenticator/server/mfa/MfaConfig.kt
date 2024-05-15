@@ -1,4 +1,4 @@
-package com.vauthenticator.server.config
+package com.vauthenticator.server.mfa
 
 import com.hubspot.jinjava.Jinjava
 import com.vauthenticator.document.repository.DocumentRepository
@@ -7,8 +7,11 @@ import com.vauthenticator.server.keys.KeyDecrypter
 import com.vauthenticator.server.keys.KeyRepository
 import com.vauthenticator.server.keys.MasterKid
 import com.vauthenticator.server.mail.*
-import com.vauthenticator.server.mfa.*
+import com.vauthenticator.server.mfa.domain.*
+import com.vauthenticator.server.mfa.repository.DynamoMfaAccountMethodsRepository
+import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.mail.javamail.JavaMailSender
@@ -78,3 +81,5 @@ class MfaConfig {
             )
         )
 }
+@ConfigurationProperties("mfa.otp")
+data class OtpConfigurationProperties(val length: Int, val timeToLiveInSeconds: Int)

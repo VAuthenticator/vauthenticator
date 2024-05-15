@@ -5,7 +5,7 @@ import sys
 import uuid
 from dotenv import load_dotenv
 
-load_dotenv(dotenv_path="../local-environment/.env")
+load_dotenv(dotenv_path="env")
 
 
 def dynamodbClient():

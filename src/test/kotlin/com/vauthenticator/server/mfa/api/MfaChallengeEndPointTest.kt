@@ -1,5 +1,6 @@
-package com.vauthenticator.server.mfa
+package com.vauthenticator.server.mfa.api
 
+import com.vauthenticator.server.mfa.domain.OtpMfaSender
 import com.vauthenticator.server.support.AccountTestFixture
 import com.vauthenticator.server.support.SecurityFixture
 import io.mockk.every
@@ -16,7 +17,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
 @ExtendWith(MockKExtension::class)
-internal class MfaApiTest {
+internal class MfaChallengeEndPointTest {
     lateinit var mokMvc: MockMvc
 
     @MockK
@@ -27,7 +28,7 @@ internal class MfaApiTest {
     @BeforeEach
     internal fun setUp() {
         mokMvc = MockMvcBuilders.standaloneSetup(
-            MfaApi(otpMfaSender)
+            MfaChallengeEndPoint(otpMfaSender)
         ).build()
     }
 
@@ -37,7 +38,7 @@ internal class MfaApiTest {
         every { otpMfaSender.sendMfaChallenge(account.email) } just runs
 
         mokMvc.perform(
-            MockMvcRequestBuilders.put("/mfa-challenge/send")
+            MockMvcRequestBuilders.put("/mfa/challenge")
                 .principal(SecurityFixture.principalFor(account.email))
         ).andExpect(status().isOk)
 

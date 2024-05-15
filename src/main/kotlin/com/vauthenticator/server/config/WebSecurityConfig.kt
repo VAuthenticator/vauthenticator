@@ -4,7 +4,7 @@ import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.login.userdetails.AccountUserDetailsService
 import com.vauthenticator.server.login.workflow.CompositeLoginWorkflowEngine
 import com.vauthenticator.server.login.workflow.LOGIN_ENGINE_BROKER_PAGE
-import com.vauthenticator.server.mfa.MfaLoginWorkflowHandler
+import com.vauthenticator.server.mfa.web.MfaLoginWorkflowHandler
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.Scope
 import com.vauthenticator.server.oidc.logout.ClearSessionStateLogoutHandler
@@ -83,8 +83,8 @@ class WebSecurityConfig(
             .authorizeHttpRequests { authz ->
                 authz
                     .requestMatchers(LOGIN_ENGINE_BROKER_PAGE).permitAll()
-                    .requestMatchers("/mfa-challenge/send").permitAll()
-                    .requestMatchers(HttpMethod.GET, "/mfa-challenge").permitAll()
+                    .requestMatchers("/api/mfa/challenge").authenticated()
+                    .requestMatchers(HttpMethod.GET, "/mfa-challenge").authenticated()
                     .requestMatchers(HttpMethod.POST, "/mfa-challenge").authenticated()
 
                     .requestMatchers("/change-password").permitAll()
@@ -140,7 +140,7 @@ class WebSecurityConfig(
     ) =
         CompositeLoginWorkflowEngine(
             listOf(
-                MfaLoginWorkflowHandler(clientApplicationRepository, "/mfa-challenge/send"),
+                MfaLoginWorkflowHandler(clientApplicationRepository, "/mfa-challenge"),
                 ChangePasswordLoginWorkflowHandler(
                     accountRepository,
                     SimpleUrlAuthenticationSuccessHandler(CHANGE_PASSWORD_URL)

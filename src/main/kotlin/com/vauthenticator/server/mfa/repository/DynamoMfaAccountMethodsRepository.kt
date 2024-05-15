@@ -1,18 +1,14 @@
-package com.vauthenticator.server.mfa
+package com.vauthenticator.server.mfa.repository
 
 import com.vauthenticator.server.extentions.asDynamoAttribute
 import com.vauthenticator.server.extentions.valueAsStringFor
 import com.vauthenticator.server.keys.*
-import com.vauthenticator.server.mfa.MfaMethod.valueOf
+import com.vauthenticator.server.mfa.domain.MfaAccountMethod
+import com.vauthenticator.server.mfa.domain.MfaMethod
+import com.vauthenticator.server.mfa.domain.MfaMethod.valueOf
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest
-
-interface MfaAccountMethodsRepository {
-
-    fun findAll(email: String): Map<MfaMethod, MfaAccountMethod>
-    fun save(email: String, mfaMfaMethod: MfaMethod): MfaAccountMethod
-}
 
 class DynamoMfaAccountMethodsRepository(
     private val tableName: String,

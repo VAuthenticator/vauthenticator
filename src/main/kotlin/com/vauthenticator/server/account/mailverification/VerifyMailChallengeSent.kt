@@ -6,8 +6,8 @@ import com.vauthenticator.server.account.ticket.InvalidTicketException
 import com.vauthenticator.server.account.ticket.Ticket
 import com.vauthenticator.server.account.ticket.TicketRepository
 import com.vauthenticator.server.account.ticket.VerificationTicket
-import com.vauthenticator.server.mfa.MfaMethod
-import com.vauthenticator.server.mfa.MfaMethodsEnrolmentAssociation
+import com.vauthenticator.server.mfa.domain.MfaMethod
+import com.vauthenticator.server.mfa.domain.MfaMethodsEnrolmentAssociation
 
 class VerifyMailChallengeSent(
     private val accountRepository: AccountRepository,

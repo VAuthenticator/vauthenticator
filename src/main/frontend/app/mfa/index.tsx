@@ -16,17 +16,19 @@ interface MfaChallengePageProps {
 }
 
 const MfaChallengePage: React.FC<MfaChallengePageProps> = ({rawErrors, rawI18nMessages}) => {
-    const sendAgainMfaCode = () => {
-        fetch("/mfa-challenge/send", {
+    const sendMfaCode = () => {
+        fetch("/api/mfa/challenge", {
             method: 'PUT', // *GET, POST, PUT, DELETE, etc.
             credentials: 'same-origin', // include, *same-origin, omit
-        });
+        })
     }
 
     const errorMessage = JSON.parse(rawErrors)["mfa-challenge"];
     const i18nMessages = JSON.parse(rawI18nMessages)
 
     const errorsBanner = <ErrorBanner errorMessage={errorMessage}/>
+
+    sendMfaCode()
 
     return (
         <ThemeProvider theme={theme}>
@@ -53,7 +55,7 @@ const MfaChallengePage: React.FC<MfaChallengePageProps> = ({rawErrors, rawI18nMe
                         <FormButton type="submit" label={i18nMessages["submitButtonText"]}/>
 
                         <FormButton type="button" label={i18nMessages["sendAgainButtonText"]}
-                                    onClickHandler={() => sendAgainMfaCode()}/>
+                                    onClickHandler={() => sendMfaCode()}/>
                     </Box>
                 </form>}
             </Template>

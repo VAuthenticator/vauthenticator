@@ -1,6 +1,7 @@
-package com.vauthenticator.server.mfa
+package com.vauthenticator.server.mfa.domain
 
 import com.vauthenticator.server.account.Account
+import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
 
 class MfaMethodsEnrolmentAssociation(private val mfaAccountMethodsRepository: MfaAccountMethodsRepository) {
 

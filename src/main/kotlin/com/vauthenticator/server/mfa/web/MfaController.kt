@@ -1,8 +1,9 @@
-package com.vauthenticator.server.mfa
+package com.vauthenticator.server.mfa.web
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.i18n.I18nMessageInjector
 import com.vauthenticator.server.i18n.I18nScope
+import com.vauthenticator.server.mfa.domain.*
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
@@ -12,26 +13,21 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestParam
 import java.util.*
 
 @Controller
 class MfaController(
-    private val i18nMessageInjector : I18nMessageInjector,
+    private val i18nMessageInjector: I18nMessageInjector,
     private val publisher: ApplicationEventPublisher,
     private val objectMapper: ObjectMapper,
     private val nextHopeLoginWorkflowSuccessHandler: AuthenticationSuccessHandler,
     private val mfaFailureHandler: AuthenticationFailureHandler,
-    private val otpMfaSender: OtpMfaSender,
     private val otpMfaVerifier: OtpMfaVerifier
 ) {
     private val logger = LoggerFactory.getLogger(MfaController::class.java)
-
-    @GetMapping("/mfa-challenge/send")
-    fun view(authentication: Authentication): String {
-        otpMfaSender.sendMfaChallenge(authentication.name)
-        return "redirect:/mfa-challenge"
-    }
 
     @GetMapping("/mfa-challenge")
     fun view(
@@ -77,10 +73,3 @@ class MfaController(
     }
 }
 
-@RestController
-class MfaApi(private val otpMfaSender: OtpMfaSender) {
-    @PutMapping("/mfa-challenge/send")
-    fun sendAgain(authentication: Authentication) {
-        otpMfaSender.sendMfaChallenge(authentication.name)
-    }
-}
