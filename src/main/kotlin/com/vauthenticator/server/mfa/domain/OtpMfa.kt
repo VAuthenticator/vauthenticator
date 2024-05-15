@@ -25,9 +25,9 @@ class TaimosOtpMfa(
     private val tokenTimeWindow: Int = properties.timeToLiveInSeconds
     private val tokenTimeWindowMillis: Long = (tokenTimeWindow * 1000).toLong()
 
+    // todo to be improved
     override fun generateSecretKeyFor(account: Account): MfaSecret {
-        val associatedMfa = mfaAccountMethodsRepository.findAll(account.email)
-        val mfatMethod = associatedMfa[MfaMethod.EMAIL_MFA_METHOD]!!
+        val mfatMethod =mfaAccountMethodsRepository.findOne(account.email,MfaMethod.EMAIL_MFA_METHOD).orElseGet { null }
         val encryptedSecret = keyRepository.keyFor(mfatMethod.key, KeyPurpose.MFA)
         val decryptKeyAsByteArray = keyDecrypter.decryptKey(encryptedSecret.dataKey.encryptedPrivateKeyAsString())
         val decryptedKey = Hex.encodeHexString(decoder.decode(decryptKeyAsByteArray))

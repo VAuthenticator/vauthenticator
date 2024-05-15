@@ -12,7 +12,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
@@ -38,7 +38,7 @@ internal class MfaChallengeEndPointTest {
         every { otpMfaSender.sendMfaChallenge(account.email) } just runs
 
         mokMvc.perform(
-            MockMvcRequestBuilders.put("/mfa/challenge")
+            put("/api/mfa/challenge")
                 .principal(SecurityFixture.principalFor(account.email))
         ).andExpect(status().isOk)
 

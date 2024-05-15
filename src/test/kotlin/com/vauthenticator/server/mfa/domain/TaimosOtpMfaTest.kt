@@ -12,6 +12,7 @@ import org.apache.commons.codec.binary.Hex
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import java.util.Optional.of
 
 @ExtendWith(MockKExtension::class)
 class TaimosOtpMfaTest {
@@ -42,9 +43,9 @@ class TaimosOtpMfaTest {
             KeyPurpose.MFA,
             0L
         )
-        every { mfaAccountMethodsRepository.findAll(email) } returns mapOf(
-            MfaMethod.EMAIL_MFA_METHOD to MfaAccountMethod(email, Kid("A_KID"), MfaMethod.EMAIL_MFA_METHOD)
-        )
+        every { mfaAccountMethodsRepository.findOne(email, MfaMethod.EMAIL_MFA_METHOD) } returns
+                of(MfaAccountMethod(email, Kid("A_KID"), MfaMethod.EMAIL_MFA_METHOD))
+
         every { keyRepository.keyFor(Kid("A_KID"), KeyPurpose.MFA) } returns key
         every { keyDecrypter.decryptKey("QV9FTkNSWVBURURfS0VZ") } returns "QV9ERUNSWVBURURfU1lNTUVUUklDX0tFWQ=="
         val actual = underTest.generateSecretKeyFor(account)
