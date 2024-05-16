@@ -52,10 +52,21 @@ const MfaChallengePage: React.FC<MfaChallengePageProps> = ({rawErrors, rawI18nMe
 
                         <Separator/>
 
-                        <FormButton type="submit" label={i18nMessages["submitButtonText"]}/>
+                        <FormButton type="submit" label={i18nMessages["submitButtonText"]} buttonColor={"success"}/>
 
-                        <FormButton type="button" label={i18nMessages["sendAgainButtonText"]}
-                                    onClickHandler={() => sendMfaCode()}/>
+                        <Separator/>
+
+                        <Grid container sm={12}>
+                            <Grid item sm={4}>
+                                <FormButton type="button" label={i18nMessages["sendAgainButtonText"]}
+                                            onClickHandler={() => sendMfaCode()}/>
+                            </Grid>
+                            <Grid item sm={4}> </Grid>
+                            <Grid item sm={4}>
+                                <FormButton type="button" label={i18nMessages["changeMfaMethodButtonText"]} direction={"rtl"}
+                                            onClickHandler={() => sendMfaCode()}/>
+                            </Grid>
+                        </Grid>
                     </Box>
                 </form>}
             </Template>
