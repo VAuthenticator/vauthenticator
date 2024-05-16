@@ -9,6 +9,7 @@ import React from "react";
 import ErrorBanner from "../component/ErrorBanner";
 import getDataFromDomUtils from "../utils/getDataFromDomUtils";
 import ComponentInitializer from "../utils/ComponentInitializer";
+import Modal from "../component/Modal";
 
 interface MfaChallengePageProps {
     rawErrors: string
@@ -27,11 +28,19 @@ const MfaChallengePage: React.FC<MfaChallengePageProps> = ({rawErrors, rawI18nMe
     const i18nMessages = JSON.parse(rawI18nMessages)
 
     const errorsBanner = <ErrorBanner errorMessage={errorMessage}/>
+    const [openChooseMFAModal, setOpenChooseMFAModal] = React.useState(false)
 
     sendMfaCode()
 
     return (
         <ThemeProvider theme={theme}>
+
+            <Modal maxWidth="md"
+                   open={openChooseMFAModal}
+                   onExecute={deleteRole}
+                   onClose={handleCloseConfirmationDialog}
+                   message="Are you sure delete the selected role"
+                   title="Choose your preferred MFA method"/>
 
             <Template maxWidth="sm">
                 <Typography variant="h3" component="h3">
