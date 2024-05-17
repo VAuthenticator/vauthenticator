@@ -5,11 +5,13 @@ import {Person, VpnKey} from "@mui/icons-material";
 import FormInputTextField from "../component/FormInputTextField";
 import Separator from "../component/Separator";
 import FormButton from "../component/FormButton";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import ErrorBanner from "../component/ErrorBanner";
 import getDataFromDomUtils from "../utils/getDataFromDomUtils";
 import ComponentInitializer from "../utils/ComponentInitializer";
 import Modal from "../component/Modal";
+import {getMfaMethods, MfaAccountEnrolledMethod, sendMfaCode} from "./MfaRepository";
+import EmailIcon from '@mui/icons-material/Email';
 
 interface MfaChallengePageProps {
     rawErrors: string
@@ -17,35 +19,45 @@ interface MfaChallengePageProps {
 }
 
 const MfaChallengePage: React.FC<MfaChallengePageProps> = ({rawErrors, rawI18nMessages}) => {
-    const sendMfaCode = () => {
-        fetch("/api/mfa/challenge", {
-            method: 'PUT', // *GET, POST, PUT, DELETE, etc.
-            credentials: 'same-origin', // include, *same-origin, omit
-        })
-    }
-
     const errorMessage = JSON.parse(rawErrors)["mfa-challenge"];
     const i18nMessages = JSON.parse(rawI18nMessages)
 
     const errorsBanner = <ErrorBanner errorMessage={errorMessage}/>
     const [openChooseMFAModal, setOpenChooseMFAModal] = React.useState(false)
+    const [mfaAccountEnrolledMethod, setMfaAccountEnrolledMethod] = useState<MfaAccountEnrolledMethod[]>()
     const handleCloseChooseMFAModal = () => {
         setOpenChooseMFAModal(false);
     };
     const handleOpenChooseMFAModal = () => {
         setOpenChooseMFAModal(true);
     }
-    sendMfaCode()
 
+    useEffect(() => {
+        getMfaMethods()
+            .then(result => setMfaAccountEnrolledMethod(result))
+    }, [])
+
+    const mfaIcon = (mfaMethod: string) => {
+        let icon
+        if ("EMAIL_MFA_METHOD" === mfaMethod) {
+            icon = <><EmailIcon/> EMail</>
+        }
+        return icon
+    }
     return (
         <ThemeProvider theme={theme}>
 
             <Modal maxWidth="md"
                    open={openChooseMFAModal}
-                   onExecute={() => {}}
+                   onExecute={() => {
+                   }}
                    onClose={handleCloseChooseMFAModal}
-                   message="Are you sure delete the selected role"
-                   title="Choose your preferred MFA method"/>
+                   message="Enrolled MFA Methods"
+                   title="Choose your preferred MFA method">
+                <div>
+                    {mfaAccountEnrolledMethod?.map(method => <p>{mfaIcon(method.mfaMethod)}</p>)}
+                </div>
+            </Modal>
 
             <Template maxWidth="sm">
                 <Typography variant="h3" component="h3">
@@ -66,7 +78,7 @@ const MfaChallengePage: React.FC<MfaChallengePageProps> = ({rawErrors, rawI18nMe
 
                         <Separator/>
 
-                        <FormButton type="submit" label={i18nMessages["submitButtonText"]} buttonColor={"success"} />
+                        <FormButton type="submit" label={i18nMessages["submitButtonText"]} buttonColor={"success"}/>
 
                         <Separator/>
 
@@ -77,7 +89,8 @@ const MfaChallengePage: React.FC<MfaChallengePageProps> = ({rawErrors, rawI18nMe
                             </Grid>
                             <Grid item sm={4}> </Grid>
                             <Grid item sm={4}>
-                                <FormButton type="button" label={i18nMessages["changeMfaMethodButtonText"]} direction={"rtl"}
+                                <FormButton type="button" label={i18nMessages["changeMfaMethodButtonText"]}
+                                            direction={"rtl"}
                                             onClickHandler={() => handleOpenChooseMFAModal()}/>
                             </Grid>
                         </Grid>

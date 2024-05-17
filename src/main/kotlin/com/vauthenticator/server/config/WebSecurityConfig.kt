@@ -84,7 +84,7 @@ class WebSecurityConfig(
                 authz
                     .requestMatchers(LOGIN_ENGINE_BROKER_PAGE).permitAll()
                     .requestMatchers("/api/mfa/challenge").authenticated()
-                    .requestMatchers(HttpMethod.GET, "/mfa-challenge").authenticated()
+                    .requestMatchers(HttpMethod.GET, "/mfa-challenge", "/mfa-challenge/send").authenticated()
                     .requestMatchers(HttpMethod.POST, "/mfa-challenge").authenticated()
 
                     .requestMatchers("/change-password").permitAll()
@@ -140,7 +140,7 @@ class WebSecurityConfig(
     ) =
         CompositeLoginWorkflowEngine(
             listOf(
-                MfaLoginWorkflowHandler(clientApplicationRepository, "/mfa-challenge"),
+                MfaLoginWorkflowHandler(clientApplicationRepository, "/mfa-challenge/send"),
                 ChangePasswordLoginWorkflowHandler(
                     accountRepository,
                     SimpleUrlAuthenticationSuccessHandler(CHANGE_PASSWORD_URL)

@@ -11,17 +11,19 @@ interface ConfirmationDialogProps {
     open: boolean,
     title: string,
     message: string,
-    maxWidth: Breakpoint
+    maxWidth: Breakpoint,
+    children: React.ReactNode
 }
 
 const Modal: React.FC<ConfirmationDialogProps> = ({
-                                                                   onExecute,
-                                                                   onClose,
-                                                                   open,
-                                                                   title,
-                                                                   message,
-                                                                   maxWidth
-                                                               }) => {
+                                                      onExecute,
+                                                      onClose,
+                                                      open,
+                                                      title,
+                                                      message,
+                                                      maxWidth,
+                                                      children
+                                                  }) => {
     return (
         <Dialog onClose={onClose} aria-labelledby="simple-dialog-title" open={open} maxWidth={maxWidth}>
             <DialogTitle id="simple-dialog-title">{title}</DialogTitle>
@@ -30,11 +32,13 @@ const Modal: React.FC<ConfirmationDialogProps> = ({
                     {message}
                 </DialogContentText>
 
+                {children}
+
                 <Separator/>
 
                 <DialogActions>
-                    <FormButton label="Yes" type={"button"} onClickHandler={onExecute}/>
-                    <FormButton label="No" type={"button"} onClickHandler={onClose}/>
+                    <FormButton label="OK" type={"button"} onClickHandler={onExecute}/>
+                    <FormButton label="Close" type={"button"} onClickHandler={onClose}/>
                 </DialogActions>
             </DialogContent>
         </Dialog>

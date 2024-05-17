@@ -20,7 +20,7 @@ Authorization: Bearer {{auth_token}}
 
 {
   "email": "admin2@email.com",
-  "password": "s3Cr3t123456!",
+  "password": "secret!",
   "firstName": "Admin",
   "lastName": "",
   "birthDate": "1970-01-01",

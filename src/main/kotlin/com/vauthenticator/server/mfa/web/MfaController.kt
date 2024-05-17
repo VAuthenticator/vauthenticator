@@ -25,9 +25,16 @@ class MfaController(
     private val objectMapper: ObjectMapper,
     private val nextHopeLoginWorkflowSuccessHandler: AuthenticationSuccessHandler,
     private val mfaFailureHandler: AuthenticationFailureHandler,
+    private val otpMfaSender: OtpMfaSender,
     private val otpMfaVerifier: OtpMfaVerifier
 ) {
     private val logger = LoggerFactory.getLogger(MfaController::class.java)
+
+    @GetMapping("/mfa-challenge/send")
+    fun view(authentication: Authentication): String {
+        otpMfaSender.sendMfaChallenge(authentication.name)
+        return "redirect:/mfa-challenge"
+    }
 
     @GetMapping("/mfa-challenge")
     fun view(
