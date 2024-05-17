@@ -7,7 +7,7 @@ import {Breakpoint} from "@mui/system";
 
 interface ConfirmationDialogProps {
     onExecute: () => void,
-    onClose: (value : boolean) => void,
+    onClose: () => void,
     open: boolean,
     title: string,
     message: string,
@@ -33,8 +33,8 @@ const Modal: React.FC<ConfirmationDialogProps> = ({
                 <Separator/>
 
                 <DialogActions>
-                    <FormButton label="Yes" onClickHandler={onExecute}/>
-                    <FormButton label="No" onClickHandler={onClose}/>
+                    <FormButton label="Yes" type={"button"} onClickHandler={onExecute}/>
+                    <FormButton label="No" type={"button"} onClickHandler={onClose}/>
                 </DialogActions>
             </DialogContent>
         </Dialog>

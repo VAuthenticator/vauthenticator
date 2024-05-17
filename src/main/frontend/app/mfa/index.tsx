@@ -29,7 +29,12 @@ const MfaChallengePage: React.FC<MfaChallengePageProps> = ({rawErrors, rawI18nMe
 
     const errorsBanner = <ErrorBanner errorMessage={errorMessage}/>
     const [openChooseMFAModal, setOpenChooseMFAModal] = React.useState(false)
-
+    const handleCloseChooseMFAModal = () => {
+        setOpenChooseMFAModal(false);
+    };
+    const handleOpenChooseMFAModal = () => {
+        setOpenChooseMFAModal(true);
+    }
     sendMfaCode()
 
     return (
@@ -37,8 +42,8 @@ const MfaChallengePage: React.FC<MfaChallengePageProps> = ({rawErrors, rawI18nMe
 
             <Modal maxWidth="md"
                    open={openChooseMFAModal}
-                   onExecute={deleteRole}
-                   onClose={handleCloseConfirmationDialog}
+                   onExecute={() => {}}
+                   onClose={handleCloseChooseMFAModal}
                    message="Are you sure delete the selected role"
                    title="Choose your preferred MFA method"/>
 
@@ -61,7 +66,7 @@ const MfaChallengePage: React.FC<MfaChallengePageProps> = ({rawErrors, rawI18nMe
 
                         <Separator/>
 
-                        <FormButton type="submit" label={i18nMessages["submitButtonText"]} buttonColor={"success"}/>
+                        <FormButton type="submit" label={i18nMessages["submitButtonText"]} buttonColor={"success"} />
 
                         <Separator/>
 
@@ -73,7 +78,7 @@ const MfaChallengePage: React.FC<MfaChallengePageProps> = ({rawErrors, rawI18nMe
                             <Grid item sm={4}> </Grid>
                             <Grid item sm={4}>
                                 <FormButton type="button" label={i18nMessages["changeMfaMethodButtonText"]} direction={"rtl"}
-                                            onClickHandler={() => sendMfaCode()}/>
+                                            onClickHandler={() => handleOpenChooseMFAModal()}/>
                             </Grid>
                         </Grid>
                     </Box>
