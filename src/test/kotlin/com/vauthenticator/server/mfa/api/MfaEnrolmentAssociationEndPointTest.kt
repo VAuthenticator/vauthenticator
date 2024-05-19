@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
@@ -66,19 +65,5 @@ class MfaEnrolmentAssociationEndPointTest {
                     )
                 )
             )
-    }
-
-    @Test
-    fun `when an MFA Method is enrolled`() {
-        val account = AccountTestFixture.anAccount()
-        val email = account.email
-
-        every { mfaAccountMethodsRepository.findAll(email) } returns accountMfaAssociatedMfaMethods(email)
-
-        mokMvc.perform(
-            put("/api/mfa/enrollment")
-                .principal(principalFor(email))
-        )
-            .andExpect(status().isNoContent)
     }
 }
