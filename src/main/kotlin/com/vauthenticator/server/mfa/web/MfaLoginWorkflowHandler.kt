@@ -1,4 +1,4 @@
-package com.vauthenticator.server.mfa
+package com.vauthenticator.server.mfa.web
 
 import com.vauthenticator.server.extentions.hasEnoughScopes
 import com.vauthenticator.server.login.workflow.LoginWorkflowHandler

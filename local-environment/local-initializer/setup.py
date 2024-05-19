@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 def str2bool(v):
     return v.lower() in ("True")
 
-load_dotenv(dotenv_path="../local-environment/.env")
+load_dotenv(dotenv_path="env")
 
 isProduction = str2bool(os.getenv("IS_PRODUCITON"))
 print(isProduction)
@@ -80,11 +80,28 @@ def store_sso_client_applications():
         ["openid", "profile", "email", "admin:reset-password", "admin:change-password", "admin:key-reader",
          "admin:key-editor",
          "admin:mail-template-reader", "admin:mail-template-writer"])
+
     if isProduction:
         scopes.add("mfa:always")
 
     table.put_item(Item={
         "client_id": client_id,
+        "client_secret": pass_encoded(client_secret),
+        "with_pkce": False,
+        "scopes": scopes,
+        "authorized_grant_types": set(["AUTHORIZATION_CODE", "REFRESH_TOKEN"]),
+        "web_server_redirect_uri": "http://local.management.vauthenticator.com:8080/login/oauth2/code/client",
+        "authorities": set(["ROLE_USER", "VAUTHENTICATOR_ADMIN"]),
+        "access_token_validity": 180,
+        "refresh_token_validity": 3600,
+        "auto_approve": True,
+        "post_logout_redirect_uris": "http://local.management.vauthenticator.com:8080/secure/admin/index",
+        "logout_uris": "http://local.management.vauthenticator.com:8080/logout",
+    })
+
+    scopes.add("mfa:always")
+    table.put_item(Item={
+        "client_id": f"mfa-{client_id}",
         "client_secret": pass_encoded(client_secret),
         "with_pkce": False,
         "scopes": scopes,

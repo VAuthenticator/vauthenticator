@@ -1,4 +1,4 @@
-package com.vauthenticator.server.mfa
+package com.vauthenticator.server.mfa.web
 
 import com.vauthenticator.server.clientapp.ClientAppFixture
 import com.vauthenticator.server.oauth2.clientapp.*

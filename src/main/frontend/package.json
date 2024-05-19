@@ -1,6 +1,6 @@
 {
   "name": "vautehenticator-asset",
-  "version": "0.7",
+  "version": "0.8",
   "description": "VAuthenticator UI Asset library",
   "scripts": {
     "build": "webpack --config webpack.config.js --mode=development",

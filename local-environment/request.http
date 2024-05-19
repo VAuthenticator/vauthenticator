@@ -8,6 +8,26 @@ GET {{host}}/.well-known/openid-configuration
 POST {{host}}/oauth2/token
 Content-Type: application/x-www-form-urlencoded
 
-client_id=admin&client_secret=secret&grant_type=client_credentials&scope=admin:key-editor admin:key-reader
+client_id=admin&client_secret=secret&grant_type=client_credentials&scope=admin:signup admin:key-editor admin:key-reader
 
 > {% client.global.set("auth_token", response.body.access_token); %}
+
+### sign up a new account
+
+POST {{host}}/api/accounts
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "email": "admin2@email.com",
+  "password": "secret!",
+  "firstName": "Admin",
+  "lastName": "",
+  "birthDate": "1970-01-01",
+  "phone": "+39 233 2323233",
+  "locale": "it",
+  "authorities": [
+    "ROLE_USER",
+    "VAUTHENTICATOR_ADMIN"
+  ]
+}

@@ -1,4 +1,4 @@
-package com.vauthenticator.server.mfa
+package com.vauthenticator.server.mfa.domain
 
 import com.j256.twofactorauth.TimeBasedOneTimePasswordUtil
 import com.vauthenticator.server.account.Account
@@ -6,8 +6,9 @@ import com.vauthenticator.server.extentions.decoder
 import com.vauthenticator.server.keys.KeyDecrypter
 import com.vauthenticator.server.keys.KeyPurpose
 import com.vauthenticator.server.keys.KeyRepository
+import com.vauthenticator.server.mfa.OtpConfigurationProperties
+import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
 import org.apache.commons.codec.binary.Hex
-import org.springframework.boot.context.properties.ConfigurationProperties
 
 interface OtpMfa {
     fun generateSecretKeyFor(account: Account): MfaSecret
@@ -24,9 +25,9 @@ class TaimosOtpMfa(
     private val tokenTimeWindow: Int = properties.timeToLiveInSeconds
     private val tokenTimeWindowMillis: Long = (tokenTimeWindow * 1000).toLong()
 
+    // todo to be improved
     override fun generateSecretKeyFor(account: Account): MfaSecret {
-        val associatedMfa = mfaAccountMethodsRepository.findAll(account.email)
-        val mfatMethod = associatedMfa[MfaMethod.EMAIL_MFA_METHOD]!!
+        val mfatMethod =mfaAccountMethodsRepository.findOne(account.email,MfaMethod.EMAIL_MFA_METHOD).orElseGet { null }
         val encryptedSecret = keyRepository.keyFor(mfatMethod.key, KeyPurpose.MFA)
         val decryptKeyAsByteArray = keyDecrypter.decryptKey(encryptedSecret.dataKey.encryptedPrivateKeyAsString())
         val decryptedKey = Hex.encodeHexString(decoder.decode(decryptKeyAsByteArray))
@@ -66,5 +67,3 @@ class TaimosOtpMfa(
 
 }
 
-@ConfigurationProperties("mfa.otp")
-data class OtpConfigurationProperties(val length: Int, val timeToLiveInSeconds: Int)

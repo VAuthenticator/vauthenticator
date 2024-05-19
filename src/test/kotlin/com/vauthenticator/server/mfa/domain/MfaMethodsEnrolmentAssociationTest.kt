@@ -1,6 +1,7 @@
-package com.vauthenticator.server.mfa
+package com.vauthenticator.server.mfa.domain
 
 import com.vauthenticator.server.keys.Kid
+import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -33,7 +34,7 @@ class MfaMethodsEnrolmentAssociationTest {
 
     @Test
     fun `when an email association goes fine`() {
-        every { mfaAccountMethodsRepository.findAll(email) } returns emptyMap()
+        every { mfaAccountMethodsRepository.findAll(email) } returns emptyList()
         every { mfaAccountMethodsRepository.save(email, MfaMethod.EMAIL_MFA_METHOD) } returns mfaAccountMethod
 
         underTest.associate(account, MfaMethod.EMAIL_MFA_METHOD)
@@ -44,7 +45,7 @@ class MfaMethodsEnrolmentAssociationTest {
 
     @Test
     fun `when an email association is already done`() {
-        every { mfaAccountMethodsRepository.findAll(email) } returns mapOf(MfaMethod.EMAIL_MFA_METHOD to mfaAccountMethod)
+        every { mfaAccountMethodsRepository.findAll(email) } returns listOf( mfaAccountMethod)
 
         underTest.associate(account, MfaMethod.EMAIL_MFA_METHOD)
 
