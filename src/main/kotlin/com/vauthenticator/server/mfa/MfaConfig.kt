@@ -7,6 +7,7 @@ import com.vauthenticator.server.keys.KeyDecrypter
 import com.vauthenticator.server.keys.KeyRepository
 import com.vauthenticator.server.keys.MasterKid
 import com.vauthenticator.server.mail.*
+import com.vauthenticator.server.mask.SensitiveEmailMasker
 import com.vauthenticator.server.mfa.domain.*
 import com.vauthenticator.server.mfa.repository.DynamoMfaAccountMethodsRepository
 import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
@@ -33,6 +34,9 @@ class MfaConfig {
             keyRepository,
             MasterKid(masterKey)
         )
+
+    @Bean
+    fun sensitiveEmailMasker() = SensitiveEmailMasker()
 
     @Bean
     fun mfaMethodsEnrolmentAssociation(mfaAccountMethodsRepository: MfaAccountMethodsRepository) =

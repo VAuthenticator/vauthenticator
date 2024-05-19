@@ -72,7 +72,7 @@ object SecurityFixture {
             )
         }
 
-    fun principalFor(mail: String, authorities: List<String> = emptyList()) =
+    fun principalFor(mail: String, authorities: List<String> = emptyList()): UsernamePasswordAuthenticationToken =
         UsernamePasswordAuthenticationToken.authenticated(mail, "", authorities.map(::SimpleGrantedAuthority))
 
 }

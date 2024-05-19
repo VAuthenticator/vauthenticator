@@ -37,25 +37,26 @@ const MfaChallengePage: React.FC<MfaChallengePageProps> = ({rawErrors, rawI18nMe
             .then(result => setMfaAccountEnrolledMethod(result))
     }, [])
 
-    const mfaIcon = (mfaMethod: string) => {
+    const mfaIcon = (mfaMethod: MfaAccountEnrolledMethod) => {
         let icon
-        if ("EMAIL_MFA_METHOD" === mfaMethod) {
-            icon = <><EmailIcon/> EMail</>
+        if ("EMAIL_MFA_METHOD" === mfaMethod.mfaMethod) {
+            icon = <><EmailIcon/> EMail: {mfaMethod.email}</>
         }
         return icon
     }
     return (
         <ThemeProvider theme={theme}>
 
-            <Modal maxWidth="md"
+            <Modal maxWidth="sm"
                    open={openChooseMFAModal}
-                   onExecute={() => {
-                   }}
+                   onExecute={handleCloseChooseMFAModal}
+                   onExecuteButtonLabel={i18nMessages["changeMfaMethodModalExecuteButtonText"]}
                    onClose={handleCloseChooseMFAModal}
-                   message="Enrolled MFA Methods"
-                   title="Choose your preferred MFA method">
+                   onCloseButtonLabel={i18nMessages["changeMfaMethodModalCloseButtonText"]}
+                   headerLabel={i18nMessages["changeMfaMethodModalHeaderText"]}
+                   title={i18nMessages["changeMfaMethodModalTitleText"]}>
                 <div>
-                    {mfaAccountEnrolledMethod?.map(method => <p>{mfaIcon(method.mfaMethod)}</p>)}
+                    {mfaAccountEnrolledMethod?.map(method => <p>{mfaIcon(method)}</p>)}
                 </div>
             </Modal>
 

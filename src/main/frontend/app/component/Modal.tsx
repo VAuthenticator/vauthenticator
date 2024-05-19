@@ -6,21 +6,25 @@ import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} fr
 import {Breakpoint} from "@mui/system";
 
 interface ConfirmationDialogProps {
+    onExecuteButtonLabel : string,
     onExecute: () => void,
+    onCloseButtonLabel : string,
     onClose: () => void,
     open: boolean,
     title: string,
-    message: string,
+    headerLabel: string,
     maxWidth: Breakpoint,
     children: React.ReactNode
 }
 
 const Modal: React.FC<ConfirmationDialogProps> = ({
                                                       onExecute,
+                                                      onExecuteButtonLabel,
                                                       onClose,
+                                                      onCloseButtonLabel,
                                                       open,
                                                       title,
-                                                      message,
+                                                      headerLabel,
                                                       maxWidth,
                                                       children
                                                   }) => {
@@ -29,7 +33,7 @@ const Modal: React.FC<ConfirmationDialogProps> = ({
             <DialogTitle id="simple-dialog-title">{title}</DialogTitle>
             <DialogContent>
                 <DialogContentText id="alert-dialog-description">
-                    {message}
+                    {headerLabel}
                 </DialogContentText>
 
                 {children}
@@ -37,8 +41,8 @@ const Modal: React.FC<ConfirmationDialogProps> = ({
                 <Separator/>
 
                 <DialogActions>
-                    <FormButton label="OK" type={"button"} onClickHandler={onExecute}/>
-                    <FormButton label="Close" type={"button"} onClickHandler={onClose}/>
+                    <FormButton label={onExecuteButtonLabel} type={"button"} onClickHandler={onExecute}/>
+                    <FormButton label={onCloseButtonLabel} type={"button"} onClickHandler={onClose}/>
                 </DialogActions>
             </DialogContent>
         </Dialog>

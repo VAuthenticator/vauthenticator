@@ -23,6 +23,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.view
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
@@ -56,12 +57,24 @@ internal class MfaControllerTest {
                 i18nMessageInjector,
                 publisher,
                 ObjectMapper(),
-                successHandler, failureHandler,
+                successHandler,
+                failureHandler,
+                otpMfaSender,
                 otpMfaVerifier
             )
         ).build()
     }
 
+    @Test
+    internal fun `when an mfa challenge is sent`() {
+        every { otpMfaSender.sendMfaChallenge(account.email) } just runs
+
+        mokMvc.perform(
+            get("/mfa-challenge/send")
+                .principal(principalFor(account.email))
+        ).andExpect(redirectedUrl("/mfa-challenge"))
+        verify { otpMfaSender.sendMfaChallenge(account.email) }
+    }
     @Test
     internal fun `when an mfa challenge is rendered`() {
         every { i18nMessageInjector.setMessagedFor(I18nScope.MFA_PAGE, any()) } just runs
