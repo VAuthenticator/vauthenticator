@@ -4,6 +4,9 @@ GET {{host}}/login
 ### well-known/openid-configuration
 GET {{host}}/.well-known/openid-configuration
 
+### well-known/openid-configuration
+GET {{host}}/.well-known/oauth-authorization-server
+
 ### gain a new access token for M2M interaction
 POST {{host}}/oauth2/token
 Content-Type: application/x-www-form-urlencoded
