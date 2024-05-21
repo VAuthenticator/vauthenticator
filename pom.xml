@@ -22,10 +22,10 @@
         <kotlin.version>1.9.23</kotlin.version>
 
         <vauthenticator-starters.version>0.7</vauthenticator-starters.version>
-        <io.mockk.version>1.13.10</io.mockk.version>
-        <aws.sdk.version>2.25.45</aws.sdk.version>
+        <io.mockk.version>1.13.11</io.mockk.version>
+        <aws.sdk.version>2.25.56</aws.sdk.version>
         <greenmail.version>2.1.0-alpha-4</greenmail.version>
-        <oauth2-authorization-server.version>1.2.4</oauth2-authorization-server.version>
+        <oauth2-authorization-server.version>1.3.0</oauth2-authorization-server.version>
         <wiremock.version>3.0.1</wiremock.version>
         <two-factor-auth.version>1.3</two-factor-auth.version>
     </properties>
