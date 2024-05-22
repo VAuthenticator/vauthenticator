@@ -11,6 +11,7 @@ import com.vauthenticator.server.cache.CacheOperation
 import com.vauthenticator.server.cache.RedisCacheOperation
 import com.vauthenticator.server.role.RoleRepository
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.redis.core.RedisTemplate
@@ -28,8 +29,30 @@ class AccountConfig {
     fun saveAccount(accountRepository: AccountRepository): SaveAccount =
         SaveAccount(accountRepository)
 
-    @Bean
+
+    @Bean("accountRepository")
+    @ConditionalOnProperty(
+        name = ["vauthenticator.dynamo-db.account.cache.enabled"],
+        havingValue = "false",
+        matchIfMissing = true
+    )
     fun accountRepository(
+        mapper: ObjectMapper,
+        dynamoDbClient: DynamoDbClient,
+        roleRepository: RoleRepository,
+        @Value("\${vauthenticator.dynamo-db.account.table-name}") accountTableName: String,
+        @Value("\${vauthenticator.dynamo-db.account.role.table-name}") accountRoleTableName: String
+    ) =
+        DynamoDbAccountRepository(dynamoDbClient, accountTableName, roleRepository)
+
+
+    @Bean("accountRepository")
+    @ConditionalOnProperty(
+        name = ["vauthenticator.dynamo-db.account.cache.enabled"],
+        havingValue = "true",
+        matchIfMissing = false
+    )
+    fun cachedAccountRepository(
         mapper: ObjectMapper,
         dynamoDbClient: DynamoDbClient,
         accountCacheOperation: CacheOperation<String, String>,
@@ -44,6 +67,11 @@ class AccountConfig {
         )
 
     @Bean
+    @ConditionalOnProperty(
+        name = ["vauthenticator.dynamo-db.account.cache.enabled"],
+        havingValue = "true",
+        matchIfMissing = false
+    )
     fun accountCacheOperation(
         redisTemplate: RedisTemplate<*, *>,
         @Value("\${vauthenticator.dynamo-db.account.cache.ttl}") ttl: Duration,
