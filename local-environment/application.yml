@@ -58,7 +58,7 @@ server:
 
 management:
   server:
-    port: 9090
+    port: 9091
     servlet:
       context-path: /
   endpoints:
@@ -88,18 +88,21 @@ vauthenticator:
     account:
       table-name: VAuthenticator_Account_Local_Staging
       cache:
+        enabled: false
         ttl: 10s
         name: account
       role.table-name: VAuthenticator_Account_Role_Local_Staging
     role:
       table-name: VAuthenticator_Role_Local_Staging
       cache:
+        enabled: false
         name: role
         ttl: 1m
       protected-from-delete: ROLE_USER,VAUTHENTICATOR_ADMIN
     client-application:
       table-name: VAuthenticator_ClientApplication_Local_Staging
       cache:
+        enabled: false
         ttl: 10s
         name: client-application
     password-history:
