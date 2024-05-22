@@ -99,9 +99,9 @@ class AuthorizationServerConfig {
     }
 
     @Bean
-    fun providerSettings(): AuthorizationServerSettings {
-        return AuthorizationServerSettings.builder().issuer(oidcIss).build()
-    }
+    fun providerSettings(): AuthorizationServerSettings =
+        AuthorizationServerSettings.builder().issuer(oidcIss).build()
+
 
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
