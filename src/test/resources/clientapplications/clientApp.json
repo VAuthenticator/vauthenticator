@@ -4,7 +4,6 @@
   "scopes": ["A_SCOPE","ANOTHER_SCOPE"],
   "authorizedGrantTypes": ["REFRESH_TOKEN", "AUTHORIZATION_CODE"],
   "webServerRedirectUri": "http://a_call_back",
-  "authorities": ["AN_AUTHORITY","ANOTHER_AUTHORITY"],
   "accessTokenValidity": 100,
   "refreshTokenValidity": 200,
   "additionalInformation": {},

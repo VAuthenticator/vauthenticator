@@ -12,6 +12,7 @@ import com.vauthenticator.server.oauth2.clientapp.Scopes
 import com.vauthenticator.server.password.Password
 import com.vauthenticator.server.password.PasswordPolicy
 import com.vauthenticator.server.password.VAuthenticatorPasswordEncoder
+import com.vauthenticator.server.role.Role
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -61,7 +62,10 @@ internal class SignUpUseTest {
         val now = Instant.now()
         val clientAppId = ClientAppId("an_id")
         val aClientApp = aClientApp(clientAppId).copy(scopes = Scopes(setOf(SIGN_UP)))
-        val account = anAccount().copy(authorities = setOf("AN_AUTHORITY"), password = "encrypted_secret")
+        val account = anAccount().copy(
+            authorities = setOf(Role.defaultRole().name),
+            password = "encrypted_secret"
+        )
 
         val signUpEvent = SignUpEvent(Email(account.email), clientAppId, now, Password("encrypted_secret"))
 
