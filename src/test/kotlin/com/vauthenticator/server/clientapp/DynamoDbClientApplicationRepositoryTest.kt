@@ -1,6 +1,5 @@
 package com.vauthenticator.server.clientapp
 
-import com.vauthenticator.server.oauth2.clientapp.Authorities
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.oauth2.clientapp.ClientApplication
 import com.vauthenticator.server.oauth2.clientapp.DynamoDbClientApplicationRepository
@@ -65,7 +64,7 @@ internal class DynamoDbClientApplicationRepositoryTest {
     @Test
     fun `when find an client application with zero authorities`() {
         val clientAppId = ClientAppId("client_id")
-        val expected = ClientAppFixture.aClientApp(clientAppId, authorities = Authorities.empty())
+        val expected = ClientAppFixture.aClientApp(clientAppId)
         underTest.save(expected)
         val actual = underTest.findAll()
 

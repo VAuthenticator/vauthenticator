@@ -27,7 +27,7 @@ internal class ClientAppRegisteredClientRepositoryTest {
     @MockK
     lateinit var clientApplicationRepository: ClientApplicationRepository
 
-    lateinit var clientAppRegisteredClientRepository: ClientAppRegisteredClientRepository
+    private lateinit var clientAppRegisteredClientRepository: ClientAppRegisteredClientRepository
 
     @BeforeEach
     fun setup() {
@@ -81,7 +81,6 @@ internal class ClientAppRegisteredClientRepositoryTest {
                     .copy(
                         postLogoutRedirectUri = PostLogoutRedirectUri("http://post_logout_redirect_uri"),
                         logoutUri = LogoutUri("http://post_logout_redirect_uri"),
-                        authorities = Authorities.empty(),
                         scopes = Scopes(setOf(Scope("A_SCOPE"), Scope("ANOTHER_SCOPE")))
                     ), true
             )

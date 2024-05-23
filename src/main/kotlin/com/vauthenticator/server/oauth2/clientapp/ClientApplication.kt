@@ -7,7 +7,6 @@ data class ClientApplication(
     val withPkce: WithPkce = WithPkce.disabled,
     val authorizedGrantTypes: AuthorizedGrantTypes,
     val webServerRedirectUri: CallbackUri,
-    val authorities: Authorities,
     val accessTokenValidity: TokenTimeToLive,
     val refreshTokenValidity: TokenTimeToLive,
     val additionalInformation: Map<String, Any> = emptyMap(),

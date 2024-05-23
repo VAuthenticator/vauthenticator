@@ -10,6 +10,7 @@ import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
 import com.vauthenticator.server.password.Password
 import com.vauthenticator.server.password.PasswordPolicy
 import com.vauthenticator.server.password.VAuthenticatorPasswordEncoder
+import com.vauthenticator.server.role.Role
 import java.time.Instant
 
 open class SignUpUse(
@@ -25,7 +26,7 @@ open class SignUpUse(
             .map {
                 val encodedPassword = vAuthenticatorPasswordEncoder.encode(account.password)
                 val registeredAccount = account.copy(
-                    authorities = it.authorities.content.map { it.content }.toSet(),
+                    authorities = setOf(Role.defaultRole().name),
                     password = encodedPassword
                 )
                 accountRepository.create(registeredAccount)

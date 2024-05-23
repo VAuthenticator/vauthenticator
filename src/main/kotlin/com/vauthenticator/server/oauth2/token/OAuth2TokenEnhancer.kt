@@ -27,7 +27,6 @@ class OAuth2TokenEnhancer(
                 val findOne = clientApplicationRepository.findOne(ClientAppId(clientId))
                 findOne.ifPresent {
                     context.claims.claim("user_name", it.clientAppId.content)
-                    context.claims.claim("authorities", it.authorities.content.stream().map { authority -> authority.content }.collect(Collectors.toList()))
                 }
             } else {
                 val attributes = context.authorization!!.attributes

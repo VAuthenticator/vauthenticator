@@ -10,7 +10,7 @@ import java.util.*
 
 object RegisteredClientRepositoryFixture {
 
-    fun aRegisteredClient() = RegisteredClient.withId("A_CLIENT_APP_ID")
+    fun aRegisteredClient(): RegisteredClient = RegisteredClient.withId("A_CLIENT_APP_ID")
         .clientId("A_CLIENT_APP_ID")
         .clientSecret("A_SECRET")
         .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
@@ -31,7 +31,7 @@ object RegisteredClientRepositoryFixture {
         )
         .build()
 
-    fun aClientApplication() = Optional.ofNullable(
+    fun aClientApplication(): Optional<ClientApplication> = Optional.ofNullable(
         ClientApplication(
             clientAppId = ClientAppId("A_CLIENT_APP_ID"),
             secret = Secret("A_SECRET"),
@@ -43,7 +43,6 @@ object RegisteredClientRepositoryFixture {
                 )
             ),
             webServerRedirectUri = CallbackUri("http://a_call_back"),
-            authorities = Authorities(setOf(Authority("AN_AUTHORITY"), Authority("ANOTHER_AUTHORITY"))),
             accessTokenValidity = TokenTimeToLive(100),
             refreshTokenValidity = TokenTimeToLive(200),
             additionalInformation = emptyMap(),
