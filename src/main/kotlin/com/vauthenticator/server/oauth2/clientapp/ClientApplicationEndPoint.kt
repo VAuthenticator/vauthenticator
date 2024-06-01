@@ -65,7 +65,6 @@ data class ClientAppRepresentation(
     var scopes: List<String>,
     var authorizedGrantTypes: List<String>,
     var webServerRedirectUri: String,
-    var authorities: List<String>,
     var accessTokenValidity: Long,
     var refreshTokenValidity: Long,
     var postLogoutRedirectUri: String,
@@ -81,7 +80,6 @@ data class ClientAppRepresentation(
                 scopes = clientApplication.scopes.content.map { it.content },
                 authorizedGrantTypes = clientApplication.authorizedGrantTypes.content.map { it.name.lowercase() },
                 webServerRedirectUri = clientApplication.webServerRedirectUri.content,
-                authorities = clientApplication.authorities.content.map { it.content },
                 accessTokenValidity = clientApplication.accessTokenValidity.content,
                 refreshTokenValidity = clientApplication.refreshTokenValidity.content,
                 postLogoutRedirectUri = clientApplication.postLogoutRedirectUri.content,
@@ -97,7 +95,6 @@ data class ClientAppRepresentation(
                 authorizedGrantTypes = AuthorizedGrantTypes(representation.authorizedGrantTypes.map { it.uppercase() }
                     .map { AuthorizedGrantType.valueOf(it) }),
                 webServerRedirectUri = CallbackUri(representation.webServerRedirectUri),
-                authorities = Authorities(representation.authorities.map { it.uppercase() }.map(::Authority).toSet()),
                 accessTokenValidity = TokenTimeToLive(representation.accessTokenValidity),
                 refreshTokenValidity = TokenTimeToLive(representation.refreshTokenValidity),
                 postLogoutRedirectUri = PostLogoutRedirectUri(representation.postLogoutRedirectUri),

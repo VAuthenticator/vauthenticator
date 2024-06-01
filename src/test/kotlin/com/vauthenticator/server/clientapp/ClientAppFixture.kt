@@ -9,7 +9,6 @@ object ClientAppFixture {
         clientAppId: ClientAppId,
         password: Secret = Secret("secret"),
         logoutUri: LogoutUri = LogoutUri("http://an_uri"),
-        authorities: Authorities = Authorities(setOf(Authority("AN_AUTHORITY")))
     ) = ClientApplication(
         clientAppId,
         password,
@@ -17,7 +16,6 @@ object ClientAppFixture {
         WithPkce.enabled,
         AuthorizedGrantTypes.from(AuthorizedGrantType.PASSWORD),
         CallbackUri("http://an_uri"),
-        authorities,
         TokenTimeToLive(10),
         TokenTimeToLive(10),
         emptyMap(),

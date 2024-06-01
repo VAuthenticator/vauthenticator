@@ -25,7 +25,6 @@ class ClientAppRegisteredClientRepository(
         storeClientApplication.store(
             ClientApplication(
                 clientAppId = ClientAppId(registeredClient.clientId),
-                authorities = Authorities.empty(),
                 logoutUri = LogoutUri(
                     Optional.ofNullable(registeredClient.postLogoutRedirectUris.firstOrNull()).orElseGet { "" }),
                 postLogoutRedirectUri = PostLogoutRedirectUri(
