@@ -1,5 +1,6 @@
 package com.vauthenticator.server.support
 
+import org.testcontainers.containers.ComposeContainer
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
 import software.amazon.awssdk.regions.Region
@@ -27,13 +28,13 @@ object DynamoDbUtils {
         .endpointOverride(URI.create("http://localhost:4566"))
         .build()
 
-    fun dynamoDbClient(port: Int): DynamoDbClient = DynamoDbClient.builder()
+    fun dynamoDbClient(compose: ComposeContainer): DynamoDbClient = DynamoDbClient.builder()
         .credentialsProvider(
             StaticCredentialsProvider.create(
                 AwsBasicCredentials.create("ACCESS_KEY_ID", "SECRET_ACCESS_KEY")
             )
         ).region(Region.US_EAST_1)
-        .endpointOverride(URI.create("http://localhost:$port"))
+        .endpointOverride(URI.create("http://localhost:${compose.getServicePort("localstack", 4566)}"))
         .build()
 
     fun initRoleTests(roleRepository: DynamoDbClient) {

@@ -13,7 +13,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.*
 
-abstract class AccountRepositoryTest {
+abstract class AbstractAccountRepositoryTest {
 
     private val role = Role("role", "description")
     private val anotherRole = Role("another_role", "description")
