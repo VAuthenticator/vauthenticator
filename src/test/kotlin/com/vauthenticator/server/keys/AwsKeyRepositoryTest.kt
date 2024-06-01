@@ -7,10 +7,10 @@ import com.vauthenticator.server.keys.KeyPurpose.MFA
 import com.vauthenticator.server.keys.KeyPurpose.SIGNATURE
 import com.vauthenticator.server.keys.KeyType.ASYMMETRIC
 import com.vauthenticator.server.keys.KeyType.SYMMETRIC
-import com.vauthenticator.server.support.DatabaseUtils.dynamoDbClient
-import com.vauthenticator.server.support.DatabaseUtils.dynamoMfaKeysTableName
-import com.vauthenticator.server.support.DatabaseUtils.dynamoSignatureKeysTableName
-import com.vauthenticator.server.support.DatabaseUtils.resetDatabase
+import com.vauthenticator.server.support.DynamoDbUtils.dynamoDbClient
+import com.vauthenticator.server.support.DynamoDbUtils.dynamoMfaKeysTableName
+import com.vauthenticator.server.support.DynamoDbUtils.dynamoSignatureKeysTableName
+import com.vauthenticator.server.support.DynamoDbUtils.resetDynamoDb
 import com.vauthenticator.server.support.KeysUtils.aNewMasterKey
 import com.vauthenticator.server.support.KeysUtils.kmsClient
 import com.vauthenticator.server.support.KmsClientWrapper
@@ -36,7 +36,7 @@ internal class AwsKeyRepositoryTest {
 
     @BeforeEach
     internal fun setUp() {
-        resetDatabase()
+        resetDynamoDb(dynamoDbClient)
         wrapper = KmsClientWrapper(kmsClient)
         keyRepository =
             AwsKeyRepository(

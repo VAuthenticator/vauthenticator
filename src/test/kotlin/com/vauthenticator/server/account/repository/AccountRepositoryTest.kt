@@ -2,41 +2,36 @@ package com.vauthenticator.server.account.repository
 
 import com.vauthenticator.server.account.Account
 import com.vauthenticator.server.account.AccountMandatoryAction.RESET_PASSWORD
-import com.vauthenticator.server.role.*
+import com.vauthenticator.server.role.Role
+import com.vauthenticator.server.role.RoleRepository
+import com.vauthenticator.server.role.defaultRole
+import com.vauthenticator.server.role.protectedRoleName
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
-import com.vauthenticator.server.support.DatabaseUtils.dynamoAccountTableName
-import com.vauthenticator.server.support.DatabaseUtils.dynamoDbClient
-import com.vauthenticator.server.support.DatabaseUtils.dynamoRoleTableName
-import com.vauthenticator.server.support.DatabaseUtils.resetDatabase
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.*
 
-internal class DynamoDbAccountRepositoryTest {
+abstract class AccountRepositoryTest {
 
     private val role = Role("role", "description")
     private val anotherRole = Role("another_role", "description")
     private val account = anAccount(setOf(role, defaultRole))
-    private lateinit var accountRepository: DynamoDbAccountRepository
-    private lateinit var roleRepository: DynamoDbRoleRepository
+
+    private lateinit var accountRepository: AccountRepository
+    private lateinit var roleRepository: RoleRepository
+
+    abstract fun initAccountRepository(roleRepository: RoleRepository): AccountRepository
+    abstract fun initRoleRepository(): RoleRepository
+    abstract fun resetDatabase()
 
     @BeforeEach
     fun setUp() {
         resetDatabase()
 
-        roleRepository = DynamoDbRoleRepository(
-            protectedRoleNames,
-            dynamoDbClient,
-            dynamoRoleTableName
-        )
-
-        accountRepository = DynamoDbAccountRepository(
-            dynamoDbClient,
-            dynamoAccountTableName,
-            roleRepository
-        )
+        roleRepository = initRoleRepository()
+        accountRepository = initAccountRepository(roleRepository)
 
 
         roleRepository.save(Role(protectedRoleName, protectedRoleName))

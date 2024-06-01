@@ -8,7 +8,7 @@ import software.amazon.awssdk.services.dynamodb.model.*
 import java.net.URI
 
 
-object DatabaseUtils {
+object DynamoDbUtils {
     const val dynamoPasswordHistoryTableName: String = "TESTING_VAuthenticator_PasswordHistory"
     const val dynamoClientApplicationTableName: String = "TESTING_VAuthenticator_ClientApplication"
     const val dynamoAccountTableName: String = "TESTING_VAuthenticator_Account"
@@ -27,6 +27,15 @@ object DatabaseUtils {
         .endpointOverride(URI.create("http://localhost:4566"))
         .build()
 
+    fun dynamoDbClient(port: Int): DynamoDbClient = DynamoDbClient.builder()
+        .credentialsProvider(
+            StaticCredentialsProvider.create(
+                AwsBasicCredentials.create("ACCESS_KEY_ID", "SECRET_ACCESS_KEY")
+            )
+        ).region(Region.US_EAST_1)
+        .endpointOverride(URI.create("http://localhost:$port"))
+        .build()
+
     fun initRoleTests(roleRepository: DynamoDbClient) {
         val roleName = AttributeValue.builder().s("a_role").build()
         val description = AttributeValue.builder().s("A_ROLE").build()
@@ -42,67 +51,69 @@ object DatabaseUtils {
         roleRepository.putItem(item)
     }
 
-    fun resetDatabase() {
+    fun resetDynamoDb(dbClient: DynamoDbClient = dynamoDbClient) {
         try {
-            dynamoDbClient.deleteTable(
+            dbClient.deleteTable(
                 DeleteTableRequest.builder()
                     .tableName(dynamoPasswordHistoryTableName)
                     .build()
             )
-            dynamoDbClient.deleteTable(
+            dbClient.deleteTable(
                 DeleteTableRequest.builder()
                     .tableName(dynamoClientApplicationTableName)
                     .build()
             )
-            dynamoDbClient.deleteTable(
+            dbClient.deleteTable(
                 DeleteTableRequest.builder()
                     .tableName(dynamoAccountTableName)
                     .build()
             )
-            dynamoDbClient.deleteTable(
+            dbClient.deleteTable(
                 DeleteTableRequest.builder()
                     .tableName(dynamoRoleTableName)
                     .build()
             )
-            dynamoDbClient.deleteTable(
+            dbClient.deleteTable(
                 DeleteTableRequest.builder()
                     .tableName(dynamoSignatureKeysTableName)
                     .build()
             )
-            dynamoDbClient.deleteTable(
+            dbClient.deleteTable(
                 DeleteTableRequest.builder()
                     .tableName(dynamoMfaKeysTableName)
                     .build()
             )
-            dynamoDbClient.deleteTable(
+            dbClient.deleteTable(
                 DeleteTableRequest.builder()
                     .tableName(dynamoTicketTableName)
                     .build()
             )
-            dynamoDbClient.deleteTable(
+            dbClient.deleteTable(
                 DeleteTableRequest.builder()
                     .tableName(dynamoMfaAccountMethodsTableName)
                     .build()
             )
         } catch (e: java.lang.Exception) {
+            println(e)
         }
         try {
-            createDynamoPasswordHistoryTable()
-            createDynamoClientApplicationTable()
-            createDynamoAccountTable()
-            createDynamoRoleTable()
-            createDynamoSignatureKeysTable()
-            createDynamoMfaKeysTable()
-            createDynamoTicketTable()
-            createDynamoMfaAccountMethodsTable()
+            createDynamoPasswordHistoryTable(dbClient)
+            createDynamoClientApplicationTable(dbClient)
+            createDynamoAccountTable(dbClient)
+            createDynamoRoleTable(dbClient)
+            createDynamoSignatureKeysTable(dbClient)
+            createDynamoMfaKeysTable(dbClient)
+            createDynamoTicketTable(dbClient)
+            createDynamoMfaAccountMethodsTable(dbClient)
         } catch (e: java.lang.Exception) {
+            println(e)
+
         }
 
     }
 
-    private fun createDynamoPasswordHistoryTable() {
-
-        dynamoDbClient.createTable(
+    private fun createDynamoPasswordHistoryTable(dbClient: DynamoDbClient = dynamoDbClient) {
+        dbClient.createTable(
             CreateTableRequest.builder()
                 .tableName(dynamoPasswordHistoryTableName)
                 .keySchema(
@@ -131,8 +142,8 @@ object DatabaseUtils {
         );
     }
 
-    private fun createDynamoMfaAccountMethodsTable() {
-        dynamoDbClient.createTable(
+    private fun createDynamoMfaAccountMethodsTable(dbClient: DynamoDbClient = dynamoDbClient) {
+        dbClient.createTable(
             CreateTableRequest.builder()
                 .tableName(dynamoMfaAccountMethodsTableName)
                 .keySchema(
@@ -160,8 +171,8 @@ object DatabaseUtils {
         )
     }
 
-    private fun createDynamoRoleTable() {
-        dynamoDbClient.createTable(
+    private fun createDynamoRoleTable(dbClient: DynamoDbClient = dynamoDbClient) {
+        dbClient.createTable(
             CreateTableRequest.builder()
                 .tableName(dynamoRoleTableName)
                 .keySchema(
@@ -181,8 +192,8 @@ object DatabaseUtils {
         )
     }
 
-    private fun createDynamoAccountTable() {
-        dynamoDbClient.createTable(
+    private fun createDynamoAccountTable(dbClient: DynamoDbClient = dynamoDbClient) {
+        dbClient.createTable(
             CreateTableRequest.builder()
                 .tableName(dynamoAccountTableName)
                 .keySchema(
@@ -202,8 +213,8 @@ object DatabaseUtils {
         )
     }
 
-    private fun createDynamoClientApplicationTable() {
-        dynamoDbClient.createTable(
+    private fun createDynamoClientApplicationTable(dbClient: DynamoDbClient = dynamoDbClient) {
+        dbClient.createTable(
             CreateTableRequest.builder()
                 .tableName(dynamoClientApplicationTableName)
                 .keySchema(
@@ -223,8 +234,8 @@ object DatabaseUtils {
         )
     }
 
-    private fun createDynamoSignatureKeysTable() {
-        dynamoDbClient.createTable(
+    private fun createDynamoSignatureKeysTable(dbClient: DynamoDbClient = dynamoDbClient) {
+        dbClient.createTable(
             CreateTableRequest.builder()
                 .tableName(dynamoSignatureKeysTableName)
                 .keySchema(
@@ -244,8 +255,8 @@ object DatabaseUtils {
         )
     }
 
-    private fun createDynamoMfaKeysTable() {
-        dynamoDbClient.createTable(
+    private fun createDynamoMfaKeysTable(dbClient: DynamoDbClient = dynamoDbClient) {
+        dbClient.createTable(
             CreateTableRequest.builder()
                 .tableName(dynamoMfaKeysTableName)
                 .keySchema(
@@ -265,8 +276,8 @@ object DatabaseUtils {
         );
     }
 
-    private fun createDynamoTicketTable() {
-        dynamoDbClient.createTable(
+    private fun createDynamoTicketTable(dbClient: DynamoDbClient = dynamoDbClient) {
+        dbClient.createTable(
             CreateTableRequest.builder()
                 .tableName(dynamoTicketTableName)
                 .keySchema(

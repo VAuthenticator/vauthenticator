@@ -2,9 +2,9 @@ package com.vauthenticator.server.account.ticket
 
 import com.vauthenticator.server.clientapp.A_CLIENT_APP_ID
 import com.vauthenticator.server.extentions.asDynamoAttribute
-import com.vauthenticator.server.support.DatabaseUtils
-import com.vauthenticator.server.support.DatabaseUtils.dynamoTicketTableName
-import com.vauthenticator.server.support.DatabaseUtils.resetDatabase
+import com.vauthenticator.server.support.DynamoDbUtils
+import com.vauthenticator.server.support.DynamoDbUtils.dynamoTicketTableName
+import com.vauthenticator.server.support.DynamoDbUtils.resetDynamoDb
 import com.vauthenticator.server.support.EMAIL
 import com.vauthenticator.server.support.TicketFixture.ticketFor
 import io.mockk.junit5.MockKExtension
@@ -26,15 +26,15 @@ internal class DynamoDbTicketRepositoryTest {
 
     @BeforeEach
     internal fun setUp() {
-        underTest = DynamoDbTicketRepository(DatabaseUtils.dynamoDbClient, dynamoTicketTableName)
-        resetDatabase()
+        underTest = DynamoDbTicketRepository(DynamoDbUtils.dynamoDbClient, dynamoTicketTableName)
+        resetDynamoDb(DynamoDbUtils.dynamoDbClient)
     }
 
     @Test
     internal fun `when a ticket is stored`() {
         underTest.store(ticket)
 
-        val item = DatabaseUtils.dynamoDbClient.getItem(
+        val item = DynamoDbUtils.dynamoDbClient.getItem(
             GetItemRequest.builder()
                 .tableName(dynamoTicketTableName)
                 .key(

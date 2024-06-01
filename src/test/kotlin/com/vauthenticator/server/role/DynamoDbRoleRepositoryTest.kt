@@ -1,9 +1,9 @@
 package com.vauthenticator.server.role
 
-import com.vauthenticator.server.support.DatabaseUtils.dynamoDbClient
-import com.vauthenticator.server.support.DatabaseUtils.dynamoRoleTableName
-import com.vauthenticator.server.support.DatabaseUtils.initRoleTests
-import com.vauthenticator.server.support.DatabaseUtils.resetDatabase
+import com.vauthenticator.server.support.DynamoDbUtils.dynamoDbClient
+import com.vauthenticator.server.support.DynamoDbUtils.dynamoRoleTableName
+import com.vauthenticator.server.support.DynamoDbUtils.initRoleTests
+import com.vauthenticator.server.support.DynamoDbUtils.resetDynamoDb
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -14,7 +14,7 @@ internal class DynamoDbRoleRepositoryTest {
     @BeforeEach
     fun setUp() {
         roleRepository = DynamoDbRoleRepository(protectedRoleNames, dynamoDbClient, dynamoRoleTableName)
-        resetDatabase()
+        resetDynamoDb(dynamoDbClient)
         initRoleTests(dynamoDbClient)
     }
 

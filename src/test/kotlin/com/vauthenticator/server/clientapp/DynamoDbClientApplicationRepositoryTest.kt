@@ -3,9 +3,9 @@ package com.vauthenticator.server.clientapp
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.oauth2.clientapp.ClientApplication
 import com.vauthenticator.server.oauth2.clientapp.DynamoDbClientApplicationRepository
-import com.vauthenticator.server.support.DatabaseUtils.dynamoClientApplicationTableName
-import com.vauthenticator.server.support.DatabaseUtils.dynamoDbClient
-import com.vauthenticator.server.support.DatabaseUtils.resetDatabase
+import com.vauthenticator.server.support.DynamoDbUtils.dynamoClientApplicationTableName
+import com.vauthenticator.server.support.DynamoDbUtils.dynamoDbClient
+import com.vauthenticator.server.support.DynamoDbUtils.resetDynamoDb
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -18,7 +18,7 @@ internal class DynamoDbClientApplicationRepositoryTest {
     @BeforeEach
     fun setUp() {
         underTest = DynamoDbClientApplicationRepository(dynamoDbClient, dynamoClientApplicationTableName)
-        resetDatabase()
+        resetDynamoDb(dynamoDbClient)
     }
 
     @Test
