@@ -9,11 +9,11 @@ import com.vauthenticator.server.support.DynamoDbUtils.dynamoAccountTableName
 import com.vauthenticator.server.support.DynamoDbUtils.dynamoDbClient
 import com.vauthenticator.server.support.DynamoDbUtils.dynamoRoleTableName
 import com.vauthenticator.server.support.DynamoDbUtils.resetDynamoDb
-import org.testcontainers.containers.ComposeContainer
-import org.testcontainers.containers.wait.strategy.Wait
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection
+import org.testcontainers.containers.GenericContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
-import java.io.File
+import org.testcontainers.utility.DockerImageName
 
 
 @Testcontainers
@@ -21,15 +21,15 @@ internal class DynamoDbAbstractAccountRepositoryTest : AbstractAccountRepository
 
     companion object {
         @Container
-        var localStack: ComposeContainer =
-            ComposeContainer(File("src/test/resources/docker-compose.yml"))
-                .withExposedService("localstack", 4566, Wait.forListeningPort())
-                .withPull(false)
+        @ServiceConnection("localstack")
+        var localStack =
+            GenericContainer(DockerImageName.parse("localstack/localstack:3.2"))
+                .withExposedPorts(4566)
     }
 
     override fun initAccountRepository(roleRepository: RoleRepository): AccountRepository =
         DynamoDbAccountRepository(
-            dynamoDbClient(localStack),
+            dynamoDbClient(localStack.getMappedPort(4566)),
             dynamoAccountTableName,
             roleRepository
         )
@@ -37,13 +37,13 @@ internal class DynamoDbAbstractAccountRepositoryTest : AbstractAccountRepository
     override fun initRoleRepository(): RoleRepository =
         DynamoDbRoleRepository(
             protectedRoleNames,
-            dynamoDbClient(localStack),
+            dynamoDbClient(localStack.getMappedPort(4566)),
             dynamoRoleTableName
         )
 
 
     override fun resetDatabase() {
-        resetDynamoDb(dynamoDbClient(localStack))
+        resetDynamoDb(dynamoDbClient(localStack.getMappedPort(4566)))
     }
 
 }
