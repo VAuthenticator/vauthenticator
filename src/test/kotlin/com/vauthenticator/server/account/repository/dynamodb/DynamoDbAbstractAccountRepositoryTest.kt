@@ -24,6 +24,7 @@ internal class DynamoDbAbstractAccountRepositoryTest : AbstractAccountRepository
         var localStack: ComposeContainer =
             ComposeContainer(File("src/test/resources/docker-compose.yml"))
                 .withExposedService("localstack", 4566, Wait.forListeningPort())
+                .withPull(false)
     }
 
     override fun initAccountRepository(roleRepository: RoleRepository): AccountRepository =
