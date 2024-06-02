@@ -27,7 +27,7 @@ object DynamoDbUtils {
         .endpointOverride(URI.create("http://localhost:4566"))
         .build()
 
-    fun initRoleTests() {
+    fun initRoleTestsInDynamo() {
         val roleName = AttributeValue.builder().s("a_role").build()
         val description = AttributeValue.builder().s("A_ROLE").build()
         val item = PutItemRequest.builder()

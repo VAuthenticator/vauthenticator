@@ -5,7 +5,7 @@ import com.vauthenticator.server.role.protectedRoleNames
 import com.vauthenticator.server.role.repository.AbstractRoleRepositoryTest
 import com.vauthenticator.server.support.DynamoDbUtils.dynamoDbClient
 import com.vauthenticator.server.support.DynamoDbUtils.dynamoRoleTableName
-import com.vauthenticator.server.support.DynamoDbUtils.initRoleTests
+import com.vauthenticator.server.support.DynamoDbUtils.initRoleTestsInDynamo
 import com.vauthenticator.server.support.DynamoDbUtils.resetDynamoDb
 
 class DynamoDbRoleRepositoryTest : AbstractRoleRepositoryTest() {
@@ -14,7 +14,7 @@ class DynamoDbRoleRepositoryTest : AbstractRoleRepositoryTest() {
 
     override fun resetDatabase() {
         resetDynamoDb()
-        initRoleTests()
+        initRoleTestsInDynamo()
     }
 
 }
