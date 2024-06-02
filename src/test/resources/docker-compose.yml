@@ -1,5 +1,15 @@
 version: '3.8'
 services:
+  postgres:
+    image: postgres:14-alpine
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
   localstack:
     #    container_name: "${LOCALSTACK_DOCKER_NAME-localstack_main}"
     image: localstack/localstack:3.2

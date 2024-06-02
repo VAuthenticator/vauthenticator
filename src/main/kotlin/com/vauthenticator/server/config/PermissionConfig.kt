@@ -4,10 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.cache.CacheOperation
 import com.vauthenticator.server.cache.RedisCacheOperation
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
-import com.vauthenticator.server.role.CachedRoleRepository
-import com.vauthenticator.server.role.DynamoDbRoleRepository
 import com.vauthenticator.server.role.PermissionValidator
 import com.vauthenticator.server.role.RoleCacheContentConverter
+import com.vauthenticator.server.role.repository.CachedRoleRepository
+import com.vauthenticator.server.role.repository.dynamodb.DynamoDbRoleRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean

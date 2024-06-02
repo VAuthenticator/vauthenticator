@@ -1,14 +1,7 @@
 package com.vauthenticator.server.role
 
-import com.vauthenticator.server.cache.CacheContentConverter
-import com.vauthenticator.server.cache.CacheOperation
 import com.vauthenticator.server.extentions.asDynamoAttribute
 import com.vauthenticator.server.extentions.valueAsStringFor
-import com.vauthenticator.server.role.DynamoDbRoleMapper.deleteRoleRequestFor
-import com.vauthenticator.server.role.DynamoDbRoleMapper.findAllRequestFor
-import com.vauthenticator.server.role.DynamoDbRoleMapper.roleFor
-import com.vauthenticator.server.role.DynamoDbRoleMapper.saveRoleRequestFor
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
@@ -19,64 +12,6 @@ interface RoleRepository {
     fun findAll(): List<Role>
     fun save(role: Role)
     fun delete(role: String)
-
-}
-
-private const val ROLES_CACHE_KEY = "roles"
-
-class CachedRoleRepository(
-    private val cacheContentConverter: CacheContentConverter<List<Role>>,
-    private val cacheOperation: CacheOperation<String, String>,
-    private val delegate: RoleRepository
-) : RoleRepository by delegate {
-
-    override fun findAll(): List<Role> {
-        return cacheOperation.get(ROLES_CACHE_KEY)
-            .map { cacheContentConverter.getObjectFromCacheContentFor(it) }
-            .orElseGet {
-                val loadedRoles = delegate.findAll()
-                cacheOperation.put(
-                    ROLES_CACHE_KEY,
-                    cacheContentConverter.loadableContentIntoCacheFor(loadedRoles)
-                )
-                loadedRoles
-            }
-    }
-
-    override fun save(role: Role) {
-        cacheOperation.evict(ROLES_CACHE_KEY)
-        delegate.save(role)
-    }
-
-    override fun delete(role: String) {
-        cacheOperation.evict(ROLES_CACHE_KEY)
-        delegate.delete(role)
-    }
-}
-
-class DynamoDbRoleRepository(
-    private val protectedRoleFromDeletion: List<String>,
-    private val dynamoDbClient: DynamoDbClient,
-    private val tableName: String
-) : RoleRepository {
-
-    override fun findAll() =
-        dynamoDbClient.scan(findAllRequestFor(tableName))
-            .items()
-            .map(::roleFor)
-
-    override fun save(role: Role) =
-        dynamoDbClient.putItem(saveRoleRequestFor(role, tableName))
-            .let { }
-
-    override fun delete(roleName: String) =
-        if (protectedRoleFromDeletion.contains(roleName)) {
-            throw ProtectedRoleFromDeletionException("the role $roleName is not allowed to be deleted")
-        } else {
-            dynamoDbClient.deleteItem(deleteRoleRequestFor(roleName, tableName))
-                .let { }
-        }
-
 
 }
 

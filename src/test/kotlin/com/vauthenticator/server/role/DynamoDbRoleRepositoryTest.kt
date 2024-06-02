@@ -1,5 +1,6 @@
 package com.vauthenticator.server.role
 
+import com.vauthenticator.server.role.repository.dynamodb.DynamoDbRoleRepository
 import com.vauthenticator.server.support.DynamoDbUtils.dynamoDbClient
 import com.vauthenticator.server.support.DynamoDbUtils.dynamoRoleTableName
 import com.vauthenticator.server.support.DynamoDbUtils.initRoleTests
