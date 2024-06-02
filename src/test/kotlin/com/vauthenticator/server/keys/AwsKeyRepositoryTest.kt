@@ -36,7 +36,7 @@ internal class AwsKeyRepositoryTest {
 
     @BeforeEach
     internal fun setUp() {
-        resetDynamoDb(dynamoDbClient)
+        resetDynamoDb()
         wrapper = KmsClientWrapper(kmsClient)
         keyRepository =
             AwsKeyRepository(

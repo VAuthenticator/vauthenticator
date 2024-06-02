@@ -30,7 +30,7 @@ class DynamoPasswordHistoryRepositoryTest {
             dynamoDbClient
         )
 
-        resetDynamoDb(dynamoDbClient)
+        resetDynamoDb()
     }
 
     @Test

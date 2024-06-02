@@ -27,7 +27,7 @@ object DynamoDbUtils {
         .endpointOverride(URI.create("http://localhost:4566"))
         .build()
 
-    fun initRoleTests(roleRepository: DynamoDbClient) {
+    fun initRoleTests() {
         val roleName = AttributeValue.builder().s("a_role").build()
         val description = AttributeValue.builder().s("A_ROLE").build()
         val item = PutItemRequest.builder()
@@ -39,7 +39,7 @@ object DynamoDbUtils {
                 )
             )
             .build()
-        roleRepository.putItem(item)
+        dynamoDbClient.putItem(item)
     }
 
     fun resetDynamoDb() {
@@ -85,7 +85,6 @@ object DynamoDbUtils {
                     .build()
             )
         } catch (e: java.lang.Exception) {
-            println(e)
         }
         try {
             createDynamoPasswordHistoryTable()
@@ -97,8 +96,6 @@ object DynamoDbUtils {
             createDynamoTicketTable()
             createDynamoMfaAccountMethodsTable()
         } catch (e: java.lang.Exception) {
-            println(e)
-
         }
 
     }

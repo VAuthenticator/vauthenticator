@@ -29,7 +29,7 @@ class DynamoMfaAccountMethodsRepositoryTest {
 
     @BeforeEach
     fun setUp() {
-        resetDynamoDb(dynamoDbClient)
+        resetDynamoDb()
         underTest = DynamoMfaAccountMethodsRepository(
             dynamoMfaAccountMethodsTableName,
             dynamoDbClient,

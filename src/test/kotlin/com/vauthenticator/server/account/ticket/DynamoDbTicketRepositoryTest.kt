@@ -27,7 +27,7 @@ internal class DynamoDbTicketRepositoryTest {
     @BeforeEach
     internal fun setUp() {
         underTest = DynamoDbTicketRepository(DynamoDbUtils.dynamoDbClient, dynamoTicketTableName)
-        resetDynamoDb(DynamoDbUtils.dynamoDbClient)
+        resetDynamoDb()
     }
 
     @Test

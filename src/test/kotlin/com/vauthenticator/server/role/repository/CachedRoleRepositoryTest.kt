@@ -1,8 +1,8 @@
-package com.vauthenticator.server.role
+package com.vauthenticator.server.role.repository
 
 import com.vauthenticator.server.cache.CacheContentConverter
 import com.vauthenticator.server.cache.CacheOperation
-import com.vauthenticator.server.role.repository.CachedRoleRepository
+import com.vauthenticator.server.role.*
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -14,9 +14,10 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import java.util.*
 
-private val caceh_content = "roles-junit-content"
+private const val caceh_content = "roles-junit-content"
 
 private const val cache_key = "roles"
+
 
 @ExtendWith(MockKExtension::class)
 class CachedRoleRepositoryTest {
@@ -47,9 +48,9 @@ class CachedRoleRepositoryTest {
 
         underTest.findAll()
 
-        verify { cacheOperation.get(cache_key)}
+        verify { cacheOperation.get(cache_key) }
         verify { delegate.findAll() }
-        verify { roleCacheContentConverter.loadableContentIntoCacheFor(roles)}
+        verify { roleCacheContentConverter.loadableContentIntoCacheFor(roles) }
         verify { cacheOperation.put(cache_key, caceh_content) }
     }
 

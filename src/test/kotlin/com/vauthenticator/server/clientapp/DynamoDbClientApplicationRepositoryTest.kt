@@ -18,7 +18,7 @@ internal class DynamoDbClientApplicationRepositoryTest {
     @BeforeEach
     fun setUp() {
         underTest = DynamoDbClientApplicationRepository(dynamoDbClient, dynamoClientApplicationTableName)
-        resetDynamoDb(dynamoDbClient)
+        resetDynamoDb()
     }
 
     @Test

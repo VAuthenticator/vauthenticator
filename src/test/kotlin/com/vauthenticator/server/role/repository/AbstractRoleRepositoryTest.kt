@@ -1,26 +1,28 @@
-package com.vauthenticator.server.role
+package com.vauthenticator.server.role.repository
 
-import com.vauthenticator.server.role.repository.dynamodb.DynamoDbRoleRepository
-import com.vauthenticator.server.support.DynamoDbUtils.dynamoDbClient
-import com.vauthenticator.server.support.DynamoDbUtils.dynamoRoleTableName
+import com.vauthenticator.server.role.ProtectedRoleFromDeletionException
+import com.vauthenticator.server.role.Role
+import com.vauthenticator.server.role.RoleRepository
 import com.vauthenticator.server.support.DynamoDbUtils.initRoleTests
-import com.vauthenticator.server.support.DynamoDbUtils.resetDynamoDb
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-internal class DynamoDbRoleRepositoryTest {
+abstract class AbstractRoleRepositoryTest {
     private lateinit var roleRepository: RoleRepository
+
+    abstract fun initRoleRepository(): RoleRepository
+    abstract fun resetDatabase()
 
     @BeforeEach
     fun setUp() {
-        roleRepository = DynamoDbRoleRepository(protectedRoleNames, dynamoDbClient, dynamoRoleTableName)
-        resetDynamoDb(dynamoDbClient)
-        initRoleTests(dynamoDbClient)
+        roleRepository = initRoleRepository()
+        resetDatabase()
+        initRoleTests()
     }
 
     @Test
-    internal fun findAllRoles() {
+    fun findAllRoles() {
         val actual = roleRepository.findAll()
         val expected: List<Role> = listOf(Role("a_role", "A_ROLE"))
 
@@ -28,7 +30,7 @@ internal class DynamoDbRoleRepositoryTest {
     }
 
     @Test
-    internal fun `save a new role`() {
+    fun `save a new role`() {
         roleRepository.save(Role("another_role", "ANOTHER_ROLE"))
         val expected = roleRepository.findAll().toSet()
         val actual = listOf(Role("a_role", "A_ROLE"), Role("another_role", "ANOTHER_ROLE")).toSet()
@@ -37,7 +39,7 @@ internal class DynamoDbRoleRepositoryTest {
     }
 
     @Test
-    internal fun `save a new role again`() {
+    fun `save a new role again`() {
         roleRepository.save(Role("another_role", "ANOTHER_ROLE"))
         roleRepository.save(Role("another_role", "ANOTHER_ROLE AGAIN"))
         val expected = roleRepository.findAll().toSet()
@@ -47,7 +49,7 @@ internal class DynamoDbRoleRepositoryTest {
     }
 
     @Test
-    internal fun `delete a role`() {
+    fun `delete a role`() {
         roleRepository.delete("a_role")
         val roles = roleRepository.findAll()
 
