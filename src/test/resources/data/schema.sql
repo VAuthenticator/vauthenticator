@@ -2,15 +2,9 @@ CREATE TABLE ROLE
 (
     name        varchar(64)  not null PRIMARY KEY,
     description varchar(255) not null DEFAULT ''
+
 );
 
-CREATE TABLE ACCOUNT_ROLE
-(
-    account_username varchar(255) not null,
-    role_name        varchar(64)  not null,
-
-    primary key (account_username, role_name)
-);
 
 CREATE TABLE ACCOUNT
 (
@@ -32,4 +26,14 @@ CREATE TABLE ACCOUNT
     phone                   varchar(30)           default '',
     locale                  varchar(10)           default 'en',
     mandatory_action        varchar(100) not null default 'NO_ACTION'
+);
+
+CREATE TABLE ACCOUNT_ROLE
+(
+    account_username varchar(255) not null,
+    role_name        varchar(64)  not null,
+
+
+    FOREIGN KEY (account_username) REFERENCES ACCOUNT(username) on delete cascade,
+    FOREIGN KEY (role_name) REFERENCES ROLE (name) on delete cascade
 );

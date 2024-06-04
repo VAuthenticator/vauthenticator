@@ -82,7 +82,8 @@ private const val FIND_ACCOUNT_ROLE_QUERY: String = """
      FROM ACCOUNT_ROLE
      WHERE account_username=?
     """
-
+private const val DELETE_ACCOUNT_ROLE_QUERY = """DELETE FROM ACCOUNT_ROLE WHERE role_name=?"""
+private const val INSERT_ACCOUNT_ROLE_QUERY = "INSERT INTO ACCOUNT_ROLE (account_username, role_name) VALUES (?,?)"
 
 @Transactional
 class JdbcAccountRepository(private val jdbcTemplate: JdbcTemplate) : AccountRepository {
@@ -90,8 +91,7 @@ class JdbcAccountRepository(private val jdbcTemplate: JdbcTemplate) : AccountRep
     @Transactional(readOnly = true)
     override fun accountFor(username: String): Optional<Account> {
 
-        val authorities: Set<String> =
-            jdbcTemplate.query(FIND_ACCOUNT_ROLE_QUERY, { rs, i -> rs.getString("role_name") }, username).toSet()
+        val authorities: Set<String> = getUserRoleFor(username)
 
         val queryResult = jdbcTemplate.query(FIND_ONE_QUERY, { rs, i ->
             Account(
@@ -106,7 +106,7 @@ class JdbcAccountRepository(private val jdbcTemplate: JdbcTemplate) : AccountRep
                 firstName = rs.getString("first_name"),
                 lastName = rs.getString("last_name"),
                 authorities = authorities,
-                birthDate = Date.isoDateFor(rs.getString("birth_date")),
+                birthDate = Date.isoDateFor(rs.getString("birth_date").orEmpty()),
                 phone = Phone.phoneFor(rs.getString("phone")),
                 locale = UserLocale.localeFrom(rs.getString("locale")),
                 mandatoryAction = AccountMandatoryAction.valueOf(rs.getString("mandatory_action"))
@@ -114,6 +114,9 @@ class JdbcAccountRepository(private val jdbcTemplate: JdbcTemplate) : AccountRep
         }, username)
         return Optional.ofNullable(queryResult.firstOrNull())
     }
+
+    private fun getUserRoleFor(username: String) =
+        jdbcTemplate.query(FIND_ACCOUNT_ROLE_QUERY, { rs, i -> rs.getString("role_name") }, username).toSet()
 
     override fun save(account: Account) {
         jdbcTemplate.update(
@@ -148,6 +151,8 @@ class JdbcAccountRepository(private val jdbcTemplate: JdbcTemplate) : AccountRep
             account.locale.map { it.formattedLocale() }.orElse(""),
             account.mandatoryAction.name
         )
+
+        saveRoleFor(account.username, account.authorities)
     }
 
     override fun create(account: Account) {
@@ -169,9 +174,19 @@ class JdbcAccountRepository(private val jdbcTemplate: JdbcTemplate) : AccountRep
                 account.locale.map { it.formattedLocale() }.orElse(""),
                 account.mandatoryAction.name
             )
+            saveRoleFor(account.username, account.authorities)
         } catch (e: DuplicateKeyException) {
-            throw AccountRegistrationException("", e)
+            throw AccountRegistrationException(e.message!!, e)
         }
-
     }
+
+    private fun saveRoleFor(userName: String, roles: Set<String>) {
+        val userRoles: Set<String> = getUserRoleFor(userName)
+
+        userRoles.forEach { jdbcTemplate.update(DELETE_ACCOUNT_ROLE_QUERY, it) }
+        roles.forEach {
+            jdbcTemplate.update(INSERT_ACCOUNT_ROLE_QUERY, userName, it)
+        }
+    }
+
 }

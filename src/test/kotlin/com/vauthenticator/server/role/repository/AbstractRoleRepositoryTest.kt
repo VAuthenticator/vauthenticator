@@ -3,7 +3,6 @@ package com.vauthenticator.server.role.repository
 import com.vauthenticator.server.role.ProtectedRoleFromDeletionException
 import com.vauthenticator.server.role.Role
 import com.vauthenticator.server.role.RoleRepository
-import com.vauthenticator.server.support.DynamoDbUtils.initRoleTestsInDynamo
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -18,8 +17,8 @@ abstract class AbstractRoleRepositoryTest {
     fun setUp() {
         roleRepository = initRoleRepository()
         resetDatabase()
-        initRoleTestsInDynamo()
     }
+
 
     @Test
     fun findAllRoles() {

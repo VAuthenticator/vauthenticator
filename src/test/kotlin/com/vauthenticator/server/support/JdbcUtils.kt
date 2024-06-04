@@ -19,14 +19,10 @@ object JdbcUtils {
 
     fun resetDb() {
         try {
-            jdbcTemplate.execute(
-                """
-                TRUNCATE TABLE ACCOUNT_ROLE;
-                TRUNCATE TABLE ROLE;
-                TRUNCATE TABLE ACCOUNT; 
-            """.trimIndent()
-            )
+            jdbcTemplate.execute("TRUNCATE TABLE ACCOUNT CASCADE;")
+            jdbcTemplate.execute("TRUNCATE TABLE ROLE CASCADE;")
         } catch (e: java.lang.Exception) {
+            println(e)
         }
     }
 
