@@ -3,6 +3,8 @@ package com.vauthenticator.server.support
 import org.postgresql.Driver
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.datasource.SimpleDriverDataSource
+import java.nio.file.Files
+import java.nio.file.Paths
 
 
 object JdbcUtils {
@@ -19,8 +21,7 @@ object JdbcUtils {
 
     fun resetDb() {
         try {
-            jdbcTemplate.execute("TRUNCATE TABLE ACCOUNT CASCADE;")
-            jdbcTemplate.execute("TRUNCATE TABLE ROLE CASCADE;")
+            jdbcTemplate.execute(Files.readString(Paths.get("src/test/resources/data/schema.sql")))
         } catch (e: java.lang.Exception) {
             println(e)
         }

@@ -57,6 +57,13 @@ jobs:
   build-backend:
     runs-on: ubuntu-20.04
     services:
+      postgres:
+        image: postgres:14-alpine
+        ports:
+          - "5432:5432"
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
       localstack:
         image: localstack/localstack:3.2
         ports:
@@ -99,7 +106,7 @@ jobs:
       - name: Docker tag
         if: github.event.inputs.version != '' || github.event.inputs.version != ' '
 
-        run: |               
+        run: |
           DOCKER_TAG="${{github.event.inputs.version}}"
           docker build -t mrflick72/vauthenticator-k8s:$DOCKER_TAG -f application.Dockerfile .
           docker push mrflick72/vauthenticator-k8s:$DOCKER_TAG

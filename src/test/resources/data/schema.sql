@@ -1,8 +1,11 @@
+DROP TABLE IF EXISTS ROLE CASCADE;
+DROP TABLE IF EXISTS ACCOUNT CASCADE;
+DROP TABLE IF EXISTS ACCOUNT_ROLE;
+
 CREATE TABLE ROLE
 (
     name        varchar(64)  not null PRIMARY KEY,
     description varchar(255) not null DEFAULT ''
-
 );
 
 
