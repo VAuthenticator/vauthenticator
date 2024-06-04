@@ -62,7 +62,7 @@ jobs:
         ports:
           - "4566-4599:4566-4599"
         env:
-          SERVICES: s3,kms,dynamo
+          SERVICES: s3,kms,dynamodb
       redis:
         image: redis
         ports:
