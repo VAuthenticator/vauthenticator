@@ -83,3 +83,12 @@ cp * ../../../../../dist/static-asset/content/asset/
 cd ../../../../../communication/default/mail 
 cp *  ../../../dist/mail/templates
 ```
+
+## Postgres usage
+
+Postgres is an available option as storage, it is experimental right now and it is supported only for account and roles.
+
+In order to activate it is needed to add the corrisponding spring profile '''experimental_database_persistence''' and 
+for the init process add to the docker run the environment variable '''experimental_database_persistence=true'''with the command like below:
+
+> docker run -e experimental_database_persistence=true -it mrflick72/vauthenticator-local-tenant-installer:move-storage-in-prostres-in-order-to-start-to-support-multi-tenancy
