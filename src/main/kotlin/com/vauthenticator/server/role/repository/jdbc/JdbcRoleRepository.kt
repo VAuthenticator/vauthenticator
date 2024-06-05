@@ -19,7 +19,7 @@ class JdbcRoleRepository(
 
     @Transactional(readOnly = true)
     override fun findAll(): List<Role> =
-        jdbcTemplate.query(FIND_ALL_QUERY) { rs, i -> Role(rs.getString("name"), rs.getString("description")) }
+        jdbcTemplate.query(FIND_ALL_QUERY) { rs, _ -> Role(rs.getString("name"), rs.getString("description")) }
 
 
     override fun save(role: Role) {

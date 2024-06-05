@@ -82,7 +82,7 @@ private const val FIND_ACCOUNT_ROLE_QUERY: String = """
      FROM ACCOUNT_ROLE
      WHERE account_username=?
     """
-private const val DELETE_ACCOUNT_ROLE_QUERY = """DELETE FROM ACCOUNT_ROLE WHERE role_name=?"""
+private const val DELETE_ACCOUNT_ROLE_QUERY = "DELETE FROM ACCOUNT_ROLE WHERE role_name=?"
 private const val INSERT_ACCOUNT_ROLE_QUERY = "INSERT INTO ACCOUNT_ROLE (account_username, role_name) VALUES (?,?)"
 
 @Transactional
@@ -93,7 +93,7 @@ class JdbcAccountRepository(private val jdbcTemplate: JdbcTemplate) : AccountRep
 
         val authorities: Set<String> = getUserRoleFor(username)
 
-        val queryResult = jdbcTemplate.query(FIND_ONE_QUERY, { rs, i ->
+        val queryResult = jdbcTemplate.query(FIND_ONE_QUERY, { rs, _ ->
             Account(
                 accountNonExpired = rs.getBoolean("account_non_expired"),
                 accountNonLocked = rs.getBoolean("account_non_locked"),
@@ -116,7 +116,7 @@ class JdbcAccountRepository(private val jdbcTemplate: JdbcTemplate) : AccountRep
     }
 
     private fun getUserRoleFor(username: String) =
-        jdbcTemplate.query(FIND_ACCOUNT_ROLE_QUERY, { rs, i -> rs.getString("role_name") }, username).toSet()
+        jdbcTemplate.query(FIND_ACCOUNT_ROLE_QUERY, { rs, _ -> rs.getString("role_name") }, username).toSet()
 
     override fun save(account: Account) {
         jdbcTemplate.update(

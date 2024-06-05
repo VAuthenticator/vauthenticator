@@ -18,7 +18,7 @@ client app for admin M2M purpose.
 In order to have all the needed infrastructure you can avail on the [docker-compose.yml](..%2Fdocker-compose.yml)`, while
 it is possible to instantiate a container to install a new tenant usable for local development using the command: 
 
-> docker run -it mrflick72/vauthenticator-local-tenant-installer:tag
+> docker run -it mrflick72/vauthenticator-local-tenant-installer:move-storage-in-prostres-in-order-to-start-to-support-multi-tenancy
 
 
 # local host config
