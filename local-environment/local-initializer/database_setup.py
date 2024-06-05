@@ -53,7 +53,7 @@ def store_account():
 def store_roles():
     cur.execute("INSERT INTO Role (name,description) VALUES ('ROLE_USER','Generic user role') ")
     cur.execute("INSERT INTO Role (name,description) VALUES ('VAUTHENTICATOR_ADMIN','VAuthenticator admin role') ")
-    conn.commit()
+    connconn.commit()
 
 
 def pass_encoded(password):
