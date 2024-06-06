@@ -21,7 +21,10 @@ object JdbcUtils {
 
     fun resetDb() {
         try {
-            jdbcTemplate.execute(Files.readString(Paths.get("src/test/resources/data/schema.sql")))
+            jdbcTemplate.execute("DROP TABLE IF EXISTS ROLE CASCADE;")
+            jdbcTemplate.execute("DROP TABLE IF EXISTS ACCOUNT CASCADE;")
+            jdbcTemplate.execute("DROP TABLE IF EXISTS ACCOUNT_ROLE;")
+            jdbcTemplate.execute(Files.readString(Paths.get("src/main/resources/data/schema.sql")))
         } catch (e: java.lang.Exception) {
             println(e)
         }

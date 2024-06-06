@@ -8,11 +8,14 @@ import com.vauthenticator.server.role.PermissionValidator
 import com.vauthenticator.server.role.RoleCacheContentConverter
 import com.vauthenticator.server.role.repository.CachedRoleRepository
 import com.vauthenticator.server.role.repository.dynamodb.DynamoDbRoleRepository
+import com.vauthenticator.server.role.repository.jdbc.JdbcRoleRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.jdbc.core.JdbcTemplate
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import java.time.Duration
 
@@ -20,12 +23,20 @@ import java.time.Duration
 class PermissionConfig {
 
     @Bean("roleRepository")
+    @Profile("experimental_database_persistence")
+    fun jdbcRoleRepository(
+        jdbcTemplate: JdbcTemplate,
+        @Value("\${vauthenticator.dynamo-db.role.protected-from-delete}") protectedRoleFromDeletion: List<String>
+    ) = JdbcRoleRepository(jdbcTemplate, protectedRoleFromDeletion)
+
+    @Bean("roleRepository")
     @ConditionalOnProperty(
         name = ["vauthenticator.dynamo-db.role.cache.enabled"],
         havingValue = "false",
         matchIfMissing = true
     )
-    fun roleRepository(
+    @Profile("!experimental_database_persistence")
+    fun dynamoDbRoleRepository(
         mapper: ObjectMapper,
         dynamoDbClient: DynamoDbClient,
         @Value("\${vauthenticator.dynamo-db.role.table-name}") roleTableName: String,
@@ -39,7 +50,8 @@ class PermissionConfig {
         havingValue = "true",
         matchIfMissing = false
     )
-    fun cachedRoleRepository(
+    @Profile("!experimental_database_persistence")
+    fun cachedDynamoDbRoleRepository(
         mapper: ObjectMapper,
         roleCacheOperation: CacheOperation<String, String>,
         dynamoDbClient: DynamoDbClient,
@@ -57,6 +69,7 @@ class PermissionConfig {
         havingValue = "true",
         matchIfMissing = false
     )
+    @Profile("!experimental_database_persistence")
     fun roleCacheOperation(
         redisTemplate: RedisTemplate<*, *>,
         @Value("\${vauthenticator.dynamo-db.role.cache.ttl}") ttl: Duration,

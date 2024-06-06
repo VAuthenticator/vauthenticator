@@ -92,3 +92,6 @@ In order to activate it is needed to add the corrisponding spring profile '''exp
 for the init process add to the docker run the environment variable '''experimental_database_persistence=true'''with the command like below:
 
 > docker run -e experimental_database_persistence=true -it mrflick72/vauthenticator-local-tenant-installer:move-storage-in-prostres-in-order-to-start-to-support-multi-tenancy
+
+
+docker build -t vauthenticator-local-tenant-installer1 -f tenant-installer.Dockerfile .

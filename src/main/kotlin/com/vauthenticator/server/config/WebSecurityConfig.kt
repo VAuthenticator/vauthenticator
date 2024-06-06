@@ -30,6 +30,7 @@ import org.springframework.security.oauth2.server.authorization.settings.Authori
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.*
+import java.util.*
 
 
 const val adminRole = "VAUTHENTICATOR_ADMIN"
@@ -162,7 +163,8 @@ class WebSecurityConfig(
                 .filter { scope -> scope != Scope.PROFILE.content }
                 .map { role: String -> SimpleGrantedAuthority(role) }
 
-            val authoritiesClaims = jwt.getClaim<List<String>>("authorities")
+            val authoritiesClaims = Optional.ofNullable(jwt.getClaim<List<String>>("authorities"))
+                .orElseGet { emptyList() }
                 .map { role: String -> SimpleGrantedAuthority(role) }
 
             logger.debug("authorities: ${authoritiesClaims + scope}")

@@ -169,7 +169,7 @@ class JdbcAccountRepository(private val jdbcTemplate: JdbcTemplate) : AccountRep
                 account.emailVerified,
                 account.firstName,
                 account.lastName,
-                account.birthDate.map { it.formattedDate() }.orElse(null),
+                account.birthDate.map { it.localDate }.orElse(null),
                 account.phone.map { it.formattedPhone() }.orElse(""),
                 account.locale.map { it.formattedLocale() }.orElse(""),
                 account.mandatoryAction.name

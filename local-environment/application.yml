@@ -125,3 +125,15 @@ aws:
     endpointOverride: "http://localhost:4566"
   dynamodb:
     endpointOverride: "http://localhost:4566"
+
+
+---
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/
+    username: postgres
+    password: postgres
+  config:
+    activate:
+      on-profile: experimental_database_persistence

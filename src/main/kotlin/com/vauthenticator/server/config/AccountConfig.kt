@@ -7,6 +7,7 @@ import com.vauthenticator.server.account.SaveAccount
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.account.repository.CachedAccountRepository
 import com.vauthenticator.server.account.repository.dynamodb.DynamoDbAccountRepository
+import com.vauthenticator.server.account.repository.jdbc.JdbcAccountRepository
 import com.vauthenticator.server.cache.CacheOperation
 import com.vauthenticator.server.cache.RedisCacheOperation
 import com.vauthenticator.server.role.RoleRepository
@@ -14,7 +15,9 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.jdbc.core.JdbcTemplate
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import java.time.Duration
 
@@ -31,12 +34,20 @@ class AccountConfig {
 
 
     @Bean("accountRepository")
+    @Profile("experimental_database_persistence")
+    fun jdbcAccountRepository(
+        jdbcTemplate: JdbcTemplate
+    ) = JdbcAccountRepository(jdbcTemplate)
+
+
+    @Bean("accountRepository")
     @ConditionalOnProperty(
         name = ["vauthenticator.dynamo-db.account.cache.enabled"],
         havingValue = "false",
         matchIfMissing = true
     )
-    fun accountRepository(
+    @Profile("!experimental_database_persistence")
+    fun dynamoDbAccountRepository(
         mapper: ObjectMapper,
         dynamoDbClient: DynamoDbClient,
         roleRepository: RoleRepository,
@@ -52,7 +63,8 @@ class AccountConfig {
         havingValue = "true",
         matchIfMissing = false
     )
-    fun cachedAccountRepository(
+    @Profile("!experimental_database_persistence")
+    fun cachedDynamoDbAccountRepository(
         mapper: ObjectMapper,
         dynamoDbClient: DynamoDbClient,
         accountCacheOperation: CacheOperation<String, String>,
@@ -72,6 +84,7 @@ class AccountConfig {
         havingValue = "true",
         matchIfMissing = false
     )
+    @Profile("!experimental_database_persistence")
     fun accountCacheOperation(
         redisTemplate: RedisTemplate<*, *>,
         @Value("\${vauthenticator.dynamo-db.account.cache.ttl}") ttl: Duration,
