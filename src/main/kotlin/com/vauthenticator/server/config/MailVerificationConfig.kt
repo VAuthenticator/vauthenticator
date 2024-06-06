@@ -4,7 +4,7 @@ import com.hubspot.jinjava.Jinjava
 import com.vauthenticator.document.repository.DocumentRepository
 import com.vauthenticator.server.account.mailverification.SendVerifyMailChallenge
 import com.vauthenticator.server.account.mailverification.SendVerifyMailChallengeUponSignUpEventConsumer
-import com.vauthenticator.server.account.mailverification.VerifyMailChallengeSent
+import com.vauthenticator.server.account.mailverification.VerifyMailChallenge
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.account.ticket.TicketRepository
 import com.vauthenticator.server.account.ticket.VerificationTicketFactory
@@ -40,7 +40,7 @@ class MailVerificationConfig {
         ticketRepository: TicketRepository,
         mfaMethodsEnrolmentAssociation: MfaMethodsEnrolmentAssociation
     ) =
-        VerifyMailChallengeSent(
+        VerifyMailChallenge(
             accountRepository,
             ticketRepository,
             mfaMethodsEnrolmentAssociation

@@ -4,9 +4,9 @@ import com.vauthenticator.server.keys.*
 import com.vauthenticator.server.mfa.domain.MfaAccountMethod
 import com.vauthenticator.server.mfa.domain.MfaMethod
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
-import com.vauthenticator.server.support.DatabaseUtils.dynamoDbClient
-import com.vauthenticator.server.support.DatabaseUtils.dynamoMfaAccountMethodsTableName
-import com.vauthenticator.server.support.DatabaseUtils.resetDatabase
+import com.vauthenticator.server.support.DynamoDbUtils.dynamoDbClient
+import com.vauthenticator.server.support.DynamoDbUtils.dynamoMfaAccountMethodsTableName
+import com.vauthenticator.server.support.DynamoDbUtils.resetDynamoDb
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -29,7 +29,7 @@ class DynamoMfaAccountMethodsRepositoryTest {
 
     @BeforeEach
     fun setUp() {
-        resetDatabase()
+        resetDynamoDb()
         underTest = DynamoMfaAccountMethodsRepository(
             dynamoMfaAccountMethodsTableName,
             dynamoDbClient,

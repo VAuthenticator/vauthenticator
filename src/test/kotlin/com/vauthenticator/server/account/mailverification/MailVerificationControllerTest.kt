@@ -21,19 +21,19 @@ internal class MailVerificationControllerTest {
     lateinit var mokMvc: MockMvc
 
     @MockK
-    lateinit var mailVerifyMailChallengeSent: VerifyMailChallengeSent
+    lateinit var mailVerifyMailChallenge: VerifyMailChallenge
 
     @MockK
     lateinit var i18nMessageInjector: I18nMessageInjector
 
     @BeforeEach
     internal fun setUp() {
-        mokMvc = standaloneSetup(MailVerificationController(i18nMessageInjector, mailVerifyMailChallengeSent)).build()
+        mokMvc = standaloneSetup(MailVerificationController(i18nMessageInjector, mailVerifyMailChallenge)).build()
     }
 
     @Test
     internal fun `when the challenge is verified`() {
-        every { mailVerifyMailChallengeSent.verifyMail("A_TICKET") } just runs
+        every { mailVerifyMailChallenge.verifyMail("A_TICKET") } just runs
         every { i18nMessageInjector.setMessagedFor(I18nScope.SUCCESSFUL_MAIL_VERIFY_PAGE, any()) } just runs
 
         mokMvc.perform(MockMvcRequestBuilders.get("/mail-verify/A_TICKET"))

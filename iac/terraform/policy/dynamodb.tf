@@ -1,5 +1,5 @@
 
-resource "aws_iam_user_policy_attachment" "_dynamo_policy-attach" {
+resource "aws_iam_user_policy_attachment" "dynamo_policy-attach" {
   user       = data.aws_iam_user.vauthenticator.user_name
   policy_arn = aws_iam_policy.dynamo_policy.arn
 }

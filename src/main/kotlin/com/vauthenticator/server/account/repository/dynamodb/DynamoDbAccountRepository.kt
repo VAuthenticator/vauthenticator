@@ -1,9 +1,11 @@
-package com.vauthenticator.server.account.repository
+package com.vauthenticator.server.account.repository.dynamodb
 
 import com.vauthenticator.server.account.Account
-import com.vauthenticator.server.account.repository.DynamoAccountConverter.fromDynamoToDomain
-import com.vauthenticator.server.account.repository.DynamoAccountQueryFactory.findAccountQueryForUserName
-import com.vauthenticator.server.account.repository.DynamoAccountQueryFactory.storeAccountQueryFor
+import com.vauthenticator.server.account.repository.AccountRegistrationException
+import com.vauthenticator.server.account.repository.AccountRepository
+import com.vauthenticator.server.account.repository.dynamodb.DynamoAccountConverter.fromDynamoToDomain
+import com.vauthenticator.server.account.repository.dynamodb.DynamoAccountQueryFactory.findAccountQueryForUserName
+import com.vauthenticator.server.account.repository.dynamodb.DynamoAccountQueryFactory.storeAccountQueryFor
 import com.vauthenticator.server.extentions.filterEmptyMetadata
 import com.vauthenticator.server.role.RoleRepository
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient

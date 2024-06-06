@@ -36,12 +36,12 @@ class MailVerificationEndPoint(
 @Controller
 class MailVerificationController(
     private val i18nMessageInjector: I18nMessageInjector,
-    private val verifyMailChallengeSent: VerifyMailChallengeSent
+    private val verifyMailChallenge: VerifyMailChallenge
 ) {
 
     @GetMapping("/mail-verify/{ticket}")
     fun verifyMail(@PathVariable ticket: String, model: Model): String {
-        verifyMailChallengeSent.verifyMail(ticket)
+        verifyMailChallenge.verifyMail(ticket)
 
         i18nMessageInjector.setMessagedFor(I18nScope.SUCCESSFUL_MAIL_VERIFY_PAGE, model)
         model.addAttribute("assetBundle", "successfulMailVerify_bundle.js")

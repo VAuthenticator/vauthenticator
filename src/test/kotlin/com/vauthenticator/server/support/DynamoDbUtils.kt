@@ -8,7 +8,7 @@ import software.amazon.awssdk.services.dynamodb.model.*
 import java.net.URI
 
 
-object DatabaseUtils {
+object DynamoDbUtils {
     const val dynamoPasswordHistoryTableName: String = "TESTING_VAuthenticator_PasswordHistory"
     const val dynamoClientApplicationTableName: String = "TESTING_VAuthenticator_ClientApplication"
     const val dynamoAccountTableName: String = "TESTING_VAuthenticator_Account"
@@ -27,7 +27,7 @@ object DatabaseUtils {
         .endpointOverride(URI.create("http://localhost:4566"))
         .build()
 
-    fun initRoleTests(roleRepository: DynamoDbClient) {
+    fun initRoleTestsInDynamo() {
         val roleName = AttributeValue.builder().s("a_role").build()
         val description = AttributeValue.builder().s("A_ROLE").build()
         val item = PutItemRequest.builder()
@@ -39,10 +39,10 @@ object DatabaseUtils {
                 )
             )
             .build()
-        roleRepository.putItem(item)
+        dynamoDbClient.putItem(item)
     }
 
-    fun resetDatabase() {
+    fun resetDynamoDb() {
         try {
             dynamoDbClient.deleteTable(
                 DeleteTableRequest.builder()
@@ -101,7 +101,6 @@ object DatabaseUtils {
     }
 
     private fun createDynamoPasswordHistoryTable() {
-
         dynamoDbClient.createTable(
             CreateTableRequest.builder()
                 .tableName(dynamoPasswordHistoryTableName)

@@ -9,7 +9,7 @@ import com.vauthenticator.server.account.ticket.VerificationTicket
 import com.vauthenticator.server.mfa.domain.MfaMethod
 import com.vauthenticator.server.mfa.domain.MfaMethodsEnrolmentAssociation
 
-class VerifyMailChallengeSent(
+class VerifyMailChallenge(
     private val accountRepository: AccountRepository,
     private val ticketRepository: TicketRepository,
     private val mfaMethodsEnrolmentAssociation: MfaMethodsEnrolmentAssociation

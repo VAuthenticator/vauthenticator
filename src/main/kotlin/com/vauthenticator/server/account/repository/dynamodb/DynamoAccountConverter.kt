@@ -1,4 +1,4 @@
-package com.vauthenticator.server.account.repository
+package com.vauthenticator.server.account.repository.dynamodb
 
 import com.vauthenticator.server.account.*
 import com.vauthenticator.server.extentions.asDynamoAttribute

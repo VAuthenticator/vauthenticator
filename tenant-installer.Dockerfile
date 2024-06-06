@@ -22,5 +22,6 @@ ADD iac iac
 WORKDIR local-environment/local-initializer
 
 ADD local-environment/local-initializer .
+ADD src/main/resources/data/schema.sql .
 
 ENTRYPOINT sh ./build.sh

@@ -22,7 +22,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import java.util.*
 
 @ExtendWith(MockKExtension::class)
-internal class VerifyMailChallengeSentTest {
+internal class VerifyMailChallengeTest {
 
     @MockK
     lateinit var accountRepository: AccountRepository
@@ -33,11 +33,11 @@ internal class VerifyMailChallengeSentTest {
     @MockK
     lateinit var mfaMethodsEnrolmentAssociation: MfaMethodsEnrolmentAssociation
 
-    private lateinit var underTest: VerifyMailChallengeSent
+    private lateinit var underTest: VerifyMailChallenge
 
     @BeforeEach
     fun setup() {
-        underTest = VerifyMailChallengeSent(
+        underTest = VerifyMailChallenge(
             accountRepository,
             ticketRepository,
             mfaMethodsEnrolmentAssociation
