@@ -14,6 +14,9 @@
 <div id="metadata" th:text="${metadata}" style="display: none"></div>
 <div id="i18nMessages" th:text="${i18nMessages}" style="display: none"></div>
 
+<div id="csrfName" th:text="${_csrf.parameterName}" style="display: none"></div>
+<div id="csrfToken" th:text="${_csrf.token}" style="display: none"></div>
+
 <div id="app"></div>
 
 </body>

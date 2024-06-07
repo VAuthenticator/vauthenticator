@@ -94,9 +94,11 @@ interface LoginProps {
     rawFeatures: string
     rawErrors: string
     rawI18nMessages: string
+    csrfName: string
+    csrfToken: string
 }
 
-const Login: React.FC<LoginProps> = ({rawFeatures, rawErrors, rawI18nMessages}) => {
+const Login: React.FC<LoginProps> = ({rawFeatures, rawErrors, rawI18nMessages, csrfName, csrfToken}) => {
     const features = JSON.parse(rawFeatures);
     const errorMessage = JSON.parse(rawErrors)["login"];
     const i18nMessages = JSON.parse(rawI18nMessages);
@@ -124,6 +126,8 @@ const Login: React.FC<LoginProps> = ({rawFeatures, rawErrors, rawI18nMessages}) 
 
                 {<form action="login" method="post">
                     <Box>
+                        <input name={csrfName} type="hidden" value={csrfToken}/>
+
                         <FormInputTextField id="username"
                                             label={i18nMessages["userNamePlaceholderText"]}
                                             type="email"
@@ -159,5 +163,8 @@ const Login: React.FC<LoginProps> = ({rawFeatures, rawErrors, rawI18nMessages}) 
 const features = getDataFromDomUtils('features')
 const errors = getDataFromDomUtils('errors')
 const i18nMessages = getDataFromDomUtils('i18nMessages')
+const csrfName = getDataFromDomUtils('csrfName')
+const csrfToken = getDataFromDomUtils('csrfToken')
 
-ComponentInitializer(<Login rawFeatures={features} rawErrors={errors} rawI18nMessages={i18nMessages}/>)
+ComponentInitializer(<Login csrfName={csrfName} csrfToken={csrfToken} rawFeatures={features} rawErrors={errors}
+                            rawI18nMessages={i18nMessages}/>)

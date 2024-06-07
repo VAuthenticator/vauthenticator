@@ -30,6 +30,7 @@ import org.springframework.security.oauth2.server.authorization.settings.Authori
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.*
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import java.util.*
 
 
@@ -56,7 +57,7 @@ class WebSecurityConfig(
         clientApplicationRepository: ClientApplicationRepository,
         accountUserDetailsService: AccountUserDetailsService
     ): SecurityFilterChain {
-        http.csrf { it.disable() }
+        http.csrf { it.requireCsrfProtectionMatcher(AntPathRequestMatcher("/login", HttpMethod.POST.name())) }
         http.headers { it.frameOptions { it.disable() } }
 
         http.formLogin {
