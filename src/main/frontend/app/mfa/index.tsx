@@ -109,5 +109,7 @@ const MfaChallengePage: React.FC<MfaChallengePageProps> = ({rawErrors, rawI18nMe
 
 const errors = getDataFromDomUtils('errors')
 const i18nMessages = getDataFromDomUtils('i18nMessages')
+const csrfName = getDataFromDomUtils('csrfName')
+const csrfToken = getDataFromDomUtils('csrfToken')
 
-ComponentInitializer(<MfaChallengePage rawErrors={errors} rawI18nMessages={i18nMessages}/>)
+ComponentInitializer(<MfaChallengePage csrfName={csrfName} csrfToken={csrfToken} rawErrors={errors} rawI18nMessages={i18nMessages}/>)
