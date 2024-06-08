@@ -35,7 +35,7 @@ class AccountEndPoint(
     fun signup(
         session: HttpSession,
         principal: JwtAuthenticationToken?,
-        @RequestBody representation: FinalAccountRepresentation
+        @RequestBody representation: AccountRepresentation
     ): ResponseEntity<Unit> {
         permissionValidator.validate(principal, session, Scopes.from(Scope.SIGN_UP))
         val account = fromRepresentationToSignedUpAccount(representation)
@@ -54,7 +54,7 @@ class AccountEndPoint(
     @PutMapping("/api/accounts")
     fun save(
         principal: JwtAuthenticationToken,
-        @RequestBody representation: FinalAccountRepresentation
+        @RequestBody representation: AccountRepresentation
     ): ResponseEntity<Unit> {
         logWarningForNotEmptyUserNameInRequestBodyFor(representation)
         val incompleteAccount = fromRepresentationToSignedUpAccount(representation)
@@ -62,7 +62,7 @@ class AccountEndPoint(
             .let { ResponseEntity.noContent().build() }
     }
 
-    private fun logWarningForNotEmptyUserNameInRequestBodyFor(representation: FinalAccountRepresentation) {
+    private fun logWarningForNotEmptyUserNameInRequestBodyFor(representation: AccountRepresentation) {
         if (representation.email.isNotEmpty()) {
             logger.warn("there is an email in the body.............. it will be ignored in favour of the access token identity")
         }
@@ -71,7 +71,7 @@ class AccountEndPoint(
 }
 
 
-data class FinalAccountRepresentation(
+data class AccountRepresentation(
     var email: String = "",
     var password: String = "",
     var firstName: String = "",
@@ -83,7 +83,7 @@ data class FinalAccountRepresentation(
 )
 
 object SignUpAccountConverter {
-    fun fromRepresentationToSignedUpAccount(representation: FinalAccountRepresentation): Account =
+    fun fromRepresentationToSignedUpAccount(representation: AccountRepresentation): Account =
         Account(
             accountNonExpired = true,
             accountNonLocked = false,

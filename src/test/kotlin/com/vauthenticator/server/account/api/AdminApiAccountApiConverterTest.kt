@@ -1,6 +1,6 @@
 package com.vauthenticator.server.account.api
 
-import com.vauthenticator.server.account.api.AdminAccountApiConverter.fromDomainToAccountApiRepresentation
+import com.vauthenticator.server.account.api.AdminApiAccountApiConverter.fromDomainToAccountAdminApiRepresentation
 import com.vauthenticator.server.config.adminRole
 import com.vauthenticator.server.role.Role
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 
-internal class AdminAccountApiConverterTest {
+internal class AdminApiAccountApiConverterTest {
 
     @Test
     fun whenAccountViewIsForAdmin() {
@@ -18,9 +18,9 @@ internal class AdminAccountApiConverterTest {
         UsernamePasswordAuthenticationToken(mockk(), mockk(), listOf(SimpleGrantedAuthority(
             adminRole
         )))
-        val accountApiRepresentation = fromDomainToAccountApiRepresentation(anAccount)
+        val accountApiRepresentation = fromDomainToAccountAdminApiRepresentation(anAccount)
         assertEquals(
-            AdminAccountApiRepresentation(accountLocked = true, enabled = true, email = "email@domain.com", authorities = setOf(
+            AdminApiAccountApiRepresentation(accountLocked = true, enabled = true, email = "email@domain.com", authorities = setOf(
                 adminRole
             )), accountApiRepresentation)
     }

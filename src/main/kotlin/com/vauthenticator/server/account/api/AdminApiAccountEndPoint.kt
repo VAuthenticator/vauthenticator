@@ -11,7 +11,7 @@ import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 
 @RestController
-class AdminAccountEndPoint(
+class AdminApiAccountEndPoint(
     private val accountRepository: AccountRepository,
     private val accountUpdateAdminAction: AccountUpdateAdminAction
 ) {
@@ -20,7 +20,7 @@ class AdminAccountEndPoint(
     fun findAccountFor(@PathVariable email: String, authentication: Authentication) =
         ok(
             accountRepository.accountFor(email)
-                .map { AdminAccountApiConverter.fromDomainToAccountApiRepresentation(it) }
+                .map { AdminApiAccountApiConverter.fromDomainToAccountAdminApiRepresentation(it) }
         )
 
     @PutMapping("/api/admin/accounts")
@@ -30,7 +30,7 @@ class AdminAccountEndPoint(
 
 }
 
-data class AdminAccountApiRepresentation(
+data class AdminApiAccountApiRepresentation(
     val accountLocked: Boolean = true,
     val enabled: Boolean = true,
     var email: String = "",
@@ -38,9 +38,9 @@ data class AdminAccountApiRepresentation(
     val mandatoryAction: String = AccountMandatoryAction.NO_ACTION.name
 )
 
-object AdminAccountApiConverter {
-    fun fromDomainToAccountApiRepresentation(domain: Account): AdminAccountApiRepresentation =
-        AdminAccountApiRepresentation(
+object AdminApiAccountApiConverter {
+    fun fromDomainToAccountAdminApiRepresentation(domain: Account): AdminApiAccountApiRepresentation =
+        AdminApiAccountApiRepresentation(
             !domain.accountNonLocked,
             domain.enabled,
             domain.email,

@@ -30,6 +30,8 @@ import org.springframework.security.oauth2.server.authorization.settings.Authori
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.*
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher
+import org.springframework.security.web.util.matcher.OrRequestMatcher
 import java.util.*
 
 
@@ -56,7 +58,14 @@ class WebSecurityConfig(
         clientApplicationRepository: ClientApplicationRepository,
         accountUserDetailsService: AccountUserDetailsService
     ): SecurityFilterChain {
-        http.csrf { it.disable() }
+        http.csrf {
+            it.requireCsrfProtectionMatcher(
+                OrRequestMatcher(
+                    AntPathRequestMatcher("/login", HttpMethod.POST.name()),
+                    AntPathRequestMatcher("/mfa-challenge", HttpMethod.POST.name())
+                )
+            )
+        }
         http.headers { it.frameOptions { it.disable() } }
 
         http.formLogin {
@@ -87,6 +96,7 @@ class WebSecurityConfig(
                     .requestMatchers("/api/mfa/challenge").authenticated()
                     .requestMatchers(HttpMethod.GET, "/mfa-challenge", "/mfa-challenge/send").authenticated()
                     .requestMatchers(HttpMethod.POST, "/mfa-challenge").authenticated()
+                    .requestMatchers(HttpMethod.GET, "/api/mfa/enrollment").authenticated()
 
                     .requestMatchers("/change-password").permitAll()
 
@@ -100,10 +110,10 @@ class WebSecurityConfig(
                     .requestMatchers(*WHITE_LIST).permitAll()
                     .requestMatchers("/api/accounts").permitAll()
 
-                    .requestMatchers(HttpMethod.PUT, "/api/sign-up/mail/welcome")
+                    .requestMatchers(HttpMethod.PUT, "/api/sign-up/welcome")
                     .hasAnyAuthority(Scope.WELCOME.content)
 
-                    .requestMatchers(HttpMethod.PUT, "/api/mail/verify-challenge")
+                    .requestMatchers(HttpMethod.PUT, "/api/verify-challenge")
                     .hasAnyAuthority(Scope.MAIL_VERIFY.content)
 
                     .requestMatchers(HttpMethod.PUT, "/api/accounts/password")

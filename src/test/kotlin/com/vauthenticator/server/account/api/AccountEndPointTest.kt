@@ -52,7 +52,7 @@ internal class AccountEndPointTest {
 
     private val objectMapper = ObjectMapper()
 
-    private val representation = FinalAccountRepresentation(
+    private val representation = AccountRepresentation(
         email = EMAIL,
         password = "secret",
         firstName = "A First Name",

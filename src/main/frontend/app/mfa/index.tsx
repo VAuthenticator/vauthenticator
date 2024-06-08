@@ -16,9 +16,11 @@ import EmailIcon from '@mui/icons-material/Email';
 interface MfaChallengePageProps {
     rawErrors: string
     rawI18nMessages: string
+    csrfName: string
+    csrfToken: string
 }
 
-const MfaChallengePage: React.FC<MfaChallengePageProps> = ({rawErrors, rawI18nMessages}) => {
+const MfaChallengePage: React.FC<MfaChallengePageProps> = ({rawErrors, rawI18nMessages, csrfName, csrfToken}) => {
     const errorMessage = JSON.parse(rawErrors)["mfa-challenge"];
     const i18nMessages = JSON.parse(rawI18nMessages)
 
@@ -72,6 +74,8 @@ const MfaChallengePage: React.FC<MfaChallengePageProps> = ({rawErrors, rawI18nMe
 
                 {<form action="mfa-challenge" method="post">
                     <Box>
+                        <input name={csrfName} type="hidden" value={csrfToken}/>
+
                         <FormInputTextField id="mfa-code"
                                             label={i18nMessages["mfaPlaceholderText"]}
                                             type="text"
@@ -105,5 +109,7 @@ const MfaChallengePage: React.FC<MfaChallengePageProps> = ({rawErrors, rawI18nMe
 
 const errors = getDataFromDomUtils('errors')
 const i18nMessages = getDataFromDomUtils('i18nMessages')
+const csrfName = getDataFromDomUtils('csrfName')
+const csrfToken = getDataFromDomUtils('csrfToken')
 
-ComponentInitializer(<MfaChallengePage rawErrors={errors} rawI18nMessages={i18nMessages}/>)
+ComponentInitializer(<MfaChallengePage csrfName={csrfName} csrfToken={csrfToken} rawErrors={errors} rawI18nMessages={i18nMessages}/>)
