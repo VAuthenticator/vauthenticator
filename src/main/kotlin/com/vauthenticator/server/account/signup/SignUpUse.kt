@@ -26,7 +26,7 @@ open class SignUpUse(
             .map {
                 val encodedPassword = vAuthenticatorPasswordEncoder.encode(account.password)
                 val registeredAccount = account.copy(
-                    authorities = setOf(Role.defaultRole().name),
+                    authorities = account.authorities + setOf(Role.defaultRole().name),
                     password = encodedPassword
                 )
                 accountRepository.create(registeredAccount)

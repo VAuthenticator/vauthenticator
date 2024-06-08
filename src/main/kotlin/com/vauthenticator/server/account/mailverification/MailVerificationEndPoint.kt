@@ -26,6 +26,7 @@ class MailVerificationEndPoint(
         principal: JwtAuthenticationToken
     ): ResponseEntity<Unit> {
         permissionValidator.validate(principal, httpSession, Scopes.from(Scope.MAIL_VERIFY))
+        //todo validate mail field in body
         sendVerifyMailChallenge.sendVerifyMail(request["mail"]!!)
         return noContent().build()
     }
