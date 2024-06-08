@@ -22,7 +22,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import java.util.*
 
 @ExtendWith(MockKExtension::class)
-internal class AdminAccountEndPointTest {
+internal class AdminApiAccountEndPointTest {
 
     lateinit var mokMvc: MockMvc
 
@@ -34,7 +34,7 @@ internal class AdminAccountEndPointTest {
     @BeforeEach
     internal fun setUp() {
         mokMvc = MockMvcBuilders.standaloneSetup(
-            AdminAccountEndPoint(
+            AdminApiAccountEndPoint(
                 accountRepository,
                 AccountUpdateAdminAction(accountRepository)
             )
