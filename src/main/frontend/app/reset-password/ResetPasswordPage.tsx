@@ -1,9 +1,9 @@
-import React from 'react';
+import React, {SyntheticEvent} from 'react';
 import Template from "../component/Template";
 import FormInputTextField from "../component/FormInputTextField";
 import Separator from "../component/Separator";
 import FormButton from "../component/FormButton";
-import {Divider, Grid, Paper, ThemeProvider, Typography} from "@mui/material";
+import {Alert, Divider, Grid, Paper, Snackbar, ThemeProvider, Typography} from "@mui/material";
 import {Person, VpnKey} from "@mui/icons-material";
 import theme from "../component/styles";
 import getDataFromDomUtils from "../utils/getDataFromDomUtils";
@@ -19,8 +19,12 @@ const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({rawMetadata, rawI1
     const metadata = JSON.parse(rawMetadata);
 
     const [password, setPassword] = React.useState("")
-    const resetPassword = (ticket: string, password: string) => {
-        return fetch(`/api/reset-password/${ticket}`, {
+    const [openWarning, setOpenWarning] = React.useState(false);
+    const handleClose = (event: SyntheticEvent<Element, Event>) => {
+        setOpenWarning(false);
+    };
+    const resetPassword = async (ticket: string, password: string) => {
+        let r = await fetch(`/api/reset-password/${ticket}`, {
             method: "PUT",
             credentials: 'same-origin',
             headers: {
@@ -30,12 +34,13 @@ const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({rawMetadata, rawI1
             body: JSON.stringify({
                 newPassword: password
             })
-        }).then(r => {
-            console.log("send reset password")
-            if (r.status === 204) {
-                window.document.location.href = "/reset-password/successful-password-reset"
-            }
-        })
+        });
+        console.log("send reset password")
+        if (r.status === 204) {
+            window.document.location.href = "/reset-password/successful-password-reset"
+        } else {
+            setOpenWarning(true)
+        }
 
     }
     return (
@@ -65,6 +70,11 @@ const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({rawMetadata, rawI1
                     <FormButton type="button" label={i18nMessages["submitButtonTextReset"]}
                                 onClickHandler={() => resetPassword(metadata["ticket"], password)}/>
                 </Paper>
+                <Snackbar open={openWarning} autoHideDuration={600}>
+                    <Alert onClose={handleClose} severity="warning">
+                        {i18nMessages["errorFeedback"]}
+                    </Alert>
+                </Snackbar>
             </Template>
         </ThemeProvider>
     )

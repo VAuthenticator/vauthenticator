@@ -17,8 +17,8 @@ const ResetPasswordChallengeSender: React.FC<ResetPasswordChallengeSenderPagePro
     const i18nMessages = JSON.parse(rawI18nMessages)
     const [email, setEmail] = React.useState("")
 
-    const sentResetPasswordChallenge = (email: string) => {
-        return fetch(`/api/reset-password-challenge`, {
+    const sentResetPasswordChallenge = async (email: string) => {
+        let r = await fetch(`/api/reset-password-challenge`, {
             method: "PUT",
             headers: {
                 'Accept': 'application/json',
@@ -26,11 +26,10 @@ const ResetPasswordChallengeSender: React.FC<ResetPasswordChallengeSenderPagePro
             },
             body: JSON.stringify({"mail": email}),
             credentials: 'same-origin'
-        }).then(r => {
-            if (r.status === 204) {
-                window.location.href = "/reset-password/successful-reset-password-mail-challenge";
-            }
-        })
+        });
+        if (r.status === 204) {
+            window.location.href = "/reset-password/successful-reset-password-mail-challenge";
+        }
     }
 
     return (
