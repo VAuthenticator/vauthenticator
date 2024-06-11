@@ -8,13 +8,25 @@ import ComponentInitializer from "../utils/ComponentInitializer";
 import FormButton from "../component/FormButton";
 import FormInputTextField from "../component/FormInputTextField";
 import Separator from "../component/Separator";
+import ErrorBanner from "../component/ErrorBanner";
 
 interface ChangePasswordPageProps {
     rawI18nMessages: string
+    rawErrors: string
+    csrfName: string
+    csrfToken: string
 }
 
-const ResetChangePasswordPage: React.FC<ChangePasswordPageProps> = ({rawI18nMessages}) => {
+const ResetChangePasswordPage: React.FC<ChangePasswordPageProps> = ({
+                                                                        rawI18nMessages,
+                                                                        rawErrors,
+                                                                        csrfName,
+                                                                        csrfToken
+                                                                    }) => {
     const i18nMessages = JSON.parse(rawI18nMessages);
+    const errorMessage = JSON.parse(rawErrors)["password-change"];
+    const errorsBanner = <ErrorBanner errorMessage={errorMessage}/>
+
     return (
         <ThemeProvider theme={theme}>
             <Template maxWidth="sm">
@@ -27,7 +39,11 @@ const ResetChangePasswordPage: React.FC<ChangePasswordPageProps> = ({rawI18nMess
                 </Grid>
 
                 <Paper>
+                    {errorMessage ? errorsBanner : ""}
+
                     <form action="/change-password" method="post">
+                        <input name={csrfName} type="hidden" value={csrfToken}/>
+
                         <FormInputTextField id="new-password"
                                             label={i18nMessages["passwordPlaceholderText"]}
                                             type="password"
@@ -43,5 +59,9 @@ const ResetChangePasswordPage: React.FC<ChangePasswordPageProps> = ({rawI18nMess
 }
 
 const rawI18nMessages = getDataFromDomUtils('i18nMessages')
+const rawErrors = getDataFromDomUtils('errors')
+const csrfName = getDataFromDomUtils('csrfName')
+const csrfToken = getDataFromDomUtils('csrfToken')
 
-ComponentInitializer(<ResetChangePasswordPage rawI18nMessages={rawI18nMessages}/>)
+ComponentInitializer(<ResetChangePasswordPage csrfName={csrfName} csrfToken={csrfToken}
+                                              rawErrors={rawErrors} rawI18nMessages={rawI18nMessages}/>)

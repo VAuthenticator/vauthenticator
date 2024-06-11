@@ -62,7 +62,8 @@ class WebSecurityConfig(
             it.requireCsrfProtectionMatcher(
                 OrRequestMatcher(
                     AntPathRequestMatcher("/login", HttpMethod.POST.name()),
-                    AntPathRequestMatcher("/mfa-challenge", HttpMethod.POST.name())
+                    AntPathRequestMatcher("/mfa-challenge", HttpMethod.POST.name()),
+                    AntPathRequestMatcher("/change-password", HttpMethod.POST.name())
                 )
             )
         }
