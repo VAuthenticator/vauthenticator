@@ -18,8 +18,9 @@ class I18nMessageInjector(
     ) {
         val servletRequest = currentHttpServletRequest()
         val userLang = localeResolver.resolveLocale(servletRequest).toLanguageTag()
-        val i18nMessages = i18nMessageRepository.getMessagedFor(i18nScope, userLang).content
-        model.addAttribute("i18nMessages", objectMapper.writeValueAsString(i18nMessages))
+        val i18nMessages = i18nMessageRepository.getMessagedFor(i18nScope, userLang)
+        model.addAttribute("i18nMessages", objectMapper.writeValueAsString(i18nMessages.messages))
+        model.addAttribute("errors", objectMapper.writeValueAsString(i18nMessages.error))
     }
 
     private fun currentHttpServletRequest() =
