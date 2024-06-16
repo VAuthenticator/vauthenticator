@@ -93,14 +93,22 @@ c-111 1 -132 4 -194 28 -38 15 -96 43 -128 62 -32 19 -64 35 -70 35 -7 0 -30
 interface LoginProps {
     rawFeatures: string
     rawErrors: string
+    hasServerSideErrors: boolean
     rawI18nMessages: string
     csrfName: string
     csrfToken: string
 }
 
-const Login: React.FC<LoginProps> = ({rawFeatures, rawErrors, rawI18nMessages, csrfName, csrfToken}) => {
+const Login: React.FC<LoginProps> = ({
+                                         rawFeatures,
+                                         rawErrors,
+                                         hasServerSideErrors,
+                                         rawI18nMessages,
+                                         csrfName,
+                                         csrfToken
+                                     }) => {
     const features = JSON.parse(rawFeatures);
-    const errorMessage = JSON.parse(rawErrors)["login"];
+    const errorMessage = JSON.parse(rawErrors)["feedback"];
     const i18nMessages = JSON.parse(rawI18nMessages);
     const errorsBanner = <ErrorBanner errorMessage={errorMessage}/>
 
@@ -121,8 +129,7 @@ const Login: React.FC<LoginProps> = ({rawFeatures, rawErrors, rawI18nMessages, c
                 <Grid style={{marginTop: '10px'}}>
                     <Divider/>
                 </Grid>
-                {errorMessage ? errorsBanner : ""}
-
+                {hasServerSideErrors ? errorsBanner : ""}
 
                 {<form action="login" method="post">
                     <Box>
@@ -161,10 +168,11 @@ const Login: React.FC<LoginProps> = ({rawFeatures, rawErrors, rawI18nMessages, c
 }
 
 const features = getDataFromDomUtils('features')
+const hasServerSideErrors = getDataFromDomUtils('hasServerSideErrors') === 'true'
 const errors = getDataFromDomUtils('errors')
 const i18nMessages = getDataFromDomUtils('i18nMessages')
 const csrfName = getDataFromDomUtils('csrfName')
 const csrfToken = getDataFromDomUtils('csrfToken')
 
 ComponentInitializer(<Login csrfName={csrfName} csrfToken={csrfToken} rawFeatures={features} rawErrors={errors}
-                            rawI18nMessages={i18nMessages}/>)
+                            hasServerSideErrors={hasServerSideErrors} rawI18nMessages={i18nMessages}/>)

@@ -1,28 +1,30 @@
-import React, {SyntheticEvent} from 'react';
+import React from 'react';
 import Template from "../component/Template";
 import FormInputTextField from "../component/FormInputTextField";
 import Separator from "../component/Separator";
 import FormButton from "../component/FormButton";
-import {Alert, Divider, Grid, Paper, Snackbar, ThemeProvider, Typography} from "@mui/material";
+import {Divider, Grid, Paper, ThemeProvider, Typography} from "@mui/material";
 import {Person, VpnKey} from "@mui/icons-material";
 import theme from "../component/styles";
 import getDataFromDomUtils from "../utils/getDataFromDomUtils";
 import ComponentInitializer from "../utils/ComponentInitializer";
+import ErrorBanner from "../component/ErrorBanner";
 
 interface ResetPasswordPageProps {
     rawMetadata: string
     rawI18nMessages: string
+    rawErrors: string
 }
 
-const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({rawMetadata, rawI18nMessages}) => {
+const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({rawMetadata, rawI18nMessages, rawErrors}) => {
     const i18nMessages = JSON.parse(rawI18nMessages);
+    const errorMessage = JSON.parse(rawErrors)["feedback"];
     const metadata = JSON.parse(rawMetadata);
+    const errorsBanner = <ErrorBanner errorMessage={errorMessage}/>
 
     const [password, setPassword] = React.useState("")
-    const [openWarning, setOpenWarning] = React.useState(false);
-    const handleClose = (event: SyntheticEvent<Element, Event>) => {
-        setOpenWarning(false);
-    };
+    const [hasError, setHasError] = React.useState(false);
+
     const resetPassword = async (ticket: string, password: string) => {
         let r = await fetch(`/api/reset-password/${ticket}`, {
             method: "PUT",
@@ -39,7 +41,7 @@ const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({rawMetadata, rawI1
         if (r.status === 204) {
             window.document.location.href = "/reset-password/successful-password-reset"
         } else {
-            setOpenWarning(true)
+            setHasError(true)
         }
 
     }
@@ -55,6 +57,8 @@ const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({rawMetadata, rawI1
                 </Grid>
 
                 <Paper>
+                    {hasError ? errorsBanner : ""}
+
                     <FormInputTextField id="newPassword"
                                         label={i18nMessages["passwordPlaceholderText"]}
                                         type="password"
@@ -70,11 +74,6 @@ const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({rawMetadata, rawI1
                     <FormButton type="button" label={i18nMessages["submitButtonTextReset"]}
                                 onClickHandler={() => resetPassword(metadata["ticket"], password)}/>
                 </Paper>
-                <Snackbar open={openWarning} autoHideDuration={600}>
-                    <Alert onClose={handleClose} severity="warning">
-                        {i18nMessages["errorFeedback"]}
-                    </Alert>
-                </Snackbar>
             </Template>
         </ThemeProvider>
     )
@@ -82,5 +81,6 @@ const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({rawMetadata, rawI1
 
 const metadata = getDataFromDomUtils('metadata')
 const i18nMessages = getDataFromDomUtils('i18nMessages')
+const errors = getDataFromDomUtils('errors')
 
-ComponentInitializer(<ResetPasswordPage rawMetadata={metadata} rawI18nMessages={i18nMessages}/>)
+ComponentInitializer(<ResetPasswordPage rawMetadata={metadata} rawI18nMessages={i18nMessages} rawErrors={errors}/>)

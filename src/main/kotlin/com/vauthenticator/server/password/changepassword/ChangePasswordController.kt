@@ -1,6 +1,5 @@
 package com.vauthenticator.server.password.changepassword
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.account.AccountMandatoryAction
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.i18n.I18nMessageInjector
@@ -17,11 +16,9 @@ import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
-import java.util.*
 
 @Controller
 class ChangePasswordController(
-    private val objectMapper : ObjectMapper,
     private val i18nMessageInjector: I18nMessageInjector,
     private val accountRepository: AccountRepository,
     private val publisher: ApplicationEventPublisher,
@@ -34,9 +31,7 @@ class ChangePasswordController(
 
     @GetMapping("/change-password")
     fun view(model: Model, httpServletRequest : HttpServletRequest): String {
-        val errors = errorMessageFor(httpServletRequest)
         i18nMessageInjector.setMessagedFor(I18nScope.CHANGE_PASSWORD_PAGE, model)
-        model.addAttribute("errors", objectMapper.writeValueAsString(errors))
         model.addAttribute("assetBundle", "changePassword_bundle.js")
         return "template"
     }
@@ -59,15 +54,6 @@ class ChangePasswordController(
         }
 
     }
-    private fun errorMessageFor(httpServletRequest: HttpServletRequest) =
-        if (hasBadLoginFrom(httpServletRequest)) {
-            mapOf("password-change" to "The new password does not meet the requirements!")
-        } else {
-            emptyMap()
-        }
-
-    private fun hasBadLoginFrom(httpServletRequest: HttpServletRequest) =
-        !Optional.ofNullable(httpServletRequest.session.getAttribute("SPRING_SECURITY_LAST_EXCEPTION")).isEmpty
 
     private fun changePasswordFor(authentication: Authentication, newPassword: String) {
         changePassword.resetPasswordFor(authentication, ChangePasswordRequest(newPassword))
