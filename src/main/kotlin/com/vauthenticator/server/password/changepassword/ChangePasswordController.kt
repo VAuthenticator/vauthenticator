@@ -1,6 +1,5 @@
 package com.vauthenticator.server.password.changepassword
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.account.AccountMandatoryAction
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.i18n.I18nMessageInjector
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam
 
 @Controller
 class ChangePasswordController(
-    private val objectMapper : ObjectMapper,
     private val i18nMessageInjector: I18nMessageInjector,
     private val accountRepository: AccountRepository,
     private val publisher: ApplicationEventPublisher,

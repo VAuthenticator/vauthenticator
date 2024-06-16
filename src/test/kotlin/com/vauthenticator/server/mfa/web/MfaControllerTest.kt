@@ -1,6 +1,5 @@
 package com.vauthenticator.server.mfa.web
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.i18n.I18nMessageInjector
 import com.vauthenticator.server.i18n.I18nScope
 import com.vauthenticator.server.mfa.domain.MfaChallenge
@@ -56,7 +55,6 @@ internal class MfaControllerTest {
             MfaController(
                 i18nMessageInjector,
                 publisher,
-                ObjectMapper(),
                 successHandler,
                 failureHandler,
                 otpMfaSender,

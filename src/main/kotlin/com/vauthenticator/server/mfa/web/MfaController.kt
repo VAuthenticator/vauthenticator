@@ -1,6 +1,5 @@
 package com.vauthenticator.server.mfa.web
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.i18n.I18nMessageInjector
 import com.vauthenticator.server.i18n.I18nScope
 import com.vauthenticator.server.mfa.domain.*
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam
 class MfaController(
     private val i18nMessageInjector: I18nMessageInjector,
     private val publisher: ApplicationEventPublisher,
-    private val objectMapper: ObjectMapper,
     private val nextHopeLoginWorkflowSuccessHandler: AuthenticationSuccessHandler,
     private val mfaFailureHandler: AuthenticationFailureHandler,
     private val otpMfaSender: OtpMfaSender,
