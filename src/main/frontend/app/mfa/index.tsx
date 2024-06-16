@@ -14,14 +14,15 @@ import {getMfaMethods, MfaAccountEnrolledMethod, sendMfaCode} from "./MfaReposit
 import EmailIcon from '@mui/icons-material/Email';
 
 interface MfaChallengePageProps {
-    rawErrors: string
     rawI18nMessages: string
+    rawErrors: string
+    hasServerSideErrors: boolean
     csrfName: string
     csrfToken: string
 }
 
-const MfaChallengePage: React.FC<MfaChallengePageProps> = ({rawErrors, rawI18nMessages, csrfName, csrfToken}) => {
-    const errorMessage = JSON.parse(rawErrors)["mfa-challenge"];
+const MfaChallengePage: React.FC<MfaChallengePageProps> = ({ rawI18nMessages,rawErrors,hasServerSideErrors, csrfName, csrfToken}) => {
+    const errorMessage = JSON.parse(rawErrors)["feedback"];
     const i18nMessages = JSON.parse(rawI18nMessages)
 
     const errorsBanner = <ErrorBanner errorMessage={errorMessage}/>
@@ -70,7 +71,7 @@ const MfaChallengePage: React.FC<MfaChallengePageProps> = ({rawErrors, rawI18nMe
                 <Grid style={{marginTop: '10px'}}>
                     <Divider/>
                 </Grid>
-                {errorMessage ? errorsBanner : ""}
+                {hasServerSideErrors ? errorsBanner : ""}
 
                 {<form action="mfa-challenge" method="post">
                     <Box>
@@ -108,8 +109,9 @@ const MfaChallengePage: React.FC<MfaChallengePageProps> = ({rawErrors, rawI18nMe
 }
 
 const errors = getDataFromDomUtils('errors')
+const hasServerSideErrors = getDataFromDomUtils('hasServerSideErrors') === "true"
 const i18nMessages = getDataFromDomUtils('i18nMessages')
 const csrfName = getDataFromDomUtils('csrfName')
 const csrfToken = getDataFromDomUtils('csrfToken')
 
-ComponentInitializer(<MfaChallengePage csrfName={csrfName} csrfToken={csrfToken} rawErrors={errors} rawI18nMessages={i18nMessages}/>)
+ComponentInitializer(<MfaChallengePage csrfName={csrfName} csrfToken={csrfToken} rawErrors={errors} hasServerSideErrors={hasServerSideErrors} rawI18nMessages={i18nMessages}/>)

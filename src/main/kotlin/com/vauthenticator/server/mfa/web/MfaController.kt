@@ -16,7 +16,6 @@ import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
-import java.util.*
 
 @Controller
 class MfaController(
@@ -42,23 +41,11 @@ class MfaController(
         authentication: Authentication,
         httpServletRequest: HttpServletRequest
     ): String {
-        val errors = errorMessageFor(httpServletRequest)
-        model.addAttribute("errors", objectMapper.writeValueAsString(errors))
         model.addAttribute("assetBundle", "mfa_bundle.js")
         i18nMessageInjector.setMessagedFor(I18nScope.MFA_PAGE, model)
 
         return "template"
     }
-
-    private fun errorMessageFor(httpServletRequest: HttpServletRequest) =
-        if (hasBadLoginFrom(httpServletRequest)) {
-            mapOf("mfa-challenge" to "Ops! the MFA code provided is wrong or expired")
-        } else {
-            emptyMap()
-        }
-
-    private fun hasBadLoginFrom(httpServletRequest: HttpServletRequest) =
-        !Optional.ofNullable(httpServletRequest.session.getAttribute("SPRING_SECURITY_LAST_EXCEPTION")).isEmpty
 
     @PostMapping("/mfa-challenge")
     fun processSecondFactor(

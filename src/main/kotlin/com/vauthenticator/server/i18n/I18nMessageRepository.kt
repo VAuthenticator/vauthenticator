@@ -9,7 +9,6 @@ class I18nMessageRepository(private val resourceLoader: ResourceLoader) {
 
     private val logger = LoggerFactory.getLogger(I18nMessageRepository::class.java)
 
-
     fun getMessagedFor(scope: I18nScope, userLang: String): I18nMessages {
         try {
             val properties = Properties()
@@ -17,7 +16,6 @@ class I18nMessageRepository(private val resourceLoader: ResourceLoader) {
             properties.load(resource.inputStream)
             val messages = getContentFor(properties, scope, "")
             val errors = getContentFor(properties, scope, "errors_")
-
             return I18nMessages(messages, errors)
         } catch (e: Exception) {
             logger.error(e.message, e)
@@ -28,7 +26,7 @@ class I18nMessageRepository(private val resourceLoader: ResourceLoader) {
     private fun getContentFor(
         properties: Properties,
         scope: I18nScope,
-        prefix : String
+        prefix: String
     ) = (properties.toMap() as Map<String, String>)
         .filter { it.key.startsWith("$prefix${scope.prefix}") }
         .mapKeys { it.key.removePrefix("$prefix${scope.prefix}.") }

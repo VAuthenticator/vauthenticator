@@ -13,6 +13,7 @@ import ErrorBanner from "../component/ErrorBanner";
 interface ChangePasswordPageProps {
     rawI18nMessages: string
     rawErrors: string
+    hasServerSideErrors : boolean
     csrfName: string
     csrfToken: string
 }
@@ -20,11 +21,13 @@ interface ChangePasswordPageProps {
 const ResetChangePasswordPage: React.FC<ChangePasswordPageProps> = ({
                                                                         rawI18nMessages,
                                                                         rawErrors,
+                                                                        hasServerSideErrors,
+
                                                                         csrfName,
                                                                         csrfToken
                                                                     }) => {
     const i18nMessages = JSON.parse(rawI18nMessages);
-    const errorMessage = JSON.parse(rawErrors)["password-change"];
+    const errorMessage = JSON.parse(rawErrors)["feedback"];
     const errorsBanner = <ErrorBanner errorMessage={errorMessage}/>
 
     return (
@@ -39,7 +42,7 @@ const ResetChangePasswordPage: React.FC<ChangePasswordPageProps> = ({
                 </Grid>
 
                 <Paper>
-                    {errorMessage ? errorsBanner : ""}
+                    {hasServerSideErrors ? errorsBanner : ""}
 
                     <form action="/change-password" method="post">
                         <input name={csrfName} type="hidden" value={csrfToken}/>
@@ -60,8 +63,9 @@ const ResetChangePasswordPage: React.FC<ChangePasswordPageProps> = ({
 
 const rawI18nMessages = getDataFromDomUtils('i18nMessages')
 const rawErrors = getDataFromDomUtils('errors')
+const hasServerSideErrors = getDataFromDomUtils('hasServerSideErrors') === "true"
 const csrfName = getDataFromDomUtils('csrfName')
 const csrfToken = getDataFromDomUtils('csrfToken')
 
-ComponentInitializer(<ResetChangePasswordPage csrfName={csrfName} csrfToken={csrfToken}
+ComponentInitializer(<ResetChangePasswordPage csrfName={csrfName} csrfToken={csrfToken} hasServerSideErrors={hasServerSideErrors}
                                               rawErrors={rawErrors} rawI18nMessages={rawI18nMessages}/>)
