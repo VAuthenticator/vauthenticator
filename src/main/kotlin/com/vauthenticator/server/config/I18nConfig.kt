@@ -3,6 +3,7 @@ package com.vauthenticator.server.config
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.i18n.I18nMessageInjector
 import com.vauthenticator.server.i18n.I18nMessageRepository
+import com.vauthenticator.server.web.CurrentHttpServletRequestService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.io.ResourceLoader
@@ -18,6 +19,7 @@ class I18nConfig {
     fun i18nMessageInjector(
         localeResolver: LocaleResolver,
         objectMapper: ObjectMapper,
-        i18nMessageRepository: I18nMessageRepository
-    ) = I18nMessageInjector(localeResolver, objectMapper, i18nMessageRepository)
+        i18nMessageRepository: I18nMessageRepository,
+        currentHttpServletRequestService : CurrentHttpServletRequestService
+    ) = I18nMessageInjector(localeResolver, objectMapper, i18nMessageRepository, currentHttpServletRequestService)
 }

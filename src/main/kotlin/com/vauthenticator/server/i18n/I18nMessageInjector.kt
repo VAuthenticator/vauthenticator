@@ -1,10 +1,9 @@
 package com.vauthenticator.server.i18n
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.vauthenticator.server.web.CurrentHttpServletRequestService
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.ui.Model
-import org.springframework.web.context.request.RequestContextHolder
-import org.springframework.web.context.request.ServletRequestAttributes
 import org.springframework.web.servlet.LocaleResolver
 import java.util.*
 
@@ -12,13 +11,14 @@ import java.util.*
 class I18nMessageInjector(
     private val localeResolver: LocaleResolver,
     private val objectMapper: ObjectMapper,
-    private val i18nMessageRepository: I18nMessageRepository
+    private val i18nMessageRepository: I18nMessageRepository,
+    private val currentHttpServletRequestService: CurrentHttpServletRequestService
 ) {
     fun setMessagedFor(
         i18nScope: I18nScope,
         model: Model
     ) {
-        val httpServletRequest = currentHttpServletRequest()
+        val httpServletRequest = currentHttpServletRequestService.getServletRequest()
         val userLang = localeResolver.resolveLocale(httpServletRequest).toLanguageTag()
         val i18nMessages = i18nMessageRepository.getMessagedFor(i18nScope, userLang)
         model.addAttribute("i18nMessages", objectMapper.writeValueAsString(i18nMessages.messages))
@@ -26,8 +26,6 @@ class I18nMessageInjector(
         model.addAttribute("hasServerSideErrors", hasBadLoginFrom(httpServletRequest))
     }
 
-    private fun currentHttpServletRequest() =
-        (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes).request
 
     companion object {
 
