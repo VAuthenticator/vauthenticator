@@ -37,20 +37,20 @@ class EMailEndPointTest {
 
     @Test
     fun `when an mfa mail template is retrieved`() {
-        val response = MailTemplate(
-            MailType.MFA,
+        val response = EMailTemplate(
+            EMailType.MFA,
             "A_TEMPLATE"
         )
 
         every {
             documentRepository.loadDocument(
                 DocumentType.MAIL.content,
-                MailType.MFA.path
+                EMailType.MFA.path
             )
-        } returns Document("", MailType.MFA.path, "A_TEMPLATE".toByteArray())
+        } returns Document("", EMailType.MFA.path, "A_TEMPLATE".toByteArray())
 
         mockMvc.perform(
-            get("/api/email-template/${MailType.MFA}")
+            get("/api/email-template/${EMailType.MFA}")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(response))
         )
@@ -60,8 +60,8 @@ class EMailEndPointTest {
 
     @Test
     fun `when a new mail template is uploaded`() {
-        val request = MailTemplate(
-            MailType.WELCOME,
+        val request = EMailTemplate(
+            EMailType.WELCOME,
             "A_TEMPLATE"
         )
 

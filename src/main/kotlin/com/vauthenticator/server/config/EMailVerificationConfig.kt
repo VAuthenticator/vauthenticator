@@ -24,7 +24,7 @@ class EMailVerificationConfig {
         clientAccountRepository: ClientApplicationRepository,
         accountRepository: AccountRepository,
         verificationTicketFactory: VerificationTicketFactory,
-        verificationMailSender: MailSenderService,
+        verificationMailSender: EMailSenderService,
         @Value("\${vauthenticator.host}") frontChannelBaseUrl: String
     ) =
         SendVerifyEMailChallenge(
@@ -52,14 +52,14 @@ class EMailVerificationConfig {
         documentRepository: DocumentRepository,
         noReplyEMailConfiguration: NoReplyEMailConfiguration
     ) =
-        JavaMailSenderService(
+        JavaEMailSenderService(
             documentRepository,
             javaMailSender,
             JinjavaMailTemplateResolver(Jinjava()),
-            SimpleMailMessageFactory(
+            SimpleEMailMessageFactory(
                 noReplyEMailConfiguration.from,
                 noReplyEMailConfiguration.welcomeMailSubject,
-                MailType.EMAIL_VERIFICATION
+                EMailType.EMAIL_VERIFICATION
             )
         )
 

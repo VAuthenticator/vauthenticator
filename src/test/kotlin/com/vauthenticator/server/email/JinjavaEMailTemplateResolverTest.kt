@@ -4,7 +4,7 @@ import com.hubspot.jinjava.Jinjava
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-internal class JinjavaMailTemplateResolverTest {
+internal class JinjavaEMailTemplateResolverTest {
 
     @Test
     internal fun `happy path`() {

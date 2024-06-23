@@ -1,7 +1,7 @@
 package com.vauthenticator.server.mfa.domain
 
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.email.MailSenderService
+import com.vauthenticator.server.email.EMailSenderService
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -22,7 +22,7 @@ internal class OtpMfaEmailSenderTest {
     lateinit var accountRepository: AccountRepository
 
     @MockK
-    lateinit var mfaMailSender: MailSenderService
+    lateinit var mfaMailSender: EMailSenderService
 
     @Test
     internal fun `when a otp is sent via mail`() {

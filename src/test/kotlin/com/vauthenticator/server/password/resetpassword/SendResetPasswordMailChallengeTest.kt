@@ -3,7 +3,7 @@ package com.vauthenticator.server.password.resetpassword
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.account.ticket.VerificationTicket
 import com.vauthenticator.server.account.ticket.VerificationTicketFactory
-import com.vauthenticator.server.email.MailSenderService
+import com.vauthenticator.server.email.EMailSenderService
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import io.mockk.every
@@ -28,14 +28,14 @@ internal class SendResetPasswordMailChallengeTest {
     lateinit var ticketFactory: VerificationTicketFactory
 
     @MockK
-    lateinit var mailSenderService: MailSenderService
+    lateinit var EMailSenderService: EMailSenderService
 
     @BeforeEach
     internal fun setUp() {
         underTest = SendResetPasswordMailChallenge(
             accountRepository,
             ticketFactory,
-            mailSenderService,
+            EMailSenderService,
             "https://vauthenticator.com"
         )
     }
@@ -47,7 +47,7 @@ internal class SendResetPasswordMailChallengeTest {
         every { accountRepository.accountFor(anAccount.email) } returns Optional.of(anAccount)
         every { ticketFactory.createTicketFor(anAccount, ClientAppId.empty()) } returns VerificationTicket("A_TICKET")
         every {
-            mailSenderService.sendFor(
+            EMailSenderService.sendFor(
                 anAccount,
                 mapOf("resetPasswordLink" to "https://vauthenticator.com/reset-password/A_TICKET")
             )

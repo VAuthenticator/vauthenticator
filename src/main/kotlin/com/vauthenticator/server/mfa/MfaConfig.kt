@@ -59,7 +59,7 @@ class MfaConfig {
     fun otpMfaSender(
         accountRepository: AccountRepository,
         otpMfa: OtpMfa,
-        mfaMailSender: MailSenderService
+        mfaMailSender: EMailSenderService
     ) = OtpMfaEmailSender(accountRepository, otpMfa, mfaMailSender)
 
     @Bean
@@ -74,14 +74,14 @@ class MfaConfig {
         documentRepository: DocumentRepository,
         noReplyEMailConfiguration: NoReplyEMailConfiguration
     ) =
-        JavaMailSenderService(
+        JavaEMailSenderService(
             documentRepository,
             javaMailSender,
             JinjavaMailTemplateResolver(Jinjava()),
-            SimpleMailMessageFactory(
+            SimpleEMailMessageFactory(
                 noReplyEMailConfiguration.from,
                 noReplyEMailConfiguration.mfaMailSubject, // todo chenge the subject
-                MailType.MFA
+                EMailType.MFA
             )
         )
 }

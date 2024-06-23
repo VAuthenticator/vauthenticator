@@ -2,7 +2,7 @@ package com.vauthenticator.server.account.welcome
 
 import com.vauthenticator.server.account.AccountNotFoundException
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.email.MailSenderService
+import com.vauthenticator.server.email.EMailSenderService
 import com.vauthenticator.server.support.AccountTestFixture
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -23,7 +23,7 @@ internal class SayWelcomeTest {
     lateinit var accountRepository: AccountRepository
 
     @MockK
-    lateinit var welcomeMailSender: MailSenderService
+    lateinit var welcomeMailSender: EMailSenderService
 
     lateinit var underTest: SayWelcome
 

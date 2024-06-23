@@ -1,7 +1,7 @@
 package com.vauthenticator.server.mfa.domain
 
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.email.MailSenderService
+import com.vauthenticator.server.email.EMailSenderService
 
 
 interface OtpMfaSender {
@@ -15,7 +15,7 @@ interface OtpMfaVerifier {
 class OtpMfaEmailSender(
     private val accountRepository: AccountRepository,
     private val otpMfa: OtpMfa,
-    private val mfaMailSender: MailSenderService
+    private val mfaMailSender: EMailSenderService
 ) : OtpMfaSender {
 
     override fun sendMfaChallenge(email: String) {

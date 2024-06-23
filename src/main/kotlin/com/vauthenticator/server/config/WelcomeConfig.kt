@@ -16,7 +16,7 @@ class WelcomeConfig {
     @Bean
     fun sayWelcome(
         accountRepository: AccountRepository,
-        welcomeMailSender: MailSenderService
+        welcomeMailSender: EMailSenderService
     ) = SayWelcome(accountRepository, welcomeMailSender)
 
     @Bean
@@ -25,14 +25,14 @@ class WelcomeConfig {
         documentRepository: DocumentRepository,
         noReplyEMailConfiguration: NoReplyEMailConfiguration
     ) =
-        JavaMailSenderService(
+        JavaEMailSenderService(
             documentRepository,
             javaMailSender,
             JinjavaMailTemplateResolver(Jinjava()),
-            SimpleMailMessageFactory(
+            SimpleEMailMessageFactory(
                 noReplyEMailConfiguration.from,
                 noReplyEMailConfiguration.welcomeMailSubject,
-                MailType.WELCOME
+                EMailType.WELCOME
             )
         )
 

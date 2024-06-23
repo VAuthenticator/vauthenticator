@@ -2,11 +2,11 @@ package com.vauthenticator.server.account.welcome
 
 import com.vauthenticator.server.account.AccountNotFoundException
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.email.MailSenderService
+import com.vauthenticator.server.email.EMailSenderService
 
 class SayWelcome(
     private val accountRepository: AccountRepository,
-    private val welcomeMailSender: MailSenderService
+    private val welcomeMailSender: EMailSenderService
 ) {
 
     fun welcome(email: String): Unit =

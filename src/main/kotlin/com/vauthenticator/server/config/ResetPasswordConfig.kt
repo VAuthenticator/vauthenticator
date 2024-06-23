@@ -25,7 +25,7 @@ class ResetPasswordConfig {
         accountRepository: AccountRepository,
         clientApplicationRepository: ClientApplicationRepository,
         verificationTicketFactory: VerificationTicketFactory,
-        resetPasswordMailSender: MailSenderService,
+        resetPasswordMailSender: EMailSenderService,
         @Value("\${vauthenticator.host}") frontChannelBaseUrl: String
     ) =
         SendResetPasswordMailChallenge(
@@ -51,14 +51,14 @@ class ResetPasswordConfig {
         documentRepository: DocumentRepository,
         noReplyEMailConfiguration: NoReplyEMailConfiguration
     ) =
-        JavaMailSenderService(
+        JavaEMailSenderService(
             documentRepository,
             javaMailSender,
             JinjavaMailTemplateResolver(Jinjava()),
-            SimpleMailMessageFactory(
+            SimpleEMailMessageFactory(
                 noReplyEMailConfiguration.from,
                 noReplyEMailConfiguration.resetPasswordMailSubject,
-                MailType.RESET_PASSWORD
+                EMailType.RESET_PASSWORD
             )
         )
 

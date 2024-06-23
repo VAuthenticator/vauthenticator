@@ -4,7 +4,7 @@ import com.vauthenticator.server.account.AccountNotFoundException
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.account.ticket.VerificationTicket
 import com.vauthenticator.server.account.ticket.VerificationTicketFactory
-import com.vauthenticator.server.email.MailSenderService
+import com.vauthenticator.server.email.EMailSenderService
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import org.slf4j.LoggerFactory
 
@@ -13,7 +13,7 @@ private const val LINK_KEY = "verificationEMailLink"
 class SendVerifyEMailChallenge(
     private val accountRepository: AccountRepository,
     private val verificationTicketFactory: VerificationTicketFactory,
-    private val mailVerificationMailSender: MailSenderService,
+    private val mailVerificationMailSender: EMailSenderService,
     private val frontChannelBaseUrl: String
 ) {
 

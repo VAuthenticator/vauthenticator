@@ -8,17 +8,17 @@ import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 
 
-interface MailSenderService {
-    fun sendFor(account: Account, mailContext: MailContext = emptyMap())
+interface EMailSenderService {
+    fun sendFor(account: Account, eMailContext: EMailContext = emptyMap())
 }
 
-interface MailMessageFactory {
-    fun makeMailMessageFor(account: Account, requestContext: MailContext): MailMessage
+fun interface EMailMessageFactory {
+    fun makeMailMessageFor(account: Account, requestContext: EMailContext): EMailMessage
 }
 
-class SimpleMailMessageFactory(val from: String, val subject: String, val mailType: MailType) : MailMessageFactory {
+class SimpleEMailMessageFactory(val from: String, val subject: String, private val eMailType: EMailType) : EMailMessageFactory {
 
-    override fun makeMailMessageFor(account: Account, requestContext: MailContext): MailMessage {
+    override fun makeMailMessageFor(account: Account, requestContext: EMailContext): EMailMessage {
         val context = mapOf(
             "enabled" to account.enabled,
             "username" to account.username,
@@ -29,40 +29,40 @@ class SimpleMailMessageFactory(val from: String, val subject: String, val mailTy
             "birthDate" to account.birthDate.map { it.iso8601FormattedDate() }.orElse(""),
             "phone" to account.phone.map { it.formattedPhone() }.orElse("")
         ) + requestContext
-        return MailMessage(account.email, from, subject, mailType, context)
+        return EMailMessage(account.email, from, subject, eMailType, context)
     }
 
 }
 
-class JavaMailSenderService(
+class JavaEMailSenderService(
     private val documentRepository: DocumentRepository,
     private val mailSender: JavaMailSender,
     private val templateResolver: MailTemplateResolver,
-    private val mailMessageFactory: MailMessageFactory
-) : MailSenderService {
+    private val EMailMessageFactory: EMailMessageFactory
+) : EMailSenderService {
 
-    override fun sendFor(account: Account, mailContext: MailContext) {
-        val mailMessage = mailMessageFactory.makeMailMessageFor(account, mailContext)
+    override fun sendFor(account: Account, EMailContext: EMailContext) {
+        val mailMessage = EMailMessageFactory.makeMailMessageFor(account, EMailContext)
         val mailContent = mailContentFor(mailMessage)
         val email = composeMailFor(mailContent, mailMessage)
         mailSender.send(email)
     }
 
-    private fun mailContentFor(email: MailMessage): String {
+    private fun mailContentFor(email: EMailMessage): String {
         val documentContent = documentRepository.loadDocument(DocumentType.MAIL.content, mailTemplatePathFor(email.type))
         return String(documentContent.content)
     }
 
-    private fun mailTemplatePathFor(mailType: MailType): String = mailType.path
+    private fun mailTemplatePathFor(EMailType: EMailType): String = EMailType.path
 
-    private fun composeMailFor(mailContent: String, mailMessage: MailMessage): MimeMessage {
+    private fun composeMailFor(mailContent: String, EMailMessage: EMailMessage): MimeMessage {
         val mimeMessage: MimeMessage = mailSender.createMimeMessage()
 
         val helper = MimeMessageHelper(mimeMessage, "utf-8")
-        helper.setText(templateResolver.compile(mailContent, mailMessage.context), true) // Use this or above line.
-        helper.setTo(mailMessage.to)
-        helper.setSubject(mailMessage.subject)
-        helper.setFrom(mailMessage.from)
+        helper.setText(templateResolver.compile(mailContent, EMailMessage.context), true) // Use this or above line.
+        helper.setTo(EMailMessage.to)
+        helper.setSubject(EMailMessage.subject)
+        helper.setFrom(EMailMessage.from)
 
         return mimeMessage
     }
