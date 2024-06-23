@@ -129,7 +129,7 @@ def store_client_applications():
         "with_pkce": False,
         "scopes": set([
             "openid", "profile", "email",
-            "admin:signup", "admin:welcome", "admin:mail-verify", "admin:reset-password", "admin:change-password",
+            "admin:signup", "admin:welcome", "admin:email-verify", "admin:reset-password", "admin:change-password",
             "admin:key-reader", "admin:key-editor",
             "admin:mail-template-reader", "admin:mail-template-writer",
             "mfa:always"

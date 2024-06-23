@@ -11,7 +11,7 @@ GET {{host}}/.well-known/oauth-authorization-server
 POST {{host}}/oauth2/token
 Content-Type: application/x-www-form-urlencoded
 
-client_id=admin&client_secret=secret&grant_type=client_credentials&scope=admin:signup admin:key-editor admin:key-reader admin:mail-verify
+client_id=admin&client_secret=secret&grant_type=client_credentials&scope=admin:signup admin:key-editor admin:key-reader admin:email-verify
 
 > {% client.global.set("auth_token", response.body.access_token); %}
 
@@ -43,5 +43,5 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
 {
-  "mail": "admin3@email.com"
+  "mail": "admin2@email.com"
 }
