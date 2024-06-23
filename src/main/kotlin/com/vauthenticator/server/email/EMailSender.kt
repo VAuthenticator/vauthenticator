@@ -49,7 +49,7 @@ class JavaMailSenderService(
     }
 
     private fun mailContentFor(email: MailMessage): String {
-        val documentContent = documentRepository.loadDocument(DocumentType.email.content, mailTemplatePathFor(email.type))
+        val documentContent = documentRepository.loadDocument(DocumentType.MAIL.content, mailTemplatePathFor(email.type))
         return String(documentContent.content)
     }
 
