@@ -8,8 +8,8 @@ import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 
 
-interface EMailSenderService {
-    fun sendFor(account: Account, emailContext: EMailContext = emptyMap())
+fun interface EMailSenderService {
+    fun sendFor(account: Account, emailContext: EMailContext)
 }
 
 fun interface EMailMessageFactory {
@@ -38,11 +38,11 @@ class JavaEMailSenderService(
     private val documentRepository: DocumentRepository,
     private val mailSender: JavaMailSender,
     private val templateResolver: MailTemplateResolver,
-    private val EMailMessageFactory: EMailMessageFactory
+    private val emailMessageFactory: EMailMessageFactory
 ) : EMailSenderService {
 
-    override fun sendFor(account: Account, EMailContext: EMailContext) {
-        val mailMessage = EMailMessageFactory.makeMailMessageFor(account, EMailContext)
+    override fun sendFor(account: Account, emailContext: EMailContext) {
+        val mailMessage = emailMessageFactory.makeMailMessageFor(account, emailContext)
         val mailContent = mailContentFor(mailMessage)
         val email = composeMailFor(mailContent, mailMessage)
         mailSender.send(email)
@@ -53,16 +53,16 @@ class JavaEMailSenderService(
         return String(documentContent.content)
     }
 
-    private fun mailTemplatePathFor(EMailType: EMailType): String = EMailType.path
+    private fun mailTemplatePathFor(emailType: EMailType): String = emailType.path
 
-    private fun composeMailFor(mailContent: String, EMailMessage: EMailMessage): MimeMessage {
+    private fun composeMailFor(mailContent: String, emailMessage: EMailMessage): MimeMessage {
         val mimeMessage: MimeMessage = mailSender.createMimeMessage()
 
         val helper = MimeMessageHelper(mimeMessage, "utf-8")
-        helper.setText(templateResolver.compile(mailContent, EMailMessage.context), true) // Use this or above line.
-        helper.setTo(EMailMessage.to)
-        helper.setSubject(EMailMessage.subject)
-        helper.setFrom(EMailMessage.from)
+        helper.setText(templateResolver.compile(mailContent, emailMessage.context), true) // Use this or above line.
+        helper.setTo(emailMessage.to)
+        helper.setSubject(emailMessage.subject)
+        helper.setFrom(emailMessage.from)
 
         return mimeMessage
     }

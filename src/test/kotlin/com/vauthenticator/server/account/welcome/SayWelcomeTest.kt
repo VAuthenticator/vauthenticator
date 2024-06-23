@@ -37,11 +37,11 @@ internal class SayWelcomeTest {
         val email = "email@domain.com"
         val anAccount = AccountTestFixture.anAccount()
         every { accountRepository.accountFor(email) } returns Optional.of(anAccount)
-        every { welcomeMailSender.sendFor(anAccount) } just runs
+        every { welcomeMailSender.sendFor(anAccount, emptyMap()) } just runs
 
         underTest.welcome(email)
 
-        verify { welcomeMailSender.sendFor(anAccount) }
+        verify { welcomeMailSender.sendFor(anAccount, emptyMap()) }
     }
 
     @Test
@@ -52,6 +52,6 @@ internal class SayWelcomeTest {
 
         assertThrows(AccountNotFoundException::class.java) { underTest.welcome(email) }
 
-        verify(exactly = 0) { welcomeMailSender.sendFor(anAccount) }
+        verify(exactly = 0) { welcomeMailSender.sendFor(anAccount, emptyMap()) }
     }
 }
