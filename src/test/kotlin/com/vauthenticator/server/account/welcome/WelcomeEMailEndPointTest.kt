@@ -62,7 +62,7 @@ internal class WelcomeEMailEndPointTest {
         mokMvc.perform(
             put("/api/sign-up/welcome")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(mapOf("mail" to EMAIL)))
+                .content(objectMapper.writeValueAsBytes(mapOf("email" to EMAIL)))
                 .principal(principal)
         )
             .andExpect(status().isNoContent)
@@ -77,7 +77,7 @@ internal class WelcomeEMailEndPointTest {
         mokMvc.perform(
             put("/api/sign-up/welcome")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(mapOf("mail" to EMAIL)))
+                .content(objectMapper.writeValueAsBytes(mapOf("email" to EMAIL)))
                 .principal(principal)
         )
             .andExpect(status().isNotFound)

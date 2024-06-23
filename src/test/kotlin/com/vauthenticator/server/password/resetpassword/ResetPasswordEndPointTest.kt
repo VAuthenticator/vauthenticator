@@ -70,7 +70,7 @@ internal class ResetPasswordEndPointTest {
         mokMvc.perform(
             put("/api/reset-password-challenge")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(mapOf("mail" to EMAIL)))
+                .content(objectMapper.writeValueAsBytes(mapOf("email" to EMAIL)))
                 .principal(principal)
         )
             .andExpect(status().isNoContent)
@@ -90,7 +90,7 @@ internal class ResetPasswordEndPointTest {
         mokMvc.perform(
             put("/api/reset-password-challenge")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(mapOf("mail" to EMAIL)))
+                .content(objectMapper.writeValueAsBytes(mapOf("email" to EMAIL)))
                 .sessionAttr("clientId", A_CLIENT_APP_ID)
         ).andExpect(status().isNoContent)
     }

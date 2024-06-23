@@ -53,7 +53,7 @@ internal class ResetPasswordControllerTest {
             )
         } just runs
 
-        mokMvc.perform(get("/reset-password/successful-reset-password-mail-challenge"))
+        mokMvc.perform(get("/reset-password/successful-reset-password-email-challenge"))
             .andExpect(status().isOk)
             .andExpect(model().attribute("assetBundle", "successfulResetPasswordMailChallenge_bundle.js"))
             .andExpect(view().name("template"))

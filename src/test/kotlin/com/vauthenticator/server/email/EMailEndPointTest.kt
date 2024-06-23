@@ -50,7 +50,7 @@ class EMailEndPointTest {
         } returns Document("", MailType.MFA.path, "A_TEMPLATE".toByteArray())
 
         mockMvc.perform(
-            get("/api/mail-template/${MailType.MFA}")
+            get("/api/email-template/${MailType.MFA}")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(response))
         )
@@ -73,7 +73,7 @@ class EMailEndPointTest {
         } just runs
 
         mockMvc.perform(
-            put("/api/mail-template")
+            put("/api/email-template")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
         ).andExpect(status().isNoContent)
