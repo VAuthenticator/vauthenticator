@@ -22,7 +22,6 @@ class RedisOAuth2AuthorizationService(private val redisTemplate: RedisTemplate<A
     val logger: Logger = LoggerFactory.getLogger(RedisOAuth2AuthorizationService::class.java)
 
     override fun save(authorization: OAuth2Authorization) {
-        Assert.notNull(authorization, "authorization cannot be null")
         logger.debug("save")
 
         redisTemplate.opsForHash<String, OAuth2Authorization>()
@@ -36,7 +35,6 @@ class RedisOAuth2AuthorizationService(private val redisTemplate: RedisTemplate<A
     }
 
     override fun remove(authorization: OAuth2Authorization) {
-        Assert.notNull(authorization, "authorization cannot be null")
         logger.debug("remove")
         redisTemplate.opsForHash<String, OAuth2Authorization>()
             .delete(authorization.id, authorization.id.toSha256(), authorization)
@@ -59,7 +57,7 @@ class RedisOAuth2AuthorizationService(private val redisTemplate: RedisTemplate<A
         return redisTemplate.opsForHash<String, OAuth2Authorization>().get(id, id.toSha256())
     }
 
-    fun findByTokenFor(
+    private fun findByTokenFor(
         authorization: OAuth2Authorization,
     ): List<String> {
         val state = authorization.getAttribute(OAuth2ParameterNames.STATE) as String?
