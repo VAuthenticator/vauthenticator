@@ -58,7 +58,7 @@ class EMailVerificationConfig {
             JinjavaMailTemplateResolver(Jinjava()),
             SimpleEMailMessageFactory(
                 noReplyEMailConfiguration.from,
-                noReplyEMailConfiguration.welcomeMailSubject,
+                noReplyEMailConfiguration.welcomeEMailSubject,
                 EMailType.EMAIL_VERIFICATION
             )
         )

@@ -57,7 +57,7 @@ class ResetPasswordConfig {
             JinjavaMailTemplateResolver(Jinjava()),
             SimpleEMailMessageFactory(
                 noReplyEMailConfiguration.from,
-                noReplyEMailConfiguration.resetPasswordMailSubject,
+                noReplyEMailConfiguration.resetPasswordEMailSubject,
                 EMailType.RESET_PASSWORD
             )
         )

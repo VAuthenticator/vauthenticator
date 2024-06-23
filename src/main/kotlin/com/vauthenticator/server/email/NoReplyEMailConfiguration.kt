@@ -5,8 +5,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 @ConfigurationProperties("no-reply.email")
 data class NoReplyEMailConfiguration(
     val from: String = "",
-    val welcomeMailSubject: String = "",
-    val verificationMailSubject: String = "",
-    val resetPasswordMailSubject: String = "",
-    val mfaMailSubject: String = ""
+    val welcomeEMailSubject: String = "",
+    val verificationEMailSubject: String = "",
+    val resetPasswordEMailSubject: String = "",
+    val mfaEMailSubject: String = ""
 )

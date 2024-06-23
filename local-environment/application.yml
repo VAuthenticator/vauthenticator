@@ -7,13 +7,13 @@ event:
     enable:
       logger-event-consumer: true
 
-no-reply: #todo update helm chart too
+no-reply:
   email:
     from: "no-reply@local.com"
-    welcomeMailSubject: "welcome mail"
-    verificationMailSubject: "verification mail"
-    resetPasswordMailSubject: "reset password mail"
-    mfaMailSubject: "mfa code"
+    welcomeEMailSubject: "welcome mail"
+    verificationEMailSubject: "verification mail"
+    resetPasswordEMailSubject: "reset password mail"
+    mfaEMailSubject: "mfa code"
 
 mfa:
   otp:

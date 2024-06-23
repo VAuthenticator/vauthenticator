@@ -31,7 +31,7 @@ class WelcomeConfig {
             JinjavaMailTemplateResolver(Jinjava()),
             SimpleEMailMessageFactory(
                 noReplyEMailConfiguration.from,
-                noReplyEMailConfiguration.welcomeMailSubject,
+                noReplyEMailConfiguration.welcomeEMailSubject,
                 EMailType.WELCOME
             )
         )
