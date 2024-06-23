@@ -4,7 +4,7 @@ import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-internal class SimpleEEMailMessageFactoryTest {
+internal class SimpleEMailMessageFactoryTest {
 
     private val underTest = SimpleEMailMessageFactory("from", "subject", EMailType.WELCOME)
 

@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.*
 @RestController
 class EMailEndPoint(private val documentRepository: DocumentRepository) {
 
-    @GetMapping("/api/email-template/{EMailType}")
-    fun getMailTemplate(@PathVariable EMailType: EMailType): ResponseEntity<EMailTemplate> {
-        val document = documentRepository.loadDocument(DocumentType.MAIL.content, EMailType.path)
-        return ResponseEntity.ok(EMailTemplate(EMailType, String(document.content)))
+    @GetMapping("/api/email-template/{emailType}")
+    fun getMailTemplate(@PathVariable emailType: EMailType): ResponseEntity<EMailTemplate> {
+        val document = documentRepository.loadDocument(DocumentType.MAIL.content, emailType.path)
+        return ResponseEntity.ok(EMailTemplate(emailType, String(document.content)))
     }
 
     @PutMapping("/api/email-template")
