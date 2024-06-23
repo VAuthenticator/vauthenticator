@@ -8,7 +8,7 @@ import com.vauthenticator.server.account.welcome.SendWelcomeMailUponSignUpEventC
 import com.vauthenticator.server.email.*
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.email.javamail.JavaMailSender
+import org.springframework.mail.javamail.JavaMailSender
 
 @Configuration(proxyBeanMethods = false)
 class WelcomeConfig {
