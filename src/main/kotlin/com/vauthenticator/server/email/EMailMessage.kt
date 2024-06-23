@@ -10,4 +10,4 @@ enum class EMailType(val path: String) {
 }
 
 data class EMailMessage(val to: String, val from: String, val subject: String, val type: EMailType = EMailType.WELCOME, val context: EMailContext)
-data class EMailTemplate(val eMailType: EMailType, val body: String)
+data class EMailTemplate(val emailType: EMailType, val body: String)

@@ -20,7 +20,7 @@ class EMailEndPoint(private val documentRepository: DocumentRepository) {
     fun saveMailTemplate(@RequestBody request: EMailTemplate): ResponseEntity<Unit> {
         documentRepository.saveDocument(
             DocumentType.MAIL.content, //todo MAIL should be EMAIL
-            Document(MediaType.TEXT_HTML_VALUE, request.EMailType.path, request.body.toByteArray())
+            Document(MediaType.TEXT_HTML_VALUE, request.emailType.path, request.body.toByteArray())
         )
         return ResponseEntity.noContent().build()
     }
