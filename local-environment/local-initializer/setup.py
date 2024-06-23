@@ -79,7 +79,7 @@ def store_sso_client_applications():
     scopes = set(
         ["openid", "profile", "email", "admin:reset-password", "admin:change-password", "admin:key-reader",
          "admin:key-editor",
-         "admin:mail-template-reader", "admin:mail-template-writer"])
+         "admin:email-template-reader", "admin:email-template-writer"])
 
     if isProduction:
         scopes.add("mfa:always")
@@ -131,7 +131,7 @@ def store_client_applications():
             "openid", "profile", "email",
             "admin:signup", "admin:welcome", "admin:email-verify", "admin:reset-password", "admin:change-password",
             "admin:key-reader", "admin:key-editor",
-            "admin:mail-template-reader", "admin:mail-template-writer",
+            "admin:email-template-reader", "admin:email-template-writer",
             "mfa:always"
         ]),
         "authorized_grant_types": set(["CLIENT_CREDENTIALS"]),
