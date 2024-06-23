@@ -13,9 +13,9 @@ module.exports = {
         changePassword: path.resolve(__dirname, './app/change-password/index.tsx'),
         signup: path.resolve(__dirname, './app/signup/SignUpPage.tsx'),
         successfulSignUp: path.resolve(__dirname, './app/signup/SuccessfulSignUpPage.tsx'),
-        successfulMailVerify: path.resolve(__dirname, './app/mail-verify/SuccessfulMailVerifyPage.tsx'),
+        successfulMailVerify: path.resolve(__dirname, './app/email-verify/SuccessfulEMailVerifyPage.tsx'),
         resetPasswordChallengeSender: path.resolve(__dirname, './app/reset-password/ResetPasswordChallengeSenderPage.tsx'),
-        successfulResetPasswordMailChallenge: path.resolve(__dirname, './app/reset-password/SuccessfulResetPasswordMailChallengePage.tsx'),
+        successfulResetPasswordMailChallenge: path.resolve(__dirname, './app/reset-password/SuccessfulResetPasswordEMailChallengePage.tsx'),
         resetPassword: path.resolve(__dirname, './app/reset-password/ResetPasswordPage.tsx'),
         successfulPasswordReset: path.resolve(__dirname, './app/reset-password/SuccessfulPasswordReset.tsx')
     },

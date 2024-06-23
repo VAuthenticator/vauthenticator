@@ -24,11 +24,11 @@ const ResetPasswordChallengeSender: React.FC<ResetPasswordChallengeSenderPagePro
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({"mail": email}),
+            body: JSON.stringify({"email": email}),
             credentials: 'same-origin'
         });
         if (r.status === 204) {
-            window.location.href = "/reset-password/successful-reset-password-mail-challenge";
+            window.location.href = "/reset-password/successful-reset-password-email-challenge";
         }
     }
 
