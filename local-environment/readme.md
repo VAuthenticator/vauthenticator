@@ -18,7 +18,7 @@ client app for admin M2M purpose.
 In order to have all the needed infrastructure you can avail on the [docker-compose.yml](..%2Fdocker-compose.yml)`, while
 it is possible to instantiate a container to install a new tenant usable for local development using the command: 
 
-> docker run -it mrflick72/vauthenticator-local-tenant-installer:tag
+> docker run --pull=always -it mrflick72/vauthenticator-local-tenant-installer:latest
 
 
 # local host config
@@ -91,4 +91,4 @@ Postgres is an available option as storage, it is experimental right now and it 
 In order to activate it is needed to add the corrisponding spring profile '''experimental_database_persistence''' and 
 for the init process add to the docker run the environment variable '''experimental_database_persistence=true'''with the command like below:
 
-> docker run -e experimental_database_persistence=true -it mrflick72/vauthenticator-local-tenant-installer:tag
+> docker run --pull=always -e experimental_database_persistence=true -it mrflick72/vauthenticator-local-tenant-installer:latest

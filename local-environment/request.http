@@ -43,5 +43,5 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
 {
-  "mail": "admin2@email.com"
+  "email": "admin2@email.com"
 }
