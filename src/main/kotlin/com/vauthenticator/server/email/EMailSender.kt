@@ -9,14 +9,14 @@ import org.springframework.mail.javamail.MimeMessageHelper
 
 
 interface EMailSenderService {
-    fun sendFor(account: Account, eMailContext: EMailContext = emptyMap())
+    fun sendFor(account: Account, emailContext: EMailContext = emptyMap())
 }
 
 fun interface EMailMessageFactory {
     fun makeMailMessageFor(account: Account, requestContext: EMailContext): EMailMessage
 }
 
-class SimpleEMailMessageFactory(val from: String, val subject: String, private val eMailType: EMailType) : EMailMessageFactory {
+class SimpleEMailMessageFactory(val from: String, val subject: String, private val emailType: EMailType) : EMailMessageFactory {
 
     override fun makeMailMessageFor(account: Account, requestContext: EMailContext): EMailMessage {
         val context = mapOf(
@@ -29,7 +29,7 @@ class SimpleEMailMessageFactory(val from: String, val subject: String, private v
             "birthDate" to account.birthDate.map { it.iso8601FormattedDate() }.orElse(""),
             "phone" to account.phone.map { it.formattedPhone() }.orElse("")
         ) + requestContext
-        return EMailMessage(account.email, from, subject, eMailType, context)
+        return EMailMessage(account.email, from, subject, emailType, context)
     }
 
 }
