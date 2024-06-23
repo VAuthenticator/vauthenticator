@@ -1,4 +1,4 @@
-package com.vauthenticator.server.account.mailverification
+package com.vauthenticator.server.account.emailverification
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.clientapp.A_CLIENT_APP_ID
@@ -32,7 +32,7 @@ internal class MailVerificationEndPointTest {
     lateinit var mokMvc: MockMvc
 
     @MockK
-    lateinit var sendVerifyMailChallenge: SendVerifyMailChallenge
+    lateinit var sendVerifyEMailChallenge: SendVerifyEMailChallenge
 
     @MockK
     lateinit var cientApplicationRepository: ClientApplicationRepository
@@ -42,7 +42,7 @@ internal class MailVerificationEndPointTest {
         mokMvc = MockMvcBuilders.standaloneSetup(
             MailVerificationEndPoint(
                 PermissionValidator(cientApplicationRepository),
-                sendVerifyMailChallenge
+                sendVerifyEMailChallenge
             )
         )
             .build()
@@ -50,7 +50,7 @@ internal class MailVerificationEndPointTest {
 
     @Test
     internal fun `when a challenge is sent`() {
-        every { sendVerifyMailChallenge.sendVerifyMail(EMAIL) } just runs
+        every { sendVerifyEMailChallenge.sendVerifyMail(EMAIL) } just runs
 
         val signedJWT = signedJWTFor(A_CLIENT_APP_ID, EMAIL, listOf(Scope.MAIL_VERIFY.content))
         val principal = JwtAuthenticationToken(
@@ -66,7 +66,7 @@ internal class MailVerificationEndPointTest {
         mokMvc.perform(
             put("/api/verify-challenge")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(mapOf("mail" to EMAIL)))
+                .content(objectMapper.writeValueAsBytes(mapOf("email" to EMAIL)))
                 .principal(principal)
         )
             .andExpect(status().isNoContent)

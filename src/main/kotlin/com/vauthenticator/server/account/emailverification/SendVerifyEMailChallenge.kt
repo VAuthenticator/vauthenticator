@@ -1,4 +1,4 @@
-package com.vauthenticator.server.account.mailverification
+package com.vauthenticator.server.account.emailverification
 
 import com.vauthenticator.server.account.AccountNotFoundException
 import com.vauthenticator.server.account.repository.AccountRepository
@@ -8,16 +8,16 @@ import com.vauthenticator.server.email.MailSenderService
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import org.slf4j.LoggerFactory
 
-private const val LINK_KEY = "verificationMailLink"
+private const val LINK_KEY = "verificationEMailLink"
 
-class SendVerifyMailChallenge(
+class SendVerifyEMailChallenge(
     private val accountRepository: AccountRepository,
     private val verificationTicketFactory: VerificationTicketFactory,
     private val mailVerificationMailSender: MailSenderService,
     private val frontChannelBaseUrl: String
 ) {
 
-    private val logger = LoggerFactory.getLogger(SendVerifyMailChallenge::class.java)
+    private val logger = LoggerFactory.getLogger(SendVerifyEMailChallenge::class.java)
 
     fun sendVerifyMail(email: String) {
         accountRepository.accountFor(email)

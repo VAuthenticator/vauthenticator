@@ -1,4 +1,4 @@
-package com.vauthenticator.server.account.mailverification
+package com.vauthenticator.server.account.emailverification
 
 import com.vauthenticator.server.i18n.I18nMessageInjector
 import com.vauthenticator.server.i18n.I18nScope
@@ -21,22 +21,22 @@ internal class MailVerificationControllerTest {
     lateinit var mokMvc: MockMvc
 
     @MockK
-    lateinit var mailVerifyMailChallenge: VerifyMailChallenge
+    lateinit var mailVerifyEMailChallenge: VerifyEMailChallenge
 
     @MockK
     lateinit var i18nMessageInjector: I18nMessageInjector
 
     @BeforeEach
     internal fun setUp() {
-        mokMvc = standaloneSetup(MailVerificationController(i18nMessageInjector, mailVerifyMailChallenge)).build()
+        mokMvc = standaloneSetup(MailVerificationController(i18nMessageInjector, mailVerifyEMailChallenge)).build()
     }
 
     @Test
     internal fun `when the challenge is verified`() {
-        every { mailVerifyMailChallenge.verifyMail("A_TICKET") } just runs
+        every { mailVerifyEMailChallenge.verifyMail("A_TICKET") } just runs
         every { i18nMessageInjector.setMessagedFor(I18nScope.SUCCESSFUL_MAIL_VERIFY_PAGE, any()) } just runs
 
-        mokMvc.perform(MockMvcRequestBuilders.get("/mail-verify/A_TICKET"))
+        mokMvc.perform(MockMvcRequestBuilders.get("/email-verify/A_TICKET"))
             .andExpect(MockMvcResultMatchers.status().isOk)
     }
 }

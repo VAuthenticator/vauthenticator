@@ -2,9 +2,9 @@ package com.vauthenticator.server.config
 
 import com.hubspot.jinjava.Jinjava
 import com.vauthenticator.document.repository.DocumentRepository
-import com.vauthenticator.server.account.mailverification.SendVerifyMailChallenge
-import com.vauthenticator.server.account.mailverification.SendVerifyMailChallengeUponSignUpEventConsumer
-import com.vauthenticator.server.account.mailverification.VerifyMailChallenge
+import com.vauthenticator.server.account.emailverification.SendVerifyEMailChallenge
+import com.vauthenticator.server.account.emailverification.SendVerifyEMailChallengeUponSignUpEventConsumer
+import com.vauthenticator.server.account.emailverification.VerifyEMailChallenge
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.account.ticket.TicketRepository
 import com.vauthenticator.server.account.ticket.VerificationTicketFactory
@@ -27,7 +27,7 @@ class EMailVerificationConfig {
         verificationMailSender: MailSenderService,
         @Value("\${vauthenticator.host}") frontChannelBaseUrl: String
     ) =
-        SendVerifyMailChallenge(
+        SendVerifyEMailChallenge(
             accountRepository,
             verificationTicketFactory,
             verificationMailSender,
@@ -40,7 +40,7 @@ class EMailVerificationConfig {
         ticketRepository: TicketRepository,
         mfaMethodsEnrolmentAssociation: MfaMethodsEnrolmentAssociation
     ) =
-        VerifyMailChallenge(
+        VerifyEMailChallenge(
             accountRepository,
             ticketRepository,
             mfaMethodsEnrolmentAssociation
@@ -64,6 +64,6 @@ class EMailVerificationConfig {
         )
 
     @Bean
-    fun sendVerifyMailChallengeUponSignUpEventConsumer(mailChallenge: SendVerifyMailChallenge) =
-        SendVerifyMailChallengeUponSignUpEventConsumer(mailChallenge)
+    fun sendVerifyMailChallengeUponSignUpEventConsumer(mailChallenge: SendVerifyEMailChallenge) =
+        SendVerifyEMailChallengeUponSignUpEventConsumer(mailChallenge)
 }

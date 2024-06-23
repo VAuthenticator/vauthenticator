@@ -1,4 +1,4 @@
-package com.vauthenticator.server.account.mailverification
+package com.vauthenticator.server.account.emailverification
 
 import com.vauthenticator.server.account.AccountNotFoundException
 import com.vauthenticator.server.account.repository.AccountRepository
@@ -25,7 +25,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import java.util.*
 
 @ExtendWith(MockKExtension::class)
-internal class SendVerifyMailChallengeTest {
+internal class SendVerifyEMailChallengeTest {
 
     @MockK
     lateinit var clientAccountRepository: ClientApplicationRepository
@@ -39,11 +39,11 @@ internal class SendVerifyMailChallengeTest {
     @MockK
     lateinit var mailVerificationMailSender: MailSenderService
 
-    private lateinit var underTest: SendVerifyMailChallenge
+    private lateinit var underTest: SendVerifyEMailChallenge
 
     @BeforeEach
     fun setup() {
-        underTest = SendVerifyMailChallenge(
+        underTest = SendVerifyEMailChallenge(
             accountRepository,
             verificationTicketFactory,
             mailVerificationMailSender,
@@ -55,7 +55,7 @@ internal class SendVerifyMailChallengeTest {
     internal fun `happy path`() {
         val account = anAccount()
         val verificationTicket = VerificationTicket("A_TICKET")
-        val requestContext = mapOf("verificationMailLink" to "https://vauthenticator.com/mail-verify/A_TICKET")
+        val requestContext = mapOf("verificationEMailLink" to "https://vauthenticator.com/email-verify/A_TICKET")
 
 
         every { accountRepository.accountFor(account.email) } returns Optional.of(account)
@@ -69,15 +69,15 @@ internal class SendVerifyMailChallengeTest {
 
     @Test
     internal fun `when account does not exist`() {
-        val mail = "anemail@test.com"
+        val email = "anemail@test.com"
         val clientAppId = ClientAppId(A_CLIENT_APP_ID)
         val clientApplication = aClientApp(clientAppId).copy(scopes = Scopes.from(Scope.MAIL_VERIFY))
 
         every { clientAccountRepository.findOne(clientAppId) } returns Optional.of(clientApplication)
-        every { accountRepository.accountFor(mail) } returns Optional.empty()
+        every { accountRepository.accountFor(email) } returns Optional.empty()
 
         Assertions.assertThrows(AccountNotFoundException::class.java) {
-            underTest.sendVerifyMail(mail)
+            underTest.sendVerifyMail(email)
         }
     }
 

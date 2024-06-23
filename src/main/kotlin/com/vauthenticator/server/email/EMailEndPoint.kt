@@ -12,7 +12,7 @@ class EMailEndPoint(private val documentRepository: DocumentRepository) {
 
     @GetMapping("/api/email-template/{mailType}")
     fun getMailTemplate(@PathVariable mailType: MailType): ResponseEntity<MailTemplate> {
-        val document = documentRepository.loadDocument(DocumentType.email.content, mailType.path)
+        val document = documentRepository.loadDocument(DocumentType.MAIL.content, mailType.path)
         return ResponseEntity.ok(MailTemplate(mailType, String(document.content)))
     }
 
