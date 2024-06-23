@@ -1,4 +1,4 @@
-FROM alpine:latest as security_provider
+FROM alpine:latest AS security_provider
 RUN addgroup -S application \
     && adduser -S application -G application
 

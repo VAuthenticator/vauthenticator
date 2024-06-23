@@ -1,4 +1,4 @@
-package com.vauthenticator.server.account.mailverification
+package com.vauthenticator.server.account.emailverification
 
 import com.vauthenticator.server.account.Account
 import com.vauthenticator.server.account.repository.AccountRepository
@@ -9,7 +9,7 @@ import com.vauthenticator.server.account.ticket.VerificationTicket
 import com.vauthenticator.server.mfa.domain.MfaMethod
 import com.vauthenticator.server.mfa.domain.MfaMethodsEnrolmentAssociation
 
-class VerifyMailChallenge(
+class VerifyEMailChallenge(
     private val accountRepository: AccountRepository,
     private val ticketRepository: TicketRepository,
     private val mfaMethodsEnrolmentAssociation: MfaMethodsEnrolmentAssociation

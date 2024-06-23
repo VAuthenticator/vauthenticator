@@ -1,6 +1,6 @@
 package com.vauthenticator.server.config
 
-import com.vauthenticator.server.account.mailverification.SendVerifyMailChallengeUponSignUpEventConsumer
+import com.vauthenticator.server.account.emailverification.SendVerifyEMailChallengeUponSignUpEventConsumer
 import com.vauthenticator.server.account.signup.SignUpEventConsumer
 import com.vauthenticator.server.account.welcome.SendWelcomeMailUponSignUpEventConsumer
 import com.vauthenticator.server.events.*
@@ -27,14 +27,14 @@ class EventsConfig(private val eventConsumerConfig: EventConsumerConfig) {
         resetPasswordEventConsumer: ResetPasswordEventConsumer,
         signUpEventConsumer: SignUpEventConsumer,
         sendWelcomeMailUponSignUpEventConsumer: SendWelcomeMailUponSignUpEventConsumer,
-        sendVerifyMailChallengeUponSignUpEventConsumer: SendVerifyMailChallengeUponSignUpEventConsumer,
+        sendVerifyEMailChallengeUponSignUpEventConsumer: SendVerifyEMailChallengeUponSignUpEventConsumer,
         loggerEventConsumer: EventConsumer
     ) =
         SpringEventsCollector(
             listOf(
                 loggerEventConsumer,
                 sendWelcomeMailUponSignUpEventConsumer,
-                sendVerifyMailChallengeUponSignUpEventConsumer,
+                sendVerifyEMailChallengeUponSignUpEventConsumer,
                 signUpEventConsumer,
                 resetPasswordEventConsumer,
                 changePasswordEventConsumer

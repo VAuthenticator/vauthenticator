@@ -5,8 +5,8 @@ import com.vauthenticator.document.repository.DocumentRepository
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.account.ticket.TicketRepository
 import com.vauthenticator.server.account.ticket.VerificationTicketFactory
+import com.vauthenticator.server.email.*
 import com.vauthenticator.server.events.VAuthenticatorEventsDispatcher
-import com.vauthenticator.server.mail.*
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
 import com.vauthenticator.server.password.PasswordPolicy
 import com.vauthenticator.server.password.VAuthenticatorPasswordEncoder
@@ -25,7 +25,7 @@ class ResetPasswordConfig {
         accountRepository: AccountRepository,
         clientApplicationRepository: ClientApplicationRepository,
         verificationTicketFactory: VerificationTicketFactory,
-        resetPasswordMailSender: MailSenderService,
+        resetPasswordMailSender: EMailSenderService,
         @Value("\${vauthenticator.host}") frontChannelBaseUrl: String
     ) =
         SendResetPasswordMailChallenge(
@@ -49,16 +49,16 @@ class ResetPasswordConfig {
     fun resetPasswordMailSender(
         javaMailSender: JavaMailSender,
         documentRepository: DocumentRepository,
-        noReplyMailConfiguration: NoReplyMailConfiguration
+        noReplyEMailConfiguration: NoReplyEMailConfiguration
     ) =
-        JavaMailSenderService(
+        JavaEMailSenderService(
             documentRepository,
             javaMailSender,
             JinjavaMailTemplateResolver(Jinjava()),
-            SimpleMailMessageFactory(
-                noReplyMailConfiguration.from,
-                noReplyMailConfiguration.resetPasswordMailSubject,
-                MailType.RESET_PASSWORD
+            SimpleEMailMessageFactory(
+                noReplyEMailConfiguration.from,
+                noReplyEMailConfiguration.resetPasswordMailSubject,
+                EMailType.RESET_PASSWORD
             )
         )
 

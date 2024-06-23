@@ -65,14 +65,14 @@ data class Scope(val content: String) {
         val SIGN_UP = Scope("admin:signup")
         val WELCOME = Scope("admin:welcome")
 
-        val MAIL_VERIFY = Scope("admin:mail-verify")
+        val MAIL_VERIFY = Scope("admin:email-verify")
 
         val GENERATE_PASSWORD = Scope("admin:generate-password")
         val RESET_PASSWORD = Scope("admin:reset-password")
         val CHANGE_PASSWORD = Scope("admin:change-password")
 
-        val MAIL_TEMPLATE_READER = Scope("admin:mail-template-reader")
-        val MAIL_TEMPLATE_WRITER = Scope("admin:mail-template-writer")
+        val MAIL_TEMPLATE_READER = Scope("admin:email-template-reader")
+        val MAIL_TEMPLATE_WRITER = Scope("admin:email-template-writer")
 
         val KEY_READER = Scope("admin:key-reader")
         val KEY_EDITOR = Scope("admin:key-editor")

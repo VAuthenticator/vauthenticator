@@ -7,8 +7,8 @@ event:
     enable:
       logger-event-consumer: true
 
-no-reply:
-  mail:
+no-reply: #todo update helm chart too
+  email:
     from: "no-reply@local.com"
     welcomeMailSubject: "welcome mail"
     verificationMailSubject: "verification mail"

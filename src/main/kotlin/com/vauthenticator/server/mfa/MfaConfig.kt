@@ -3,10 +3,10 @@ package com.vauthenticator.server.mfa
 import com.hubspot.jinjava.Jinjava
 import com.vauthenticator.document.repository.DocumentRepository
 import com.vauthenticator.server.account.repository.AccountRepository
+import com.vauthenticator.server.email.*
 import com.vauthenticator.server.keys.KeyDecrypter
 import com.vauthenticator.server.keys.KeyRepository
 import com.vauthenticator.server.keys.MasterKid
-import com.vauthenticator.server.mail.*
 import com.vauthenticator.server.mask.SensitiveEmailMasker
 import com.vauthenticator.server.mfa.domain.*
 import com.vauthenticator.server.mfa.repository.DynamoMfaAccountMethodsRepository
@@ -59,7 +59,7 @@ class MfaConfig {
     fun otpMfaSender(
         accountRepository: AccountRepository,
         otpMfa: OtpMfa,
-        mfaMailSender: MailSenderService
+        mfaMailSender: EMailSenderService
     ) = OtpMfaEmailSender(accountRepository, otpMfa, mfaMailSender)
 
     @Bean
@@ -72,16 +72,16 @@ class MfaConfig {
     fun mfaMailSender(
         javaMailSender: JavaMailSender,
         documentRepository: DocumentRepository,
-        noReplyMailConfiguration: NoReplyMailConfiguration
+        noReplyEMailConfiguration: NoReplyEMailConfiguration
     ) =
-        JavaMailSenderService(
+        JavaEMailSenderService(
             documentRepository,
             javaMailSender,
             JinjavaMailTemplateResolver(Jinjava()),
-            SimpleMailMessageFactory(
-                noReplyMailConfiguration.from,
-                noReplyMailConfiguration.mfaMailSubject, // todo chenge the subject
-                MailType.MFA
+            SimpleEMailMessageFactory(
+                noReplyEMailConfiguration.from,
+                noReplyEMailConfiguration.mfaMailSubject, // todo chenge the subject
+                EMailType.MFA
             )
         )
 }

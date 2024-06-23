@@ -2,7 +2,7 @@ package com.vauthenticator.server.account.welcome
 
 import com.vauthenticator.server.account.AccountNotFoundException
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.mail.MailSenderService
+import com.vauthenticator.server.email.EMailSenderService
 import com.vauthenticator.server.support.AccountTestFixture
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -23,7 +23,7 @@ internal class SayWelcomeTest {
     lateinit var accountRepository: AccountRepository
 
     @MockK
-    lateinit var welcomeMailSender: MailSenderService
+    lateinit var welcomeMailSender: EMailSenderService
 
     lateinit var underTest: SayWelcome
 
@@ -37,11 +37,11 @@ internal class SayWelcomeTest {
         val email = "email@domain.com"
         val anAccount = AccountTestFixture.anAccount()
         every { accountRepository.accountFor(email) } returns Optional.of(anAccount)
-        every { welcomeMailSender.sendFor(anAccount) } just runs
+        every { welcomeMailSender.sendFor(anAccount, emptyMap()) } just runs
 
         underTest.welcome(email)
 
-        verify { welcomeMailSender.sendFor(anAccount) }
+        verify { welcomeMailSender.sendFor(anAccount, emptyMap()) }
     }
 
     @Test
@@ -52,6 +52,6 @@ internal class SayWelcomeTest {
 
         assertThrows(AccountNotFoundException::class.java) { underTest.welcome(email) }
 
-        verify(exactly = 0) { welcomeMailSender.sendFor(anAccount) }
+        verify(exactly = 0) { welcomeMailSender.sendFor(anAccount, emptyMap()) }
     }
 }

@@ -30,7 +30,7 @@ class ResetPasswordEndPoint(
         principal: JwtAuthenticationToken?
     ): ResponseEntity<Unit> {
         permissionValidator.validate(principal, session, Scopes.from(Scope.RESET_PASSWORD))
-        sendResetPasswordMailChallenge.sendResetPasswordMailFor(request["mail"]!!)
+        sendResetPasswordMailChallenge.sendResetPasswordMailFor(request["email"]!!)
         return noContent().build()
     }
 
@@ -55,7 +55,7 @@ class ResetPasswordController(
         return "template"
     }
 
-    @GetMapping("/reset-password/successful-reset-password-mail-challenge")
+    @GetMapping("/reset-password/successful-reset-password-email-challenge")
     fun successfulResetPasswordMailChallengePage(model: Model): String {
         i18nMessageInjector.setMessagedFor(I18nScope.SUCCESSFUL_RESET_PASSWORD_CHALLENGE_SENDER_PAGE, model)
         model.addAttribute("assetBundle", "successfulResetPasswordMailChallenge_bundle.js")

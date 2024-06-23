@@ -1,4 +1,4 @@
-package com.vauthenticator.server.account.mailverification
+package com.vauthenticator.server.account.emailverification
 
 import com.vauthenticator.server.events.EventFixture.signUpEvent
 import io.mockk.every
@@ -12,14 +12,14 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
-class SendVerifyMailChallengeUponSignUpEventConsumerTest {
+class SendVerifyEMailChallengeUponSignUpEventConsumerTest {
 
     @MockK
-    lateinit var mailChallenge: SendVerifyMailChallenge
+    lateinit var mailChallenge: SendVerifyEMailChallenge
 
     @Test
     fun `when the verify mail challenge is sent`() {
-        val uut = SendVerifyMailChallengeUponSignUpEventConsumer(mailChallenge)
+        val uut = SendVerifyEMailChallengeUponSignUpEventConsumer(mailChallenge)
 
         every { mailChallenge.sendVerifyMail("AN_EMAIL") } just runs
 

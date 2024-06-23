@@ -1,20 +1,20 @@
-package com.vauthenticator.server.mail
+package com.vauthenticator.server.email
 
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-internal class SimpleMailMessageFactoryTest {
+internal class SimpleEMailMessageFactoryTest {
 
-    private val underTest = SimpleMailMessageFactory("from", "subject", MailType.WELCOME)
+    private val underTest = SimpleEMailMessageFactory("from", "subject", EMailType.WELCOME)
 
     @Test
     internal fun `make a new mail message`() {
         val account = anAccount()
         val actual = underTest.makeMailMessageFor(account, mapOf("key" to "value"))
 
-        val expected = MailMessage(
-                "email@domain.com", "from", "subject", MailType.WELCOME,
+        val expected = EMailMessage(
+                "email@domain.com", "from", "subject", EMailType.WELCOME,
                 mapOf(
                         "enabled" to account.enabled,
                         "username" to account.username,

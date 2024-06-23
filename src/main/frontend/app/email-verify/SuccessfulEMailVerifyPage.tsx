@@ -10,7 +10,7 @@ interface SuccessfulMailVerifyPagePageProps {
     rawI18nMessages: string
 }
 
-const SuccessfulMailVerifyPage: React.FC<SuccessfulMailVerifyPagePageProps> = ({rawI18nMessages}) => {
+const SuccessfulEMailVerifyPage: React.FC<SuccessfulMailVerifyPagePageProps> = ({rawI18nMessages}) => {
     let i18nMessages = JSON.parse(rawI18nMessages);
 
     return (
@@ -34,4 +34,4 @@ const SuccessfulMailVerifyPage: React.FC<SuccessfulMailVerifyPagePageProps> = ({
 
 const i18nMessages = getDataFromDomUtils('i18nMessages')
 
-ComponentInitializer(<SuccessfulMailVerifyPage rawI18nMessages={i18nMessages}/>)
+ComponentInitializer(<SuccessfulEMailVerifyPage rawI18nMessages={i18nMessages}/>)

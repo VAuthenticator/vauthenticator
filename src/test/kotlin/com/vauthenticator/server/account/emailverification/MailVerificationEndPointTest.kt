@@ -1,85 +1,76 @@
-package com.vauthenticator.server.account.welcome
+package com.vauthenticator.server.account.emailverification
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.vauthenticator.server.account.AccountNotFoundException
 import com.vauthenticator.server.clientapp.A_CLIENT_APP_ID
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.Scope
 import com.vauthenticator.server.role.PermissionValidator
 import com.vauthenticator.server.support.EMAIL
-import com.vauthenticator.server.support.SecurityFixture.principalFor
-import com.vauthenticator.server.support.VAUTHENTICATOR_ADMIN
+import com.vauthenticator.server.support.SecurityFixture
+import com.vauthenticator.server.support.SecurityFixture.signedJWTFor
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
-import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.http.MediaType
+import org.springframework.security.oauth2.jwt.Jwt
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
-
+import java.time.Instant
 
 @ExtendWith(MockKExtension::class)
-internal class WelcomeMailEndPointTest {
+internal class MailVerificationEndPointTest {
     private val objectMapper = ObjectMapper()
 
     lateinit var mokMvc: MockMvc
 
     @MockK
-    lateinit var sayWelcome: SayWelcome
+    lateinit var sendVerifyEMailChallenge: SendVerifyEMailChallenge
 
     @MockK
-    lateinit var clientApplicationRepository: ClientApplicationRepository
-
-    private val principal = principalFor(
-        A_CLIENT_APP_ID,
-        EMAIL,
-        listOf(VAUTHENTICATOR_ADMIN),
-        listOf(Scope.WELCOME.content)
-    )
+    lateinit var cientApplicationRepository: ClientApplicationRepository
 
     @BeforeEach
     internal fun setUp() {
         mokMvc = MockMvcBuilders.standaloneSetup(
-            WelcomeMailEndPoint(
-                PermissionValidator(clientApplicationRepository),
-                sayWelcome
+            MailVerificationEndPoint(
+                PermissionValidator(cientApplicationRepository),
+                sendVerifyEMailChallenge
             )
         )
             .build()
     }
 
     @Test
-    internal fun `happy path`() {
-        every { sayWelcome.welcome(EMAIL) } just runs
+    internal fun `when a challenge is sent`() {
+        every { sendVerifyEMailChallenge.sendVerifyMail(EMAIL) } just runs
+
+        val signedJWT = signedJWTFor(A_CLIENT_APP_ID, EMAIL, listOf(Scope.MAIL_VERIFY.content))
+        val principal = JwtAuthenticationToken(
+            Jwt(
+                SecurityFixture.simpleJwtFor(A_CLIENT_APP_ID),
+                Instant.now(),
+                Instant.now().plusSeconds(100),
+                signedJWT.header.toJSONObject(),
+                signedJWT.payload.toJSONObject()
+            )
+        )
 
         mokMvc.perform(
-            put("/api/sign-up/welcome")
+            put("/api/verify-challenge")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(mapOf("mail" to EMAIL)))
+                .content(objectMapper.writeValueAsBytes(mapOf("email" to EMAIL)))
                 .principal(principal)
         )
             .andExpect(status().isNoContent)
-
-        verify { sayWelcome.welcome(EMAIL) }
     }
 
-    @Test
-    internal fun `no account found`() {
-        every { sayWelcome.welcome(EMAIL) } throws AccountNotFoundException("")
 
-        mokMvc.perform(
-            put("/api/sign-up/welcome")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(mapOf("mail" to EMAIL)))
-                .principal(principal)
-        )
-            .andExpect(status().isNotFound)
-    }
 }

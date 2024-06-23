@@ -1,4 +1,4 @@
-package com.vauthenticator.server.account.mailverification
+package com.vauthenticator.server.account.emailverification
 
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.account.ticket.InvalidTicketException
@@ -22,7 +22,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import java.util.*
 
 @ExtendWith(MockKExtension::class)
-internal class VerifyMailChallengeTest {
+internal class VerifyEMailChallengeTest {
 
     @MockK
     lateinit var accountRepository: AccountRepository
@@ -33,11 +33,11 @@ internal class VerifyMailChallengeTest {
     @MockK
     lateinit var mfaMethodsEnrolmentAssociation: MfaMethodsEnrolmentAssociation
 
-    private lateinit var underTest: VerifyMailChallenge
+    private lateinit var underTest: VerifyEMailChallenge
 
     @BeforeEach
     fun setup() {
-        underTest = VerifyMailChallenge(
+        underTest = VerifyEMailChallenge(
             accountRepository,
             ticketRepository,
             mfaMethodsEnrolmentAssociation
