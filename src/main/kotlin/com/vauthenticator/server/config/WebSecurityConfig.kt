@@ -120,10 +120,10 @@ class WebSecurityConfig(
                     .requestMatchers(HttpMethod.PUT, "/api/accounts/password")
                     .hasAnyAuthority(Scope.CHANGE_PASSWORD.content)
 
-                    .requestMatchers(HttpMethod.GET, "/api/mail-template")
+                    .requestMatchers(HttpMethod.GET, "/api/email-template")
                     .hasAnyAuthority(Scope.MAIL_TEMPLATE_READER.content)
 
-                    .requestMatchers(HttpMethod.PUT, "/api/mail-template")
+                    .requestMatchers(HttpMethod.PUT, "/api/email-template")
                     .hasAnyAuthority(Scope.MAIL_TEMPLATE_WRITER.content)
 
                     .requestMatchers(HttpMethod.GET, "/api/keys")

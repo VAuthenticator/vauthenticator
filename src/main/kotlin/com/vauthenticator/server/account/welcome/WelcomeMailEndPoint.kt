@@ -24,7 +24,7 @@ class WelcomeMailEndPoint(
         session: HttpSession, principal: JwtAuthenticationToken
     ): ResponseEntity<Unit> {
         permissionValidator.validate(principal, session, Scopes.from(Scope.WELCOME))
-        sayWelcome.welcome(request["mail"]!!)
+        sayWelcome.welcome(request["email"]!!)
         return ResponseEntity.noContent().build()
     }
 

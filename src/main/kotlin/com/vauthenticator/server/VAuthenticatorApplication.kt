@@ -1,7 +1,7 @@
 package com.vauthenticator.server
 
+import com.vauthenticator.server.email.NoReplyEMailConfiguration
 import com.vauthenticator.server.events.EventConsumerConfig
-import com.vauthenticator.server.mail.NoReplyMailConfiguration
 import com.vauthenticator.server.mfa.OtpConfigurationProperties
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -9,7 +9,7 @@ import org.springframework.boot.runApplication
 
 @SpringBootApplication
 @EnableConfigurationProperties(
-    NoReplyMailConfiguration::class,
+    NoReplyEMailConfiguration::class,
     OtpConfigurationProperties::class,
     EventConsumerConfig::class
 )

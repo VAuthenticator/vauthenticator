@@ -6,7 +6,7 @@ import com.vauthenticator.server.account.ticket.VerificationTicket
 import com.vauthenticator.server.account.ticket.VerificationTicketFactory
 import com.vauthenticator.server.clientapp.A_CLIENT_APP_ID
 import com.vauthenticator.server.clientapp.ClientAppFixture.aClientApp
-import com.vauthenticator.server.mail.MailSenderService
+import com.vauthenticator.server.email.MailSenderService
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.Scope

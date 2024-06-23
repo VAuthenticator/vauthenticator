@@ -26,8 +26,8 @@ class MailVerificationEndPoint(
         principal: JwtAuthenticationToken
     ): ResponseEntity<Unit> {
         permissionValidator.validate(principal, httpSession, Scopes.from(Scope.MAIL_VERIFY))
-        //todo validate mail field in body
-        sendVerifyMailChallenge.sendVerifyMail(request["mail"]!!)
+        //todo validate email field in body
+        sendVerifyMailChallenge.sendVerifyMail(request["email"]!!)
         return noContent().build()
     }
 
@@ -40,7 +40,7 @@ class MailVerificationController(
     private val verifyMailChallenge: VerifyMailChallenge
 ) {
 
-    @GetMapping("/mail-verify/{ticket}")
+    @GetMapping("/email-verify/{ticket}")
     fun verifyMail(@PathVariable ticket: String, model: Model): String {
         verifyMailChallenge.verifyMail(ticket)
 

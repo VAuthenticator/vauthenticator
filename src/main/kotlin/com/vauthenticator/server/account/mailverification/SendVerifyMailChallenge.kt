@@ -4,7 +4,7 @@ import com.vauthenticator.server.account.AccountNotFoundException
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.account.ticket.VerificationTicket
 import com.vauthenticator.server.account.ticket.VerificationTicketFactory
-import com.vauthenticator.server.mail.MailSenderService
+import com.vauthenticator.server.email.MailSenderService
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import org.slf4j.LoggerFactory
 
@@ -19,8 +19,8 @@ class SendVerifyMailChallenge(
 
     private val logger = LoggerFactory.getLogger(SendVerifyMailChallenge::class.java)
 
-    fun sendVerifyMail(mail: String) {
-        accountRepository.accountFor(mail)
+    fun sendVerifyMail(email: String) {
+        accountRepository.accountFor(email)
             .map { account ->
                 val verificationTicket = verificationTicketFactory.createTicketFor(account, ClientAppId.empty())
                 val mailContext = mailContextFrom(verificationTicket)
@@ -32,7 +32,7 @@ class SendVerifyMailChallenge(
     }
 
     private fun mailContextFrom(verificationTicket: VerificationTicket): Map<String, String> {
-        val verificationLink = "$frontChannelBaseUrl/mail-verify/${verificationTicket.content}"
+        val verificationLink = "$frontChannelBaseUrl/email-verify/${verificationTicket.content}"
         return mapOf(LINK_KEY to verificationLink)
     }
 

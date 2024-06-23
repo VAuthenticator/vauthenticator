@@ -1,4 +1,4 @@
-package com.vauthenticator.server.mail
+package com.vauthenticator.server.email
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.document.repository.Document
@@ -9,7 +9,6 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -22,7 +21,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
 @ExtendWith(MockKExtension::class)
-class MailEndPointTest {
+class EMailEndPointTest {
 
     lateinit var mockMvc: MockMvc
 
@@ -33,7 +32,7 @@ class MailEndPointTest {
 
     @BeforeEach
     internal fun setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(MailEndPoint(documentRepository)).build()
+        mockMvc = MockMvcBuilders.standaloneSetup(EMailEndPoint(documentRepository)).build()
     }
 
     @Test

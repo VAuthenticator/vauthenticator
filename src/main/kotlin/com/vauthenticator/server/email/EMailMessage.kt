@@ -1,10 +1,10 @@
-package com.vauthenticator.server.mail
+package com.vauthenticator.server.email
 
 typealias MailContext = Map<String, Any>
 
 enum class MailType(val path: String) {
     WELCOME("templates/welcome.html"),
-    EMAIL_VERIFICATION("templates/mail-verify-challenge.html"),
+    EMAIL_VERIFICATION("templates/email-verify-challenge.html"),
     RESET_PASSWORD("templates/reset-password.html"),
     MFA("templates/mfa-challenge.html");
 }

@@ -1,4 +1,4 @@
-package com.vauthenticator.server.mail
+package com.vauthenticator.server.email
 
 import com.vauthenticator.document.repository.Document
 import com.vauthenticator.document.repository.DocumentRepository
@@ -8,18 +8,18 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-class MailEndPoint(private val documentRepository: DocumentRepository) {
+class EMailEndPoint(private val documentRepository: DocumentRepository) {
 
-    @GetMapping("/api/mail-template/{mailType}")
+    @GetMapping("/api/email-template/{mailType}")
     fun getMailTemplate(@PathVariable mailType: MailType): ResponseEntity<MailTemplate> {
-        val document = documentRepository.loadDocument(DocumentType.MAIL.content, mailType.path)
+        val document = documentRepository.loadDocument(DocumentType.email.content, mailType.path)
         return ResponseEntity.ok(MailTemplate(mailType, String(document.content)))
     }
 
-    @PutMapping("/api/mail-template")
+    @PutMapping("/api/email-template")
     fun saveMailTemplate(@RequestBody request: MailTemplate): ResponseEntity<Unit> {
         documentRepository.saveDocument(
-            DocumentType.MAIL.content,
+            DocumentType.MAIL.content, //todo MAIL should be EMAIL
             Document(MediaType.TEXT_HTML_VALUE, request.mailType.path, request.body.toByteArray())
         )
         return ResponseEntity.noContent().build()

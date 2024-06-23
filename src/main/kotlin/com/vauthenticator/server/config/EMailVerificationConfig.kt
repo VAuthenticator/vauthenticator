@@ -8,16 +8,16 @@ import com.vauthenticator.server.account.mailverification.VerifyMailChallenge
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.account.ticket.TicketRepository
 import com.vauthenticator.server.account.ticket.VerificationTicketFactory
-import com.vauthenticator.server.mail.*
+import com.vauthenticator.server.email.*
 import com.vauthenticator.server.mfa.domain.MfaMethodsEnrolmentAssociation
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.mail.javamail.JavaMailSender
+import org.springframework.email.javamail.JavaMailSender
 
 @Configuration(proxyBeanMethods = false)
-class MailVerificationConfig {
+class EMailVerificationConfig {
 
     @Bean
     fun sendVerifyMailChallenge(
@@ -50,15 +50,15 @@ class MailVerificationConfig {
     fun verificationMailSender(
         javaMailSender: JavaMailSender,
         documentRepository: DocumentRepository,
-        noReplyMailConfiguration: NoReplyMailConfiguration
+        noReplyEMailConfiguration: NoReplyEMailConfiguration
     ) =
         JavaMailSenderService(
             documentRepository,
             javaMailSender,
             JinjavaMailTemplateResolver(Jinjava()),
             SimpleMailMessageFactory(
-                noReplyMailConfiguration.from,
-                noReplyMailConfiguration.welcomeMailSubject,
+                noReplyEMailConfiguration.from,
+                noReplyEMailConfiguration.welcomeMailSubject,
                 MailType.EMAIL_VERIFICATION
             )
         )

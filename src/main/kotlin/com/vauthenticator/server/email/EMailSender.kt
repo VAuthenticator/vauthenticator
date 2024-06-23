@@ -1,4 +1,4 @@
-package com.vauthenticator.server.mail
+package com.vauthenticator.server.email
 
 import com.vauthenticator.document.repository.DocumentRepository
 import com.vauthenticator.document.repository.DocumentType
@@ -44,12 +44,12 @@ class JavaMailSenderService(
     override fun sendFor(account: Account, mailContext: MailContext) {
         val mailMessage = mailMessageFactory.makeMailMessageFor(account, mailContext)
         val mailContent = mailContentFor(mailMessage)
-        val mail = composeMailFor(mailContent, mailMessage)
-        mailSender.send(mail)
+        val email = composeMailFor(mailContent, mailMessage)
+        mailSender.send(email)
     }
 
-    private fun mailContentFor(mail: MailMessage): String {
-        val documentContent = documentRepository.loadDocument(DocumentType.MAIL.content, mailTemplatePathFor(mail.type))
+    private fun mailContentFor(email: MailMessage): String {
+        val documentContent = documentRepository.loadDocument(DocumentType.email.content, mailTemplatePathFor(email.type))
         return String(documentContent.content)
     }
 

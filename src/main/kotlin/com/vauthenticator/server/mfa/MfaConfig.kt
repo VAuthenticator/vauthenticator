@@ -3,10 +3,10 @@ package com.vauthenticator.server.mfa
 import com.hubspot.jinjava.Jinjava
 import com.vauthenticator.document.repository.DocumentRepository
 import com.vauthenticator.server.account.repository.AccountRepository
+import com.vauthenticator.server.email.*
 import com.vauthenticator.server.keys.KeyDecrypter
 import com.vauthenticator.server.keys.KeyRepository
 import com.vauthenticator.server.keys.MasterKid
-import com.vauthenticator.server.mail.*
 import com.vauthenticator.server.mask.SensitiveEmailMasker
 import com.vauthenticator.server.mfa.domain.*
 import com.vauthenticator.server.mfa.repository.DynamoMfaAccountMethodsRepository
@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.mail.javamail.JavaMailSender
+import org.springframework.email.javamail.JavaMailSender
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 
 @Configuration(proxyBeanMethods = false)
@@ -72,15 +72,15 @@ class MfaConfig {
     fun mfaMailSender(
         javaMailSender: JavaMailSender,
         documentRepository: DocumentRepository,
-        noReplyMailConfiguration: NoReplyMailConfiguration
+        noReplyEMailConfiguration: NoReplyEMailConfiguration
     ) =
         JavaMailSenderService(
             documentRepository,
             javaMailSender,
             JinjavaMailTemplateResolver(Jinjava()),
             SimpleMailMessageFactory(
-                noReplyMailConfiguration.from,
-                noReplyMailConfiguration.mfaMailSubject, // todo chenge the subject
+                noReplyEMailConfiguration.from,
+                noReplyEMailConfiguration.mfaMailSubject, // todo chenge the subject
                 MailType.MFA
             )
         )

@@ -26,7 +26,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
 
 @ExtendWith(MockKExtension::class)
-internal class WelcomeMailEndPointTest {
+internal class WelcomeEMailEndPointTest {
     private val objectMapper = ObjectMapper()
 
     lateinit var mokMvc: MockMvc
