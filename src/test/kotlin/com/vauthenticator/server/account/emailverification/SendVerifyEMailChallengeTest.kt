@@ -2,11 +2,11 @@ package com.vauthenticator.server.account.emailverification
 
 import com.vauthenticator.server.account.AccountNotFoundException
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.account.ticket.VerificationTicket
-import com.vauthenticator.server.account.ticket.VerificationTicketFactory
 import com.vauthenticator.server.clientapp.A_CLIENT_APP_ID
 import com.vauthenticator.server.clientapp.ClientAppFixture.aClientApp
 import com.vauthenticator.server.email.EMailSenderService
+import com.vauthenticator.server.mfa.domain.VerificationTicket
+import com.vauthenticator.server.mfa.domain.VerificationTicketFactory
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.Scope

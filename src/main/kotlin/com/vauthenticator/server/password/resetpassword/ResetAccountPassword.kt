@@ -2,12 +2,12 @@ package com.vauthenticator.server.password.resetpassword
 
 import com.vauthenticator.server.account.Email
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.account.ticket.InvalidTicketException
-import com.vauthenticator.server.account.ticket.Ticket
-import com.vauthenticator.server.account.ticket.TicketRepository
-import com.vauthenticator.server.account.ticket.VerificationTicket
 import com.vauthenticator.server.events.ResetPasswordEvent
 import com.vauthenticator.server.events.VAuthenticatorEventsDispatcher
+import com.vauthenticator.server.mfa.domain.InvalidTicketException
+import com.vauthenticator.server.mfa.domain.Ticket
+import com.vauthenticator.server.mfa.domain.VerificationTicket
+import com.vauthenticator.server.mfa.repository.TicketRepository
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.password.Password
 import com.vauthenticator.server.password.PasswordPolicy

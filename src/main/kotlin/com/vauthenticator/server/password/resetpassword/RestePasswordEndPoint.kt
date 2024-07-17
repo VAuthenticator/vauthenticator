@@ -1,9 +1,9 @@
 package com.vauthenticator.server.password.resetpassword
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.vauthenticator.server.account.ticket.VerificationTicket
 import com.vauthenticator.server.i18n.I18nMessageInjector
 import com.vauthenticator.server.i18n.I18nScope
+import com.vauthenticator.server.mfa.domain.VerificationTicket
 import com.vauthenticator.server.oauth2.clientapp.Scope
 import com.vauthenticator.server.oauth2.clientapp.Scopes
 import com.vauthenticator.server.role.PermissionValidator

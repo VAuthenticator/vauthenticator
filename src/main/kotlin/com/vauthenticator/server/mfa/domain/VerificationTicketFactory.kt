@@ -1,7 +1,8 @@
-package com.vauthenticator.server.account.ticket
+package com.vauthenticator.server.mfa.domain
 
 import com.vauthenticator.server.account.Account
 import com.vauthenticator.server.extentions.expirationTimeStampInSecondFromNow
+import com.vauthenticator.server.mfa.repository.TicketRepository
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import java.time.Clock
 

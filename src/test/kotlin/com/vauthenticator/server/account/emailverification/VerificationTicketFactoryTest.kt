@@ -1,10 +1,10 @@
 package com.vauthenticator.server.account.emailverification
 
-import com.vauthenticator.server.account.ticket.TicketRepository
-import com.vauthenticator.server.account.ticket.VerificationTicket
-import com.vauthenticator.server.account.ticket.VerificationTicketFactory
-import com.vauthenticator.server.account.ticket.VerificationTicketFeatures
 import com.vauthenticator.server.clientapp.A_CLIENT_APP_ID
+import com.vauthenticator.server.mfa.domain.VerificationTicket
+import com.vauthenticator.server.mfa.domain.VerificationTicketFactory
+import com.vauthenticator.server.mfa.domain.VerificationTicketFeatures
+import com.vauthenticator.server.mfa.repository.TicketRepository
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import com.vauthenticator.server.support.EMAIL

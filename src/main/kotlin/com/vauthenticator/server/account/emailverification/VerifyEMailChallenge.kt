@@ -2,12 +2,8 @@ package com.vauthenticator.server.account.emailverification
 
 import com.vauthenticator.server.account.Account
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.account.ticket.InvalidTicketException
-import com.vauthenticator.server.account.ticket.Ticket
-import com.vauthenticator.server.account.ticket.TicketRepository
-import com.vauthenticator.server.account.ticket.VerificationTicket
-import com.vauthenticator.server.mfa.domain.MfaMethod
-import com.vauthenticator.server.mfa.domain.MfaMethodsEnrolmentAssociation
+import com.vauthenticator.server.mfa.domain.*
+import com.vauthenticator.server.mfa.repository.TicketRepository
 
 class VerifyEMailChallenge(
     private val accountRepository: AccountRepository,

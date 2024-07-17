@@ -1,4 +1,4 @@
-package com.vauthenticator.server.account.ticket
+package com.vauthenticator.server.mfa.domain
 
 import java.time.Duration
 

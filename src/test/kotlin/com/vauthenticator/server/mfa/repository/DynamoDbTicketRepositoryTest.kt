@@ -1,7 +1,9 @@
-package com.vauthenticator.server.account.ticket
+package com.vauthenticator.server.mfa.repository
 
 import com.vauthenticator.server.clientapp.A_CLIENT_APP_ID
 import com.vauthenticator.server.extentions.asDynamoAttribute
+import com.vauthenticator.server.mfa.domain.Ticket
+import com.vauthenticator.server.mfa.domain.VerificationTicket
 import com.vauthenticator.server.support.DynamoDbUtils
 import com.vauthenticator.server.support.DynamoDbUtils.dynamoTicketTableName
 import com.vauthenticator.server.support.DynamoDbUtils.resetDynamoDb

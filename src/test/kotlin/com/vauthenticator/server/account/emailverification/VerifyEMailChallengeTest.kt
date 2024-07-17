@@ -1,11 +1,11 @@
 package com.vauthenticator.server.account.emailverification
 
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.account.ticket.InvalidTicketException
-import com.vauthenticator.server.account.ticket.TicketRepository
-import com.vauthenticator.server.account.ticket.VerificationTicket
+import com.vauthenticator.server.mfa.domain.InvalidTicketException
 import com.vauthenticator.server.mfa.domain.MfaMethod
 import com.vauthenticator.server.mfa.domain.MfaMethodsEnrolmentAssociation
+import com.vauthenticator.server.mfa.domain.VerificationTicket
+import com.vauthenticator.server.mfa.repository.TicketRepository
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.support.AccountTestFixture
 import com.vauthenticator.server.support.TicketFixture

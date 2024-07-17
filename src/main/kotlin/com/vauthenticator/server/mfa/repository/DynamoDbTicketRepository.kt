@@ -1,20 +1,16 @@
-package com.vauthenticator.server.account.ticket
+package com.vauthenticator.server.mfa.repository
 
 import com.vauthenticator.server.extentions.asDynamoAttribute
 import com.vauthenticator.server.extentions.filterEmptyMetadata
 import com.vauthenticator.server.extentions.valueAsLongFor
 import com.vauthenticator.server.extentions.valueAsStringFor
+import com.vauthenticator.server.mfa.domain.Ticket
+import com.vauthenticator.server.mfa.domain.VerificationTicket
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
 import java.util.*
-
-interface TicketRepository {
-    fun store(ticket: Ticket)
-    fun loadFor(verificationTicket: VerificationTicket): Optional<Ticket>
-    fun delete(verificationTicket: VerificationTicket)
-}
 
 class DynamoDbTicketRepository(
     private val dynamoDbClient: DynamoDbClient,

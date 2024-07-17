@@ -1,7 +1,7 @@
 package com.vauthenticator.server.support
 
-import com.vauthenticator.server.account.ticket.Ticket
-import com.vauthenticator.server.account.ticket.VerificationTicket
+import com.vauthenticator.server.mfa.domain.Ticket
+import com.vauthenticator.server.mfa.domain.VerificationTicket
 
 object TicketFixture {
     fun ticketFor(verificationTicketValue: String, mail: String, clientAppId: String) =

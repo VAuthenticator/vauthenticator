@@ -3,10 +3,10 @@ package com.vauthenticator.server.config
 import com.hubspot.jinjava.Jinjava
 import com.vauthenticator.document.repository.DocumentRepository
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.account.ticket.TicketRepository
-import com.vauthenticator.server.account.ticket.VerificationTicketFactory
 import com.vauthenticator.server.email.*
 import com.vauthenticator.server.events.VAuthenticatorEventsDispatcher
+import com.vauthenticator.server.mfa.domain.VerificationTicketFactory
+import com.vauthenticator.server.mfa.repository.TicketRepository
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
 import com.vauthenticator.server.password.PasswordPolicy
 import com.vauthenticator.server.password.VAuthenticatorPasswordEncoder

@@ -6,10 +6,10 @@ import com.vauthenticator.server.account.emailverification.SendVerifyEMailChalle
 import com.vauthenticator.server.account.emailverification.SendVerifyEMailChallengeUponSignUpEventConsumer
 import com.vauthenticator.server.account.emailverification.VerifyEMailChallenge
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.account.ticket.TicketRepository
-import com.vauthenticator.server.account.ticket.VerificationTicketFactory
 import com.vauthenticator.server.email.*
 import com.vauthenticator.server.mfa.domain.MfaMethodsEnrolmentAssociation
+import com.vauthenticator.server.mfa.domain.VerificationTicketFactory
+import com.vauthenticator.server.mfa.repository.TicketRepository
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean

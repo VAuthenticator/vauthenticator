@@ -5,8 +5,7 @@ import com.vauthenticator.server.mfa.domain.MfaMethod
 import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.security.core.Authentication
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 class MfaEnrolmentAssociationEndPoint(
@@ -21,7 +20,11 @@ class MfaEnrolmentAssociationEndPoint(
             mfaAccountMethodsRepository.findAll(authentication.name)
                 .map {
                     when (it.method) {
-                        MfaMethod.EMAIL_MFA_METHOD -> EmailMfaEnrolledDeviceResponse(sensitiveEmailMasker.mask(it.email), it.method.name)
+                        MfaMethod.EMAIL_MFA_METHOD -> EmailMfaEnrolledDevice(
+                            sensitiveEmailMasker.mask(it.email),
+                            it.method.name
+                        )
+
                         MfaMethod.SMS_MFA_METHOD -> TODO()
                         MfaMethod.OTP_MFA_METHOD -> TODO()
                     }
@@ -29,8 +32,32 @@ class MfaEnrolmentAssociationEndPoint(
                 }
         )
 
+
+    /*
+    * /api/mfa/enrollment -> enrollmentId
+    *
+    * */
+    @PutMapping("/api/mfa/enrollment")
+    fun enrollMfa(authentication: Authentication, enrolling: MfaEnrolledDevice) {
+        TODO("will return enrollment_id")
+    }
+
+    @PostMapping("/api/mfa/associate")
+    fun associateMfaEnrollment(authentication: Authentication) {
+
+    }
+
+    @DeleteMapping("/api/mfa/enrollment/{enrollmentId}/associate")
+    fun deleteMfaAssociation(
+        @PathVariable("enrollmentId") enrollmentId: String,
+        authentication: Authentication
+    ) {
+
+    }
 }
 
-sealed class MfaEnrolledDeviceResponse(val mfaMethod: String)
-class EmailMfaEnrolledDeviceResponse(val email: String, mfaMethod: String) : MfaEnrolledDeviceResponse(mfaMethod)
+data class MfaEnrollmentDeviceResponse(val enrollmentId: String)
+
+sealed class MfaEnrolledDevice(val mfaMethod: String)
+class EmailMfaEnrolledDevice(val email: String, mfaMethod: String) : MfaEnrolledDevice(mfaMethod)
 
