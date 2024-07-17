@@ -6,6 +6,13 @@ import org.springframework.security.authentication.event.AbstractAuthenticationF
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.AuthenticationException
 
+interface MfaEnrollingDevice
+interface MfaEnrolledDevice
+
+sealed class MfaDevice(val mfaMethod: MfaMethod) : MfaEnrolledDevice, MfaEnrollingDevice
+
+class EmailMfaDevice(val email: String, mfaMethod: MfaMethod) : MfaDevice(mfaMethod)
+
 
 class MfaException(message: String) : AuthenticationException(message)
 

@@ -13,3 +13,9 @@ class MfaMethodsEnrolmentAssociation(private val mfaAccountMethodsRepository: Mf
         }
     }
 }
+class MfaMethodsEnrollment(private val mfaAccountMethodsRepository: MfaAccountMethodsRepository) {
+
+    fun enroll(account: Account, emailMfaMethod: MfaMethod) {
+        TODO()
+    }
+}

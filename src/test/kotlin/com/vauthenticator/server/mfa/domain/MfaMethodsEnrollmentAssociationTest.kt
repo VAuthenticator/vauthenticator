@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
-class MfaMethodsEnrolmentAssociationTest {
+class MfaMethodsEnrollmentAssociationTest {
     val account = anAccount()
     val email = account.email
 

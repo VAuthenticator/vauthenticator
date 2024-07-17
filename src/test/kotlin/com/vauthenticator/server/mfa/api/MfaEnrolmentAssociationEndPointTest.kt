@@ -2,6 +2,7 @@ package com.vauthenticator.server.mfa.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.mask.SensitiveEmailMasker
+import com.vauthenticator.server.mfa.domain.EmailMfaDevice
 import com.vauthenticator.server.mfa.domain.MfaMethod.EMAIL_MFA_METHOD
 import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
 import com.vauthenticator.server.support.AccountTestFixture
@@ -60,7 +61,7 @@ class MfaEnrolmentAssociationEndPointTest {
                 content().json(
                     objectMapper.writeValueAsString(
                         listOf(
-                            EmailMfaEnrolledDevice(email, EMAIL_MFA_METHOD.name)
+                            EmailMfaDevice(email, EMAIL_MFA_METHOD)
                         )
                     )
                 )

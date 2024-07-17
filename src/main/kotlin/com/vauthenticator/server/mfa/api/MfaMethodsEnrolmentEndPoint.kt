@@ -1,6 +1,8 @@
 package com.vauthenticator.server.mfa.api
 
 import com.vauthenticator.server.mask.SensitiveEmailMasker
+import com.vauthenticator.server.mfa.domain.EmailMfaDevice
+import com.vauthenticator.server.mfa.domain.MfaEnrollingDevice
 import com.vauthenticator.server.mfa.domain.MfaMethod
 import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
 import org.springframework.http.ResponseEntity.ok
@@ -20,9 +22,9 @@ class MfaEnrolmentAssociationEndPoint(
             mfaAccountMethodsRepository.findAll(authentication.name)
                 .map {
                     when (it.method) {
-                        MfaMethod.EMAIL_MFA_METHOD -> EmailMfaEnrolledDevice(
+                        MfaMethod.EMAIL_MFA_METHOD -> EmailMfaDevice(
                             sensitiveEmailMasker.mask(it.email),
-                            it.method.name
+                            it.method
                         )
 
                         MfaMethod.SMS_MFA_METHOD -> TODO()
@@ -37,9 +39,9 @@ class MfaEnrolmentAssociationEndPoint(
     * /api/mfa/enrollment -> enrollmentId
     *
     * */
-    @PutMapping("/api/mfa/enrollment")
-    fun enrollMfa(authentication: Authentication, enrolling: MfaEnrolledDevice) {
-        TODO("will return enrollment_id")
+    @PostMapping("/api/mfa/enrollment")
+    fun enrollMfa(authentication: Authentication, enrolling: MfaEnrollingDevice) {
+        TODO("will return ticket to enroll")
     }
 
     @PostMapping("/api/mfa/associate")
@@ -47,7 +49,7 @@ class MfaEnrolmentAssociationEndPoint(
 
     }
 
-    @DeleteMapping("/api/mfa/enrollment/{enrollmentId}/associate")
+    @DeleteMapping("/api/mfa/enrollment/{enrollmentId}")
     fun deleteMfaAssociation(
         @PathVariable("enrollmentId") enrollmentId: String,
         authentication: Authentication
@@ -58,6 +60,4 @@ class MfaEnrolmentAssociationEndPoint(
 
 data class MfaEnrollmentDeviceResponse(val enrollmentId: String)
 
-sealed class MfaEnrolledDevice(val mfaMethod: String)
-class EmailMfaEnrolledDevice(val email: String, mfaMethod: String) : MfaEnrolledDevice(mfaMethod)
 
