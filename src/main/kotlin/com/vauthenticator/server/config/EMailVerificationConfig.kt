@@ -7,7 +7,7 @@ import com.vauthenticator.server.account.emailverification.SendVerifyEMailChalle
 import com.vauthenticator.server.account.emailverification.VerifyEMailChallenge
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.email.*
-import com.vauthenticator.server.mfa.domain.MfaMethodsEnrolmentAssociation
+import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollmentAssociation
 import com.vauthenticator.server.mfa.domain.VerificationTicketFactory
 import com.vauthenticator.server.mfa.repository.TicketRepository
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
@@ -38,12 +38,12 @@ class EMailVerificationConfig {
     fun verifyMailChallengeSent(
         accountRepository: AccountRepository,
         ticketRepository: TicketRepository,
-        mfaMethodsEnrolmentAssociation: MfaMethodsEnrolmentAssociation
+        mfaMethodsEnrollmentAssociation: MfaMethodsEnrollmentAssociation
     ) =
         VerifyEMailChallenge(
-            accountRepository,
             ticketRepository,
-            mfaMethodsEnrolmentAssociation
+            accountRepository,
+            mfaMethodsEnrollmentAssociation
         )
 
     @Bean

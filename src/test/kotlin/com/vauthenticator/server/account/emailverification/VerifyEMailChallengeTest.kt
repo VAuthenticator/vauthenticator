@@ -3,7 +3,7 @@ package com.vauthenticator.server.account.emailverification
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.mfa.domain.InvalidTicketException
 import com.vauthenticator.server.mfa.domain.MfaMethod
-import com.vauthenticator.server.mfa.domain.MfaMethodsEnrolmentAssociation
+import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollmentAssociation
 import com.vauthenticator.server.mfa.domain.VerificationTicket
 import com.vauthenticator.server.mfa.repository.TicketRepository
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
@@ -31,16 +31,17 @@ internal class VerifyEMailChallengeTest {
     lateinit var ticketRepository: TicketRepository
 
     @MockK
-    lateinit var mfaMethodsEnrolmentAssociation: MfaMethodsEnrolmentAssociation
+    lateinit var mfaMethodsEnrollmentAssociation: MfaMethodsEnrollmentAssociation
+
 
     private lateinit var underTest: VerifyEMailChallenge
 
     @BeforeEach
     fun setup() {
         underTest = VerifyEMailChallenge(
-            accountRepository,
             ticketRepository,
-            mfaMethodsEnrolmentAssociation
+            accountRepository,
+            mfaMethodsEnrollmentAssociation
         )
     }
 
@@ -57,13 +58,13 @@ internal class VerifyEMailChallengeTest {
                 ClientAppId.empty().content
             )
         )
-        every { mfaMethodsEnrolmentAssociation.associate(enabledAccount, MfaMethod.EMAIL_MFA_METHOD) } just runs
+        every { mfaMethodsEnrollmentAssociation.associate("A_TICKET", MfaMethod.EMAIL_MFA_METHOD) } just runs
         every { accountRepository.accountFor(account.email) } returns Optional.of(account)
         every { accountRepository.save(enabledAccount) } just runs
         every { ticketRepository.delete(verificationTicket) } just runs
 
         underTest.verifyMail("A_TICKET")
-        verify(exactly = 1) { mfaMethodsEnrolmentAssociation.associate(enabledAccount, MfaMethod.EMAIL_MFA_METHOD) }
+        verify(exactly = 1) { mfaMethodsEnrollmentAssociation.associate("A_TICKET", MfaMethod.EMAIL_MFA_METHOD) }
     }
 
     @Test
@@ -79,6 +80,7 @@ internal class VerifyEMailChallengeTest {
             )
         )
         every { accountRepository.accountFor(account.email) } returns Optional.empty()
+        every { mfaMethodsEnrollmentAssociation.associate("A_TICKET", MfaMethod.EMAIL_MFA_METHOD) } just runs
 
         assertThrows(InvalidTicketException::class.java) { underTest.verifyMail("A_TICKET") }
     }

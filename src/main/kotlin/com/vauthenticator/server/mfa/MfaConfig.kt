@@ -11,6 +11,7 @@ import com.vauthenticator.server.mask.SensitiveEmailMasker
 import com.vauthenticator.server.mfa.domain.*
 import com.vauthenticator.server.mfa.repository.DynamoMfaAccountMethodsRepository
 import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
+import com.vauthenticator.server.mfa.repository.TicketRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -39,8 +40,9 @@ class MfaConfig {
     fun sensitiveEmailMasker() = SensitiveEmailMasker()
 
     @Bean
-    fun mfaMethodsEnrolmentAssociation(mfaAccountMethodsRepository: MfaAccountMethodsRepository) =
-        MfaMethodsEnrolmentAssociation(mfaAccountMethodsRepository)
+    fun mfaMethodsEnrolmentAssociation(ticketRepository: TicketRepository,
+                                       mfaAccountMethodsRepository: MfaAccountMethodsRepository) =
+        MfaMethodsEnrollmentAssociation(ticketRepository , mfaAccountMethodsRepository)
 
     @Bean
     fun otpMfa(
