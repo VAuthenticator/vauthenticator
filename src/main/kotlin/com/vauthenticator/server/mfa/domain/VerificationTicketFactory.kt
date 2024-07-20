@@ -6,7 +6,7 @@ import com.vauthenticator.server.mfa.repository.TicketRepository
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import java.time.Clock
 
-
+// todo create and store ticket is a SRP violation.. it should be decoupled
 class VerificationTicketFactory(
     private val ticketGenerator: () -> String,
     private val clock: Clock,

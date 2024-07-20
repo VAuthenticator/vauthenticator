@@ -5,8 +5,9 @@ import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.clientapp.A_CLIENT_APP_ID
 import com.vauthenticator.server.clientapp.ClientAppFixture.aClientApp
 import com.vauthenticator.server.email.EMailSenderService
+import com.vauthenticator.server.mfa.domain.MfaMethod
+import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollment
 import com.vauthenticator.server.mfa.domain.VerificationTicket
-import com.vauthenticator.server.mfa.domain.VerificationTicketFactory
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.Scope
@@ -34,7 +35,7 @@ internal class SendVerifyEMailChallengeTest {
     lateinit var accountRepository: AccountRepository
 
     @MockK
-    lateinit var verificationTicketFactory: VerificationTicketFactory
+    lateinit var mfaMethodsEnrollment: MfaMethodsEnrollment
 
     @MockK
     lateinit var mailVerificationMailSender: EMailSenderService
@@ -45,7 +46,7 @@ internal class SendVerifyEMailChallengeTest {
     fun setup() {
         underTest = SendVerifyEMailChallenge(
             accountRepository,
-            verificationTicketFactory,
+            mfaMethodsEnrollment,
             mailVerificationMailSender,
             "https://vauthenticator.com"
         )
@@ -59,7 +60,7 @@ internal class SendVerifyEMailChallengeTest {
 
 
         every { accountRepository.accountFor(account.email) } returns Optional.of(account)
-        every { verificationTicketFactory.createTicketFor(account, ClientAppId.empty() ) } returns verificationTicket
+        every { mfaMethodsEnrollment.enroll(account, MfaMethod.EMAIL_MFA_METHOD,ClientAppId.empty(),false ) } returns verificationTicket
         every { mailVerificationMailSender.sendFor(account, requestContext) } just runs
 
         underTest.sendVerifyMail(account.email)

@@ -1,3 +1,5 @@
 package com.vauthenticator.server.mfa.domain
 
-class MfaMethodsEnrollmentTest
+class MfaMethodsEnrollmentTest {
+
+}

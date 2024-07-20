@@ -40,9 +40,17 @@ class MfaConfig {
     fun sensitiveEmailMasker() = SensitiveEmailMasker()
 
     @Bean
-    fun mfaMethodsEnrolmentAssociation(ticketRepository: TicketRepository,
-                                       mfaAccountMethodsRepository: MfaAccountMethodsRepository) =
-        MfaMethodsEnrollmentAssociation(ticketRepository , mfaAccountMethodsRepository)
+    fun mfaMethodsEnrolmentAssociation(
+        ticketRepository: TicketRepository,
+        mfaAccountMethodsRepository: MfaAccountMethodsRepository
+    ) =
+        MfaMethodsEnrollmentAssociation(ticketRepository, mfaAccountMethodsRepository)
+
+    @Bean
+    fun mfaMethodsEnrollment(
+        verificationTicketFactory: VerificationTicketFactory,
+        mfaAccountMethodsRepository: MfaAccountMethodsRepository
+    ) = MfaMethodsEnrollment(verificationTicketFactory, mfaAccountMethodsRepository)
 
     @Bean
     fun otpMfa(
@@ -87,5 +95,6 @@ class MfaConfig {
             )
         )
 }
+
 @ConfigurationProperties("mfa.otp")
 data class OtpConfigurationProperties(val length: Int, val timeToLiveInSeconds: Int)

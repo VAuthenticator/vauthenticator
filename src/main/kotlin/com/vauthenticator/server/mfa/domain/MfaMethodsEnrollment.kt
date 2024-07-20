@@ -3,6 +3,7 @@ package com.vauthenticator.server.mfa.domain
 import com.vauthenticator.server.account.Account
 import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
 import com.vauthenticator.server.mfa.repository.TicketRepository
+import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 
 class MfaMethodsEnrollmentAssociation(
     private val ticketRepository: TicketRepository,
@@ -30,9 +31,17 @@ class MfaMethodsEnrollmentAssociation(
         ticketRepository.delete(ticket.verificationTicket)
 }
 
-class MfaMethodsEnrollment(private val mfaAccountMethodsRepository: MfaAccountMethodsRepository) {
+class MfaMethodsEnrollment(
+    private val verificationTicketFactory: VerificationTicketFactory,
+    private val mfaAccountMethodsRepository: MfaAccountMethodsRepository
+) {
 
-    fun enroll(account: Account, emailMfaMethod: MfaMethod) {
-        TODO()
+    fun enroll(
+        account: Account,
+        emailMfaMethod: MfaMethod,
+        clientAppId: ClientAppId,
+        sendChallengeCode : Boolean = true
+    ): VerificationTicket {
+        return verificationTicketFactory.createTicketFor(account, clientAppId)
     }
 }

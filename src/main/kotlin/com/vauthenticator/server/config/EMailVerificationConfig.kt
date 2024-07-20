@@ -7,8 +7,8 @@ import com.vauthenticator.server.account.emailverification.SendVerifyEMailChalle
 import com.vauthenticator.server.account.emailverification.VerifyEMailChallenge
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.email.*
+import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollment
 import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollmentAssociation
-import com.vauthenticator.server.mfa.domain.VerificationTicketFactory
 import com.vauthenticator.server.mfa.repository.TicketRepository
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
 import org.springframework.beans.factory.annotation.Value
@@ -23,13 +23,13 @@ class EMailVerificationConfig {
     fun sendVerifyMailChallenge(
         clientAccountRepository: ClientApplicationRepository,
         accountRepository: AccountRepository,
-        verificationTicketFactory: VerificationTicketFactory,
+        mfaMethodsEnrollment: MfaMethodsEnrollment,
         verificationMailSender: EMailSenderService,
         @Value("\${vauthenticator.host}") frontChannelBaseUrl: String
     ) =
         SendVerifyEMailChallenge(
             accountRepository,
-            verificationTicketFactory,
+            mfaMethodsEnrollment,
             verificationMailSender,
             frontChannelBaseUrl
         )
