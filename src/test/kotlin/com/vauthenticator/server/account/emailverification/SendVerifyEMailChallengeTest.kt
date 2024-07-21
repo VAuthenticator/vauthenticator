@@ -12,7 +12,7 @@ import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.Scope
 import com.vauthenticator.server.oauth2.clientapp.Scopes
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
-import com.vauthenticator.server.ticket.VerificationTicket
+import com.vauthenticator.server.ticket.TicketId
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -55,12 +55,20 @@ internal class SendVerifyEMailChallengeTest {
     @Test
     internal fun `happy path`() {
         val account = anAccount()
-        val verificationTicket = VerificationTicket("A_TICKET")
+        val ticketId = TicketId("A_TICKET")
         val requestContext = mapOf("verificationEMailLink" to "https://vauthenticator.com/email-verify/A_TICKET")
 
 
         every { accountRepository.accountFor(account.email) } returns Optional.of(account)
-        every { mfaMethodsEnrollment.enroll(account, MfaMethod.EMAIL_MFA_METHOD,ClientAppId.empty(),false ) } returns verificationTicket
+        every {
+            mfaMethodsEnrollment.enroll(
+                account,
+                MfaMethod.EMAIL_MFA_METHOD,
+                account.email,
+                ClientAppId.empty(),
+                false
+            )
+        } returns ticketId
         every { mailVerificationMailSender.sendFor(account, requestContext) } just runs
 
         underTest.sendVerifyMail(account.email)

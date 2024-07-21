@@ -48,43 +48,43 @@ internal class DynamoDbTicketRepositoryTest {
         val ticketFromDynamo = item["ticket"]!!.s()
         val ticketTTLFromDynamo = item["ttl"]!!.n()
 
-        assertEquals(ticketFromDynamo, ticket.verificationTicket.content)
+        assertEquals(ticketFromDynamo, ticket.ticketId.content)
         assertEquals(ticketTTLFromDynamo, "200")
     }
 
 
     @Test
     internal fun `when a ticket is retrieved`() {
-        val verificationTicket = VerificationTicket(ticketGenerator.invoke())
+        val ticketId = TicketId(ticketGenerator.invoke())
         val expected = ticket
 
         underTest.store(expected)
 
-        val actual = underTest.loadFor(verificationTicket)
+        val actual = underTest.loadFor(ticketId)
 
         assertEquals(Optional.of(expected), actual)
     }
 
     @Test
     internal fun `when a ticket is not present`() {
-        val verificationTicket = VerificationTicket(ticketGenerator.invoke())
-        val actual = underTest.loadFor(verificationTicket)
+        val ticketId = TicketId(ticketGenerator.invoke())
+        val actual = underTest.loadFor(ticketId)
         assertEquals(Optional.empty<Ticket>(), actual)
     }
 
     @Test
     internal fun `when a ticket is delete`() {
-        val verificationTicket = VerificationTicket(ticketGenerator.invoke())
+        val ticketId = TicketId(ticketGenerator.invoke())
         val expected = ticket
 
         underTest.store(expected)
 
-        val actual = underTest.loadFor(verificationTicket)
+        val actual = underTest.loadFor(ticketId)
 
         assertEquals(Optional.of(expected), actual)
 
-        underTest.delete(verificationTicket)
-        val actualAfterDeletion = underTest.loadFor(verificationTicket)
+        underTest.delete(ticketId)
+        val actualAfterDeletion = underTest.loadFor(ticketId)
 
         assertEquals(Optional.empty<Ticket>(), actualAfterDeletion)
     }

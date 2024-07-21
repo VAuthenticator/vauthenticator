@@ -7,8 +7,8 @@ import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.support.AccountTestFixture
 import com.vauthenticator.server.support.TicketFixture
 import com.vauthenticator.server.ticket.InvalidTicketException
+import com.vauthenticator.server.ticket.TicketId
 import com.vauthenticator.server.ticket.TicketRepository
-import com.vauthenticator.server.ticket.VerificationTicket
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -49,11 +49,11 @@ internal class VerifyEMailChallengeTest {
     internal fun `happy path`() {
         val account = AccountTestFixture.anAccount()
         val enabledAccount = account.copy(accountNonLocked = true, enabled = true, emailVerified = true)
-        val verificationTicket = VerificationTicket("A_TICKET")
+        val ticketId = TicketId("A_TICKET")
 
-        every { ticketRepository.loadFor(verificationTicket) } returns Optional.of(
+        every { ticketRepository.loadFor(ticketId) } returns Optional.of(
             TicketFixture.ticketFor(
-                verificationTicket.content,
+                ticketId.content,
                 account.email,
                 ClientAppId.empty().content
             )
@@ -61,7 +61,7 @@ internal class VerifyEMailChallengeTest {
         every { mfaMethodsEnrollmentAssociation.associate("A_TICKET", MfaMethod.EMAIL_MFA_METHOD) } just runs
         every { accountRepository.accountFor(account.email) } returns Optional.of(account)
         every { accountRepository.save(enabledAccount) } just runs
-        every { ticketRepository.delete(verificationTicket) } just runs
+        every { ticketRepository.delete(ticketId) } just runs
 
         underTest.verifyMail("A_TICKET")
         verify(exactly = 1) { mfaMethodsEnrollmentAssociation.associate("A_TICKET", MfaMethod.EMAIL_MFA_METHOD) }
@@ -70,11 +70,11 @@ internal class VerifyEMailChallengeTest {
     @Test
     internal fun `when the account does not exist`() {
         val account = AccountTestFixture.anAccount()
-        val verificationTicket = VerificationTicket("A_TICKET")
+        val ticketId = TicketId("A_TICKET")
 
-        every { ticketRepository.loadFor(verificationTicket) } returns Optional.of(
+        every { ticketRepository.loadFor(ticketId) } returns Optional.of(
             TicketFixture.ticketFor(
-                verificationTicket.content,
+                ticketId.content,
                 account.email,
                 ClientAppId.empty().content
             )
@@ -87,9 +87,9 @@ internal class VerifyEMailChallengeTest {
 
     @Test
     internal fun `when the ticket does not exist`() {
-        val verificationTicket = VerificationTicket("A_TICKET")
+        val ticketId = TicketId("A_TICKET")
 
-        every { ticketRepository.loadFor(verificationTicket) } returns Optional.empty()
+        every { ticketRepository.loadFor(ticketId) } returns Optional.empty()
 
         assertThrows(InvalidTicketException::class.java) { underTest.verifyMail("A_TICKET") }
     }

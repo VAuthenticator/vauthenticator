@@ -36,7 +36,7 @@ class MfaMethodsEnrollmentAssociationTest {
         account.email,
         ClientAppId.empty().content
     )
-    private val verificationTicket = VerificationTicket(RAW_TICKET)
+    private val ticketId = TicketId(RAW_TICKET)
 
     @MockK
     lateinit var ticketRepository: TicketRepository
@@ -53,35 +53,35 @@ class MfaMethodsEnrollmentAssociationTest {
 
     @Test
     fun `when an email association can be associated`() {
-        every { ticketRepository.loadFor(verificationTicket) } returns Optional.of(
+        every { ticketRepository.loadFor(ticketId) } returns Optional.of(
             ticket
         )
         every { mfaAccountMethodsRepository.findAll(email) } returns emptyList()
         every { mfaAccountMethodsRepository.save(email, MfaMethod.EMAIL_MFA_METHOD) } returns mfaAccountMethod
-        every { ticketRepository.delete(ticket.verificationTicket) } just runs
+        every { ticketRepository.delete(ticket.ticketId) } just runs
 
 
         underTest.associate(RAW_TICKET, MfaMethod.EMAIL_MFA_METHOD)
 
-        verify { ticketRepository.loadFor(verificationTicket) }
+        verify { ticketRepository.loadFor(ticketId) }
         verify { mfaAccountMethodsRepository.findAll(email) }
         verify { mfaAccountMethodsRepository.save(email, MfaMethod.EMAIL_MFA_METHOD) }
-        verify { ticketRepository.delete(ticket.verificationTicket) }
+        verify { ticketRepository.delete(ticket.ticketId) }
     }
 
     @Test
     fun `when an email is already associated`() {
-        every { ticketRepository.loadFor(verificationTicket) } returns Optional.of(
+        every { ticketRepository.loadFor(ticketId) } returns Optional.of(
             ticket
         )
         every { mfaAccountMethodsRepository.findAll(email) } returns listOf(mfaAccountMethod)
-        every { ticketRepository.delete(ticket.verificationTicket) } just runs
+        every { ticketRepository.delete(ticket.ticketId) } just runs
 
         underTest.associate(RAW_TICKET, MfaMethod.EMAIL_MFA_METHOD)
 
-        verify { ticketRepository.loadFor(verificationTicket) }
+        verify { ticketRepository.loadFor(ticketId) }
         verify { mfaAccountMethodsRepository.findAll(email) }
         verify(exactly = 0) { mfaAccountMethodsRepository.save(email, MfaMethod.EMAIL_MFA_METHOD) }
-        verify { ticketRepository.delete(ticket.verificationTicket) }
+        verify { ticketRepository.delete(ticket.ticketId) }
     }
 }

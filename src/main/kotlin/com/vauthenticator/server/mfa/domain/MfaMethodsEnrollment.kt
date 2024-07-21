@@ -13,38 +13,39 @@ class MfaMethodsEnrollmentAssociation(
     //todo mfaMethod: MfaMethod can be encoded in the ticket itself
     //todo ticket can be an higher abstraction like RawTicket
     fun associate(ticket: String, mfaMethod: MfaMethod) {
-        ticketRepository.loadFor(VerificationTicket(ticket))
+        ticketRepository.loadFor(TicketId(ticket))
             .map { ticket ->
-                val email = ticket.email
+                val email = ticket.userName
                 val mfaAccountMethods = mfaAccountMethodsRepository.findAll(email)
                 if (!mfaAccountMethods.any { it.method == mfaMethod }) {
                     mfaAccountMethodsRepository.save(email, mfaMethod)
                 }
 
                 revoke(ticket)
-                ticket.email
+                ticket.userName
             }
             .orElseThrow { throw InvalidTicketException("The ticket $ticket is not a valid ticket, it seems to be expired") }
     }
 
     private fun revoke(ticket: Ticket) =
-        ticketRepository.delete(ticket.verificationTicket)
+        ticketRepository.delete(ticket.ticketId)
 }
 
 class MfaMethodsEnrollment(
-    private val verificationTicketFactory: VerificationTicketFactory,
+    private val ticketCreator: TicketCreator,
     private val mfaSender: OtpMfaSender,
 ) {
 
     fun enroll(
         account: Account,
         emailMfaMethod: MfaMethod,
+        mfaChannel: String,
         clientAppId: ClientAppId,
         sendChallengeCode: Boolean = true
-    ): VerificationTicket {
+    ): TicketId {
         if (sendChallengeCode) {
             mfaSender.sendMfaChallenge(account.email)
         }
-        return verificationTicketFactory.createTicketFor(account, clientAppId)
+        return ticketCreator.createTicketFor(account, clientAppId)
     }
 }

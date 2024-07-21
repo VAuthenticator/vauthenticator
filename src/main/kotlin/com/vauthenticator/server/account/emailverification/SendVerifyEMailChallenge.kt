@@ -6,7 +6,7 @@ import com.vauthenticator.server.email.EMailSenderService
 import com.vauthenticator.server.mfa.domain.MfaMethod
 import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollment
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
-import com.vauthenticator.server.ticket.VerificationTicket
+import com.vauthenticator.server.ticket.TicketId
 import org.slf4j.LoggerFactory
 
 private const val LINK_KEY = "verificationEMailLink"
@@ -24,7 +24,13 @@ class SendVerifyEMailChallenge(
         accountRepository.accountFor(email)
             .map { account ->
                 val verificationTicket =
-                    mfaMethodsEnrollment.enroll(account, MfaMethod.EMAIL_MFA_METHOD, ClientAppId.empty(), false)
+                    mfaMethodsEnrollment.enroll(
+                        account,
+                        MfaMethod.EMAIL_MFA_METHOD,
+                        account.email,
+                        ClientAppId.empty(),
+                        false
+                    )
                 val mailContext = mailContextFrom(verificationTicket)
                 mailVerificationMailSender.sendFor(account, mailContext)
             }.orElseThrow {
@@ -33,8 +39,8 @@ class SendVerifyEMailChallenge(
             }
     }
 
-    private fun mailContextFrom(verificationTicket: VerificationTicket): Map<String, String> {
-        val verificationLink = "$frontChannelBaseUrl/email-verify/${verificationTicket.content}"
+    private fun mailContextFrom(ticketId: TicketId): Map<String, String> {
+        val verificationLink = "$frontChannelBaseUrl/email-verify/${ticketId.content}"
         return mapOf(LINK_KEY to verificationLink)
     }
 

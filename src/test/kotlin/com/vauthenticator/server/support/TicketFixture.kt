@@ -1,9 +1,9 @@
 package com.vauthenticator.server.support
 
 import com.vauthenticator.server.ticket.Ticket
-import com.vauthenticator.server.ticket.VerificationTicket
+import com.vauthenticator.server.ticket.TicketId
 
 object TicketFixture {
     fun ticketFor(verificationTicketValue: String, mail: String, clientAppId: String) =
-            Ticket(VerificationTicket(verificationTicketValue), mail, clientAppId, 200)
+            Ticket(TicketId(verificationTicketValue), mail, clientAppId, 200)
 }

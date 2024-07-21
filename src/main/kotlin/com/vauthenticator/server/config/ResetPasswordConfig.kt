@@ -10,8 +10,8 @@ import com.vauthenticator.server.password.PasswordPolicy
 import com.vauthenticator.server.password.VAuthenticatorPasswordEncoder
 import com.vauthenticator.server.password.resetpassword.ResetAccountPassword
 import com.vauthenticator.server.password.resetpassword.SendResetPasswordMailChallenge
+import com.vauthenticator.server.ticket.TicketCreator
 import com.vauthenticator.server.ticket.TicketRepository
-import com.vauthenticator.server.ticket.VerificationTicketFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -24,13 +24,13 @@ class ResetPasswordConfig {
     fun sendResetPasswordMailChallenge(
         accountRepository: AccountRepository,
         clientApplicationRepository: ClientApplicationRepository,
-        verificationTicketFactory: VerificationTicketFactory,
+        ticketCreator: TicketCreator,
         resetPasswordMailSender: EMailSenderService,
         @Value("\${vauthenticator.host}") frontChannelBaseUrl: String
     ) =
         SendResetPasswordMailChallenge(
             accountRepository,
-            verificationTicketFactory,
+            ticketCreator,
             resetPasswordMailSender,
             frontChannelBaseUrl
         )

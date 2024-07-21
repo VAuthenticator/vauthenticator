@@ -10,7 +10,7 @@ import com.vauthenticator.server.role.PermissionValidator
 import com.vauthenticator.server.support.EMAIL
 import com.vauthenticator.server.support.SecurityFixture.principalFor
 import com.vauthenticator.server.support.VAUTHENTICATOR_ADMIN
-import com.vauthenticator.server.ticket.VerificationTicket
+import com.vauthenticator.server.ticket.TicketId
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -100,7 +100,7 @@ internal class ResetPasswordEndPointTest {
         val request = ResetPasswordRequest("A_NEW_PSWD")
         val ticket = "A_TICKET"
 
-        every { resetAccountPassword.resetPasswordFromMailChallenge(VerificationTicket(ticket), request) } just runs
+        every { resetAccountPassword.resetPasswordFromMailChallenge(TicketId(ticket), request) } just runs
         mokMvc.perform(
             put("/api/reset-password/{ticket}", ticket)
                 .contentType(MediaType.APPLICATION_JSON)

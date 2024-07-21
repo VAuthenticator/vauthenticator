@@ -8,8 +8,8 @@ import com.vauthenticator.server.password.VAuthenticatorPasswordEncoder
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import com.vauthenticator.server.support.TicketFixture
 import com.vauthenticator.server.ticket.InvalidTicketException
+import com.vauthenticator.server.ticket.TicketId
 import com.vauthenticator.server.ticket.TicketRepository
-import com.vauthenticator.server.ticket.VerificationTicket
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -52,30 +52,30 @@ internal class ResetAccountPasswordTest {
         val anAccount = anAccount()
         val email = anAccount.email
 
-        val verificationTicket = VerificationTicket("A_TICKET")
-        val ticket = TicketFixture.ticketFor(verificationTicket.content, email, "")
+        val ticketId = TicketId("A_TICKET")
+        val ticket = TicketFixture.ticketFor(ticketId.content, email, "")
 
         every { passwordPolicy.accept(email,"NEW_PSWD") } just runs
-        every { ticketRepository.loadFor(verificationTicket) } returns Optional.of(ticket)
-        every { ticketRepository.delete(verificationTicket) } just runs
+        every { ticketRepository.loadFor(ticketId) } returns Optional.of(ticket)
+        every { ticketRepository.delete(ticketId) } just runs
         every { accountRepository.accountFor(email) } returns Optional.of(anAccount)
         every { accountRepository.save(anAccount.copy(password = "NEW_PSWD")) } just runs
         every { vAuthenticatorPasswordEncoder.encode("NEW_PSWD") } returns "NEW_PSWD"
         every { eventsDispatcher.dispatch(any<ResetPasswordEvent>()) } just runs
 
-        underTest.resetPasswordFromMailChallenge(verificationTicket, ResetPasswordRequest("NEW_PSWD"))
+        underTest.resetPasswordFromMailChallenge(ticketId, ResetPasswordRequest("NEW_PSWD"))
     }
 
     @Test
     internal fun `when a ticket was revoked`() {
-        val verificationTicket = VerificationTicket("A_TICKET")
+        val ticketId = TicketId("A_TICKET")
 
         every { passwordPolicy.accept("A_USERNAME", "NEW_PSWD") } just runs
-        every { ticketRepository.loadFor(verificationTicket) } returns Optional.empty()
+        every { ticketRepository.loadFor(ticketId) } returns Optional.empty()
 
         assertThrows(InvalidTicketException::class.java) {
             underTest.resetPasswordFromMailChallenge(
-                verificationTicket,
+                ticketId,
                 ResetPasswordRequest("NEW_PSWD")
             )
         }

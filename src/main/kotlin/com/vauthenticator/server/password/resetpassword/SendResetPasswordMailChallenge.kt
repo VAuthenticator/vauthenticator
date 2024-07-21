@@ -3,11 +3,11 @@ package com.vauthenticator.server.password.resetpassword
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.email.EMailSenderService
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
-import com.vauthenticator.server.ticket.VerificationTicketFactory
+import com.vauthenticator.server.ticket.TicketCreator
 
 class SendResetPasswordMailChallenge(
     private val accountRepository: AccountRepository,
-    private val ticketFactory: VerificationTicketFactory,
+    private val ticketFactory: TicketCreator,
     private val emailSenderService: EMailSenderService,
     private val frontChannelBaseUrl: String
 ) {

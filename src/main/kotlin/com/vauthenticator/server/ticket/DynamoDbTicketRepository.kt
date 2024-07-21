@@ -21,9 +21,9 @@ class DynamoDbTicketRepository(
                 .tableName(tableName)
                 .item(
                     mapOf(
-                        "ticket" to ticket.verificationTicket.content.asDynamoAttribute(),
+                        "ticket" to ticket.ticketId.content.asDynamoAttribute(),
                         "ttl" to (ticket.ttl).asDynamoAttribute(),
-                        "email" to ticket.email.asDynamoAttribute(),
+                        "email" to ticket.userName.asDynamoAttribute(),
                         "client_application_id" to ticket.clientAppId.asDynamoAttribute()
                     )
                 )
@@ -32,19 +32,19 @@ class DynamoDbTicketRepository(
     }
 
 
-    override fun loadFor(verificationTicket: VerificationTicket): Optional<Ticket> {
+    override fun loadFor(ticketId: TicketId): Optional<Ticket> {
         return Optional.ofNullable(
             dynamoDbClient.getItem(
                 GetItemRequest.builder()
                     .tableName(tableName)
-                    .key(mapOf("ticket" to verificationTicket.content.asDynamoAttribute()))
+                    .key(mapOf("ticket" to ticketId.content.asDynamoAttribute()))
                     .build()
             ).item()
         )
             .flatMap { it.filterEmptyMetadata() }
             .map {
                 Ticket(
-                    VerificationTicket(it.valueAsStringFor("ticket")),
+                    TicketId(it.valueAsStringFor("ticket")),
                     it.valueAsStringFor("email"),
                     it.valueAsStringFor("client_application_id"),
                     it.valueAsLongFor("ttl")
@@ -52,11 +52,11 @@ class DynamoDbTicketRepository(
             }
     }
 
-    override fun delete(verificationTicket: VerificationTicket) {
+    override fun delete(ticketId: TicketId) {
         dynamoDbClient.deleteItem(
             DeleteItemRequest.builder()
                 .tableName(tableName)
-                .key(mapOf("ticket" to verificationTicket.content.asDynamoAttribute()))
+                .key(mapOf("ticket" to ticketId.content.asDynamoAttribute()))
                 .build()
         )
     }

@@ -5,8 +5,8 @@ import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.mfa.domain.MfaMethod
 import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollmentAssociation
 import com.vauthenticator.server.ticket.InvalidTicketException
+import com.vauthenticator.server.ticket.TicketId
 import com.vauthenticator.server.ticket.TicketRepository
-import com.vauthenticator.server.ticket.VerificationTicket
 
 class VerifyEMailChallenge(
     private val ticketRepository: TicketRepository,
@@ -15,10 +15,10 @@ class VerifyEMailChallenge(
 ) {
 
     fun verifyMail(ticket: String) {
-        ticketRepository.loadFor(VerificationTicket(ticket))
+        ticketRepository.loadFor(TicketId(ticket))
             .map {
                 mfaMethodsEnrollmentAssociation.associate(ticket, MfaMethod.EMAIL_MFA_METHOD)
-                enableAccountFrom(it.email)
+                enableAccountFrom(it.userName)
             }
             .orElseThrow { throw InvalidTicketException("The ticket $ticket is not a valid ticket, it seems to be expired") }
     }

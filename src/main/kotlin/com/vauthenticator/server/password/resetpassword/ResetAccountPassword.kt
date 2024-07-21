@@ -10,8 +10,8 @@ import com.vauthenticator.server.password.PasswordPolicy
 import com.vauthenticator.server.password.VAuthenticatorPasswordEncoder
 import com.vauthenticator.server.ticket.InvalidTicketException
 import com.vauthenticator.server.ticket.Ticket
+import com.vauthenticator.server.ticket.TicketId
 import com.vauthenticator.server.ticket.TicketRepository
-import com.vauthenticator.server.ticket.VerificationTicket
 import java.time.Instant
 import java.util.*
 
@@ -22,26 +22,26 @@ class ResetAccountPassword(
     private val passwordPolicy: PasswordPolicy,
     private val ticketRepository: TicketRepository
 ) {
-    fun resetPasswordFromMailChallenge(verificationTicket: VerificationTicket, request: ResetPasswordRequest) {
-        ticketRepository.loadFor(verificationTicket).map {
-            passwordPolicy.accept(it.email, request.newPassword)
+    fun resetPasswordFromMailChallenge(ticketId: TicketId, request: ResetPasswordRequest) {
+        ticketRepository.loadFor(ticketId).map {
+            passwordPolicy.accept(it.userName, request.newPassword)
             val encodedNewPassword = vAuthenticatorPasswordEncoder.encode(request.newPassword)
             passwordResetFor(it, request.copy(newPassword = encodedNewPassword))
-            ticketRepository.delete(verificationTicket)
+            ticketRepository.delete(ticketId)
             eventsDispatcher.dispatch(
                 ResetPasswordEvent(
-                    Email(it.email),
+                    Email(it.userName),
                     ClientAppId.empty(),
                     Instant.now(),
                     Password(encodedNewPassword)
                 )
             )
         }
-            .orElseThrow { throw InvalidTicketException("The ticket ${verificationTicket.content} is not a valid ticket it seems to be used or expired") }
+            .orElseThrow { throw InvalidTicketException("The ticket ${ticketId.content} is not a valid ticket it seems to be used or expired") }
     }
 
     private fun passwordResetFor(it: Ticket, request: ResetPasswordRequest): Optional<Unit> =
-        accountRepository.accountFor(it.email).map {
+        accountRepository.accountFor(it.userName).map {
             val newAccount = it.copy(password = request.newPassword)
             accountRepository.save(newAccount)
         }

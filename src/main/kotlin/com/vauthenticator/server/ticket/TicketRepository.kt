@@ -4,7 +4,7 @@ import java.util.*
 
 interface TicketRepository {
     fun store(ticket: Ticket)
-    fun loadFor(verificationTicket: VerificationTicket): Optional<Ticket>
-    fun delete(verificationTicket: VerificationTicket)
+    fun loadFor(ticketId: TicketId): Optional<Ticket>
+    fun delete(ticketId: TicketId)
 }
 

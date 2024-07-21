@@ -2,8 +2,8 @@ package com.vauthenticator.server.mfa.domain
 
 import com.vauthenticator.server.clientapp.ClientAppFixture.aClientAppId
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
-import com.vauthenticator.server.ticket.VerificationTicket
-import com.vauthenticator.server.ticket.VerificationTicketFactory
+import com.vauthenticator.server.ticket.TicketCreator
+import com.vauthenticator.server.ticket.TicketId
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -18,7 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 class MfaMethodsEnrollmentTest {
 
     @MockK
-    private lateinit var verificationTicketFactory: VerificationTicketFactory
+    private lateinit var ticketCreator: TicketCreator
 
     @MockK
     private lateinit var mfaSender: OtpMfaSender
@@ -28,7 +28,7 @@ class MfaMethodsEnrollmentTest {
     fun `when the enrolment do not send the verification code together the verification ticket`() {
 
         val uut = MfaMethodsEnrollment(
-            verificationTicketFactory,
+            ticketCreator,
             mfaSender,
         )
 
@@ -37,21 +37,21 @@ class MfaMethodsEnrollmentTest {
         val clientAppId = aClientAppId()
 
 
-        val verificationTicket = VerificationTicket("A_TICKET")
+        val ticketId = TicketId("A_TICKET")
 
-        every { verificationTicketFactory.createTicketFor(account, clientAppId) } returns verificationTicket
-        val actual = uut.enroll(account, MfaMethod.EMAIL_MFA_METHOD, clientAppId, false)
+        every { ticketCreator.createTicketFor(account, clientAppId) } returns ticketId
+        val actual = uut.enroll(account, MfaMethod.EMAIL_MFA_METHOD,account.email, clientAppId, false)
 
-        verify { verificationTicketFactory.createTicketFor(account, clientAppId) }
+        verify { ticketCreator.createTicketFor(account, clientAppId) }
 
-        assertEquals(verificationTicket, actual)
+        assertEquals(ticketId, actual)
     }
 
     @Test
     fun `when the enrolment send the verification code together the verification ticket`() {
 
         val uut = MfaMethodsEnrollment(
-            verificationTicketFactory,
+            ticketCreator,
             mfaSender,
         )
 
@@ -60,16 +60,16 @@ class MfaMethodsEnrollmentTest {
         val clientAppId = aClientAppId()
 
 
-        val verificationTicket = VerificationTicket("A_TICKET")
+        val ticketId = TicketId("A_TICKET")
 
-        every { verificationTicketFactory.createTicketFor(account, clientAppId) } returns verificationTicket
+        every { ticketCreator.createTicketFor(account, clientAppId) } returns ticketId
         every { mfaSender.sendMfaChallenge(account.email) } just runs
 
-        val actual = uut.enroll(account, MfaMethod.EMAIL_MFA_METHOD, clientAppId, true)
+        val actual = uut.enroll(account, MfaMethod.EMAIL_MFA_METHOD,account.email, clientAppId, true)
 
-        verify { verificationTicketFactory.createTicketFor(account, clientAppId) }
+        verify { ticketCreator.createTicketFor(account, clientAppId) }
         verify { mfaSender.sendMfaChallenge(account.email) }
 
-        assertEquals(verificationTicket, actual)
+        assertEquals(ticketId, actual)
     }
 }
