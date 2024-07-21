@@ -1,7 +1,5 @@
-package com.vauthenticator.server.mfa.repository
+package com.vauthenticator.server.ticket
 
-import com.vauthenticator.server.mfa.domain.Ticket
-import com.vauthenticator.server.mfa.domain.VerificationTicket
 import java.util.*
 
 interface TicketRepository {

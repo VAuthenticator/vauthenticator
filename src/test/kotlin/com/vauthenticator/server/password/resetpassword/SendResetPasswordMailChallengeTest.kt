@@ -2,10 +2,10 @@ package com.vauthenticator.server.password.resetpassword
 
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.email.EMailSenderService
-import com.vauthenticator.server.mfa.domain.VerificationTicket
-import com.vauthenticator.server.mfa.domain.VerificationTicketFactory
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
+import com.vauthenticator.server.ticket.VerificationTicket
+import com.vauthenticator.server.ticket.VerificationTicketFactory
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension

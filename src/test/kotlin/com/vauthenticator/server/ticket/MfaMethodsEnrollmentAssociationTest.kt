@@ -1,8 +1,10 @@
-package com.vauthenticator.server.mfa.domain
+package com.vauthenticator.server.ticket
 
 import com.vauthenticator.server.keys.Kid
+import com.vauthenticator.server.mfa.domain.MfaAccountMethod
+import com.vauthenticator.server.mfa.domain.MfaMethod
+import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollmentAssociation
 import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
-import com.vauthenticator.server.mfa.repository.TicketRepository
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import com.vauthenticator.server.support.TicketFixture

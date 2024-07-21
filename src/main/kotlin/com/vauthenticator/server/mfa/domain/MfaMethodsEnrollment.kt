@@ -2,8 +2,8 @@ package com.vauthenticator.server.mfa.domain
 
 import com.vauthenticator.server.account.Account
 import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
-import com.vauthenticator.server.mfa.repository.TicketRepository
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
+import com.vauthenticator.server.ticket.*
 
 class MfaMethodsEnrollmentAssociation(
     private val ticketRepository: TicketRepository,
@@ -33,7 +33,7 @@ class MfaMethodsEnrollmentAssociation(
 
 class MfaMethodsEnrollment(
     private val verificationTicketFactory: VerificationTicketFactory,
-    private val mfaAccountMethodsRepository: MfaAccountMethodsRepository
+    mfaSender: OtpMfaSender,
 ) {
 
     fun enroll(

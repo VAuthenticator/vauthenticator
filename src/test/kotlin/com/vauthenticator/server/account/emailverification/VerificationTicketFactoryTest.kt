@@ -1,14 +1,14 @@
 package com.vauthenticator.server.account.emailverification
 
 import com.vauthenticator.server.clientapp.A_CLIENT_APP_ID
-import com.vauthenticator.server.mfa.domain.VerificationTicket
-import com.vauthenticator.server.mfa.domain.VerificationTicketFactory
-import com.vauthenticator.server.mfa.domain.VerificationTicketFeatures
-import com.vauthenticator.server.mfa.repository.TicketRepository
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import com.vauthenticator.server.support.EMAIL
 import com.vauthenticator.server.support.TicketFixture.ticketFor
+import com.vauthenticator.server.ticket.TicketRepository
+import com.vauthenticator.server.ticket.VerificationTicket
+import com.vauthenticator.server.ticket.VerificationTicketFactory
+import com.vauthenticator.server.ticket.VerificationTicketFeatures
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension

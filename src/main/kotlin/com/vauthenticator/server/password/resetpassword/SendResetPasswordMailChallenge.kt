@@ -2,8 +2,8 @@ package com.vauthenticator.server.password.resetpassword
 
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.email.EMailSenderService
-import com.vauthenticator.server.mfa.domain.VerificationTicketFactory
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
+import com.vauthenticator.server.ticket.VerificationTicketFactory
 
 class SendResetPasswordMailChallenge(
     private val accountRepository: AccountRepository,

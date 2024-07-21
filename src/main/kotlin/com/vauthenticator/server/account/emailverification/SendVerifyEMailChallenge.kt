@@ -5,8 +5,8 @@ import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.email.EMailSenderService
 import com.vauthenticator.server.mfa.domain.MfaMethod
 import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollment
-import com.vauthenticator.server.mfa.domain.VerificationTicket
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
+import com.vauthenticator.server.ticket.VerificationTicket
 import org.slf4j.LoggerFactory
 
 private const val LINK_KEY = "verificationEMailLink"

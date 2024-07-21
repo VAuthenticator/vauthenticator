@@ -1,12 +1,13 @@
-package com.vauthenticator.server.mfa.domain
+package com.vauthenticator.server.ticket
 
 import com.vauthenticator.server.account.Account
 import com.vauthenticator.server.extentions.expirationTimeStampInSecondFromNow
-import com.vauthenticator.server.mfa.repository.TicketRepository
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import java.time.Clock
 
-// todo create and store ticket is a SRP violation.. it should be decoupled
+/*
+* This domain class create a new verification ticket storing the associated information in the database
+* */
 class VerificationTicketFactory(
     private val ticketGenerator: () -> String,
     private val clock: Clock,

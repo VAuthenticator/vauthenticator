@@ -1,11 +1,9 @@
-package com.vauthenticator.server.mfa.repository
+package com.vauthenticator.server.ticket
 
 import com.vauthenticator.server.extentions.asDynamoAttribute
 import com.vauthenticator.server.extentions.filterEmptyMetadata
 import com.vauthenticator.server.extentions.valueAsLongFor
 import com.vauthenticator.server.extentions.valueAsStringFor
-import com.vauthenticator.server.mfa.domain.Ticket
-import com.vauthenticator.server.mfa.domain.VerificationTicket
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest

@@ -3,13 +3,13 @@ package com.vauthenticator.server.password.resetpassword
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.events.ResetPasswordEvent
 import com.vauthenticator.server.events.VAuthenticatorEventsDispatcher
-import com.vauthenticator.server.mfa.domain.InvalidTicketException
-import com.vauthenticator.server.mfa.domain.VerificationTicket
-import com.vauthenticator.server.mfa.repository.TicketRepository
 import com.vauthenticator.server.password.PasswordPolicy
 import com.vauthenticator.server.password.VAuthenticatorPasswordEncoder
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import com.vauthenticator.server.support.TicketFixture
+import com.vauthenticator.server.ticket.InvalidTicketException
+import com.vauthenticator.server.ticket.TicketRepository
+import com.vauthenticator.server.ticket.VerificationTicket
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension

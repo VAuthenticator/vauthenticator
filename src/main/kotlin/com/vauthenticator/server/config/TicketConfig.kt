@@ -1,9 +1,9 @@
 package com.vauthenticator.server.config
 
-import com.vauthenticator.server.mfa.domain.VerificationTicketFactory
-import com.vauthenticator.server.mfa.domain.VerificationTicketFeatures
-import com.vauthenticator.server.mfa.repository.DynamoDbTicketRepository
-import com.vauthenticator.server.mfa.repository.TicketRepository
+import com.vauthenticator.server.ticket.DynamoDbTicketRepository
+import com.vauthenticator.server.ticket.TicketRepository
+import com.vauthenticator.server.ticket.VerificationTicketFactory
+import com.vauthenticator.server.ticket.VerificationTicketFeatures
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

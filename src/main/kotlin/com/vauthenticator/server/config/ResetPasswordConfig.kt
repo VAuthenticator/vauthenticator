@@ -5,13 +5,13 @@ import com.vauthenticator.document.repository.DocumentRepository
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.email.*
 import com.vauthenticator.server.events.VAuthenticatorEventsDispatcher
-import com.vauthenticator.server.mfa.domain.VerificationTicketFactory
-import com.vauthenticator.server.mfa.repository.TicketRepository
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
 import com.vauthenticator.server.password.PasswordPolicy
 import com.vauthenticator.server.password.VAuthenticatorPasswordEncoder
 import com.vauthenticator.server.password.resetpassword.ResetAccountPassword
 import com.vauthenticator.server.password.resetpassword.SendResetPasswordMailChallenge
+import com.vauthenticator.server.ticket.TicketRepository
+import com.vauthenticator.server.ticket.VerificationTicketFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
