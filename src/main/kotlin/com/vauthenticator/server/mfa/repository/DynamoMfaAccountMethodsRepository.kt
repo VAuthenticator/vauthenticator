@@ -19,7 +19,7 @@ class DynamoMfaAccountMethodsRepository(
 ) : MfaAccountMethodsRepository {
 
     override fun findOne(email: String, mfaMfaMethod: MfaMethod): Optional<MfaAccountMethod> =
-        Optional.ofNullable(findAll(email).find { it.method == MfaMethod.EMAIL_MFA_METHOD })
+        Optional.ofNullable(findAll(email).find { it.method == mfaMfaMethod})
 
 
     override fun findAll(email: String): List<MfaAccountMethod> =
