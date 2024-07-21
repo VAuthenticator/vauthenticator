@@ -33,15 +33,18 @@ class MfaMethodsEnrollmentAssociation(
 
 class MfaMethodsEnrollment(
     private val verificationTicketFactory: VerificationTicketFactory,
-    mfaSender: OtpMfaSender,
+    private val mfaSender: OtpMfaSender,
 ) {
 
     fun enroll(
         account: Account,
         emailMfaMethod: MfaMethod,
         clientAppId: ClientAppId,
-        sendChallengeCode : Boolean = true
+        sendChallengeCode: Boolean = true
     ): VerificationTicket {
+        if (sendChallengeCode) {
+            mfaSender.sendMfaChallenge(account.email)
+        }
         return verificationTicketFactory.createTicketFor(account, clientAppId)
     }
 }
