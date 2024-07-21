@@ -44,7 +44,7 @@ class MfaMethodsEnrollment(
         sendChallengeCode: Boolean = true
     ): TicketId {
         if (sendChallengeCode) {
-            mfaSender.sendMfaChallenge(account.email)
+            mfaSender.sendMfaChallenge(account.email, mfaChannel)
         }
         return ticketCreator.createTicketFor(account, clientAppId)
     }

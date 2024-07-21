@@ -35,7 +35,7 @@ internal class MfaChallengeEndPointTest {
 
     @Test
     internal fun `when an mfa challenge is sent`() {
-        every { otpMfaSender.sendMfaChallenge(account.email) } just runs
+        every { otpMfaSender.sendMfaChallenge(account.email,account.email) } just runs
 
         mokMvc.perform(
             put("/api/mfa/challenge")

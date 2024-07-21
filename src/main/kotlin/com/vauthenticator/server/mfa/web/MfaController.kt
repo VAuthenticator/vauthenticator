@@ -29,7 +29,7 @@ class MfaController(
 
     @GetMapping("/mfa-challenge/send")
     fun view(authentication: Authentication): String {
-        otpMfaSender.sendMfaChallenge(authentication.name)
+        otpMfaSender.sendMfaChallenge(authentication.name, authentication.name)
         return "redirect:/mfa-challenge"
     }
 

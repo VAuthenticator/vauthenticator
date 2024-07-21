@@ -65,14 +65,15 @@ internal class MfaControllerTest {
 
     @Test
     internal fun `when an mfa challenge is sent`() {
-        every { otpMfaSender.sendMfaChallenge(account.email) } just runs
+        every { otpMfaSender.sendMfaChallenge(account.email, account.email) } just runs
 
         mokMvc.perform(
             get("/mfa-challenge/send")
                 .principal(principalFor(account.email))
         ).andExpect(redirectedUrl("/mfa-challenge"))
-        verify { otpMfaSender.sendMfaChallenge(account.email) }
+        verify { otpMfaSender.sendMfaChallenge(account.email, account.email) }
     }
+
     @Test
     internal fun `when an mfa challenge is rendered`() {
         every { i18nMessageInjector.setMessagedFor(I18nScope.MFA_PAGE, any()) } just runs

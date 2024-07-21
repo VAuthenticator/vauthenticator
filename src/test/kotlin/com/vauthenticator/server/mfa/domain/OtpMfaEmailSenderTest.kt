@@ -34,8 +34,13 @@ internal class OtpMfaEmailSenderTest {
         every { accountRepository.accountFor(account.email) } returns Optional.of(account)
         every { otp.generateSecretKeyFor(account) } returns mfaSecret
         every { otp.getTOTPCode(mfaSecret) } returns mfaChallenge
-        every { mfaMailSender.sendFor(account, mapOf("mfaCode" to mfaChallenge.content())) } just runs
+        every {
+            mfaMailSender.sendFor(
+                account,
+                mapOf("email" to account.email, "mfaCode" to mfaChallenge.content())
+            )
+        } just runs
 
-        underTest.sendMfaChallenge(account.email)
+        underTest.sendMfaChallenge(account.email, account.email)
     }
 }

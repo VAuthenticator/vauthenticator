@@ -10,7 +10,7 @@ class MfaChallengeEndPoint(private val otpMfaSender: OtpMfaSender) {
 
     @PutMapping("/api/mfa/challenge")
     fun sendMfaChallenge(authentication: Authentication) {
-        otpMfaSender.sendMfaChallenge(authentication.name)
+        otpMfaSender.sendMfaChallenge(authentication.name, authentication.name)
     }
 
 }

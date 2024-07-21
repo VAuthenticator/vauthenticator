@@ -29,7 +29,7 @@ class SimpleEMailMessageFactory(val from: String, val subject: String, private v
             "birthDate" to account.birthDate.map { it.iso8601FormattedDate() }.orElse(""),
             "phone" to account.phone.map { it.formattedPhone() }.orElse("")
         ) + requestContext
-        return EMailMessage(account.email, from, subject, emailType, context)
+        return EMailMessage(context["email"] as String, from, subject, emailType, context)
     }
 
 }
