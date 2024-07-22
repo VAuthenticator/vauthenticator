@@ -8,7 +8,12 @@ data class Ticket(
     val clientAppId: String,
     val ttl: Long,
     val context: TicketContext = TicketContext.empty(),
-)
+) {
+    companion object {
+        val MFA_CHANNEL_CONTEXT_KEY = "mfaChannel"
+        val MFA_METHOD_CONTEXT_KEY = "mfaMethod"
+    }
+}
 
 data class TicketContext(val content: Map<String, String>) {
 

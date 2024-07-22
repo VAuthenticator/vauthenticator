@@ -1,7 +1,6 @@
 package com.vauthenticator.server.account.emailverification
 
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.mfa.domain.MfaMethod
 import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollmentAssociation
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.support.AccountTestFixture
@@ -58,13 +57,13 @@ internal class VerifyEMailChallengeTest {
                 ClientAppId.empty().content
             )
         )
-        every { mfaMethodsEnrollmentAssociation.associate("A_TICKET", MfaMethod.EMAIL_MFA_METHOD) } just runs
+        every { mfaMethodsEnrollmentAssociation.associate("A_TICKET") } just runs
         every { accountRepository.accountFor(account.email) } returns Optional.of(account)
         every { accountRepository.save(enabledAccount) } just runs
         every { ticketRepository.delete(ticketId) } just runs
 
         underTest.verifyMail("A_TICKET")
-        verify(exactly = 1) { mfaMethodsEnrollmentAssociation.associate("A_TICKET", MfaMethod.EMAIL_MFA_METHOD) }
+        verify(exactly = 1) { mfaMethodsEnrollmentAssociation.associate("A_TICKET") }
     }
 
     @Test
@@ -80,7 +79,7 @@ internal class VerifyEMailChallengeTest {
             )
         )
         every { accountRepository.accountFor(account.email) } returns Optional.empty()
-        every { mfaMethodsEnrollmentAssociation.associate("A_TICKET", MfaMethod.EMAIL_MFA_METHOD) } just runs
+        every { mfaMethodsEnrollmentAssociation.associate("A_TICKET") } just runs
 
         assertThrows(InvalidTicketException::class.java) { underTest.verifyMail("A_TICKET") }
     }

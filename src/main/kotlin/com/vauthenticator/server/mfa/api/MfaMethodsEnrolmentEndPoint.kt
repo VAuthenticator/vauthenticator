@@ -35,10 +35,6 @@ class MfaEnrolmentAssociationEndPoint(
         )
 
 
-    /*
-    * /api/mfa/enrollment -> enrollmentId
-    *
-    * */
     @PostMapping("/api/mfa/enrollment")
     fun enrollMfa(authentication: Authentication, enrolling: MfaEnrollingDevice) {
         TODO("will return ticket to enroll")

@@ -4,19 +4,20 @@ import com.vauthenticator.server.account.Account
 import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.ticket.*
+import com.vauthenticator.server.ticket.Ticket.Companion.MFA_CHANNEL_CONTEXT_KEY
+import com.vauthenticator.server.ticket.Ticket.Companion.MFA_METHOD_CONTEXT_KEY
 
 class MfaMethodsEnrollmentAssociation(
     private val ticketRepository: TicketRepository,
     private val mfaAccountMethodsRepository: MfaAccountMethodsRepository
 ) {
 
-    //todo mfaMethod: MfaMethod can be encoded in the ticket itself
-    //todo ticket can be an higher abstraction like RawTicket
-    fun associate(ticket: String, mfaMethod: MfaMethod) {
+    fun associate(ticket: String) {
         ticketRepository.loadFor(TicketId(ticket))
             .map { ticket ->
                 val email = ticket.userName
                 val mfaAccountMethods = mfaAccountMethodsRepository.findAll(email)
+                val mfaMethod = MfaMethod.valueOf(ticket.context.content[MFA_METHOD_CONTEXT_KEY]!!)
                 if (!mfaAccountMethods.any { it.method == mfaMethod }) {
                     mfaAccountMethodsRepository.save(email, mfaMethod)
                 }
@@ -51,8 +52,8 @@ class MfaMethodsEnrollment(
             clientAppId,
             TicketContext(
                 mapOf(
-                    "mfaChannel" to mfaChannel,
-                    "mfaMethod" to mfaMethod.name
+                    MFA_CHANNEL_CONTEXT_KEY to mfaChannel,
+                    MFA_METHOD_CONTEXT_KEY to mfaMethod.name
                 )
             )
         )

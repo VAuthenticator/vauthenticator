@@ -61,7 +61,7 @@ class MfaMethodsEnrollmentAssociationTest {
         every { ticketRepository.delete(ticket.ticketId) } just runs
 
 
-        underTest.associate(RAW_TICKET, MfaMethod.EMAIL_MFA_METHOD)
+        underTest.associate(RAW_TICKET)
 
         verify { ticketRepository.loadFor(ticketId) }
         verify { mfaAccountMethodsRepository.findAll(email) }
@@ -77,7 +77,7 @@ class MfaMethodsEnrollmentAssociationTest {
         every { mfaAccountMethodsRepository.findAll(email) } returns listOf(mfaAccountMethod)
         every { ticketRepository.delete(ticket.ticketId) } just runs
 
-        underTest.associate(RAW_TICKET, MfaMethod.EMAIL_MFA_METHOD)
+        underTest.associate(RAW_TICKET)
 
         verify { ticketRepository.loadFor(ticketId) }
         verify { mfaAccountMethodsRepository.findAll(email) }
