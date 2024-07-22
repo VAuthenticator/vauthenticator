@@ -2,6 +2,7 @@ package com.vauthenticator.server.mfa.domain
 
 import com.vauthenticator.server.clientapp.ClientAppFixture.aClientAppId
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
+import com.vauthenticator.server.support.TicketFixture.ticketContext
 import com.vauthenticator.server.ticket.TicketCreator
 import com.vauthenticator.server.ticket.TicketId
 import io.mockk.every
@@ -39,10 +40,13 @@ class MfaMethodsEnrollmentTest {
 
         val ticketId = TicketId("A_TICKET")
 
-        every { ticketCreator.createTicketFor(account, clientAppId) } returns ticketId
-        val actual = uut.enroll(account, MfaMethod.EMAIL_MFA_METHOD,account.email, clientAppId, false)
-
-        verify { ticketCreator.createTicketFor(account, clientAppId) }
+        every { ticketCreator.createTicketFor(account, clientAppId, ticketContext(account.email)) } returns ticketId
+        val actual = uut.enroll(account, MfaMethod.EMAIL_MFA_METHOD, account.email, clientAppId, false)
+        verify {
+            ticketCreator.createTicketFor(
+                account, clientAppId, ticketContext(account.email)
+            )
+        }
 
         assertEquals(ticketId, actual)
     }
@@ -62,13 +66,13 @@ class MfaMethodsEnrollmentTest {
 
         val ticketId = TicketId("A_TICKET")
 
-        every { ticketCreator.createTicketFor(account, clientAppId) } returns ticketId
-        every { mfaSender.sendMfaChallenge(account.email,account.email) } just runs
+        every { ticketCreator.createTicketFor(account, clientAppId, ticketContext(account.email)) } returns ticketId
+        every { mfaSender.sendMfaChallenge(account.email, account.email) } just runs
 
-        val actual = uut.enroll(account, MfaMethod.EMAIL_MFA_METHOD,account.email, clientAppId, true)
+        val actual = uut.enroll(account, MfaMethod.EMAIL_MFA_METHOD, account.email, clientAppId, true)
 
-        verify { ticketCreator.createTicketFor(account, clientAppId) }
-        verify { mfaSender.sendMfaChallenge(account.email,account.email) }
+        verify { ticketCreator.createTicketFor(account, clientAppId, ticketContext(account.email)) }
+        verify { mfaSender.sendMfaChallenge(account.email, account.email) }
 
         assertEquals(ticketId, actual)
     }

@@ -6,6 +6,6 @@ import java.util.*
 
 
 fun HttpServletRequest.oauth2ClientId(): Optional<ClientAppId> {
-    return Optional.ofNullable((this.getParameter("client_id") as String?)).map { ClientAppId(it) }
+    return Optional.ofNullable(this.getParameter("client_id")).map { ClientAppId(it) }
 
 }

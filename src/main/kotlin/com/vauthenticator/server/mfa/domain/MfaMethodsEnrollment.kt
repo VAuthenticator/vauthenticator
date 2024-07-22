@@ -38,7 +38,7 @@ class MfaMethodsEnrollment(
 
     fun enroll(
         account: Account,
-        emailMfaMethod: MfaMethod,
+        mfaMethod: MfaMethod,
         mfaChannel: String,
         clientAppId: ClientAppId,
         sendChallengeCode: Boolean = true
@@ -46,6 +46,15 @@ class MfaMethodsEnrollment(
         if (sendChallengeCode) {
             mfaSender.sendMfaChallenge(account.email, mfaChannel)
         }
-        return ticketCreator.createTicketFor(account, clientAppId)
+        return ticketCreator.createTicketFor(
+            account,
+            clientAppId,
+            TicketContext(
+                mapOf(
+                    "mfaChannel" to mfaChannel,
+                    "mfaMethod" to mfaMethod.name
+                )
+            )
+        )
     }
 }

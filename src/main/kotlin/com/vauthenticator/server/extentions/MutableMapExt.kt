@@ -6,7 +6,7 @@ import java.util.*
 fun MutableMap<String, AttributeValue>.valueAsStringFor(key: String): String =
     this[key]?.s()!!
 
-fun MutableMap<String, AttributeValue>.valueAsStringFor(key: String, default : String): String =
+fun MutableMap<String, AttributeValue>.valueAsStringFor(key: String, default: String): String =
     Optional.ofNullable(this[key]).map { this[key]?.s()!! }.orElse(default)
 
 fun MutableMap<String, AttributeValue>.valuesAsListOfStringFor(key: String): List<String> =

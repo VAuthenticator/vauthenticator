@@ -4,6 +4,7 @@ import com.vauthenticator.server.clientapp.A_CLIENT_APP_ID
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import com.vauthenticator.server.support.EMAIL
+import com.vauthenticator.server.support.TicketFixture.ticketContext
 import com.vauthenticator.server.support.TicketFixture.ticketFor
 import com.vauthenticator.server.ticket.TicketCreator
 import com.vauthenticator.server.ticket.TicketFeatures
@@ -55,7 +56,7 @@ internal class TicketIdFactoryTest {
         every { ticketRepository.store(ticket) } just runs
 
         val expected = TicketId(ticketGenerator.invoke())
-        val actual = underTest.createTicketFor(account, ClientAppId(A_CLIENT_APP_ID))
+        val actual = underTest.createTicketFor(account, ClientAppId(A_CLIENT_APP_ID), ticketContext(account.email))
 
         assertEquals(expected, actual)
     }

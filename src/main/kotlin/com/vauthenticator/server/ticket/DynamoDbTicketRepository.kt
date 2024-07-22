@@ -1,9 +1,6 @@
 package com.vauthenticator.server.ticket
 
-import com.vauthenticator.server.extentions.asDynamoAttribute
-import com.vauthenticator.server.extentions.filterEmptyMetadata
-import com.vauthenticator.server.extentions.valueAsLongFor
-import com.vauthenticator.server.extentions.valueAsStringFor
+import com.vauthenticator.server.extentions.*
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
@@ -23,8 +20,9 @@ class DynamoDbTicketRepository(
                     mapOf(
                         "ticket" to ticket.ticketId.content.asDynamoAttribute(),
                         "ttl" to (ticket.ttl).asDynamoAttribute(),
-                        "email" to ticket.userName.asDynamoAttribute(),
-                        "client_application_id" to ticket.clientAppId.asDynamoAttribute()
+                        "user_name" to ticket.userName.asDynamoAttribute(),
+                        "client_application_id" to ticket.clientAppId.asDynamoAttribute(),
+                        "context" to ticket.context.content.asDynamoAttribute()
                     )
                 )
                 .build()
@@ -45,9 +43,10 @@ class DynamoDbTicketRepository(
             .map {
                 Ticket(
                     TicketId(it.valueAsStringFor("ticket")),
-                    it.valueAsStringFor("email"),
+                    it.valueAsStringFor("user_name"),
                     it.valueAsStringFor("client_application_id"),
-                    it.valueAsLongFor("ttl")
+                    it.valueAsLongFor("ttl"),
+                    TicketContext(it.valueAsMapFor("context"))
                 )
             }
     }
