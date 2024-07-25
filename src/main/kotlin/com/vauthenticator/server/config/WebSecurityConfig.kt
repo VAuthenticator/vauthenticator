@@ -139,7 +139,7 @@ class WebSecurityConfig(
                     .hasAnyAuthority(Scope.KEY_EDITOR.content)
 
                     .requestMatchers("/api/**")
-                    .hasAnyAuthority(adminRole)
+                    .authenticated()
             }
 
         return http.build()

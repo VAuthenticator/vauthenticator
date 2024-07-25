@@ -29,7 +29,8 @@ class MfaMethodsEnrollmentAssociationTest {
     private val mfaAccountMethod = MfaAccountMethod(
         email,
         Kid(""),
-        MfaMethod.EMAIL_MFA_METHOD
+        MfaMethod.EMAIL_MFA_METHOD,
+        email
     )
     private val ticket = TicketFixture.ticketFor(
         RAW_TICKET,
@@ -57,15 +58,15 @@ class MfaMethodsEnrollmentAssociationTest {
             ticket
         )
         every { mfaAccountMethodsRepository.findAll(email) } returns emptyList()
-        every { mfaAccountMethodsRepository.save(email, MfaMethod.EMAIL_MFA_METHOD) } returns mfaAccountMethod
+        every { mfaAccountMethodsRepository.save(email, MfaMethod.EMAIL_MFA_METHOD,email) } returns mfaAccountMethod
         every { ticketRepository.delete(ticket.ticketId) } just runs
 
 
-        underTest.associate(RAW_TICKET)
+        underTest.associate(RAW_TICKET, associationRequest.code)
 
         verify { ticketRepository.loadFor(ticketId) }
         verify { mfaAccountMethodsRepository.findAll(email) }
-        verify { mfaAccountMethodsRepository.save(email, MfaMethod.EMAIL_MFA_METHOD) }
+        verify { mfaAccountMethodsRepository.save(email, MfaMethod.EMAIL_MFA_METHOD,email) }
         verify { ticketRepository.delete(ticket.ticketId) }
     }
 
@@ -77,11 +78,11 @@ class MfaMethodsEnrollmentAssociationTest {
         every { mfaAccountMethodsRepository.findAll(email) } returns listOf(mfaAccountMethod)
         every { ticketRepository.delete(ticket.ticketId) } just runs
 
-        underTest.associate(RAW_TICKET)
+        underTest.associate(RAW_TICKET, associationRequest.code)
 
         verify { ticketRepository.loadFor(ticketId) }
         verify { mfaAccountMethodsRepository.findAll(email) }
-        verify(exactly = 0) { mfaAccountMethodsRepository.save(email, MfaMethod.EMAIL_MFA_METHOD) }
+        verify(exactly = 0) { mfaAccountMethodsRepository.save(email, MfaMethod.EMAIL_MFA_METHOD, email) }
         verify { ticketRepository.delete(ticket.ticketId) }
     }
 }

@@ -22,7 +22,7 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
 {
-  "email": "admin123@email.com",
+  "email": "user1@email.com",
   "password": "secret!",
   "firstName": "Admin",
   "lastName": "",
@@ -44,4 +44,49 @@ Authorization: Bearer {{auth_token}}
 
 {
   "email": "admin2@email.com"
+}
+
+
+### sign up a new account
+
+PUT {{host}}/api/client-applications/user-introspection
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "clientAppName": "user-introspection",
+  "secret": "s#cr#t!@#",
+  "withPkce": "false",
+  "storePassword": "true",
+  "scopes": ["openid", "email", "profile"],
+  "authorizedGrantTypes": ["authorization_code"],
+  "webServerRedirectUri": "http://user-introspection.com:7070/login/oauth2/code/client",
+  "accessTokenValidity": "360",
+  "refreshTokenValidity": "360",
+  "postLogoutRedirectUri": "http://user-introspection.com:7070",
+  "logoutUri": "http://user-introspection.com:7070"
+}
+
+
+### enroll new email
+
+POST {{host}}/api/mfa/enrollment
+Content-Type: application/json
+Authorization: Bearer eyJraWQiOiJkYTFiNzAwMS05NjlkLTQyNzQtYTM5Yy0wYTI2ZjMzODg2NmIiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJhZG1pbkBlbWFpbC5jb20iLCJhdWQiOiJ1c2VyLWludHJvc3BlY3Rpb24iLCJuYmYiOjE3MjE4OTM1NDIsInVzZXJfbmFtZSI6ImFkbWluQGVtYWlsLmNvbSIsInNjb3BlIjpbIm9wZW5pZCIsImVtYWlsIiwicHJvZmlsZSJdLCJpc3MiOiJodHRwOi8vbG9jYWwuYXBpLnZhdXRoZW50aWNhdG9yLmNvbTo5MDkwIiwiZXhwIjoxNzIxODkzOTAyLCJpYXQiOjE3MjE4OTM1NDIsImp0aSI6ImU2ZDYyMWQzLTJjZmUtNDE1ZC04NGM4LTE0NjEwNGNiZTM2NiIsImF1dGhvcml0aWVzIjpbIlJPTEVfVVNFUiIsIlZBVVRIRU5USUNBVE9SX0FETUlOIl19.zwd43a7ZZvBizh4ebW6r36aQRmhSj8oHt21HRScGU2mHn0mOR1OEHMhw-0QPRwW75XfcwhpnLk05k9C2VDd-Nx4d_GZn13qgmnTFK-BPBxm620hbWR3arW8sXYSMzDZTZDGQRPDCUBqJigDS51hVZfyA5LvoFdzfbOQsyKXvd-ZDgjfBNFJSt20V9GlS11gqX_Vd9hSSecPONOdLzJbtVZb9iYwc8pb7VCmI47C9WVf4B40xto6uPfPkMGRI1P055HCQoVW6mFwru_N3BZenIl0Mypb-TdLmQatifPQMNFkdozdlhY6v5VQklxqf5l-MH7pDledow3JULAG1ed-cyQ
+
+{
+  "mfaMethod": "EMAIL_MFA_METHOD",
+  "mfaChannel" : "admin11@email.com"
+}
+
+
+### associate new email
+
+POST {{host}}/api/mfa/associate?ticket=
+Content-Type: application/json
+Authorization: Bearer eyJraWQiOiJkYTFiNzAwMS05NjlkLTQyNzQtYTM5Yy0wYTI2ZjMzODg2NmIiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJhZG1pbkBlbWFpbC5jb20iLCJhdWQiOiJ1c2VyLWludHJvc3BlY3Rpb24iLCJuYmYiOjE3MjE4OTM1NDIsInVzZXJfbmFtZSI6ImFkbWluQGVtYWlsLmNvbSIsInNjb3BlIjpbIm9wZW5pZCIsImVtYWlsIiwicHJvZmlsZSJdLCJpc3MiOiJodHRwOi8vbG9jYWwuYXBpLnZhdXRoZW50aWNhdG9yLmNvbTo5MDkwIiwiZXhwIjoxNzIxODkzOTAyLCJpYXQiOjE3MjE4OTM1NDIsImp0aSI6ImU2ZDYyMWQzLTJjZmUtNDE1ZC04NGM4LTE0NjEwNGNiZTM2NiIsImF1dGhvcml0aWVzIjpbIlJPTEVfVVNFUiIsIlZBVVRIRU5USUNBVE9SX0FETUlOIl19.zwd43a7ZZvBizh4ebW6r36aQRmhSj8oHt21HRScGU2mHn0mOR1OEHMhw-0QPRwW75XfcwhpnLk05k9C2VDd-Nx4d_GZn13qgmnTFK-BPBxm620hbWR3arW8sXYSMzDZTZDGQRPDCUBqJigDS51hVZfyA5LvoFdzfbOQsyKXvd-ZDgjfBNFJSt20V9GlS11gqX_Vd9hSSecPONOdLzJbtVZb9iYwc8pb7VCmI47C9WVf4B40xto6uPfPkMGRI1P055HCQoVW6mFwru_N3BZenIl0Mypb-TdLmQatifPQMNFkdozdlhY6v5VQklxqf5l-MH7pDledow3JULAG1ed-cyQ
+
+{
+  "mfaMethod": "EMAIL_MFA_METHOD",
+  "mfaChannel" : "admin11@email.com"
 }

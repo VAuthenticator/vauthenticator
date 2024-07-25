@@ -10,6 +10,7 @@ import com.vauthenticator.server.mfa.OtpConfigurationProperties
 import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
 import org.apache.commons.codec.binary.Hex
 
+//todo the interface has to take in account the enrolled method
 interface OtpMfa {
     fun generateSecretKeyFor(account: Account): MfaSecret
     fun getTOTPCode(secretKey: MfaSecret): MfaChallenge
@@ -27,7 +28,9 @@ class TaimosOtpMfa(
 
     // todo to be improved
     override fun generateSecretKeyFor(account: Account): MfaSecret {
-        val mfatMethod =mfaAccountMethodsRepository.findOne(account.email,MfaMethod.EMAIL_MFA_METHOD).orElseGet { null }
+        //todo
+        val mfatMethod =
+            mfaAccountMethodsRepository.findOne(account.email, MfaMethod.EMAIL_MFA_METHOD, "todo").orElseGet { null }
         val encryptedSecret = keyRepository.keyFor(mfatMethod.key, KeyPurpose.MFA)
         val decryptKeyAsByteArray = keyDecrypter.decryptKey(encryptedSecret.dataKey.encryptedPrivateKeyAsString())
         val decryptedKey = Hex.encodeHexString(decoder.decode(decryptKeyAsByteArray))

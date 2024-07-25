@@ -18,14 +18,21 @@ class DynamoMfaAccountMethodsRepository(
     private val masterKid: MasterKid
 ) : MfaAccountMethodsRepository {
 
-    override fun findOne(email: String, mfaMfaMethod: MfaMethod): Optional<MfaAccountMethod> =
-        Optional.ofNullable(findAll(email).find { it.method == mfaMfaMethod})
+    override fun findOne(
+        userName: String,
+        mfaMfaMethod: MfaMethod,
+        mfaChannel: String
+    ): Optional<MfaAccountMethod> =
+        Optional.ofNullable(findAll(userName).find { it.method == mfaMfaMethod })
 
 
-    override fun findAll(email: String): List<MfaAccountMethod> =
-        getFromDynamo(email).map {
+    override fun findAll(userName: String): List<MfaAccountMethod> =
+        getFromDynamo(userName).map {
             MfaAccountMethod(
-                email, Kid(it.valueAsStringFor("key_id")), valueOf(it.valueAsStringFor("mfa_method"))
+                userName,
+                Kid(it.valueAsStringFor("key_id")),
+                valueOf(it.valueAsStringFor("mfa_method")),
+                it.valueAsStringFor("mfa_channel")
             )
         }
 
@@ -34,20 +41,22 @@ class DynamoMfaAccountMethodsRepository(
             .expressionAttributeValues(mapOf(":email" to email.asDynamoAttribute())).build()
     ).items()
 
-    override fun save(email: String, mfaMfaMethod: MfaMethod): MfaAccountMethod {
+    override fun save(userName: String, mfaMfaMethod: MfaMethod, mfaChannel: String): MfaAccountMethod {
         val kid = keyRepository.createKeyFrom(masterKid, KeyType.SYMMETRIC, KeyPurpose.MFA)
-        storeOnDynamo(email, mfaMfaMethod, kid)
-        return MfaAccountMethod(email, kid, mfaMfaMethod)
+        storeOnDynamo(userName, mfaMfaMethod,mfaChannel, kid)
+        return MfaAccountMethod(userName, kid, mfaMfaMethod, mfaChannel)
     }
 
     private fun storeOnDynamo(
-        email: String, mfaMfaMethod: MfaMethod, kid: Kid
+        userName: String, mfaMfaMethod: MfaMethod,mfaChannel:String, kid: Kid
     ) {
         dynamoDbClient.putItem(
             PutItemRequest.builder().tableName(tableName).item(
                 mapOf(
-                    "user_name" to email.asDynamoAttribute(),
+                    "user_name" to userName.asDynamoAttribute(),
+                    "user_name" to userName.asDynamoAttribute(),
                     "mfa_method" to mfaMfaMethod.name.asDynamoAttribute(),
+                    "mfa_channel" to mfaChannel.asDynamoAttribute(),
                     "key_id" to kid.content().asDynamoAttribute()
                 )
             ).build()

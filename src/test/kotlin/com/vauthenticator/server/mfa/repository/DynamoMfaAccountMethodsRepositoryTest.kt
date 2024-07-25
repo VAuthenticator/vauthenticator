@@ -42,10 +42,10 @@ class DynamoMfaAccountMethodsRepositoryTest {
     fun `when a mfa account method is stored`() {
         every { keyRepository.createKeyFrom(masterKid, KeyType.SYMMETRIC, KeyPurpose.MFA) } returns Kid("")
 
-        underTest.save(email, MfaMethod.EMAIL_MFA_METHOD)
+        underTest.save(email, MfaMethod.EMAIL_MFA_METHOD, email)
         val mfaAccountMethods = underTest.findAll(email)
         assertEquals(
-            listOf(MfaAccountMethod(email, Kid(""), MfaMethod.EMAIL_MFA_METHOD)),
+            listOf(MfaAccountMethod(email, Kid(""), MfaMethod.EMAIL_MFA_METHOD, email)),
             mfaAccountMethods
         )
     }
@@ -55,18 +55,22 @@ class DynamoMfaAccountMethodsRepositoryTest {
         val mfaAccountMethods = underTest.findAll(email)
         assertEquals(emptyList<MfaAccountMethod>(), mfaAccountMethods)
     }
+
     @Test
     fun `when try to get one specific enrolment association`() {
         every { keyRepository.createKeyFrom(masterKid, KeyType.SYMMETRIC, KeyPurpose.MFA) } returns Kid("")
 
-        underTest.save(email, MfaMethod.EMAIL_MFA_METHOD)
-        val mfaAccountMethods = underTest.findOne(email,MfaMethod.EMAIL_MFA_METHOD )
-        assertEquals(Optional.of(MfaAccountMethod(email, Kid(""), MfaMethod.EMAIL_MFA_METHOD)), mfaAccountMethods)
+        underTest.save(email, MfaMethod.EMAIL_MFA_METHOD, email)
+        val mfaAccountMethods = underTest.findOne(email, MfaMethod.EMAIL_MFA_METHOD, email)
+        assertEquals(
+            Optional.of(MfaAccountMethod(email, Kid(""), MfaMethod.EMAIL_MFA_METHOD, email)),
+            mfaAccountMethods
+        )
     }
 
     @Test
     fun `when one specific enrolment association is not found`() {
-        val mfaAccountMethods = underTest.findOne(email,MfaMethod.EMAIL_MFA_METHOD )
+        val mfaAccountMethods = underTest.findOne(email, MfaMethod.EMAIL_MFA_METHOD,email)
         val expected = Optional.empty<Any>()
         assertEquals(expected, mfaAccountMethods)
     }

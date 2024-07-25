@@ -140,7 +140,7 @@ object DynamoDbUtils {
                         .keyType(KeyType.HASH)
                         .build(),
                     KeySchemaElement.builder()
-                        .attributeName("mfa_method")
+                        .attributeName("mfa_channel")
                         .keyType(KeyType.RANGE)
                         .build()
                 )
@@ -150,7 +150,7 @@ object DynamoDbUtils {
                         .attributeType(ScalarAttributeType.S)
                         .build(),
                     AttributeDefinition.builder()
-                        .attributeName("mfa_method")
+                        .attributeName("mfa_channel")
                         .attributeType(ScalarAttributeType.S)
                         .build()
                 )

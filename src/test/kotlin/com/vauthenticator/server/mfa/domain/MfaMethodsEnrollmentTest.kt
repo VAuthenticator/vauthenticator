@@ -1,6 +1,7 @@
 package com.vauthenticator.server.mfa.domain
 
 import com.vauthenticator.server.clientapp.ClientAppFixture.aClientAppId
+import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import com.vauthenticator.server.support.TicketFixture.ticketContext
 import com.vauthenticator.server.ticket.TicketCreator
@@ -12,6 +13,7 @@ import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
 import junit.framework.TestCase.assertEquals
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -24,16 +26,22 @@ class MfaMethodsEnrollmentTest {
     @MockK
     private lateinit var mfaSender: OtpMfaSender
 
+    @MockK
+    private lateinit var mfaAccountMethodsRepository: MfaAccountMethodsRepository
+
+    private lateinit var uut: MfaMethodsEnrollment
+
+    @BeforeEach
+    fun setUp() {
+        uut = MfaMethodsEnrollment(
+            ticketCreator,
+            mfaSender,
+            mfaAccountMethodsRepository
+        )
+    }
 
     @Test
     fun `when the enrolment do not send the verification code together the verification ticket`() {
-
-        val uut = MfaMethodsEnrollment(
-            ticketCreator,
-            mfaSender,
-        )
-
-
         val account = anAccount()
         val clientAppId = aClientAppId()
 
@@ -53,13 +61,6 @@ class MfaMethodsEnrollmentTest {
 
     @Test
     fun `when the enrolment send the verification code together the verification ticket`() {
-
-        val uut = MfaMethodsEnrollment(
-            ticketCreator,
-            mfaSender,
-        )
-
-
         val account = anAccount()
         val clientAppId = aClientAppId()
 

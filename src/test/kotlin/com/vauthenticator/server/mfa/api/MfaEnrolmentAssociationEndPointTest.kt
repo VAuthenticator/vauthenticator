@@ -1,9 +1,12 @@
 package com.vauthenticator.server.mfa.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.mask.SensitiveEmailMasker
 import com.vauthenticator.server.mfa.domain.EmailMfaDevice
 import com.vauthenticator.server.mfa.domain.MfaMethod.EMAIL_MFA_METHOD
+import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollment
+import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollmentAssociation
 import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
 import com.vauthenticator.server.support.AccountTestFixture
 import com.vauthenticator.server.support.MfaFixture.accountMfaAssociatedMfaMethods
@@ -33,12 +36,24 @@ class MfaEnrolmentAssociationEndPointTest {
     @MockK
     private lateinit var mfaAccountMethodsRepository: MfaAccountMethodsRepository
 
+    @MockK
+    private lateinit var mfaMethodsEnrollment: MfaMethodsEnrollment
+
+    @MockK
+    private lateinit var accountRepository: AccountRepository
+
+    @MockK
+    private lateinit var mfaMethodsEnrolmentAssociation: MfaMethodsEnrollmentAssociation
+
     @BeforeEach
     internal fun setUp() {
         mokMvc = MockMvcBuilders.standaloneSetup(
             MfaEnrolmentAssociationEndPoint(
                 sensitiveEmailMasker,
-                mfaAccountMethodsRepository
+                mfaAccountMethodsRepository,
+                mfaMethodsEnrollment,
+                accountRepository,
+                mfaMethodsEnrolmentAssociation
             )
         ).build()
     }

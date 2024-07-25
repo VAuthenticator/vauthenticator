@@ -51,7 +51,8 @@ class MfaConfig {
     fun mfaMethodsEnrollment(
         mfaSender : OtpMfaSender,
         ticketCreator: TicketCreator,
-    ) = MfaMethodsEnrollment(ticketCreator, mfaSender)
+        mfaAccountMethodsRepository: MfaAccountMethodsRepository
+    ) = MfaMethodsEnrollment(ticketCreator, mfaSender, mfaAccountMethodsRepository)
 
     @Bean
     fun otpMfa(

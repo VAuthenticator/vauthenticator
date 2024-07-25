@@ -12,18 +12,10 @@ class MfaMethodsEnrollmentAssociation(
     private val mfaAccountMethodsRepository: MfaAccountMethodsRepository
 ) {
 
-    fun associate(ticket: String) {
+    fun associate(ticket: kotlin.String, code: kotlin.String) {
         ticketRepository.loadFor(TicketId(ticket))
             .map { ticket ->
-                val email = ticket.userName
-                val mfaAccountMethods = mfaAccountMethodsRepository.findAll(email)
-                val mfaMethod = MfaMethod.valueOf(ticket.context.content[MFA_METHOD_CONTEXT_KEY]!!)
-                if (!mfaAccountMethods.any { it.method == mfaMethod }) {
-                    mfaAccountMethodsRepository.save(email, mfaMethod)
-                }
-
                 revoke(ticket)
-                ticket.userName
             }
             .orElseThrow { throw InvalidTicketException("The ticket $ticket is not a valid ticket, it seems to be expired") }
     }
@@ -35,6 +27,7 @@ class MfaMethodsEnrollmentAssociation(
 class MfaMethodsEnrollment(
     private val ticketCreator: TicketCreator,
     private val mfaSender: OtpMfaSender,
+    private val mfaAccountMethodsRepository: MfaAccountMethodsRepository
 ) {
 
     //TODO to be improved ..... better to take the user_name instead of the account itself
@@ -45,8 +38,14 @@ class MfaMethodsEnrollment(
         clientAppId: ClientAppId,
         sendChallengeCode: Boolean = true
     ): TicketId {
+        val email = account.email
+
+        val mfaAccountMethods = mfaAccountMethodsRepository.findAll(email)
+        if (!mfaAccountMethods.any { it.method == mfaMethod }) {
+            mfaAccountMethodsRepository.save(email, mfaMethod, mfaChannel)
+        }
         if (sendChallengeCode) {
-            mfaSender.sendMfaChallenge(account.email, mfaChannel)
+            mfaSender.sendMfaChallenge(email, mfaChannel)
         }
         return ticketCreator.createTicketFor(
             account,
