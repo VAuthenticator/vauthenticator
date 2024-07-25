@@ -6,6 +6,8 @@ import com.vauthenticator.server.email.EMailSenderService
 import com.vauthenticator.server.mfa.domain.MfaMethod
 import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollment
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
+import com.vauthenticator.server.ticket.Ticket
+import com.vauthenticator.server.ticket.Ticket.Companion.MFA_AUTO_ASSOCIATION_CONTEXT_VALUE
 import com.vauthenticator.server.ticket.TicketId
 import org.slf4j.LoggerFactory
 
@@ -20,24 +22,23 @@ class SendVerifyEMailChallenge(
 
     private val logger = LoggerFactory.getLogger(SendVerifyEMailChallenge::class.java)
 
-    fun sendVerifyMail(email: String) {
-        accountRepository.accountFor(email)
-            .map { account ->
-                val verificationTicket =
-                    mfaMethodsEnrollment.enroll(
-                        account,
-                        MfaMethod.EMAIL_MFA_METHOD,
-                        account.email,
-                        ClientAppId.empty(),
-                        false
-                    )
-                val mailContext = mailContextFrom(verificationTicket)
-                mailVerificationMailSender.sendFor(account, mailContext)
-            }.orElseThrow {
-                logger.warn("account not found")
-                AccountNotFoundException("account not found")
-            }
-    }
+    fun sendVerifyMail(email: String): Unit = accountRepository.accountFor(email)
+        .map { account ->
+            val verificationTicket =
+                mfaMethodsEnrollment.enroll(
+                    account,
+                    MfaMethod.EMAIL_MFA_METHOD,
+                    account.email,
+                    ClientAppId.empty(),
+                    false,
+                    mapOf(Ticket.MFA_AUTO_ASSOCIATION_CONTEXT_KEY to MFA_AUTO_ASSOCIATION_CONTEXT_VALUE)
+                )
+            val mailContext = mailContextFrom(verificationTicket)
+            mailVerificationMailSender.sendFor(account, mailContext)
+        }.orElseThrow {
+            logger.warn("account not found")
+            AccountNotFoundException("account not found")
+        }
 
     private fun mailContextFrom(ticketId: TicketId): Map<String, String> {
         val verificationLink = "$frontChannelBaseUrl/email-verify/${ticketId.content}"

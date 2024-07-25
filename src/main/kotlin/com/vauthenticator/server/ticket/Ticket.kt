@@ -10,8 +10,10 @@ data class Ticket(
     val context: TicketContext = TicketContext.empty(),
 ) {
     companion object {
-        val MFA_CHANNEL_CONTEXT_KEY = "mfaChannel"
-        val MFA_METHOD_CONTEXT_KEY = "mfaMethod"
+        const val MFA_CHANNEL_CONTEXT_KEY = "mfaChannel"
+        const val MFA_METHOD_CONTEXT_KEY = "mfaMethod"
+        const val MFA_AUTO_ASSOCIATION_CONTEXT_KEY = "auto-association"
+        const val MFA_AUTO_ASSOCIATION_CONTEXT_VALUE = "true"
     }
 }
 

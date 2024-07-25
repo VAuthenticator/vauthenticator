@@ -4,17 +4,32 @@ import com.vauthenticator.server.account.Account
 import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.ticket.*
+import com.vauthenticator.server.ticket.Ticket.Companion.MFA_AUTO_ASSOCIATION_CONTEXT_KEY
+import com.vauthenticator.server.ticket.Ticket.Companion.MFA_AUTO_ASSOCIATION_CONTEXT_VALUE
 import com.vauthenticator.server.ticket.Ticket.Companion.MFA_CHANNEL_CONTEXT_KEY
 import com.vauthenticator.server.ticket.Ticket.Companion.MFA_METHOD_CONTEXT_KEY
 
 class MfaMethodsEnrollmentAssociation(
     private val ticketRepository: TicketRepository,
-    private val mfaAccountMethodsRepository: MfaAccountMethodsRepository
+    private val mfaAccountMethodsRepository: MfaAccountMethodsRepository,
+    private val otpMfaVerifier: OtpMfaVerifier
 ) {
 
-    fun associate(ticket: kotlin.String, code: kotlin.String) {
+    fun associate(ticket: String) {
+        associate(ticket) {
+            it.context.content[MFA_AUTO_ASSOCIATION_CONTEXT_KEY] === MFA_AUTO_ASSOCIATION_CONTEXT_VALUE
+        }
+
+    }
+
+    fun associate(ticket: String, code: String) {
+        associate(ticket) { otpMfaVerifier.verifyMfaChallengeFor(it.userName, MfaChallenge(code)) }
+    }
+
+    private fun associate(ticket: String, verifier: (ticket: Ticket) -> Unit) {
         ticketRepository.loadFor(TicketId(ticket))
             .map { ticket ->
+                verifier.invoke(ticket)
                 revoke(ticket)
             }
             .orElseThrow { throw InvalidTicketException("The ticket $ticket is not a valid ticket, it seems to be expired") }
@@ -36,7 +51,8 @@ class MfaMethodsEnrollment(
         mfaMethod: MfaMethod,
         mfaChannel: String,
         clientAppId: ClientAppId,
-        sendChallengeCode: Boolean = true
+        sendChallengeCode: Boolean = true,
+        ticketContextAdditionalProperties: Map<String, String> = emptyMap()
     ): TicketId {
         val email = account.email
 
@@ -54,7 +70,7 @@ class MfaMethodsEnrollment(
                 mapOf(
                     MFA_CHANNEL_CONTEXT_KEY to mfaChannel,
                     MFA_METHOD_CONTEXT_KEY to mfaMethod.name
-                )
+                ) + ticketContextAdditionalProperties
             )
         )
     }

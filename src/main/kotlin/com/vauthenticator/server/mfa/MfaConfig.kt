@@ -43,13 +43,14 @@ class MfaConfig {
     @Bean
     fun mfaMethodsEnrolmentAssociation(
         ticketRepository: TicketRepository,
-        mfaAccountMethodsRepository: MfaAccountMethodsRepository
+        mfaAccountMethodsRepository: MfaAccountMethodsRepository,
+        otpMfaVerifier: OtpMfaVerifier
     ) =
-        MfaMethodsEnrollmentAssociation(ticketRepository, mfaAccountMethodsRepository)
+        MfaMethodsEnrollmentAssociation(ticketRepository, mfaAccountMethodsRepository, otpMfaVerifier)
 
     @Bean
     fun mfaMethodsEnrollment(
-        mfaSender : OtpMfaSender,
+        mfaSender: OtpMfaSender,
         ticketCreator: TicketCreator,
         mfaAccountMethodsRepository: MfaAccountMethodsRepository
     ) = MfaMethodsEnrollment(ticketCreator, mfaSender, mfaAccountMethodsRepository)
