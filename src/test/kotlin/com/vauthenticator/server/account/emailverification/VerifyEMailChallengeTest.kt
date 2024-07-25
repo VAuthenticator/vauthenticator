@@ -20,6 +20,9 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import java.util.*
 
+private const val RAW_TICKET = "A_TICKET"
+private const val CODE = "CODE"
+
 @ExtendWith(MockKExtension::class)
 internal class VerifyEMailChallengeTest {
 
@@ -48,7 +51,7 @@ internal class VerifyEMailChallengeTest {
     internal fun `happy path`() {
         val account = AccountTestFixture.anAccount()
         val enabledAccount = account.copy(accountNonLocked = true, enabled = true, emailVerified = true)
-        val ticketId = TicketId("A_TICKET")
+        val ticketId = TicketId(RAW_TICKET)
 
         every { ticketRepository.loadFor(ticketId) } returns Optional.of(
             TicketFixture.ticketFor(
@@ -57,19 +60,19 @@ internal class VerifyEMailChallengeTest {
                 ClientAppId.empty().content
             )
         )
-        every { mfaMethodsEnrollmentAssociation.associate("A_TICKET", associationRequest.code) } just runs
+        every { mfaMethodsEnrollmentAssociation.associate(RAW_TICKET, CODE) } just runs
         every { accountRepository.accountFor(account.email) } returns Optional.of(account)
         every { accountRepository.save(enabledAccount) } just runs
         every { ticketRepository.delete(ticketId) } just runs
 
-        underTest.verifyMail("A_TICKET")
-        verify(exactly = 1) { mfaMethodsEnrollmentAssociation.associate("A_TICKET", associationRequest.code) }
+        underTest.verifyMail(RAW_TICKET)
+        verify(exactly = 1) { mfaMethodsEnrollmentAssociation.associate(RAW_TICKET, CODE) }
     }
 
     @Test
     internal fun `when the account does not exist`() {
         val account = AccountTestFixture.anAccount()
-        val ticketId = TicketId("A_TICKET")
+        val ticketId = TicketId(RAW_TICKET)
 
         every { ticketRepository.loadFor(ticketId) } returns Optional.of(
             TicketFixture.ticketFor(
@@ -79,18 +82,18 @@ internal class VerifyEMailChallengeTest {
             )
         )
         every { accountRepository.accountFor(account.email) } returns Optional.empty()
-        every { mfaMethodsEnrollmentAssociation.associate("A_TICKET", associationRequest.code) } just runs
+        every { mfaMethodsEnrollmentAssociation.associate(RAW_TICKET, CODE) } just runs
 
-        assertThrows(InvalidTicketException::class.java) { underTest.verifyMail("A_TICKET") }
+        assertThrows(InvalidTicketException::class.java) { underTest.verifyMail(RAW_TICKET) }
     }
 
     @Test
     internal fun `when the ticket does not exist`() {
-        val ticketId = TicketId("A_TICKET")
+        val ticketId = TicketId(RAW_TICKET)
 
         every { ticketRepository.loadFor(ticketId) } returns Optional.empty()
 
-        assertThrows(InvalidTicketException::class.java) { underTest.verifyMail("A_TICKET") }
+        assertThrows(InvalidTicketException::class.java) { underTest.verifyMail(RAW_TICKET) }
     }
 
 }

@@ -4,6 +4,7 @@ import com.vauthenticator.server.keys.Kid
 import com.vauthenticator.server.mfa.domain.MfaAccountMethod
 import com.vauthenticator.server.mfa.domain.MfaMethod
 import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollmentAssociation
+import com.vauthenticator.server.mfa.domain.OtpMfaVerifier
 import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import java.util.*
 
 private const val RAW_TICKET = "A_TICKET"
+private const val CODE = "CODE"
 
 @ExtendWith(MockKExtension::class)
 class MfaMethodsEnrollmentAssociationTest {
@@ -45,11 +47,14 @@ class MfaMethodsEnrollmentAssociationTest {
     @MockK
     lateinit var mfaAccountMethodsRepository: MfaAccountMethodsRepository
 
+    @MockK
+    lateinit var otpMfaVerifier: OtpMfaVerifier
+
     lateinit var underTest: MfaMethodsEnrollmentAssociation
 
     @BeforeEach
     fun setUp() {
-        underTest = MfaMethodsEnrollmentAssociation(ticketRepository, mfaAccountMethodsRepository)
+        underTest = MfaMethodsEnrollmentAssociation(ticketRepository, mfaAccountMethodsRepository, otpMfaVerifier)
     }
 
     @Test
@@ -58,15 +63,15 @@ class MfaMethodsEnrollmentAssociationTest {
             ticket
         )
         every { mfaAccountMethodsRepository.findAll(email) } returns emptyList()
-        every { mfaAccountMethodsRepository.save(email, MfaMethod.EMAIL_MFA_METHOD,email) } returns mfaAccountMethod
+        every { mfaAccountMethodsRepository.save(email, MfaMethod.EMAIL_MFA_METHOD, email) } returns mfaAccountMethod
         every { ticketRepository.delete(ticket.ticketId) } just runs
 
 
-        underTest.associate(RAW_TICKET, associationRequest.code)
+        underTest.associate(RAW_TICKET, CODE)
 
         verify { ticketRepository.loadFor(ticketId) }
         verify { mfaAccountMethodsRepository.findAll(email) }
-        verify { mfaAccountMethodsRepository.save(email, MfaMethod.EMAIL_MFA_METHOD,email) }
+        verify { mfaAccountMethodsRepository.save(email, MfaMethod.EMAIL_MFA_METHOD, email) }
         verify { ticketRepository.delete(ticket.ticketId) }
     }
 
@@ -78,7 +83,8 @@ class MfaMethodsEnrollmentAssociationTest {
         every { mfaAccountMethodsRepository.findAll(email) } returns listOf(mfaAccountMethod)
         every { ticketRepository.delete(ticket.ticketId) } just runs
 
-        underTest.associate(RAW_TICKET, associationRequest.code)
+
+        underTest.associate(RAW_TICKET, CODE)
 
         verify { ticketRepository.loadFor(ticketId) }
         verify { mfaAccountMethodsRepository.findAll(email) }
