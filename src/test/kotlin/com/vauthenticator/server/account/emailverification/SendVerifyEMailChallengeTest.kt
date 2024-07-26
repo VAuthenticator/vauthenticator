@@ -12,6 +12,8 @@ import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.Scope
 import com.vauthenticator.server.oauth2.clientapp.Scopes
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
+import com.vauthenticator.server.ticket.Ticket
+import com.vauthenticator.server.ticket.Ticket.Companion.MFA_AUTO_ASSOCIATION_CONTEXT_VALUE
 import com.vauthenticator.server.ticket.TicketId
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -66,7 +68,8 @@ internal class SendVerifyEMailChallengeTest {
                 MfaMethod.EMAIL_MFA_METHOD,
                 account.email,
                 ClientAppId.empty(),
-                false
+                false,
+                mapOf(Ticket.MFA_AUTO_ASSOCIATION_CONTEXT_KEY to MFA_AUTO_ASSOCIATION_CONTEXT_VALUE)
             )
         } returns ticketId
         every { mailVerificationMailSender.sendFor(account, requestContext) } just runs

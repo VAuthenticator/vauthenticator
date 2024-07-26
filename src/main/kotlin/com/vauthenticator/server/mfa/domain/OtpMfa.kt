@@ -30,7 +30,7 @@ class TaimosOtpMfa(
     override fun generateSecretKeyFor(account: Account): MfaSecret {
         //todo
         val mfatMethod =
-            mfaAccountMethodsRepository.findOne(account.email, MfaMethod.EMAIL_MFA_METHOD, "todo").orElseGet { null }
+            mfaAccountMethodsRepository.findOne(account.email, MfaMethod.EMAIL_MFA_METHOD, account.email).orElseGet { null }
         val encryptedSecret = keyRepository.keyFor(mfatMethod.key, KeyPurpose.MFA)
         val decryptKeyAsByteArray = keyDecrypter.decryptKey(encryptedSecret.dataKey.encryptedPrivateKeyAsString())
         val decryptedKey = Hex.encodeHexString(decoder.decode(decryptKeyAsByteArray))

@@ -36,7 +36,6 @@ and key.master-key=`MASTER_KEY`
 
 p.s. `MASTER_KEY` is shown in the std out of the mrflick72/vauthenticator-local-tenant-installer:tag execution like below:
 
-docker build -t vauthenticator-local-tenant-installer:mfa-enrolment-of-more-email-as-mfa -f tenant-installer.Dockerfile .
 ```shell
 ....
 

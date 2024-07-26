@@ -19,7 +19,8 @@ class VerifyEMailChallenge(
                 mfaMethodsEnrollmentAssociation.associate(ticket)
                 enableAccountFrom(it.userName)
             }
-            .orElseThrow { throw InvalidTicketException("The ticket $ticket is not a valid ticket, it seems to be expired") }
+            .orElseThrow { throw InvalidTicketException("The ticket $ticket is not a valid ticket") }
+
     }
 
     private fun enableAccountFrom(email: String): Account =

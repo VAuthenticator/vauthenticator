@@ -21,7 +21,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 import java.util.*
 
 private const val RAW_TICKET = "A_TICKET"
-private const val CODE = "CODE"
 
 @ExtendWith(MockKExtension::class)
 internal class VerifyEMailChallengeTest {
@@ -60,13 +59,12 @@ internal class VerifyEMailChallengeTest {
                 ClientAppId.empty().content
             )
         )
-        every { mfaMethodsEnrollmentAssociation.associate(RAW_TICKET, CODE) } just runs
+        every { mfaMethodsEnrollmentAssociation.associate(RAW_TICKET) } just runs
         every { accountRepository.accountFor(account.email) } returns Optional.of(account)
         every { accountRepository.save(enabledAccount) } just runs
-        every { ticketRepository.delete(ticketId) } just runs
 
         underTest.verifyMail(RAW_TICKET)
-        verify(exactly = 1) { mfaMethodsEnrollmentAssociation.associate(RAW_TICKET, CODE) }
+        verify(exactly = 1) { mfaMethodsEnrollmentAssociation.associate(RAW_TICKET) }
     }
 
     @Test
@@ -82,7 +80,7 @@ internal class VerifyEMailChallengeTest {
             )
         )
         every { accountRepository.accountFor(account.email) } returns Optional.empty()
-        every { mfaMethodsEnrollmentAssociation.associate(RAW_TICKET, CODE) } just runs
+        every { mfaMethodsEnrollmentAssociation.associate(RAW_TICKET) } just runs
 
         assertThrows(InvalidTicketException::class.java) { underTest.verifyMail(RAW_TICKET) }
     }

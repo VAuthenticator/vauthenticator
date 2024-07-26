@@ -9,24 +9,32 @@ import com.vauthenticator.server.ticket.Ticket.Companion.MFA_AUTO_ASSOCIATION_CO
 import com.vauthenticator.server.ticket.Ticket.Companion.MFA_CHANNEL_CONTEXT_KEY
 import com.vauthenticator.server.ticket.Ticket.Companion.MFA_METHOD_CONTEXT_KEY
 
+typealias MfaAssociationVerifier = (ticket: Ticket) -> Unit
+
 class MfaMethodsEnrollmentAssociation(
     private val ticketRepository: TicketRepository,
     private val mfaAccountMethodsRepository: MfaAccountMethodsRepository,
     private val otpMfaVerifier: OtpMfaVerifier
 ) {
 
-    fun associate(ticket: String) {
-        associate(ticket) {
-            it.context.content[MFA_AUTO_ASSOCIATION_CONTEXT_KEY] === MFA_AUTO_ASSOCIATION_CONTEXT_VALUE
+    fun associate(ticketId: String) {
+        associate(
+            ticketId,
+        ) {
+            if(it.context.content[MFA_AUTO_ASSOCIATION_CONTEXT_KEY] != MFA_AUTO_ASSOCIATION_CONTEXT_VALUE){
+                throw InvalidTicketException("Mfa association without code is allowed only if in the ticket context there is $MFA_AUTO_ASSOCIATION_CONTEXT_KEY feature enabled")
+            }
         }
 
     }
 
-    fun associate(ticket: String, code: String) {
-        associate(ticket) { otpMfaVerifier.verifyMfaChallengeFor(it.userName, MfaChallenge(code)) }
+    fun associate(ticketId: String, code: String) {
+        associate(
+            ticketId,
+        ) { otpMfaVerifier.verifyMfaChallengeFor(it.userName, MfaChallenge(code)) }
     }
 
-    private fun associate(ticket: String, verifier: (ticket: Ticket) -> Unit) {
+    private fun associate(ticket: String, verifier: MfaAssociationVerifier) {
         ticketRepository.loadFor(TicketId(ticket))
             .map { ticket ->
                 verifier.invoke(ticket)
@@ -56,13 +64,15 @@ class MfaMethodsEnrollment(
     ): TicketId {
         val email = account.email
 
-        val mfaAccountMethods = mfaAccountMethodsRepository.findAll(email)
-        if (!mfaAccountMethods.any { it.method == mfaMethod }) {
-            mfaAccountMethodsRepository.save(email, mfaMethod, mfaChannel)
-        }
+        mfaAccountMethodsRepository.findOne(email, mfaMethod, mfaChannel)
+            .ifPresentOrElse({},
+                { mfaAccountMethodsRepository.save(email, mfaMethod, mfaChannel) }
+            )
+
         if (sendChallengeCode) {
             mfaSender.sendMfaChallenge(email, mfaChannel)
         }
+
         return ticketCreator.createTicketFor(
             account,
             clientAppId,
