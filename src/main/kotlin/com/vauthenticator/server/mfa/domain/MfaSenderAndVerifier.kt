@@ -5,11 +5,11 @@ import com.vauthenticator.server.email.EMailSenderService
 
 
 interface OtpMfaSender {
-    fun sendMfaChallenge(userName: String, challengeChannel: String)
+    fun sendMfaChallenge(userName: String, mfaMethod: MfaMethod, mfaChannel: String)
 }
 
 interface OtpMfaVerifier {
-    fun verifyMfaChallengeFor(userName: String, challenge: MfaChallenge)
+    fun verifyMfaChallengeFor(userName: String, mfaMethod: MfaMethod, mfaChannel: String, challenge: MfaChallenge)
 }
 
 class OtpMfaEmailSender(
@@ -18,11 +18,11 @@ class OtpMfaEmailSender(
     private val mfaMailSender: EMailSenderService
 ) : OtpMfaSender {
 
-    override fun sendMfaChallenge(userName: String, challengeChannel: String) {
+    override fun sendMfaChallenge(userName: String, mfaMethod: MfaMethod, mfaChannel: String) {
         val account = accountRepository.accountFor(userName).get()
-        val mfaSecret = otpMfa.generateSecretKeyFor(account)
+        val mfaSecret = otpMfa.generateSecretKeyFor(account, mfaMethod, mfaChannel)
         val mfaCode = otpMfa.getTOTPCode(mfaSecret).content()
-        mfaMailSender.sendFor(account, mapOf("email" to challengeChannel, "mfaCode" to mfaCode))
+        mfaMailSender.sendFor(account, mapOf("email" to mfaChannel, "mfaCode" to mfaCode))
     }
 }
 
@@ -30,9 +30,14 @@ class AccountAwareOtpMfaVerifier(
     private val accountRepository: AccountRepository,
     private val otpMfa: OtpMfa
 ) : OtpMfaVerifier {
-    override fun verifyMfaChallengeFor(userName: String, challenge: MfaChallenge) {
+    override fun verifyMfaChallengeFor(
+        userName: String,
+        mfaMethod: MfaMethod,
+        mfaChannel: String,
+        challenge: MfaChallenge
+    ) {
         val account = accountRepository.accountFor(userName).get()
-        otpMfa.verify(account, challenge)
+        otpMfa.verify(account, mfaMethod, mfaChannel, challenge)
     }
 
 }

@@ -10,8 +10,8 @@ import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import com.vauthenticator.server.support.TicketFixture
-import com.vauthenticator.server.ticket.Ticket.Companion.MFA_AUTO_ASSOCIATION_CONTEXT_KEY
-import com.vauthenticator.server.ticket.Ticket.Companion.MFA_AUTO_ASSOCIATION_CONTEXT_VALUE
+import com.vauthenticator.server.ticket.Ticket.Companion.MFA_SELF_ASSOCIATION_CONTEXT_KEY
+import com.vauthenticator.server.ticket.Ticket.Companion.MFA_SELF_ASSOCIATION_CONTEXT_VALUE
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -39,12 +39,12 @@ class MfaMethodsEnrollmentAssociationTest {
         email,
         Kid(""),
         EMAIL_MFA_METHOD,
-        email
+        email,
     )
     private val ticket = TicketFixture.ticketFor(
         RAW_TICKET,
         userName,
-        ClientAppId.empty().content
+        ClientAppId.empty().content,
     )
     private val ticketId = TicketId(RAW_TICKET)
 
@@ -69,7 +69,7 @@ class MfaMethodsEnrollmentAssociationTest {
         val ticketWithAutoAssociationFeatureEnabled =
             ticket.copy(
                 context = TicketContext(
-                    mapOf(MFA_AUTO_ASSOCIATION_CONTEXT_KEY to MFA_AUTO_ASSOCIATION_CONTEXT_VALUE)
+                    mapOf(MFA_SELF_ASSOCIATION_CONTEXT_KEY to MFA_SELF_ASSOCIATION_CONTEXT_VALUE)
                 )
             )
         every { ticketRepository.loadFor(ticketId) } returns of(ticketWithAutoAssociationFeatureEnabled)
@@ -84,14 +84,28 @@ class MfaMethodsEnrollmentAssociationTest {
     @Test
     fun `when mfa is associated`() {
         every { ticketRepository.loadFor(ticketId) } returns of(ticket)
-        every { otpMfaVerifier.verifyMfaChallengeFor(userName, MfaChallenge(CODE)) } just runs
+        every {
+            otpMfaVerifier.verifyMfaChallengeFor(
+                userName,
+                ticket.context.mfaMethod(),
+                ticket.context.mfaChannel(),
+                MfaChallenge(CODE)
+            )
+        } just runs
         every { ticketRepository.delete(ticket.ticketId) } just runs
 
 
         underTest.associate(RAW_TICKET, CODE)
 
         verify { ticketRepository.loadFor(ticketId) }
-        verify { otpMfaVerifier.verifyMfaChallengeFor(userName, MfaChallenge(CODE)) }
+        verify {
+            otpMfaVerifier.verifyMfaChallengeFor(
+                userName,
+                ticket.context.mfaMethod(),
+                ticket.context.mfaChannel(),
+                MfaChallenge(CODE)
+            )
+        }
         verify { ticketRepository.delete(ticket.ticketId) }
     }
 

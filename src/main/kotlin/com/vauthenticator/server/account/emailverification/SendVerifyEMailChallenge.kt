@@ -7,7 +7,7 @@ import com.vauthenticator.server.mfa.domain.MfaMethod
 import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollment
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.ticket.Ticket
-import com.vauthenticator.server.ticket.Ticket.Companion.MFA_AUTO_ASSOCIATION_CONTEXT_VALUE
+import com.vauthenticator.server.ticket.Ticket.Companion.MFA_SELF_ASSOCIATION_CONTEXT_VALUE
 import com.vauthenticator.server.ticket.TicketId
 import org.slf4j.LoggerFactory
 
@@ -31,7 +31,7 @@ class SendVerifyEMailChallenge(
                     account.email,
                     ClientAppId.empty(),
                     false,
-                    mapOf(Ticket.MFA_AUTO_ASSOCIATION_CONTEXT_KEY to MFA_AUTO_ASSOCIATION_CONTEXT_VALUE)
+                    mapOf(Ticket.MFA_SELF_ASSOCIATION_CONTEXT_KEY to MFA_SELF_ASSOCIATION_CONTEXT_VALUE)
                 )
             val mailContext = mailContextFrom(verificationTicket)
             mailVerificationMailSender.sendFor(account, mailContext)

@@ -10,7 +10,8 @@ object TicketFixture {
     fun ticketContext(email: String) = TicketContext(
         mapOf(
             "mfaChannel" to email,
-            "mfaMethod" to MfaMethod.EMAIL_MFA_METHOD.name
+            "mfaMethod" to MfaMethod.EMAIL_MFA_METHOD.name,
+            "selfAssociation" to "false"
         )
     )
 

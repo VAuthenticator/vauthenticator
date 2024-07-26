@@ -90,7 +90,7 @@ class MfaMethodsEnrollmentTest {
             )
         } returns Optional.of(emailMfaAccountMethod)
         every { ticketCreator.createTicketFor(account, clientAppId, ticketContext(emailMfaChannel)) } returns ticketId
-        every { mfaSender.sendMfaChallenge(account.email, emailMfaChannel) } just runs
+        every { mfaSender.sendMfaChallenge(account.email, EMAIL_MFA_METHOD,emailMfaChannel) } just runs
 
         val actual = uut.enroll(account, EMAIL_MFA_METHOD, emailMfaChannel, clientAppId, true)
 
@@ -102,7 +102,7 @@ class MfaMethodsEnrollmentTest {
             )
         }
         verify { ticketCreator.createTicketFor(account, clientAppId, ticketContext(emailMfaChannel)) }
-        verify { mfaSender.sendMfaChallenge(account.email, emailMfaChannel) }
+        verify { mfaSender.sendMfaChallenge(account.email, EMAIL_MFA_METHOD,emailMfaChannel) }
 
         assertEquals(ticketId, actual)
     }

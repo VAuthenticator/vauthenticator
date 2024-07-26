@@ -4,10 +4,7 @@ import com.vauthenticator.server.account.Account
 import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.ticket.*
-import com.vauthenticator.server.ticket.Ticket.Companion.MFA_AUTO_ASSOCIATION_CONTEXT_KEY
-import com.vauthenticator.server.ticket.Ticket.Companion.MFA_AUTO_ASSOCIATION_CONTEXT_VALUE
-import com.vauthenticator.server.ticket.Ticket.Companion.MFA_CHANNEL_CONTEXT_KEY
-import com.vauthenticator.server.ticket.Ticket.Companion.MFA_METHOD_CONTEXT_KEY
+import com.vauthenticator.server.ticket.Ticket.Companion.MFA_SELF_ASSOCIATION_CONTEXT_KEY
 
 typealias MfaAssociationVerifier = (ticket: Ticket) -> Unit
 
@@ -21,8 +18,8 @@ class MfaMethodsEnrollmentAssociation(
         associate(
             ticketId,
         ) {
-            if(it.context.content[MFA_AUTO_ASSOCIATION_CONTEXT_KEY] != MFA_AUTO_ASSOCIATION_CONTEXT_VALUE){
-                throw InvalidTicketException("Mfa association without code is allowed only if in the ticket context there is $MFA_AUTO_ASSOCIATION_CONTEXT_KEY feature enabled")
+            if (it.context.isMfaNotSelfAssociable()) {
+                throw InvalidTicketException("Mfa association without code is allowed only if in the ticket context there is $MFA_SELF_ASSOCIATION_CONTEXT_KEY feature enabled")
             }
         }
 
@@ -31,7 +28,14 @@ class MfaMethodsEnrollmentAssociation(
     fun associate(ticketId: String, code: String) {
         associate(
             ticketId,
-        ) { otpMfaVerifier.verifyMfaChallengeFor(it.userName, MfaChallenge(code)) }
+        ) {
+            otpMfaVerifier.verifyMfaChallengeFor(
+                it.userName,
+                it.context.mfaMethod(),
+                it.context.mfaChannel(),
+                MfaChallenge(code)
+            )
+        }
     }
 
     private fun associate(ticket: String, verifier: MfaAssociationVerifier) {
@@ -70,17 +74,16 @@ class MfaMethodsEnrollment(
             )
 
         if (sendChallengeCode) {
-            mfaSender.sendMfaChallenge(email, mfaChannel)
+            mfaSender.sendMfaChallenge(email, mfaMethod, mfaChannel)
         }
 
         return ticketCreator.createTicketFor(
             account,
             clientAppId,
-            TicketContext(
-                mapOf(
-                    MFA_CHANNEL_CONTEXT_KEY to mfaChannel,
-                    MFA_METHOD_CONTEXT_KEY to mfaMethod.name
-                ) + ticketContextAdditionalProperties
+            TicketContext.mfaContextFor(
+                mfaMethod = mfaMethod,
+                mfaChannel = mfaChannel,
+                ticketContextAdditionalProperties = ticketContextAdditionalProperties
             )
         )
     }

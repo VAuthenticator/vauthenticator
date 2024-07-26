@@ -29,7 +29,7 @@ class MfaController(
 
     @GetMapping("/mfa-challenge/send")
     fun view(authentication: Authentication): String {
-        otpMfaSender.sendMfaChallenge(authentication.name, authentication.name)
+        otpMfaSender.sendMfaChallenge(authentication.name, MfaMethod.EMAIL_MFA_METHOD, authentication.name)
         return "redirect:/mfa-challenge"
     }
 
@@ -48,13 +48,15 @@ class MfaController(
     @PostMapping("/mfa-challenge")
     fun processSecondFactor(
         @RequestParam("mfa-code") mfaCode: String,
+        @RequestParam("mfa-method") mfaMethod: MfaMethod,
+        @RequestParam("mfa-channel") mfaChannel: String,
         authentication: Authentication,
         request: HttpServletRequest,
         response: HttpServletResponse
     ) {
         try {
-            otpMfaVerifier.verifyMfaChallengeFor(authentication.name, MfaChallenge(mfaCode))
-            publisher.publishEvent(MfaSuccessEvent( authentication))
+            otpMfaVerifier.verifyMfaChallengeFor(authentication.name, mfaMethod, mfaChannel, MfaChallenge(mfaCode))
+            publisher.publishEvent(MfaSuccessEvent(authentication))
             nextHopeLoginWorkflowSuccessHandler.onAuthenticationSuccess(request, response, authentication)
         } catch (e: Exception) {
             logger.error(e.message, e)

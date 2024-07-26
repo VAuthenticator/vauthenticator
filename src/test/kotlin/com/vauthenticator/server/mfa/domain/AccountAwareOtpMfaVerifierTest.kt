@@ -28,9 +28,9 @@ internal class AccountAwareOtpMfaVerifierTest {
         val underTest = AccountAwareOtpMfaVerifier(accountRepository, otpMfa)
 
         every { accountRepository.accountFor(account.email) } returns Optional.of(account)
-        every { otpMfa.verify(account, challenge) } just runs
+        every { otpMfa.verify(account, MfaMethod.EMAIL_MFA_METHOD, account.email, challenge) } just runs
 
-        underTest.verifyMfaChallengeFor(account.email, challenge)
+        underTest.verifyMfaChallengeFor(account.email, MfaMethod.EMAIL_MFA_METHOD, account.email, challenge)
     }
 
     @Test
@@ -39,10 +39,17 @@ internal class AccountAwareOtpMfaVerifierTest {
         val challenge = MfaChallenge("AN_MFA_CHALLENGE")
 
         every { accountRepository.accountFor(account.email) } returns Optional.of(account)
-        every { otpMfa.verify(account, challenge) } throws MfaException("")
+        every { otpMfa.verify(account, MfaMethod.EMAIL_MFA_METHOD, account.email, challenge) } throws MfaException("")
 
         val underTest = AccountAwareOtpMfaVerifier(accountRepository, otpMfa)
 
-        assertThrows(MfaException::class.java) { underTest.verifyMfaChallengeFor(account.email, challenge) }
+        assertThrows(MfaException::class.java) {
+            underTest.verifyMfaChallengeFor(
+                account.email,
+                MfaMethod.EMAIL_MFA_METHOD,
+                account.email,
+                challenge
+            )
+        }
     }
 }
