@@ -8,6 +8,7 @@ import com.vauthenticator.server.mfa.domain.MfaAccountMethod
 import com.vauthenticator.server.mfa.domain.MfaMethod
 import com.vauthenticator.server.mfa.domain.MfaMethod.valueOf
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest
 import java.util.*
@@ -23,27 +24,27 @@ class DynamoMfaAccountMethodsRepository(
         userName: String,
         mfaMfaMethod: MfaMethod,
         mfaChannel: String
-    ): Optional<MfaAccountMethod> =
-        Optional.ofNullable(findAll(userName).find { it.method == mfaMfaMethod  && it.mfaChannel == mfaChannel})
+    ): Optional<MfaAccountMethod> {
+        return Optional.ofNullable(
+            getFromDynamo(userName, mfaChannel)
+                .map { MfaAccountMethodMapper.fromDynamoToDomain(userName, it) }
+                .find { it.method == mfaMfaMethod }
+        )
+    }
 
 
     override fun findAll(userName: String): List<MfaAccountMethod> =
-        getFromDynamo(userName).map {
-            MfaAccountMethod(
-                userName,
-                Kid(it.valueAsStringFor("key_id")),
-                valueOf(it.valueAsStringFor("mfa_method")),
-                it.valueAsStringFor("mfa_channel"),
-                it.valueAsBoolFor("associated")
-            )
-        }
+        getFromDynamo(userName)
+            .map { MfaAccountMethodMapper.fromDynamoToDomain(userName, it) }
 
     private fun getFromDynamo(email: String) = dynamoDbClient.query(
         QueryRequest.builder().tableName(tableName).keyConditionExpression("user_name=:email")
             .expressionAttributeValues(mapOf(":email" to email.asDynamoAttribute())).build()
     ).items()
-    private fun getFromDynamo(email: String, mfaChannel : String) = dynamoDbClient.query(
-        QueryRequest.builder().tableName(tableName).keyConditionExpression("user_name=:email AND mfa_channel=:mfaChannel")
+
+    private fun getFromDynamo(email: String, mfaChannel: String) = dynamoDbClient.query(
+        QueryRequest.builder().tableName(tableName)
+            .keyConditionExpression("user_name=:email AND mfa_channel=:mfaChannel")
             .expressionAttributeValues(
                 mapOf(
                     ":email" to email.asDynamoAttribute(),
@@ -65,7 +66,7 @@ class DynamoMfaAccountMethodsRepository(
     }
 
     private fun storeOnDynamo(
-        userName: String, mfaMfaMethod: MfaMethod, mfaChannel: String, kid: Kid, associated : Boolean
+        userName: String, mfaMfaMethod: MfaMethod, mfaChannel: String, kid: Kid, associated: Boolean
     ) {
         dynamoDbClient.putItem(
             PutItemRequest.builder().tableName(tableName).item(
@@ -81,4 +82,19 @@ class DynamoMfaAccountMethodsRepository(
         )
     }
 
+}
+
+
+object MfaAccountMethodMapper {
+    fun fromDynamoToDomain(
+        userName: String,
+        item: MutableMap<String, AttributeValue>
+    ): MfaAccountMethod =
+        MfaAccountMethod(
+            userName,
+            Kid(item.valueAsStringFor("key_id")),
+            valueOf(item.valueAsStringFor("mfa_method")),
+            item.valueAsStringFor("mfa_channel"),
+            item.valueAsBoolFor("associated")
+        )
 }

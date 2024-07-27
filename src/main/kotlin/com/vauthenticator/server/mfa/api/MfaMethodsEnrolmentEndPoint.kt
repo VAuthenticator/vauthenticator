@@ -11,7 +11,10 @@ import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.security.core.Authentication
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class MfaEnrolmentAssociationEndPoint(
@@ -47,8 +50,6 @@ class MfaEnrolmentAssociationEndPoint(
         authentication: Authentication,
         @RequestBody enrolling: MfaEnrollmentRequest
     ): ResponseEntity<String> {
-        // todo introduce validation on the expected fields 400 in case of error
-
         val ticketId = accountRepository.accountFor(authentication.name)
             .map { account ->
                 mfaMethodsEnrollment.enroll(
@@ -71,13 +72,6 @@ class MfaEnrolmentAssociationEndPoint(
         mfaMethodsEnrolmentAssociation.associate(associationRequest.ticket, associationRequest.code)
     }
 
-    @DeleteMapping("/api/mfa/enrollment/{enrollmentId}")
-    fun deleteMfaAssociation(
-        @PathVariable("enrollmentId") enrollmentId: String,
-        authentication: Authentication
-    ) {
-
-    }
 }
 
 data class MfaEnrollmentRequest(
