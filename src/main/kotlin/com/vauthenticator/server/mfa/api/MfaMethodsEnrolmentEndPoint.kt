@@ -1,13 +1,13 @@
 package com.vauthenticator.server.mfa.api
 
 import com.vauthenticator.server.account.repository.AccountRepository
+import com.vauthenticator.server.extentions.clientAppId
 import com.vauthenticator.server.mask.SensitiveEmailMasker
 import com.vauthenticator.server.mfa.domain.EmailMfaDevice
 import com.vauthenticator.server.mfa.domain.MfaMethod
 import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollment
 import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollmentAssociation
 import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
-import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.security.core.Authentication
@@ -54,7 +54,7 @@ class MfaEnrolmentAssociationEndPoint(
             authentication.name,
             enrolling.mfaMethod,
             enrolling.mfaChannel,
-            ClientAppId.empty(), //todo figure out how to detect the client app
+            authentication.clientAppId(),
             true
         )
         return ok(ticketId.content)
