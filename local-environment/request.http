@@ -22,7 +22,7 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
 {
-  "email": "user2@email.com",
+  "email": "xxx@email.com",
   "password": "secret!",
   "firstName": "Admin",
   "lastName": "",
@@ -72,11 +72,11 @@ Authorization: Bearer {{auth_token}}
 
 POST {{host}}/api/mfa/enrollment
 Content-Type: application/json
-Authorization: Bearer eyJraWQiOiJkYTFiNzAwMS05NjlkLTQyNzQtYTM5Yy0wYTI2ZjMzODg2NmIiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ1c2VyMkBlbWFpbC5jb20iLCJhdWQiOiJ1c2VyLWludHJvc3BlY3Rpb24iLCJuYmYiOjE3MjIwMTI4NzEsInVzZXJfbmFtZSI6InVzZXIyQGVtYWlsLmNvbSIsInNjb3BlIjpbIm9wZW5pZCIsImVtYWlsIiwicHJvZmlsZSJdLCJpc3MiOiJodHRwOi8vbG9jYWwuYXBpLnZhdXRoZW50aWNhdG9yLmNvbTo5MDkwIiwiZXhwIjoxNzIyMDEzMjMxLCJpYXQiOjE3MjIwMTI4NzEsImp0aSI6ImY5ODQ0ZjYyLTllZDQtNDVmOS1iODJlLWJiZGU4ZGRmNDdmZSIsImF1dGhvcml0aWVzIjpbIlJPTEVfVVNFUiIsIlZBVVRIRU5USUNBVE9SX0FETUlOIl19.f8_LjNZ60y-2vT7kxc63fL0OHVTachIWZcL3aBLhJQZeylwKGWR67ENf474jBPfVX9QqdY-rllQwPp_l0tcVtSoQGXHd-181fPFiKry9AWUZ6jfQPB3EvvTiHmtthebYvZCvgh8EvuJHDr8F1Zf_qpcUMbZgUHE_IxSjX7isWjfWI0lJDK7S7wfKtU4Q_-5dCQq6l26IpOHhE_LXwhVFoBlnGxh_VhGg1fVesVgDX9he-QQxB0LKKJkL9UIKd0BPjgLUZGTSxHhLInhU7wumbPO2Z9TB5bDayOr77ilo5eAPma8c8zUem_BGhcGi3JuiPMfUuqmjPMyYGy_E1XmblQ
+Authorization: Bearer
 
 {
   "mfaMethod": "EMAIL_MFA_METHOD",
-  "mfaChannel" : "user2_123@email.com"
+  "mfaChannel" : "xxx@email.com"
 }
 
 
@@ -84,9 +84,9 @@ Authorization: Bearer eyJraWQiOiJkYTFiNzAwMS05NjlkLTQyNzQtYTM5Yy0wYTI2ZjMzODg2Nm
 
 POST {{host}}/api/mfa/associate
 Content-Type: application/json
-Authorization: Bearer eyJraWQiOiJkYTFiNzAwMS05NjlkLTQyNzQtYTM5Yy0wYTI2ZjMzODg2NmIiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ1c2VyMkBlbWFpbC5jb20iLCJhdWQiOiJ1c2VyLWludHJvc3BlY3Rpb24iLCJuYmYiOjE3MjIwMTI4NzEsInVzZXJfbmFtZSI6InVzZXIyQGVtYWlsLmNvbSIsInNjb3BlIjpbIm9wZW5pZCIsImVtYWlsIiwicHJvZmlsZSJdLCJpc3MiOiJodHRwOi8vbG9jYWwuYXBpLnZhdXRoZW50aWNhdG9yLmNvbTo5MDkwIiwiZXhwIjoxNzIyMDEzMjMxLCJpYXQiOjE3MjIwMTI4NzEsImp0aSI6ImY5ODQ0ZjYyLTllZDQtNDVmOS1iODJlLWJiZGU4ZGRmNDdmZSIsImF1dGhvcml0aWVzIjpbIlJPTEVfVVNFUiIsIlZBVVRIRU5USUNBVE9SX0FETUlOIl19.f8_LjNZ60y-2vT7kxc63fL0OHVTachIWZcL3aBLhJQZeylwKGWR67ENf474jBPfVX9QqdY-rllQwPp_l0tcVtSoQGXHd-181fPFiKry9AWUZ6jfQPB3EvvTiHmtthebYvZCvgh8EvuJHDr8F1Zf_qpcUMbZgUHE_IxSjX7isWjfWI0lJDK7S7wfKtU4Q_-5dCQq6l26IpOHhE_LXwhVFoBlnGxh_VhGg1fVesVgDX9he-QQxB0LKKJkL9UIKd0BPjgLUZGTSxHhLInhU7wumbPO2Z9TB5bDayOr77ilo5eAPma8c8zUem_BGhcGi3JuiPMfUuqmjPMyYGy_E1XmblQ
+Authorization: Bearer
 
 {
-  "ticket": "cd6c4b8c-e136-4fec-ad2d-c1bda930dc9e",
-  "code" : "505509"
+  "ticket": "xxx",
+  "code" : "xxx"
 }
