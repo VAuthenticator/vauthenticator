@@ -24,7 +24,7 @@ class DynamoMfaAccountMethodsRepository(
         mfaMfaMethod: MfaMethod,
         mfaChannel: String
     ): Optional<MfaAccountMethod> =
-        Optional.ofNullable(findAll(userName).find { it.method == mfaMfaMethod })
+        Optional.ofNullable(findAll(userName).find { it.method == mfaMfaMethod  && it.mfaChannel == mfaChannel})
 
 
     override fun findAll(userName: String): List<MfaAccountMethod> =
@@ -41,6 +41,16 @@ class DynamoMfaAccountMethodsRepository(
     private fun getFromDynamo(email: String) = dynamoDbClient.query(
         QueryRequest.builder().tableName(tableName).keyConditionExpression("user_name=:email")
             .expressionAttributeValues(mapOf(":email" to email.asDynamoAttribute())).build()
+    ).items()
+    private fun getFromDynamo(email: String, mfaChannel : String) = dynamoDbClient.query(
+        QueryRequest.builder().tableName(tableName).keyConditionExpression("user_name=:email AND mfa_channel=:mfaChannel")
+            .expressionAttributeValues(
+                mapOf(
+                    ":email" to email.asDynamoAttribute(),
+                    ":mfaChannel" to mfaChannel.asDynamoAttribute(),
+                )
+            )
+            .build()
     ).items()
 
     override fun save(
