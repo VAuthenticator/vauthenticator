@@ -1,10 +1,12 @@
 package com.vauthenticator.server.mfa.domain
 
-import com.vauthenticator.server.account.Account
+import com.vauthenticator.server.account.AccountNotFoundException
+import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.ticket.*
 import com.vauthenticator.server.ticket.Ticket.Companion.MFA_SELF_ASSOCIATION_CONTEXT_KEY
+import org.slf4j.LoggerFactory
 
 typealias MfaAssociationVerifier = (ticket: Ticket) -> Unit
 
@@ -58,39 +60,45 @@ class MfaMethodsEnrollmentAssociation(
 }
 
 class MfaMethodsEnrollment(
+    private val accountRepository: AccountRepository,
     private val ticketCreator: TicketCreator,
     private val mfaSender: OtpMfaSender,
     private val mfaAccountMethodsRepository: MfaAccountMethodsRepository
 ) {
 
-    //TODO to be improved ..... better to take the user_name instead of the account itself
+    private val logger = LoggerFactory.getLogger(MfaMethodsEnrollment::class.java)
+
     fun enroll(
-        account: Account,
+        userName: String,
         mfaMethod: MfaMethod,
         mfaChannel: String,
         clientAppId: ClientAppId,
         sendChallengeCode: Boolean = true,
         ticketContextAdditionalProperties: Map<String, String> = emptyMap()
     ): TicketId {
-        val email = account.email
+        return accountRepository.accountFor(userName)
+            .map {
+                mfaAccountMethodsRepository.findOne(userName, mfaMethod, mfaChannel)
+                    .ifPresentOrElse({},
+                        { mfaAccountMethodsRepository.save(userName, mfaMethod, mfaChannel, false) }
+                    )
 
-        mfaAccountMethodsRepository.findOne(email, mfaMethod, mfaChannel)
-            .ifPresentOrElse({},
-                { mfaAccountMethodsRepository.save(email, mfaMethod, mfaChannel, false) }
-            )
+                if (sendChallengeCode) {
+                    mfaSender.sendMfaChallenge(userName, mfaMethod, mfaChannel)
+                }
 
-        if (sendChallengeCode) {
-            mfaSender.sendMfaChallenge(email, mfaMethod, mfaChannel)
-        }
-
-        return ticketCreator.createTicketFor(
-            account,
-            clientAppId,
-            TicketContext.mfaContextFor(
-                mfaMethod = mfaMethod,
-                mfaChannel = mfaChannel,
-                ticketContextAdditionalProperties = ticketContextAdditionalProperties
-            )
-        )
+                ticketCreator.createTicketFor(
+                    it,
+                    clientAppId,
+                    TicketContext.mfaContextFor(
+                        mfaMethod = mfaMethod,
+                        mfaChannel = mfaChannel,
+                        ticketContextAdditionalProperties = ticketContextAdditionalProperties
+                    )
+                )
+            }.orElseThrow {
+                logger.warn("account not found")
+                AccountNotFoundException("account not found")
+            }
     }
 }

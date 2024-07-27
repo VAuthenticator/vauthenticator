@@ -26,7 +26,7 @@ class SendVerifyEMailChallenge(
         .map { account ->
             val verificationTicket =
                 mfaMethodsEnrollment.enroll(
-                    account,
+                    account.email,
                     MfaMethod.EMAIL_MFA_METHOD,
                     account.email,
                     ClientAppId.empty(),

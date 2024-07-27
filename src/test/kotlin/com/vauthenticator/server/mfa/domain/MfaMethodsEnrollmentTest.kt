@@ -1,5 +1,6 @@
 package com.vauthenticator.server.mfa.domain
 
+import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.clientapp.ClientAppFixture.aClientAppId
 import com.vauthenticator.server.keys.Kid
 import com.vauthenticator.server.mfa.domain.MfaMethod.EMAIL_MFA_METHOD
@@ -29,6 +30,9 @@ class MfaMethodsEnrollmentTest {
     private lateinit var ticketCreator: TicketCreator
 
     @MockK
+    private lateinit var accountRepository: AccountRepository
+
+    @MockK
     private lateinit var mfaSender: OtpMfaSender
 
     @MockK
@@ -37,10 +41,12 @@ class MfaMethodsEnrollmentTest {
     private lateinit var uut: MfaMethodsEnrollment
 
     private val account = anAccount()
+    private val userName = account.email
+
     private val clientAppId = aClientAppId()
     private val ticketId = TicketId("A_TICKET")
     private val emailMfaAccountMethod = MfaAccountMethod(
-        account.email,
+        userName,
         Kid("A_KID"),
         EMAIL_MFA_METHOD,
         emailMfaChannel,
@@ -50,6 +56,7 @@ class MfaMethodsEnrollmentTest {
     @BeforeEach
     fun setUp() {
         uut = MfaMethodsEnrollment(
+            accountRepository,
             ticketCreator,
             mfaSender,
             mfaAccountMethodsRepository
@@ -60,22 +67,24 @@ class MfaMethodsEnrollmentTest {
     fun `when the enrolment do not send the verification code together the verification ticket`() {
         every {
             mfaAccountMethodsRepository.findOne(
-                account.email,
+                userName,
                 EMAIL_MFA_METHOD,
                 emailMfaChannel
             )
         } returns Optional.of(emailMfaAccountMethod)
+        every { accountRepository.accountFor(userName) } returns Optional.of(account)
         every { ticketCreator.createTicketFor(account, clientAppId, ticketContext(emailMfaChannel)) } returns ticketId
 
-        val actual = uut.enroll(account, EMAIL_MFA_METHOD, emailMfaChannel, clientAppId, false)
+        val actual = uut.enroll(userName, EMAIL_MFA_METHOD, emailMfaChannel, clientAppId, false)
 
         verify {
             mfaAccountMethodsRepository.findOne(
-                account.email,
+                userName,
                 EMAIL_MFA_METHOD,
                 emailMfaChannel
             )
         }
+        verify { accountRepository.accountFor(userName) }
         verify { ticketCreator.createTicketFor(account, clientAppId, ticketContext(emailMfaChannel)) }
 
         assertEquals(ticketId, actual)
@@ -85,25 +94,27 @@ class MfaMethodsEnrollmentTest {
     fun `when the enrolment send the verification code together the verification ticket`() {
         every {
             mfaAccountMethodsRepository.findOne(
-                account.email,
+                userName,
                 EMAIL_MFA_METHOD,
                 emailMfaChannel
             )
         } returns Optional.of(emailMfaAccountMethod)
+        every { accountRepository.accountFor(userName) } returns Optional.of(account)
         every { ticketCreator.createTicketFor(account, clientAppId, ticketContext(emailMfaChannel)) } returns ticketId
-        every { mfaSender.sendMfaChallenge(account.email, EMAIL_MFA_METHOD, emailMfaChannel) } just runs
+        every { mfaSender.sendMfaChallenge(userName, EMAIL_MFA_METHOD, emailMfaChannel) } just runs
 
-        val actual = uut.enroll(account, EMAIL_MFA_METHOD, emailMfaChannel, clientAppId, true)
+        val actual = uut.enroll(userName, EMAIL_MFA_METHOD, emailMfaChannel, clientAppId, true)
 
         verify {
             mfaAccountMethodsRepository.findOne(
-                account.email,
+                userName,
                 EMAIL_MFA_METHOD,
                 emailMfaChannel
             )
         }
+        verify { accountRepository.accountFor(userName) }
         verify { ticketCreator.createTicketFor(account, clientAppId, ticketContext(emailMfaChannel)) }
-        verify { mfaSender.sendMfaChallenge(account.email, EMAIL_MFA_METHOD, emailMfaChannel) }
+        verify { mfaSender.sendMfaChallenge(userName, EMAIL_MFA_METHOD, emailMfaChannel) }
 
         assertEquals(ticketId, actual)
     }

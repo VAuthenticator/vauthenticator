@@ -50,17 +50,13 @@ class MfaEnrolmentAssociationEndPoint(
         authentication: Authentication,
         @RequestBody enrolling: MfaEnrollmentRequest
     ): ResponseEntity<String> {
-        val ticketId = accountRepository.accountFor(authentication.name)
-            .map { account ->
-                mfaMethodsEnrollment.enroll(
-                    account,
-                    enrolling.mfaMethod,
-                    enrolling.mfaChannel,
-                    ClientAppId.empty(), //todo figure out how to detect the client app
-                    true
-                )
-            }.orElseThrow()
-
+        val ticketId = mfaMethodsEnrollment.enroll(
+            authentication.name,
+            enrolling.mfaMethod,
+            enrolling.mfaChannel,
+            ClientAppId.empty(), //todo figure out how to detect the client app
+            true
+        )
         return ok(ticketId.content)
     }
 

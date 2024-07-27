@@ -64,7 +64,7 @@ internal class SendVerifyEMailChallengeTest {
         every { accountRepository.accountFor(account.email) } returns Optional.of(account)
         every {
             mfaMethodsEnrollment.enroll(
-                account,
+                account.email,
                 MfaMethod.EMAIL_MFA_METHOD,
                 account.email,
                 ClientAppId.empty(),
