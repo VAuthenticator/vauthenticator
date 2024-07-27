@@ -22,11 +22,11 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
+import org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup
 import java.time.Instant
 
 @ExtendWith(MockKExtension::class)
-internal class MailVerificationEndPointTest {
+class MailVerificationEndPointTest {
     private val objectMapper = ObjectMapper()
 
     lateinit var mokMvc: MockMvc
@@ -38,18 +38,17 @@ internal class MailVerificationEndPointTest {
     lateinit var cientApplicationRepository: ClientApplicationRepository
 
     @BeforeEach
-    internal fun setUp() {
-        mokMvc = MockMvcBuilders.standaloneSetup(
+    fun setUp() {
+        mokMvc = standaloneSetup(
             MailVerificationEndPoint(
                 PermissionValidator(cientApplicationRepository),
                 sendVerifyEMailChallenge
             )
-        )
-            .build()
+        ).build()
     }
 
     @Test
-    internal fun `when a challenge is sent`() {
+    fun `when a challenge is sent`() {
         every { sendVerifyEMailChallenge.sendVerifyMail(EMAIL) } just runs
 
         val signedJWT = signedJWTFor(A_CLIENT_APP_ID, EMAIL, listOf(Scope.MAIL_VERIFY.content))
@@ -70,6 +69,49 @@ internal class MailVerificationEndPointTest {
                 .principal(principal)
         )
             .andExpect(status().isNoContent)
+    }
+
+    @Test
+    fun `when a challenge api without request body`() {
+        val signedJWT = signedJWTFor(A_CLIENT_APP_ID, EMAIL, listOf(Scope.MAIL_VERIFY.content))
+        val principal = JwtAuthenticationToken(
+            Jwt(
+                SecurityFixture.simpleJwtFor(A_CLIENT_APP_ID),
+                Instant.now(),
+                Instant.now().plusSeconds(100),
+                signedJWT.header.toJSONObject(),
+                signedJWT.payload.toJSONObject()
+            )
+        )
+
+        mokMvc.perform(
+            put("/api/verify-challenge")
+                .contentType(MediaType.APPLICATION_JSON)
+                .principal(principal)
+        )
+            .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun `when a challenge api is bad used`() {
+        val signedJWT = signedJWTFor(A_CLIENT_APP_ID, EMAIL, listOf(Scope.MAIL_VERIFY.content))
+        val principal = JwtAuthenticationToken(
+            Jwt(
+                SecurityFixture.simpleJwtFor(A_CLIENT_APP_ID),
+                Instant.now(),
+                Instant.now().plusSeconds(100),
+                signedJWT.header.toJSONObject(),
+                signedJWT.payload.toJSONObject()
+            )
+        )
+
+        mokMvc.perform(
+            put("/api/verify-challenge")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(emptyMap<String, String>()))
+                .principal(principal)
+        )
+            .andExpect(status().isBadRequest)
     }
 
 

@@ -10,7 +10,6 @@ import com.vauthenticator.server.mfa.OtpConfigurationProperties
 import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
 import org.apache.commons.codec.binary.Hex
 
-//todo the interface has to take in account the enrolled method
 interface OtpMfa {
     fun generateSecretKeyFor(account: Account, mfaMethod: MfaMethod, mfaChannel: String): MfaSecret
     fun getTOTPCode(secretKey: MfaSecret): MfaChallenge
@@ -58,7 +57,7 @@ class TaimosOtpMfa(
                     System.currentTimeMillis(),
                     tokenTimeWindow,
                     properties.length
-                );
+                )
             if (!validated) {
                 throw MfaException("Customer Code does not match with system code")
             }
