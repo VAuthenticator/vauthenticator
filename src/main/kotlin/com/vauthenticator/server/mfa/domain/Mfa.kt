@@ -37,6 +37,5 @@ data class MfaAccountMethod(
 
 class MfaException(message: String) : AuthenticationException(message)
 
-// todo
 class UnAssociatedMfaVerificationException(message: String) : AuthenticationException(message)
 class AssociatedMfaVerificationException(message: String) : AuthenticationException(message)

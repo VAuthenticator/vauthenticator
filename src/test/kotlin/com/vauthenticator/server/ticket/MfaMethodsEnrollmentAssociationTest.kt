@@ -35,7 +35,6 @@ class MfaMethodsEnrollmentAssociationTest {
     private val email = account.email
     private val userName = email
 
-    //todo
     private val mfaAccountMethod = MfaAccountMethod(
         email,
         Kid(""),
