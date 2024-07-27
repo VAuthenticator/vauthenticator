@@ -41,14 +41,19 @@ class DynamoMfaAccountMethodsRepository(
             .expressionAttributeValues(mapOf(":email" to email.asDynamoAttribute())).build()
     ).items()
 
-    override fun save(userName: String, mfaMfaMethod: MfaMethod, mfaChannel: String): MfaAccountMethod {
+    override fun save(
+        userName: String,
+        mfaMfaMethod: MfaMethod,
+        mfaChannel: String,
+        associated: Boolean
+    ): MfaAccountMethod {
         val kid = keyRepository.createKeyFrom(masterKid, KeyType.SYMMETRIC, KeyPurpose.MFA)
-        storeOnDynamo(userName, mfaMfaMethod,mfaChannel, kid)
+        storeOnDynamo(userName, mfaMfaMethod, mfaChannel, kid, associated)
         return MfaAccountMethod(userName, kid, mfaMfaMethod, mfaChannel)
     }
 
     private fun storeOnDynamo(
-        userName: String, mfaMfaMethod: MfaMethod,mfaChannel:String, kid: Kid
+        userName: String, mfaMfaMethod: MfaMethod, mfaChannel: String, kid: Kid, associated : Boolean
     ) {
         dynamoDbClient.putItem(
             PutItemRequest.builder().tableName(tableName).item(
@@ -57,7 +62,8 @@ class DynamoMfaAccountMethodsRepository(
                     "user_name" to userName.asDynamoAttribute(),
                     "mfa_method" to mfaMfaMethod.name.asDynamoAttribute(),
                     "mfa_channel" to mfaChannel.asDynamoAttribute(),
-                    "key_id" to kid.content().asDynamoAttribute()
+                    "key_id" to kid.content().asDynamoAttribute(),
+                    "associated" to associated.asDynamoAttribute()
                 )
             ).build()
         )

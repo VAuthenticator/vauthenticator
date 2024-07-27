@@ -42,6 +42,12 @@ class MfaMethodsEnrollmentAssociation(
         ticketRepository.loadFor(TicketId(ticket))
             .map { ticket ->
                 verifier.invoke(ticket)
+                mfaAccountMethodsRepository.save(
+                    ticket.userName,
+                    ticket.context.mfaMethod(),
+                    ticket.context.mfaChannel(),
+                    true
+                )
                 revoke(ticket)
             }
             .orElseThrow { throw InvalidTicketException("The ticket $ticket is not a valid ticket, it seems to be expired") }
@@ -70,7 +76,7 @@ class MfaMethodsEnrollment(
 
         mfaAccountMethodsRepository.findOne(email, mfaMethod, mfaChannel)
             .ifPresentOrElse({},
-                { mfaAccountMethodsRepository.save(email, mfaMethod, mfaChannel) }
+                { mfaAccountMethodsRepository.save(email, mfaMethod, mfaChannel, false) }
             )
 
         if (sendChallengeCode) {

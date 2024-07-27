@@ -11,6 +11,6 @@ interface MfaAccountMethodsRepository {
 //    fun findOne(userName: String, mfaChannel : String): Optional<MfaAccountMethod>
     fun findOne(userName: String, mfaMfaMethod: MfaMethod, mfaChannel : String): Optional<MfaAccountMethod>
     fun findAll(userName: String): List<MfaAccountMethod>
-    fun save(userName: String, mfaMfaMethod: MfaMethod, mfaChannel : String): MfaAccountMethod
+    fun save(userName: String, mfaMfaMethod: MfaMethod, mfaChannel : String, associated : Boolean): MfaAccountMethod
 }
 

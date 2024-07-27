@@ -10,7 +10,7 @@ import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import com.vauthenticator.server.support.TicketFixture
-import com.vauthenticator.server.ticket.Ticket.Companion.MFA_SELF_ASSOCIATION_CONTEXT_KEY
+import com.vauthenticator.server.support.TicketFixture.ticketContext
 import com.vauthenticator.server.ticket.Ticket.Companion.MFA_SELF_ASSOCIATION_CONTEXT_VALUE
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -39,7 +39,7 @@ class MfaMethodsEnrollmentAssociationTest {
         email,
         Kid(""),
         EMAIL_MFA_METHOD,
-        email,
+        email
     )
     private val ticket = TicketFixture.ticketFor(
         RAW_TICKET,
@@ -68,16 +68,30 @@ class MfaMethodsEnrollmentAssociationTest {
     fun `when mfa is associated with auto association feature enabled`() {
         val ticketWithAutoAssociationFeatureEnabled =
             ticket.copy(
-                context = TicketContext(
-                    mapOf(MFA_SELF_ASSOCIATION_CONTEXT_KEY to MFA_SELF_ASSOCIATION_CONTEXT_VALUE)
-                )
+                context = ticketContext(userName, MFA_SELF_ASSOCIATION_CONTEXT_VALUE)
             )
         every { ticketRepository.loadFor(ticketId) } returns of(ticketWithAutoAssociationFeatureEnabled)
+        every {
+            mfaAccountMethodsRepository.save(
+                userName,
+                ticket.context.mfaMethod(),
+                ticket.context.mfaChannel(),
+                true
+            )
+        } returns mfaAccountMethod
         every { ticketRepository.delete(ticketWithAutoAssociationFeatureEnabled.ticketId) } just runs
 
         underTest.associate(RAW_TICKET)
 
         verify { ticketRepository.loadFor(ticketId) }
+        verify {
+            mfaAccountMethodsRepository.save(
+                userName,
+                ticket.context.mfaMethod(),
+                ticket.context.mfaChannel(),
+                true
+            )
+        }
         verify { ticketRepository.delete(ticketWithAutoAssociationFeatureEnabled.ticketId) }
     }
 
@@ -92,12 +106,28 @@ class MfaMethodsEnrollmentAssociationTest {
                 MfaChallenge(CODE)
             )
         } just runs
+        every {
+            mfaAccountMethodsRepository.save(
+                userName,
+                ticket.context.mfaMethod(),
+                ticket.context.mfaChannel(),
+                true
+            )
+        } returns mfaAccountMethod
         every { ticketRepository.delete(ticket.ticketId) } just runs
 
 
         underTest.associate(RAW_TICKET, CODE)
 
         verify { ticketRepository.loadFor(ticketId) }
+        verify {
+            mfaAccountMethodsRepository.save(
+                userName,
+                ticket.context.mfaMethod(),
+                ticket.context.mfaChannel(),
+                true
+            )
+        }
         verify {
             otpMfaVerifier.verifyMfaChallengeFor(
                 userName,

@@ -9,7 +9,12 @@ interface OtpMfaSender {
 }
 
 interface OtpMfaVerifier {
-    fun verifyMfaChallengeFor(userName: String, mfaMethod: MfaMethod, mfaChannel: String, challenge: MfaChallenge)
+    fun verifyMfaChallengeFor(
+        userName: String,
+        mfaMethod: MfaMethod,
+        mfaChannel: String,
+        challenge: MfaChallenge
+    )
 }
 
 class OtpMfaEmailSender(

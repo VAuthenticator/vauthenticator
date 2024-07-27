@@ -56,8 +56,10 @@ class MfaController(
         response: HttpServletResponse
     ) {
         try {
-            val mfaChannel2 = mfaChannel.orElseGet { authentication.name }
-            otpMfaVerifier.verifyMfaChallengeFor(authentication.name, mfaMethod, mfaChannel2, MfaChallenge(mfaCode))
+            val defaultMfaChannel = mfaChannel.orElseGet { authentication.name }
+
+            otpMfaVerifier.verifyMfaChallengeFor(authentication.name, mfaMethod, defaultMfaChannel, MfaChallenge(mfaCode))
+
             publisher.publishEvent(MfaSuccessEvent(authentication))
             nextHopeLoginWorkflowSuccessHandler.onAuthenticationSuccess(request, response, authentication)
         } catch (e: Exception) {
