@@ -29,7 +29,7 @@ class MfaMethodsEnrollmentAssociation(
         associate(
             ticketId,
         ) {
-            otpMfaVerifier.verifyMfaChallengeFor(
+            otpMfaVerifier.verifyMfaChallengeToBeAssociatedFor(
                 it.userName,
                 it.context.mfaMethod(),
                 it.context.mfaChannel(),

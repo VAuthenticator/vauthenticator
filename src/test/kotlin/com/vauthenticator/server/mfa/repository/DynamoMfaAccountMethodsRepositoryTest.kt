@@ -45,7 +45,7 @@ class DynamoMfaAccountMethodsRepositoryTest {
         underTest.save(email, MfaMethod.EMAIL_MFA_METHOD, email, true)
         val mfaAccountMethods = underTest.findAll(email)
         assertEquals(
-            listOf(MfaAccountMethod(email, Kid(""), MfaMethod.EMAIL_MFA_METHOD, email)),
+            listOf(MfaAccountMethod(email, Kid(""), MfaMethod.EMAIL_MFA_METHOD, email, true)),
             mfaAccountMethods
         )
     }
@@ -63,7 +63,7 @@ class DynamoMfaAccountMethodsRepositoryTest {
         underTest.save(email, MfaMethod.EMAIL_MFA_METHOD, email, true)
         val mfaAccountMethods = underTest.findOne(email, MfaMethod.EMAIL_MFA_METHOD, email)
         assertEquals(
-            Optional.of(MfaAccountMethod(email, Kid(""), MfaMethod.EMAIL_MFA_METHOD, email)),
+            Optional.of(MfaAccountMethod(email, Kid(""), MfaMethod.EMAIL_MFA_METHOD, email, true)),
             mfaAccountMethods
         )
     }

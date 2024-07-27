@@ -7,6 +7,6 @@ import com.vauthenticator.server.mfa.domain.MfaMethod
 object MfaFixture {
 
     fun accountMfaAssociatedMfaMethods(email: String) = listOf(
-        MfaAccountMethod(email, Kid("A_KID"), MfaMethod.EMAIL_MFA_METHOD, email)
+        MfaAccountMethod(email, Kid("A_KID"), MfaMethod.EMAIL_MFA_METHOD, email,true)
     )
 }

@@ -90,7 +90,7 @@ internal class MfaControllerTest {
     @Test
     internal fun `when an mfa challenge is verified`() {
         every {
-            otpMfaVerifier.verifyMfaChallengeFor(
+            otpMfaVerifier.verifyAssociatedMfaChallengeFor(
                 account.email,
                 MfaMethod.EMAIL_MFA_METHOD,
                 account.email,

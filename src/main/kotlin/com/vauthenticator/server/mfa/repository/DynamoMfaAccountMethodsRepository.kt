@@ -1,6 +1,7 @@
 package com.vauthenticator.server.mfa.repository
 
 import com.vauthenticator.server.extentions.asDynamoAttribute
+import com.vauthenticator.server.extentions.valueAsBoolFor
 import com.vauthenticator.server.extentions.valueAsStringFor
 import com.vauthenticator.server.keys.*
 import com.vauthenticator.server.mfa.domain.MfaAccountMethod
@@ -32,7 +33,8 @@ class DynamoMfaAccountMethodsRepository(
                 userName,
                 Kid(it.valueAsStringFor("key_id")),
                 valueOf(it.valueAsStringFor("mfa_method")),
-                it.valueAsStringFor("mfa_channel")
+                it.valueAsStringFor("mfa_channel"),
+                it.valueAsBoolFor("associated")
             )
         }
 
@@ -49,7 +51,7 @@ class DynamoMfaAccountMethodsRepository(
     ): MfaAccountMethod {
         val kid = keyRepository.createKeyFrom(masterKid, KeyType.SYMMETRIC, KeyPurpose.MFA)
         storeOnDynamo(userName, mfaMfaMethod, mfaChannel, kid, associated)
-        return MfaAccountMethod(userName, kid, mfaMfaMethod, mfaChannel)
+        return MfaAccountMethod(userName, kid, mfaMfaMethod, mfaChannel, associated)
     }
 
     private fun storeOnDynamo(

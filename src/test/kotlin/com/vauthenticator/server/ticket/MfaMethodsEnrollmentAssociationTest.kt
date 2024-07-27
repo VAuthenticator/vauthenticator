@@ -35,11 +35,13 @@ class MfaMethodsEnrollmentAssociationTest {
     private val email = account.email
     private val userName = email
 
+    //todo
     private val mfaAccountMethod = MfaAccountMethod(
         email,
         Kid(""),
         EMAIL_MFA_METHOD,
-        email
+        email,
+        true
     )
     private val ticket = TicketFixture.ticketFor(
         RAW_TICKET,
@@ -99,7 +101,7 @@ class MfaMethodsEnrollmentAssociationTest {
     fun `when mfa is associated`() {
         every { ticketRepository.loadFor(ticketId) } returns of(ticket)
         every {
-            otpMfaVerifier.verifyMfaChallengeFor(
+            otpMfaVerifier.verifyMfaChallengeToBeAssociatedFor(
                 userName,
                 ticket.context.mfaMethod(),
                 ticket.context.mfaChannel(),
@@ -129,7 +131,7 @@ class MfaMethodsEnrollmentAssociationTest {
             )
         }
         verify {
-            otpMfaVerifier.verifyMfaChallengeFor(
+            otpMfaVerifier.verifyMfaChallengeToBeAssociatedFor(
                 userName,
                 ticket.context.mfaMethod(),
                 ticket.context.mfaChannel(),

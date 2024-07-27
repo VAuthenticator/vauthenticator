@@ -77,9 +77,10 @@ class MfaConfig {
 
     @Bean
     fun otpMfaVerifier(
+        otpMfa: OtpMfa,
         accountRepository: AccountRepository,
-        otpMfa: OtpMfa
-    ) = AccountAwareOtpMfaVerifier(accountRepository, otpMfa)
+        mfaAccountMethodsRepository : MfaAccountMethodsRepository,
+    ) = AccountAwareOtpMfaVerifier(accountRepository, otpMfa, mfaAccountMethodsRepository)
 
     @Bean
     fun mfaMailSender(
