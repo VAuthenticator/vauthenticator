@@ -15,6 +15,7 @@ import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
+import java.util.*
 
 @Controller
 class MfaController(
@@ -49,13 +50,14 @@ class MfaController(
     fun processSecondFactor(
         @RequestParam("mfa-code") mfaCode: String,
         @RequestParam("mfa-method") mfaMethod: MfaMethod,
-        @RequestParam("mfa-channel") mfaChannel: String,
+        @RequestParam("mfa-channel", required = false) mfaChannel: Optional<String>,
         authentication: Authentication,
         request: HttpServletRequest,
         response: HttpServletResponse
     ) {
         try {
-            otpMfaVerifier.verifyMfaChallengeFor(authentication.name, mfaMethod, mfaChannel, MfaChallenge(mfaCode))
+            val mfaChannel2 = mfaChannel.orElseGet { authentication.name }
+            otpMfaVerifier.verifyMfaChallengeFor(authentication.name, mfaMethod, mfaChannel2, MfaChallenge(mfaCode))
             publisher.publishEvent(MfaSuccessEvent(authentication))
             nextHopeLoginWorkflowSuccessHandler.onAuthenticationSuccess(request, response, authentication)
         } catch (e: Exception) {
