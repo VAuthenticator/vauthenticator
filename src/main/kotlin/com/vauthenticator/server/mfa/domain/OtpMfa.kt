@@ -11,9 +11,9 @@ import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
 import org.apache.commons.codec.binary.Hex
 
 interface OtpMfa {
-    fun generateSecretKeyFor(account: Account): MfaSecret
+    fun generateSecretKeyFor(account: Account, mfaMethod: MfaMethod, mfaChannel: String): MfaSecret
     fun getTOTPCode(secretKey: MfaSecret): MfaChallenge
-    fun verify(account: Account, optCode: MfaChallenge)
+    fun verify(account: Account, mfaMethod: MfaMethod, mfaChannel: String, optCode: MfaChallenge)
 }
 
 class TaimosOtpMfa(
@@ -25,10 +25,11 @@ class TaimosOtpMfa(
     private val tokenTimeWindow: Int = properties.timeToLiveInSeconds
     private val tokenTimeWindowMillis: Long = (tokenTimeWindow * 1000).toLong()
 
-    // todo to be improved
-    override fun generateSecretKeyFor(account: Account): MfaSecret {
-        val mfatMethod =mfaAccountMethodsRepository.findOne(account.email,MfaMethod.EMAIL_MFA_METHOD).orElseGet { null }
-        val encryptedSecret = keyRepository.keyFor(mfatMethod.key, KeyPurpose.MFA)
+    override fun generateSecretKeyFor(account: Account, mfaMethod: MfaMethod, mfaChannel: String): MfaSecret {
+        val mfaAccountMethod =
+            mfaAccountMethodsRepository.findOne(account.email, mfaMethod, mfaChannel)
+                .orElseGet { null }
+        val encryptedSecret = keyRepository.keyFor(mfaAccountMethod.key, KeyPurpose.MFA)
         val decryptKeyAsByteArray = keyDecrypter.decryptKey(encryptedSecret.dataKey.encryptedPrivateKeyAsString())
         val decryptedKey = Hex.encodeHexString(decoder.decode(decryptKeyAsByteArray))
         return MfaSecret(decryptedKey)
@@ -45,8 +46,8 @@ class TaimosOtpMfa(
         )
     }
 
-    override fun verify(account: Account, optCode: MfaChallenge) {
-        val mfaSecret = generateSecretKeyFor(account)
+    override fun verify(account: Account, mfaMethod: MfaMethod, mfaChannel: String, optCode: MfaChallenge) {
+        val mfaSecret = generateSecretKeyFor(account, mfaMethod, mfaChannel)
         try {
             val validated =
                 TimeBasedOneTimePasswordUtil.validateCurrentNumberHex(
@@ -56,7 +57,7 @@ class TaimosOtpMfa(
                     System.currentTimeMillis(),
                     tokenTimeWindow,
                     properties.length
-                );
+                )
             if (!validated) {
                 throw MfaException("Customer Code does not match with system code")
             }

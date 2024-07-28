@@ -1,9 +1,9 @@
 package com.vauthenticator.server.config
 
-import com.vauthenticator.server.account.ticket.DynamoDbTicketRepository
-import com.vauthenticator.server.account.ticket.TicketRepository
-import com.vauthenticator.server.account.ticket.VerificationTicketFactory
-import com.vauthenticator.server.account.ticket.VerificationTicketFeatures
+import com.vauthenticator.server.ticket.DynamoDbTicketRepository
+import com.vauthenticator.server.ticket.TicketCreator
+import com.vauthenticator.server.ticket.TicketFeatures
+import com.vauthenticator.server.ticket.TicketRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -25,11 +25,11 @@ class TicketConfig {
 
     @Bean
     fun verificationTicketFactory(clock: Clock, ticketRepository: TicketRepository) =
-        VerificationTicketFactory(
+        TicketCreator(
             { UUID.randomUUID().toString() },
             clock,
             ticketRepository,
-            VerificationTicketFeatures(Duration.ofMinutes(5))
+            TicketFeatures(Duration.ofMinutes(5))
         )
 
 

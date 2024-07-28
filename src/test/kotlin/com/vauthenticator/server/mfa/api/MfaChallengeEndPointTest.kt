@@ -1,5 +1,6 @@
 package com.vauthenticator.server.mfa.api
 
+import com.vauthenticator.server.mfa.domain.MfaMethod
 import com.vauthenticator.server.mfa.domain.OtpMfaSender
 import com.vauthenticator.server.support.AccountTestFixture
 import com.vauthenticator.server.support.SecurityFixture
@@ -35,7 +36,7 @@ internal class MfaChallengeEndPointTest {
 
     @Test
     internal fun `when an mfa challenge is sent`() {
-        every { otpMfaSender.sendMfaChallenge(account.email) } just runs
+        every { otpMfaSender.sendMfaChallenge(account.email, MfaMethod.EMAIL_MFA_METHOD, account.email) } just runs
 
         mokMvc.perform(
             put("/api/mfa/challenge")

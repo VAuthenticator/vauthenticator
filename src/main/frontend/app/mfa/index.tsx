@@ -75,6 +75,7 @@ const MfaChallengePage: React.FC<MfaChallengePageProps> = ({ rawI18nMessages,raw
 
                 {<form action="mfa-challenge" method="post">
                     <Box>
+                        <input name="mfa-method" type="hidden" value="EMAIL_MFA_METHOD"/>
                         <input name={csrfName} type="hidden" value={csrfToken}/>
 
                         <FormInputTextField id="mfa-code"

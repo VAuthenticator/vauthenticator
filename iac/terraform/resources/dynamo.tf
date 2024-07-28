@@ -63,7 +63,7 @@ resource "aws_dynamodb_table" "mfa_account_methods_table" {
 
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "user_name"
-  range_key    = "mfa_method"
+  range_key    = "mfa_channel"
 
   attribute {
     name = "user_name"
@@ -71,7 +71,7 @@ resource "aws_dynamodb_table" "mfa_account_methods_table" {
   }
 
   attribute {
-    name = "mfa_method"
+    name = "mfa_channel"
     type = "S"
   }
 

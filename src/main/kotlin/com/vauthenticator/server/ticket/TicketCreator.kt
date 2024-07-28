@@ -1,4 +1,4 @@
-package com.vauthenticator.server.account.ticket
+package com.vauthenticator.server.ticket
 
 import com.vauthenticator.server.account.Account
 import com.vauthenticator.server.extentions.expirationTimeStampInSecondFromNow
@@ -6,22 +6,27 @@ import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import java.time.Clock
 
 
-class VerificationTicketFactory(
+class TicketCreator(
     private val ticketGenerator: () -> String,
     private val clock: Clock,
     private val ticketRepository: TicketRepository,
-    private val verificationTicketFeatures: VerificationTicketFeatures
+    private val ticketFeatures: TicketFeatures
 ) {
-    fun createTicketFor(account: Account, clientAppId: ClientAppId): VerificationTicket {
-        val verificationTicket = VerificationTicket(ticketGenerator.invoke())
+    fun createTicketFor(
+        account: Account,
+        clientAppId: ClientAppId,
+        ticketContext: TicketContext = TicketContext.empty()
+    ): TicketId {
+        val ticketId = TicketId(ticketGenerator.invoke())
         val ticket = Ticket(
-            verificationTicket,
+            ticketId,
             account.email,
             clientAppId.content,
-            verificationTicketFeatures.ttl.expirationTimeStampInSecondFromNow(clock)
+            ticketFeatures.ttl.expirationTimeStampInSecondFromNow(clock),
+            ticketContext
         )
         ticketRepository.store(ticket)
-        return verificationTicket
+        return ticketId
     }
 
 }

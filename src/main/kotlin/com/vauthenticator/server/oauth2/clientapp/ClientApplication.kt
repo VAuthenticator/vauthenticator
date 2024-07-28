@@ -78,6 +78,7 @@ data class Scope(val content: String) {
         val KEY_EDITOR = Scope("admin:key-editor")
 
         val MFA_ALWAYS = Scope("mfa:always")
+        val MFA_ENROLLMENT = Scope("mfa:enrollment")
 
         val AVAILABLE_SCOPES = listOf(
             OPEN_ID,
@@ -96,7 +97,8 @@ data class Scope(val content: String) {
             MAIL_TEMPLATE_READER,
             MAIL_TEMPLATE_WRITER,
 
-            MFA_ALWAYS
+            MFA_ALWAYS,
+            MFA_ENROLLMENT
         )
 
     }

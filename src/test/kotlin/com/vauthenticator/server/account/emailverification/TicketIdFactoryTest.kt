@@ -1,14 +1,15 @@
 package com.vauthenticator.server.account.emailverification
 
-import com.vauthenticator.server.account.ticket.TicketRepository
-import com.vauthenticator.server.account.ticket.VerificationTicket
-import com.vauthenticator.server.account.ticket.VerificationTicketFactory
-import com.vauthenticator.server.account.ticket.VerificationTicketFeatures
 import com.vauthenticator.server.clientapp.A_CLIENT_APP_ID
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import com.vauthenticator.server.support.EMAIL
+import com.vauthenticator.server.support.TicketFixture.ticketContext
 import com.vauthenticator.server.support.TicketFixture.ticketFor
+import com.vauthenticator.server.ticket.TicketCreator
+import com.vauthenticator.server.ticket.TicketFeatures
+import com.vauthenticator.server.ticket.TicketId
+import com.vauthenticator.server.ticket.TicketRepository
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -25,7 +26,7 @@ import java.time.ZoneId
 import java.util.*
 
 @ExtendWith(MockKExtension::class)
-internal class VerificationTicketFactoryTest {
+internal class TicketIdFactoryTest {
 
     private val ticket = UUID.randomUUID().toString()
     private val ticketGenerator = { ticket }
@@ -33,16 +34,16 @@ internal class VerificationTicketFactoryTest {
     @MockK
     private lateinit var ticketRepository: TicketRepository
 
-    private lateinit var underTest: VerificationTicketFactory
+    private lateinit var underTest: TicketCreator
 
     @BeforeEach
     internal fun setUp() {
         val clock = Clock.fixed(Instant.ofEpochSecond(100), ZoneId.systemDefault())
-        underTest = VerificationTicketFactory(
+        underTest = TicketCreator(
             ticketGenerator,
             clock,
             ticketRepository,
-            VerificationTicketFeatures(Duration.ofSeconds(100))
+            TicketFeatures(Duration.ofSeconds(100))
         )
     }
 
@@ -54,8 +55,8 @@ internal class VerificationTicketFactoryTest {
 
         every { ticketRepository.store(ticket) } just runs
 
-        val expected = VerificationTicket(ticketGenerator.invoke())
-        val actual = underTest.createTicketFor(account, ClientAppId(A_CLIENT_APP_ID))
+        val expected = TicketId(ticketGenerator.invoke())
+        val actual = underTest.createTicketFor(account, ClientAppId(A_CLIENT_APP_ID), ticketContext(account.email))
 
         assertEquals(expected, actual)
     }

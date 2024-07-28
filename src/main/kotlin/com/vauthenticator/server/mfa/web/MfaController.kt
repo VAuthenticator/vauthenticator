@@ -15,6 +15,7 @@ import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
+import java.util.*
 
 @Controller
 class MfaController(
@@ -29,7 +30,7 @@ class MfaController(
 
     @GetMapping("/mfa-challenge/send")
     fun view(authentication: Authentication): String {
-        otpMfaSender.sendMfaChallenge(authentication.name)
+        otpMfaSender.sendMfaChallenge(authentication.name, MfaMethod.EMAIL_MFA_METHOD, authentication.name)
         return "redirect:/mfa-challenge"
     }
 
@@ -48,13 +49,18 @@ class MfaController(
     @PostMapping("/mfa-challenge")
     fun processSecondFactor(
         @RequestParam("mfa-code") mfaCode: String,
+        @RequestParam("mfa-method") mfaMethod: MfaMethod,
+        @RequestParam("mfa-channel", required = false) mfaChannel: Optional<String>,
         authentication: Authentication,
         request: HttpServletRequest,
         response: HttpServletResponse
     ) {
         try {
-            otpMfaVerifier.verifyMfaChallengeFor(authentication.name, MfaChallenge(mfaCode))
-            publisher.publishEvent(MfaSuccessEvent( authentication))
+            val defaultMfaChannel = mfaChannel.orElseGet { authentication.name }
+
+            otpMfaVerifier.verifyAssociatedMfaChallengeFor(authentication.name, mfaMethod, defaultMfaChannel, MfaChallenge(mfaCode))
+
+            publisher.publishEvent(MfaSuccessEvent(authentication))
             nextHopeLoginWorkflowSuccessHandler.onAuthenticationSuccess(request, response, authentication)
         } catch (e: Exception) {
             logger.error(e.message, e)

@@ -11,6 +11,8 @@ import com.vauthenticator.server.mask.SensitiveEmailMasker
 import com.vauthenticator.server.mfa.domain.*
 import com.vauthenticator.server.mfa.repository.DynamoMfaAccountMethodsRepository
 import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
+import com.vauthenticator.server.ticket.TicketCreator
+import com.vauthenticator.server.ticket.TicketRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -39,8 +41,20 @@ class MfaConfig {
     fun sensitiveEmailMasker() = SensitiveEmailMasker()
 
     @Bean
-    fun mfaMethodsEnrolmentAssociation(mfaAccountMethodsRepository: MfaAccountMethodsRepository) =
-        MfaMethodsEnrolmentAssociation(mfaAccountMethodsRepository)
+    fun mfaMethodsEnrolmentAssociation(
+        ticketRepository: TicketRepository,
+        mfaAccountMethodsRepository: MfaAccountMethodsRepository,
+        otpMfaVerifier: OtpMfaVerifier
+    ) =
+        MfaMethodsEnrollmentAssociation(ticketRepository, mfaAccountMethodsRepository, otpMfaVerifier)
+
+    @Bean
+    fun mfaMethodsEnrollment(
+        mfaSender: OtpMfaSender,
+        ticketCreator: TicketCreator,
+        accountRepository: AccountRepository,
+        mfaAccountMethodsRepository: MfaAccountMethodsRepository
+    ) = MfaMethodsEnrollment(accountRepository, ticketCreator, mfaSender, mfaAccountMethodsRepository)
 
     @Bean
     fun otpMfa(
@@ -64,9 +78,10 @@ class MfaConfig {
 
     @Bean
     fun otpMfaVerifier(
+        otpMfa: OtpMfa,
         accountRepository: AccountRepository,
-        otpMfa: OtpMfa
-    ) = AccountAwareOtpMfaVerifier(accountRepository, otpMfa)
+        mfaAccountMethodsRepository: MfaAccountMethodsRepository,
+    ) = AccountAwareOtpMfaVerifier(accountRepository, otpMfa, mfaAccountMethodsRepository)
 
     @Bean
     fun mfaMailSender(
@@ -85,5 +100,6 @@ class MfaConfig {
             )
         )
 }
+
 @ConfigurationProperties("mfa.otp")
 data class OtpConfigurationProperties(val length: Int, val timeToLiveInSeconds: Int)

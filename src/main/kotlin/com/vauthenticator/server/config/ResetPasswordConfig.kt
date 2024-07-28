@@ -3,8 +3,6 @@ package com.vauthenticator.server.config
 import com.hubspot.jinjava.Jinjava
 import com.vauthenticator.document.repository.DocumentRepository
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.account.ticket.TicketRepository
-import com.vauthenticator.server.account.ticket.VerificationTicketFactory
 import com.vauthenticator.server.email.*
 import com.vauthenticator.server.events.VAuthenticatorEventsDispatcher
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
@@ -12,6 +10,8 @@ import com.vauthenticator.server.password.PasswordPolicy
 import com.vauthenticator.server.password.VAuthenticatorPasswordEncoder
 import com.vauthenticator.server.password.resetpassword.ResetAccountPassword
 import com.vauthenticator.server.password.resetpassword.SendResetPasswordMailChallenge
+import com.vauthenticator.server.ticket.TicketCreator
+import com.vauthenticator.server.ticket.TicketRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -24,13 +24,13 @@ class ResetPasswordConfig {
     fun sendResetPasswordMailChallenge(
         accountRepository: AccountRepository,
         clientApplicationRepository: ClientApplicationRepository,
-        verificationTicketFactory: VerificationTicketFactory,
+        ticketCreator: TicketCreator,
         resetPasswordMailSender: EMailSenderService,
         @Value("\${vauthenticator.host}") frontChannelBaseUrl: String
     ) =
         SendResetPasswordMailChallenge(
             accountRepository,
-            verificationTicketFactory,
+            ticketCreator,
             resetPasswordMailSender,
             frontChannelBaseUrl
         )

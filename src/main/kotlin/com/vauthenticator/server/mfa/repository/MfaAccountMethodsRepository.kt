@@ -6,8 +6,8 @@ import java.util.*
 
 interface MfaAccountMethodsRepository {
 
-    fun findOne(email: String, mfaMfaMethod: MfaMethod): Optional<MfaAccountMethod>
-    fun findAll(email: String): List<MfaAccountMethod>
-    fun save(email: String, mfaMfaMethod: MfaMethod): MfaAccountMethod
+    fun findOne(userName: String, mfaMfaMethod: MfaMethod, mfaChannel: String): Optional<MfaAccountMethod>
+    fun findAll(userName: String): List<MfaAccountMethod>
+    fun save(userName: String, mfaMfaMethod: MfaMethod, mfaChannel: String, associated: Boolean): MfaAccountMethod
 }
 

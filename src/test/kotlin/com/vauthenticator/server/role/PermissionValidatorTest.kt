@@ -68,7 +68,7 @@ class PermissionValidatorTest {
 
         val principal = SecurityFixture.principalFor(
             clientAppId = clientAppId.content,
-            mail = EMAIL,
+            email = EMAIL,
             scopes = scopesValues
         )
         uut.validate(principal = principal, session = session, scopes = scopes)
@@ -80,7 +80,7 @@ class PermissionValidatorTest {
 
         val principal = SecurityFixture.principalFor(
             clientAppId = clientAppId.content,
-            mail = EMAIL,
+            email = EMAIL,
             scopes = emptyList()
         )
         assertThrows(InsufficientClientApplicationScopeException::class.java) {

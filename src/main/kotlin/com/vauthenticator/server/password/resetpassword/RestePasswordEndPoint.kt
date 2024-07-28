@@ -1,12 +1,12 @@
 package com.vauthenticator.server.password.resetpassword
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.vauthenticator.server.account.ticket.VerificationTicket
 import com.vauthenticator.server.i18n.I18nMessageInjector
 import com.vauthenticator.server.i18n.I18nScope
 import com.vauthenticator.server.oauth2.clientapp.Scope
 import com.vauthenticator.server.oauth2.clientapp.Scopes
 import com.vauthenticator.server.role.PermissionValidator
+import com.vauthenticator.server.ticket.TicketId
 import jakarta.servlet.http.HttpSession
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.noContent
@@ -36,7 +36,7 @@ class ResetPasswordEndPoint(
 
     @PutMapping("/api/reset-password/{ticket}")
     fun resetPassword(@PathVariable ticket: String, @RequestBody request: ResetPasswordRequest): ResponseEntity<Unit> {
-        resetAccountPassword.resetPasswordFromMailChallenge(VerificationTicket(ticket), request)
+        resetAccountPassword.resetPasswordFromMailChallenge(TicketId(ticket), request)
         return noContent().build()
     }
 

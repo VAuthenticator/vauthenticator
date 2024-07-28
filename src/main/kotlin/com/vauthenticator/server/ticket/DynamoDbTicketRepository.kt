@@ -1,20 +1,11 @@
-package com.vauthenticator.server.account.ticket
+package com.vauthenticator.server.ticket
 
-import com.vauthenticator.server.extentions.asDynamoAttribute
-import com.vauthenticator.server.extentions.filterEmptyMetadata
-import com.vauthenticator.server.extentions.valueAsLongFor
-import com.vauthenticator.server.extentions.valueAsStringFor
+import com.vauthenticator.server.extentions.*
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
 import java.util.*
-
-interface TicketRepository {
-    fun store(ticket: Ticket)
-    fun loadFor(verificationTicket: VerificationTicket): Optional<Ticket>
-    fun delete(verificationTicket: VerificationTicket)
-}
 
 class DynamoDbTicketRepository(
     private val dynamoDbClient: DynamoDbClient,
@@ -27,10 +18,11 @@ class DynamoDbTicketRepository(
                 .tableName(tableName)
                 .item(
                     mapOf(
-                        "ticket" to ticket.verificationTicket.content.asDynamoAttribute(),
+                        "ticket" to ticket.ticketId.content.asDynamoAttribute(),
                         "ttl" to (ticket.ttl).asDynamoAttribute(),
-                        "email" to ticket.email.asDynamoAttribute(),
-                        "client_application_id" to ticket.clientAppId.asDynamoAttribute()
+                        "user_name" to ticket.userName.asDynamoAttribute(),
+                        "client_application_id" to ticket.clientAppId.asDynamoAttribute(),
+                        "context" to ticket.context.content.asDynamoAttribute()
                     )
                 )
                 .build()
@@ -38,31 +30,32 @@ class DynamoDbTicketRepository(
     }
 
 
-    override fun loadFor(verificationTicket: VerificationTicket): Optional<Ticket> {
+    override fun loadFor(ticketId: TicketId): Optional<Ticket> {
         return Optional.ofNullable(
             dynamoDbClient.getItem(
                 GetItemRequest.builder()
                     .tableName(tableName)
-                    .key(mapOf("ticket" to verificationTicket.content.asDynamoAttribute()))
+                    .key(mapOf("ticket" to ticketId.content.asDynamoAttribute()))
                     .build()
             ).item()
         )
             .flatMap { it.filterEmptyMetadata() }
             .map {
                 Ticket(
-                    VerificationTicket(it.valueAsStringFor("ticket")),
-                    it.valueAsStringFor("email"),
+                    TicketId(it.valueAsStringFor("ticket")),
+                    it.valueAsStringFor("user_name"),
                     it.valueAsStringFor("client_application_id"),
-                    it.valueAsLongFor("ttl")
+                    it.valueAsLongFor("ttl"),
+                    TicketContext(it.valueAsMapFor("context"))
                 )
             }
     }
 
-    override fun delete(verificationTicket: VerificationTicket) {
+    override fun delete(ticketId: TicketId) {
         dynamoDbClient.deleteItem(
             DeleteItemRequest.builder()
                 .tableName(tableName)
-                .key(mapOf("ticket" to verificationTicket.content.asDynamoAttribute()))
+                .key(mapOf("ticket" to ticketId.content.asDynamoAttribute()))
                 .build()
         )
     }

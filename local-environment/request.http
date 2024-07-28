@@ -22,7 +22,7 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
 {
-  "email": "admin2@email.com",
+  "email": "user5@email.com",
   "password": "secret!",
   "firstName": "Admin",
   "lastName": "",
@@ -43,5 +43,50 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
 {
-  "email": "admin2@email.com"
+  "email": "xxx@email.com"
+}
+
+
+### sign up a new account
+
+PUT {{host}}/api/client-applications/user-introspection
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "clientAppName": "user-introspection",
+  "secret": "s#cr#t!@#",
+  "withPkce": "false",
+  "storePassword": "true",
+  "scopes": ["openid", "email", "profile"],
+  "authorizedGrantTypes": ["authorization_code"],
+  "webServerRedirectUri": "http://user-introspection.com:7070/login/oauth2/code/client",
+  "accessTokenValidity": "360",
+  "refreshTokenValidity": "360",
+  "postLogoutRedirectUri": "http://user-introspection.com:7070",
+  "logoutUri": "http://user-introspection.com:7070"
+}
+
+
+### enroll new email
+
+POST {{host}}/api/mfa/enrollment
+Content-Type: application/json
+Authorization: Bearer xxxx
+
+{
+  "mfaMethod": "EMAIL_MFA_METHOD",
+  "mfaChannel" : "xxxx@email.com"
+}
+
+
+### associate new email
+
+POST {{host}}/api/mfa/associate
+Content-Type: application/json
+Authorization: Bearer xxx
+
+{
+  "ticket": "xxxx",
+  "code" : "xxxx"
 }

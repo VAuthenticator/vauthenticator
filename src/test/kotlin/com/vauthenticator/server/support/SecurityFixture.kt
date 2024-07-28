@@ -54,11 +54,11 @@ object SecurityFixture {
 
     fun principalFor(
         clientAppId: String,
-        mail: String,
+        email: String,
         authorities: List<String> = emptyList(),
         scopes: List<String> = emptyList()
     ) =
-        signedJWTFor(clientAppId, mail, scopes).let { signedJWT ->
+        signedJWTFor(clientAppId, email, scopes).let { signedJWT ->
             JwtAuthenticationToken(
                 Jwt(
                     simpleJwtFor(clientAppId),
@@ -68,7 +68,7 @@ object SecurityFixture {
                     signedJWT.payload.toJSONObject()
                 ),
                 authorities.map(::SimpleGrantedAuthority),
-                mail
+                email
             )
         }
 

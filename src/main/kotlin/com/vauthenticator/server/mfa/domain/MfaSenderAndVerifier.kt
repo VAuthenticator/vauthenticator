@@ -2,14 +2,27 @@ package com.vauthenticator.server.mfa.domain
 
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.email.EMailSenderService
+import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
 
 
 interface OtpMfaSender {
-    fun sendMfaChallenge(email: String)
+    fun sendMfaChallenge(userName: String, mfaMethod: MfaMethod, mfaChannel: String)
 }
 
 interface OtpMfaVerifier {
-    fun verifyMfaChallengeFor(email: String, challenge: MfaChallenge)
+    fun verifyMfaChallengeToBeAssociatedFor(
+        userName: String,
+        mfaMethod: MfaMethod,
+        mfaChannel: String,
+        challenge: MfaChallenge
+    )
+
+    fun verifyAssociatedMfaChallengeFor(
+        userName: String,
+        mfaMethod: MfaMethod,
+        mfaChannel: String,
+        challenge: MfaChallenge
+    )
 }
 
 class OtpMfaEmailSender(
@@ -18,21 +31,52 @@ class OtpMfaEmailSender(
     private val mfaMailSender: EMailSenderService
 ) : OtpMfaSender {
 
-    override fun sendMfaChallenge(email: String) {
-        val account = accountRepository.accountFor(email).get()
-        val mfaSecret = otpMfa.generateSecretKeyFor(account)
+    override fun sendMfaChallenge(userName: String, mfaMethod: MfaMethod, mfaChannel: String) {
+        val account = accountRepository.accountFor(userName).get()
+        val mfaSecret = otpMfa.generateSecretKeyFor(account, mfaMethod, mfaChannel)
         val mfaCode = otpMfa.getTOTPCode(mfaSecret).content()
-        mfaMailSender.sendFor(account, mapOf("mfaCode" to mfaCode))
+        mfaMailSender.sendFor(account, mapOf("email" to mfaChannel, "mfaCode" to mfaCode))
     }
 }
 
 class AccountAwareOtpMfaVerifier(
     private val accountRepository: AccountRepository,
-    private val otpMfa: OtpMfa
+    private val otpMfa: OtpMfa,
+    private val mfaAccountMethodsRepository: MfaAccountMethodsRepository
 ) : OtpMfaVerifier {
-    override fun verifyMfaChallengeFor(email: String, challenge: MfaChallenge) {
-        val account = accountRepository.accountFor(email).get()
-        otpMfa.verify(account, challenge)
+
+    override fun verifyMfaChallengeToBeAssociatedFor(
+        userName: String,
+        mfaMethod: MfaMethod,
+        mfaChannel: String,
+        challenge: MfaChallenge
+    ) {
+        mfaAccountMethodsRepository.findOne(userName, MfaMethod.EMAIL_MFA_METHOD, mfaChannel)
+            .map {
+                val account = accountRepository.accountFor(userName).get()
+                if (!it.associated) {
+                    otpMfa.verify(account, mfaMethod, mfaChannel, challenge)
+                } else {
+                    throw AssociatedMfaVerificationException("Mfa Challenge verification failed: this mfa method is already associated")
+                }
+            }
+    }
+
+    override fun verifyAssociatedMfaChallengeFor(
+        userName: String,
+        mfaMethod: MfaMethod,
+        mfaChannel: String,
+        challenge: MfaChallenge
+    ) {
+        mfaAccountMethodsRepository.findOne(userName, MfaMethod.EMAIL_MFA_METHOD, mfaChannel)
+            .map {
+                val account = accountRepository.accountFor(userName).get()
+                if (it.associated) {
+                    otpMfa.verify(account, mfaMethod, mfaChannel, challenge)
+                } else {
+                    throw UnAssociatedMfaVerificationException("Mfa Challenge verification failed: this mfa method has to be associated")
+                }
+            }
     }
 
 }

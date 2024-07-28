@@ -3,6 +3,7 @@ package com.vauthenticator.server.mfa.web
 import com.vauthenticator.server.i18n.I18nMessageInjector
 import com.vauthenticator.server.i18n.I18nScope
 import com.vauthenticator.server.mfa.domain.MfaChallenge
+import com.vauthenticator.server.mfa.domain.MfaMethod
 import com.vauthenticator.server.mfa.domain.OtpMfaSender
 import com.vauthenticator.server.mfa.domain.OtpMfaVerifier
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
@@ -65,14 +66,15 @@ internal class MfaControllerTest {
 
     @Test
     internal fun `when an mfa challenge is sent`() {
-        every { otpMfaSender.sendMfaChallenge(account.email) } just runs
+        every { otpMfaSender.sendMfaChallenge(account.email, MfaMethod.EMAIL_MFA_METHOD, account.email) } just runs
 
         mokMvc.perform(
             get("/mfa-challenge/send")
                 .principal(principalFor(account.email))
         ).andExpect(redirectedUrl("/mfa-challenge"))
-        verify { otpMfaSender.sendMfaChallenge(account.email) }
+        verify { otpMfaSender.sendMfaChallenge(account.email, MfaMethod.EMAIL_MFA_METHOD, account.email) }
     }
+
     @Test
     internal fun `when an mfa challenge is rendered`() {
         every { i18nMessageInjector.setMessagedFor(I18nScope.MFA_PAGE, any()) } just runs
@@ -87,7 +89,14 @@ internal class MfaControllerTest {
 
     @Test
     internal fun `when an mfa challenge is verified`() {
-        every { otpMfaVerifier.verifyMfaChallengeFor(account.email, MfaChallenge("AN_MFA_CHALLENGE_CODE")) } just runs
+        every {
+            otpMfaVerifier.verifyAssociatedMfaChallengeFor(
+                account.email,
+                MfaMethod.EMAIL_MFA_METHOD,
+                account.email,
+                MfaChallenge("AN_MFA_CHALLENGE_CODE")
+            )
+        } just runs
 
         val mfaAuthentication = principalFor(account.email)
         every { successHandler.onAuthenticationSuccess(any(), any(), mfaAuthentication) } just runs

@@ -31,4 +31,27 @@ internal class SimpleEMailMessageFactoryTest {
         assertEquals(expected, actual)
     }
 
+    @Test
+    internal fun `make a new mail message when the sender mail has changed`() {
+        val account = anAccount()
+        val actual = underTest.makeMailMessageFor(account, mapOf("key" to "value", "email" to "new-accountmail@email.com"))
+
+        val expected = EMailMessage(
+                "new-accountmail@email.com", "from", "subject", EMailType.WELCOME,
+                mapOf(
+                        "enabled" to account.enabled,
+                        "username" to account.username,
+                        "authorities" to account.authorities,
+                        "email" to "new-accountmail@email.com",
+                        "firstName" to account.firstName,
+                        "lastName" to account.lastName,
+                        "birthDate" to "",
+                        "phone" to "",
+                        "key" to "value"
+                )
+        )
+
+        assertEquals(expected, actual)
+    }
+
 }

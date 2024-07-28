@@ -1,14 +1,13 @@
 package com.vauthenticator.server.account.emailverification
 
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.account.ticket.InvalidTicketException
-import com.vauthenticator.server.account.ticket.TicketRepository
-import com.vauthenticator.server.account.ticket.VerificationTicket
-import com.vauthenticator.server.mfa.domain.MfaMethod
-import com.vauthenticator.server.mfa.domain.MfaMethodsEnrolmentAssociation
+import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollmentAssociation
 import com.vauthenticator.server.oauth2.clientapp.ClientAppId
 import com.vauthenticator.server.support.AccountTestFixture
 import com.vauthenticator.server.support.TicketFixture
+import com.vauthenticator.server.ticket.InvalidTicketException
+import com.vauthenticator.server.ticket.TicketId
+import com.vauthenticator.server.ticket.TicketRepository
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -21,6 +20,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import java.util.*
 
+private const val RAW_TICKET = "A_TICKET"
+
 @ExtendWith(MockKExtension::class)
 internal class VerifyEMailChallengeTest {
 
@@ -31,16 +32,17 @@ internal class VerifyEMailChallengeTest {
     lateinit var ticketRepository: TicketRepository
 
     @MockK
-    lateinit var mfaMethodsEnrolmentAssociation: MfaMethodsEnrolmentAssociation
+    lateinit var mfaMethodsEnrollmentAssociation: MfaMethodsEnrollmentAssociation
+
 
     private lateinit var underTest: VerifyEMailChallenge
 
     @BeforeEach
     fun setup() {
         underTest = VerifyEMailChallenge(
-            accountRepository,
             ticketRepository,
-            mfaMethodsEnrolmentAssociation
+            accountRepository,
+            mfaMethodsEnrollmentAssociation
         )
     }
 
@@ -48,48 +50,48 @@ internal class VerifyEMailChallengeTest {
     internal fun `happy path`() {
         val account = AccountTestFixture.anAccount()
         val enabledAccount = account.copy(accountNonLocked = true, enabled = true, emailVerified = true)
-        val verificationTicket = VerificationTicket("A_TICKET")
+        val ticketId = TicketId(RAW_TICKET)
 
-        every { ticketRepository.loadFor(verificationTicket) } returns Optional.of(
+        every { ticketRepository.loadFor(ticketId) } returns Optional.of(
             TicketFixture.ticketFor(
-                verificationTicket.content,
+                ticketId.content,
                 account.email,
                 ClientAppId.empty().content
             )
         )
-        every { mfaMethodsEnrolmentAssociation.associate(enabledAccount, MfaMethod.EMAIL_MFA_METHOD) } just runs
+        every { mfaMethodsEnrollmentAssociation.associate(RAW_TICKET) } just runs
         every { accountRepository.accountFor(account.email) } returns Optional.of(account)
         every { accountRepository.save(enabledAccount) } just runs
-        every { ticketRepository.delete(verificationTicket) } just runs
 
-        underTest.verifyMail("A_TICKET")
-        verify(exactly = 1) { mfaMethodsEnrolmentAssociation.associate(enabledAccount, MfaMethod.EMAIL_MFA_METHOD) }
+        underTest.verifyMail(RAW_TICKET)
+        verify(exactly = 1) { mfaMethodsEnrollmentAssociation.associate(RAW_TICKET) }
     }
 
     @Test
     internal fun `when the account does not exist`() {
         val account = AccountTestFixture.anAccount()
-        val verificationTicket = VerificationTicket("A_TICKET")
+        val ticketId = TicketId(RAW_TICKET)
 
-        every { ticketRepository.loadFor(verificationTicket) } returns Optional.of(
+        every { ticketRepository.loadFor(ticketId) } returns Optional.of(
             TicketFixture.ticketFor(
-                verificationTicket.content,
+                ticketId.content,
                 account.email,
                 ClientAppId.empty().content
             )
         )
         every { accountRepository.accountFor(account.email) } returns Optional.empty()
+        every { mfaMethodsEnrollmentAssociation.associate(RAW_TICKET) } just runs
 
-        assertThrows(InvalidTicketException::class.java) { underTest.verifyMail("A_TICKET") }
+        assertThrows(InvalidTicketException::class.java) { underTest.verifyMail(RAW_TICKET) }
     }
 
     @Test
     internal fun `when the ticket does not exist`() {
-        val verificationTicket = VerificationTicket("A_TICKET")
+        val ticketId = TicketId(RAW_TICKET)
 
-        every { ticketRepository.loadFor(verificationTicket) } returns Optional.empty()
+        every { ticketRepository.loadFor(ticketId) } returns Optional.empty()
 
-        assertThrows(InvalidTicketException::class.java) { underTest.verifyMail("A_TICKET") }
+        assertThrows(InvalidTicketException::class.java) { underTest.verifyMail(RAW_TICKET) }
     }
 
 }

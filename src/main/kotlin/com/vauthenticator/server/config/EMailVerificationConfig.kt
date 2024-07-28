@@ -6,11 +6,11 @@ import com.vauthenticator.server.account.emailverification.SendVerifyEMailChalle
 import com.vauthenticator.server.account.emailverification.SendVerifyEMailChallengeUponSignUpEventConsumer
 import com.vauthenticator.server.account.emailverification.VerifyEMailChallenge
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.account.ticket.TicketRepository
-import com.vauthenticator.server.account.ticket.VerificationTicketFactory
 import com.vauthenticator.server.email.*
-import com.vauthenticator.server.mfa.domain.MfaMethodsEnrolmentAssociation
+import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollment
+import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollmentAssociation
 import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
+import com.vauthenticator.server.ticket.TicketRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -23,13 +23,13 @@ class EMailVerificationConfig {
     fun sendVerifyMailChallenge(
         clientAccountRepository: ClientApplicationRepository,
         accountRepository: AccountRepository,
-        verificationTicketFactory: VerificationTicketFactory,
+        mfaMethodsEnrollment: MfaMethodsEnrollment,
         verificationMailSender: EMailSenderService,
         @Value("\${vauthenticator.host}") frontChannelBaseUrl: String
     ) =
         SendVerifyEMailChallenge(
             accountRepository,
-            verificationTicketFactory,
+            mfaMethodsEnrollment,
             verificationMailSender,
             frontChannelBaseUrl
         )
@@ -38,12 +38,12 @@ class EMailVerificationConfig {
     fun verifyMailChallengeSent(
         accountRepository: AccountRepository,
         ticketRepository: TicketRepository,
-        mfaMethodsEnrolmentAssociation: MfaMethodsEnrolmentAssociation
+        mfaMethodsEnrollmentAssociation: MfaMethodsEnrollmentAssociation
     ) =
         VerifyEMailChallenge(
-            accountRepository,
             ticketRepository,
-            mfaMethodsEnrolmentAssociation
+            accountRepository,
+            mfaMethodsEnrollmentAssociation
         )
 
     @Bean
