@@ -8,9 +8,14 @@ import com.vauthenticator.server.mfa.domain.MfaMethod
 import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollment
 import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollmentAssociation
 import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
+import com.vauthenticator.server.oauth2.clientapp.Scope
+import com.vauthenticator.server.oauth2.clientapp.Scopes
+import com.vauthenticator.server.role.PermissionValidator
+import jakarta.servlet.http.HttpSession
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.security.core.Authentication
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -22,7 +27,8 @@ class MfaEnrolmentAssociationEndPoint(
     private val mfaAccountMethodsRepository: MfaAccountMethodsRepository,
     private val mfaMethodsEnrollment: MfaMethodsEnrollment,
     private val accountRepository: AccountRepository,
-    private val mfaMethodsEnrolmentAssociation: MfaMethodsEnrollmentAssociation
+    private val mfaMethodsEnrolmentAssociation: MfaMethodsEnrollmentAssociation,
+    private val permissionValidator: PermissionValidator
 ) {
 
 
@@ -47,9 +53,11 @@ class MfaEnrolmentAssociationEndPoint(
 
     @PostMapping("/api/mfa/enrollment")
     fun enrollMfa(
-        authentication: Authentication,
+        authentication: JwtAuthenticationToken,
+        httpSession: HttpSession,
         @RequestBody enrolling: MfaEnrollmentRequest
     ): ResponseEntity<String> {
+        permissionValidator.validate(authentication, httpSession, Scopes.from(Scope.MFA_ENROLLMENT))
         val ticketId = mfaMethodsEnrollment.enroll(
             authentication.name,
             enrolling.mfaMethod,
@@ -62,9 +70,11 @@ class MfaEnrolmentAssociationEndPoint(
 
     @PostMapping("/api/mfa/associate")
     fun associateMfaEnrollment(
+        httpSession: HttpSession,
+        authentication: JwtAuthenticationToken,
         @RequestBody associationRequest: MfaEnrollmentAssociationRequest,
-        authentication: Authentication
     ) {
+        permissionValidator.validate(authentication, httpSession, Scopes.from(Scope.MFA_ENROLLMENT))
         mfaMethodsEnrolmentAssociation.associate(associationRequest.ticket, associationRequest.code)
     }
 

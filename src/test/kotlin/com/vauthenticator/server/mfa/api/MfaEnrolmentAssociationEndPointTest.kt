@@ -8,6 +8,7 @@ import com.vauthenticator.server.mfa.domain.MfaMethod.EMAIL_MFA_METHOD
 import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollment
 import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollmentAssociation
 import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
+import com.vauthenticator.server.role.PermissionValidator
 import com.vauthenticator.server.support.AccountTestFixture
 import com.vauthenticator.server.support.MfaFixture.accountMfaAssociatedMfaMethods
 import com.vauthenticator.server.support.SecurityFixture.principalFor
@@ -45,6 +46,9 @@ class MfaEnrolmentAssociationEndPointTest {
     @MockK
     private lateinit var mfaMethodsEnrolmentAssociation: MfaMethodsEnrollmentAssociation
 
+    @MockK
+    private lateinit var permissionValidator: PermissionValidator
+
     @BeforeEach
     internal fun setUp() {
         mokMvc = MockMvcBuilders.standaloneSetup(
@@ -53,7 +57,8 @@ class MfaEnrolmentAssociationEndPointTest {
                 mfaAccountMethodsRepository,
                 mfaMethodsEnrollment,
                 accountRepository,
-                mfaMethodsEnrolmentAssociation
+                mfaMethodsEnrolmentAssociation,
+                permissionValidator
             )
         ).build()
     }
