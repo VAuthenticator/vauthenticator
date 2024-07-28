@@ -13,9 +13,9 @@ It is possible to register multiple email via api.
 ### Enrollment
 
 
-*URI"* Post /api/mfa/enrollment
+*URI:* ```Post /api/mfa/enrollment```
 
-*Scope:* mfa:enrollment
+*Scope:* ```mfa:enrollment```
 
 *Request:*
 
@@ -32,12 +32,12 @@ It is possible to register multiple email via api.
   "ticket": "xxxx"
 }
 ```
-*Response Status:* 201 Created
+*Response Status:* ```201 Created```
 
 ### Association
 
-*URI"* Post /api/mfa/associate
-*Scope:* mfa:enrollment
+*URI:* ```Post /api/mfa/associate```
+*Scope:* ```mfa:enrollment```
 *Request Body:*
 
 ```json
@@ -47,4 +47,4 @@ It is possible to register multiple email via api.
 }
 ```
 
-*Response Status:* 204 No Content
+*Response Status:* ```204 No Content```
