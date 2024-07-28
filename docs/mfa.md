@@ -14,7 +14,9 @@ It is possible to register multiple email via api.
 
 
 *URI"* Post /api/mfa/enrollment
+
 *Scope:* mfa:enrollment
+
 *Request:*
 
 ```json
