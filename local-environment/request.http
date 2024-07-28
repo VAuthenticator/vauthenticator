@@ -43,7 +43,7 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
 {
-  "email": "user4@email.com"
+  "email": "xxx@email.com"
 }
 
 
@@ -72,11 +72,11 @@ Authorization: Bearer {{auth_token}}
 
 POST {{host}}/api/mfa/enrollment
 Content-Type: application/json
-Authorization: Bearer eyJraWQiOiJkYTFiNzAwMS05NjlkLTQyNzQtYTM5Yy0wYTI2ZjMzODg2NmIiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ1c2VyNUBlbWFpbC5jb20iLCJhdWQiOiJ1c2VyLWludHJvc3BlY3Rpb24iLCJuYmYiOjE3MjIxOTI1NzcsInVzZXJfbmFtZSI6InVzZXI1QGVtYWlsLmNvbSIsInNjb3BlIjpbIm9wZW5pZCIsImVtYWlsIiwicHJvZmlsZSJdLCJpc3MiOiJodHRwOi8vbG9jYWwuYXBpLnZhdXRoZW50aWNhdG9yLmNvbTo5MDkwIiwiZXhwIjoxNzIyMTkyOTM3LCJpYXQiOjE3MjIxOTI1NzcsImp0aSI6ImYzMmI1NzFkLWJlODItNDAwNy1iMzZhLTA4MzQ4MThkYzdhYSIsImF1dGhvcml0aWVzIjpbIlJPTEVfVVNFUiIsIlZBVVRIRU5USUNBVE9SX0FETUlOIl19.THR5FIbXmqhgx-As3C73pRhP6e2zWdrH3bEM6jyo_-SjgSXm5qkrocKs0j1mUKJk2Dpiah7rwtVjxcpl13ELCrBAO9Hq-6Kn8lB1ZlOnTNtIC7StQ2q18GjVdWNBBuvO4nbd3cjfmub_DEaFGFv5wZVg1fdlqSKeEzz1bLQbR5VtBvvq6ktTA1U1axC8iO7DnfICdXzR6ZdklKpJ9POYAK0x-d3qeXd0PO8pByJwJPdl1d13WazwJGZVRAJkwV00Dnsrbtetw6s_S4SeCHr7xzFALLALvvJgqgz2OreUuB-iEIDw7iC7pAwerHN58cjTkFdtJUUCie0WIr4H8ltnfA
+Authorization: Bearer xxxx
 
 {
   "mfaMethod": "EMAIL_MFA_METHOD",
-  "mfaChannel" : "321@email.com"
+  "mfaChannel" : "xxxx@email.com"
 }
 
 
@@ -84,9 +84,9 @@ Authorization: Bearer eyJraWQiOiJkYTFiNzAwMS05NjlkLTQyNzQtYTM5Yy0wYTI2ZjMzODg2Nm
 
 POST {{host}}/api/mfa/associate
 Content-Type: application/json
-Authorization: Bearer eyJraWQiOiJkYTFiNzAwMS05NjlkLTQyNzQtYTM5Yy0wYTI2ZjMzODg2NmIiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ1c2VyNUBlbWFpbC5jb20iLCJhdWQiOiJ1c2VyLWludHJvc3BlY3Rpb24iLCJuYmYiOjE3MjIxOTI1NzcsInVzZXJfbmFtZSI6InVzZXI1QGVtYWlsLmNvbSIsInNjb3BlIjpbIm9wZW5pZCIsImVtYWlsIiwicHJvZmlsZSJdLCJpc3MiOiJodHRwOi8vbG9jYWwuYXBpLnZhdXRoZW50aWNhdG9yLmNvbTo5MDkwIiwiZXhwIjoxNzIyMTkyOTM3LCJpYXQiOjE3MjIxOTI1NzcsImp0aSI6ImYzMmI1NzFkLWJlODItNDAwNy1iMzZhLTA4MzQ4MThkYzdhYSIsImF1dGhvcml0aWVzIjpbIlJPTEVfVVNFUiIsIlZBVVRIRU5USUNBVE9SX0FETUlOIl19.THR5FIbXmqhgx-As3C73pRhP6e2zWdrH3bEM6jyo_-SjgSXm5qkrocKs0j1mUKJk2Dpiah7rwtVjxcpl13ELCrBAO9Hq-6Kn8lB1ZlOnTNtIC7StQ2q18GjVdWNBBuvO4nbd3cjfmub_DEaFGFv5wZVg1fdlqSKeEzz1bLQbR5VtBvvq6ktTA1U1axC8iO7DnfICdXzR6ZdklKpJ9POYAK0x-d3qeXd0PO8pByJwJPdl1d13WazwJGZVRAJkwV00Dnsrbtetw6s_S4SeCHr7xzFALLALvvJgqgz2OreUuB-iEIDw7iC7pAwerHN58cjTkFdtJUUCie0WIr4H8ltnfA
+Authorization: Bearer xxx
 
 {
-  "ticket": "f5380792-f1ca-4575-9192-6fa6b548afdd",
-  "code" : "853261"
+  "ticket": "xxxx",
+  "code" : "xxxx"
 }
