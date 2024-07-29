@@ -25,6 +25,14 @@ class PermissionValidator(private val clientApplicationRepository: ClientApplica
             )
     }
 
+    //todo to be tested
+    fun validate(
+        principal: JwtAuthenticationToken,
+        scopes: Scopes
+    ) {
+        principalScopesValidation(principal, scopes)
+    }
+
     private fun clientAppScopesValidation(
         session: HttpSession,
         scopes: Scopes
@@ -42,11 +50,11 @@ class PermissionValidator(private val clientApplicationRepository: ClientApplica
     }
 
     private fun principalScopesValidation(
-        it: JwtAuthenticationToken,
+        principal: JwtAuthenticationToken,
         scopes: Scopes
     ) {
-        if (!it.hasEnoughScopes(scopes)) {
-            throw InsufficientClientApplicationScopeException("The client app ${it.clientAppId().content} does not support this use case........ consider to add ${scopes.content.map { it.content }} as scope")
+        if (!principal.hasEnoughScopes(scopes)) {
+            throw InsufficientClientApplicationScopeException("The client app ${principal.clientAppId().content} does not support this use case........ consider to add ${scopes.content.map { it.content }} as scope")
         }
     }
 }
