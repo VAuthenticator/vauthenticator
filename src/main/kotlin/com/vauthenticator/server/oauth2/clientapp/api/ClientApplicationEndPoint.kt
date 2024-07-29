@@ -22,12 +22,21 @@ class ClientApplicationEndPoint(
         return ResponseEntity.noContent().build()
     }
 
+    @PatchMapping("/api/client-applications/{clientAppId}/client-secret")
+    fun resetPasswordForClientApplicationV2(
+        @PathVariable("clientAppId") clientAppId: String,
+        @RequestBody body: ClientAppSecretRepresentation
+    ): ResponseEntity<Unit> {
+        storeClientApplication.resetPassword(ClientAppId(clientAppId), Secret(body.secret))
+        return ResponseEntity.noContent().build()
+    }
+
     @PatchMapping("/api/client-applications/{clientAppId}")
     fun resetPasswordForClientApplication(
         @PathVariable("clientAppId") clientAppId: String,
-        @RequestBody body: Map<String, String>
+        @RequestBody body: ClientAppSecretRepresentation
     ): ResponseEntity<Unit> {
-        storeClientApplication.resetPassword(ClientAppId(clientAppId), Secret(body["secret"]!!))
+        storeClientApplication.resetPassword(ClientAppId(clientAppId), Secret(body.secret))
         return ResponseEntity.noContent().build()
     }
 
@@ -57,6 +66,8 @@ class ClientApplicationEndPoint(
     fun clientApplicationNotFoundHandler() = ResponseEntity.notFound().build<Unit>()
 
 }
+
+data class ClientAppSecretRepresentation(val secret: String)
 
 data class ClientAppRepresentation(
     var clientAppName: String,

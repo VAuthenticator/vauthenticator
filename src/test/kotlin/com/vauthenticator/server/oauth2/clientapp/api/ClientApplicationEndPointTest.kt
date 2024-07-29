@@ -12,6 +12,8 @@ import io.mockk.runs
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
@@ -38,8 +40,13 @@ class ClientApplicationEndPointTest {
 
     @BeforeEach
     internal fun setUp() {
-        mockMvc = standaloneSetup(ClientApplicationEndPoint(clientApplicationRepository, storeClientApplication, readClientApplication))
-                .build()
+        mockMvc = standaloneSetup(
+            ClientApplicationEndPoint(
+                clientApplicationRepository,
+                storeClientApplication,
+                readClientApplication
+            )
+        ).build()
     }
 
 
@@ -52,37 +59,44 @@ class ClientApplicationEndPointTest {
         every { storeClientApplication.store(clientApplication, true) } just runs
 
         mockMvc.perform(
-                put("/api/client-applications/${clientAppId.content}")
-                        .content(objectMapper.writeValueAsString(representation))
-                        .contentType(MediaType.APPLICATION_JSON)
+            put("/api/client-applications/${clientAppId.content}")
+                .content(objectMapper.writeValueAsString(representation))
+                .contentType(MediaType.APPLICATION_JSON)
         )
-                .andExpect(status().isNoContent)
+            .andExpect(status().isNoContent)
 
     }
 
-    @Test
-    fun `reset password for a client app`() {
+    @ParameterizedTest
+    @ValueSource(strings = ["/client-secret", ""])
+    fun `reset password for a client app`(lastUrlSegment: String) {
         val clientAppId = aClientAppId()
         every { storeClientApplication.resetPassword(clientAppId, Secret("secret")) } just runs
 
         mockMvc.perform(
-                patch("/api/client-applications/${clientAppId.content}")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(mapOf("secret" to "secret")))
+            patch("/api/client-applications/${clientAppId.content}$lastUrlSegment")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(ClientAppSecretRepresentation("secret")))
         ).andExpect(status().isNoContent)
 
     }
 
-    @Test
-    fun `reset password for a not existing client app`() {
-        every { storeClientApplication.resetPassword(ClientAppId("clientApp"), Secret("secret")) } throws ClientApplicationNotFound("the client application clientApp was not found")
+    @ParameterizedTest
+    @ValueSource(strings = ["/client-secret", ""])
+    fun `reset password for a not existing client app`(lastUrlSegment: String) {
+        every {
+            storeClientApplication.resetPassword(
+                ClientAppId("clientApp"),
+                Secret("secret")
+            )
+        } throws ClientApplicationNotFound("the client application clientApp was not found")
 
         mockMvc.perform(
-                patch("/api/client-applications/clientApp")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(mapOf("secret" to "secret")))
+            patch("/api/client-applications/clientApp${lastUrlSegment}")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(ClientAppSecretRepresentation("secret")))
         )
-                .andExpect(status().isNotFound)
+            .andExpect(status().isNotFound)
 
     }
 
@@ -90,16 +104,20 @@ class ClientApplicationEndPointTest {
     fun `view all client app`() {
         val clientApplication = aClientApp(ClientAppId("clientApp"))
         val body = listOf(
-                ClientAppInListRepresentation.fromDomainToRepresentation(clientApplication),
-                ClientAppInListRepresentation.fromDomainToRepresentation(clientApplication),
-                ClientAppInListRepresentation.fromDomainToRepresentation(clientApplication)
+            ClientAppInListRepresentation.fromDomainToRepresentation(clientApplication),
+            ClientAppInListRepresentation.fromDomainToRepresentation(clientApplication),
+            ClientAppInListRepresentation.fromDomainToRepresentation(clientApplication)
         )
 
-        every { readClientApplication.findAll() } returns listOf(clientApplication, clientApplication, clientApplication)
+        every { readClientApplication.findAll() } returns listOf(
+            clientApplication,
+            clientApplication,
+            clientApplication
+        )
 
         mockMvc.perform(get("/api/client-applications"))
-                .andExpect(status().isOk)
-                .andExpect(content().json(objectMapper.writeValueAsString(body)))
+            .andExpect(status().isOk)
+            .andExpect(content().json(objectMapper.writeValueAsString(body)))
 
     }
 
@@ -111,8 +129,8 @@ class ClientApplicationEndPointTest {
         every { readClientApplication.findOne(ClientAppId("clientApp")) } returns Optional.of(aClientApp(ClientAppId("clientApp")))
 
         mockMvc.perform(get("/api/client-applications/clientApp"))
-                .andExpect(status().isOk)
-                .andExpect(content().json(objectMapper.writeValueAsString(body)))
+            .andExpect(status().isOk)
+            .andExpect(content().json(objectMapper.writeValueAsString(body)))
 
     }
 
@@ -121,7 +139,7 @@ class ClientApplicationEndPointTest {
         every { clientApplicationRepository.delete(ClientAppId("clientApp")) } just runs
 
         mockMvc.perform(delete("/api/client-applications/clientApp"))
-                .andExpect(status().isNoContent)
+            .andExpect(status().isNoContent)
 
     }
 }
