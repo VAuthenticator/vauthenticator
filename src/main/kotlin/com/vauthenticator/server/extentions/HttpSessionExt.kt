@@ -1,6 +1,6 @@
 package com.vauthenticator.server.extentions
 
-import com.vauthenticator.server.oauth2.clientapp.ClientAppId
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
 import jakarta.servlet.http.HttpSession
 import org.springframework.security.web.savedrequest.DefaultSavedRequest
 import java.util.*

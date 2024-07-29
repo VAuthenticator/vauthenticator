@@ -1,8 +1,8 @@
 package com.vauthenticator.server.password.resetpassword
 
 import com.vauthenticator.server.account.Email
-import com.vauthenticator.server.clientapp.ClientAppFixture
 import com.vauthenticator.server.events.ResetPasswordEvent
+import com.vauthenticator.server.oauth2.clientapp.ClientAppFixture
 import com.vauthenticator.server.password.Password
 import com.vauthenticator.server.password.PasswordHistoryRepository
 import io.mockk.every

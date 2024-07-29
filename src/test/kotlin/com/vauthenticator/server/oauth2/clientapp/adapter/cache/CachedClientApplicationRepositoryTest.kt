@@ -1,19 +1,17 @@
-package com.vauthenticator.server.clientapp
+package com.vauthenticator.server.oauth2.clientapp.adapter.cache
 
 import com.vauthenticator.server.cache.CacheContentConverter
 import com.vauthenticator.server.cache.CacheOperation
-import com.vauthenticator.server.clientapp.ClientAppFixture.aClientApp
-import com.vauthenticator.server.clientapp.ClientAppFixture.aClientAppId
-import com.vauthenticator.server.oauth2.clientapp.CachedClientApplicationRepository
-import com.vauthenticator.server.oauth2.clientapp.ClientApplication
-import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
+import com.vauthenticator.server.oauth2.clientapp.ClientAppFixture.aClientApp
+import com.vauthenticator.server.oauth2.clientapp.ClientAppFixture.aClientAppId
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplication
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

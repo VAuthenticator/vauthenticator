@@ -1,9 +1,9 @@
 package com.vauthenticator.server.events
 
 import com.vauthenticator.server.account.Email
-import com.vauthenticator.server.clientapp.A_CLIENT_APP_ID
-import com.vauthenticator.server.clientapp.ClientAppFixture
-import com.vauthenticator.server.oauth2.clientapp.ClientAppId
+import com.vauthenticator.server.oauth2.clientapp.A_CLIENT_APP_ID
+import com.vauthenticator.server.oauth2.clientapp.ClientAppFixture
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
 import com.vauthenticator.server.password.Password
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent

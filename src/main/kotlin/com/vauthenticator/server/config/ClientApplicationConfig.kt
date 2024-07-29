@@ -3,7 +3,12 @@ package com.vauthenticator.server.config
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.cache.CacheOperation
 import com.vauthenticator.server.cache.RedisCacheOperation
-import com.vauthenticator.server.oauth2.clientapp.*
+import com.vauthenticator.server.oauth2.clientapp.adapter.cache.CachedClientApplicationRepository
+import com.vauthenticator.server.oauth2.clientapp.adapter.cache.ClientApplicationCacheContentConverter
+import com.vauthenticator.server.oauth2.clientapp.adapter.dynamodb.DynamoDbClientApplicationRepository
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
+import com.vauthenticator.server.oauth2.clientapp.domain.ReadClientApplication
+import com.vauthenticator.server.oauth2.clientapp.domain.StoreClientApplication
 import com.vauthenticator.server.password.VAuthenticatorPasswordEncoder
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty

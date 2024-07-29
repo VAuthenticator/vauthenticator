@@ -2,13 +2,9 @@ package com.vauthenticator.server.mfa.api
 
 import com.vauthenticator.server.extentions.clientAppId
 import com.vauthenticator.server.mask.SensitiveEmailMasker
-import com.vauthenticator.server.mfa.domain.EmailMfaDevice
-import com.vauthenticator.server.mfa.domain.MfaMethod
-import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollment
-import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollmentAssociation
-import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
-import com.vauthenticator.server.oauth2.clientapp.Scope
-import com.vauthenticator.server.oauth2.clientapp.Scopes
+import com.vauthenticator.server.mfa.domain.*
+import com.vauthenticator.server.oauth2.clientapp.domain.Scope
+import com.vauthenticator.server.oauth2.clientapp.domain.Scopes
 import com.vauthenticator.server.role.PermissionValidator
 import jakarta.servlet.http.HttpSession
 import org.springframework.http.HttpStatus

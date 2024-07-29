@@ -1,6 +1,6 @@
 package com.vauthenticator.server.security.registeredclient
 
-import com.vauthenticator.server.oauth2.clientapp.*
+import com.vauthenticator.server.oauth2.clientapp.domain.*
 import com.vauthenticator.server.oauth2.registeredclient.ClientAppRegisteredClientRepository
 import com.vauthenticator.server.oauth2.registeredclient.RegisteredClientAppNotFound
 import com.vauthenticator.server.security.registeredclient.RegisteredClientRepositoryFixture.aClientApplication

@@ -5,10 +5,10 @@ import com.vauthenticator.server.extentions.hasEnoughScopes
 import com.vauthenticator.server.extentions.oauth2ClientId
 import com.vauthenticator.server.i18n.I18nMessageInjector
 import com.vauthenticator.server.i18n.I18nScope
-import com.vauthenticator.server.oauth2.clientapp.ClientAppId
-import com.vauthenticator.server.oauth2.clientapp.ClientApplicationFeatures
-import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
-import com.vauthenticator.server.oauth2.clientapp.Scope
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationFeatures
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
+import com.vauthenticator.server.oauth2.clientapp.domain.Scope
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpSession
 import org.slf4j.Logger

@@ -1,13 +1,9 @@
 package com.vauthenticator.server.ticket
 
 import com.vauthenticator.server.keys.Kid
-import com.vauthenticator.server.mfa.domain.MfaAccountMethod
-import com.vauthenticator.server.mfa.domain.MfaChallenge
+import com.vauthenticator.server.mfa.domain.*
 import com.vauthenticator.server.mfa.domain.MfaMethod.EMAIL_MFA_METHOD
-import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollmentAssociation
-import com.vauthenticator.server.mfa.domain.OtpMfaVerifier
-import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
-import com.vauthenticator.server.oauth2.clientapp.ClientAppId
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import com.vauthenticator.server.support.TicketFixture
 import com.vauthenticator.server.support.TicketFixture.ticketContext

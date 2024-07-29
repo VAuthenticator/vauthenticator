@@ -11,10 +11,10 @@ import com.vauthenticator.server.lambdas.AwsLambdaFunctionContextFactory
 import com.vauthenticator.server.lambdas.LambdaFunction
 import com.vauthenticator.server.lambdas.LambdaTokenEnhancer
 import com.vauthenticator.server.oauth2.authorizationservice.RedisOAuth2AuthorizationService
-import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
-import com.vauthenticator.server.oauth2.clientapp.Scope.Companion.AVAILABLE_SCOPES
-import com.vauthenticator.server.oauth2.clientapp.Scope.Companion.OPEN_ID
-import com.vauthenticator.server.oauth2.clientapp.StoreClientApplication
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
+import com.vauthenticator.server.oauth2.clientapp.domain.Scope.Companion.AVAILABLE_SCOPES
+import com.vauthenticator.server.oauth2.clientapp.domain.Scope.Companion.OPEN_ID
+import com.vauthenticator.server.oauth2.clientapp.domain.StoreClientApplication
 import com.vauthenticator.server.oauth2.registeredclient.ClientAppRegisteredClientRepository
 import com.vauthenticator.server.oauth2.token.OAuth2TokenEnhancer
 import com.vauthenticator.server.oidc.sessionmanagement.SessionManagementFactory

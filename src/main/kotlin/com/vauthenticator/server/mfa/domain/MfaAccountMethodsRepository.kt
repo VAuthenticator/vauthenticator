@@ -1,7 +1,5 @@
-package com.vauthenticator.server.mfa.repository
+package com.vauthenticator.server.mfa.domain
 
-import com.vauthenticator.server.mfa.domain.MfaAccountMethod
-import com.vauthenticator.server.mfa.domain.MfaMethod
 import java.util.*
 
 interface MfaAccountMethodsRepository {

@@ -2,16 +2,16 @@ package com.vauthenticator.server.mfa.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.clientapp.A_CLIENT_APP_ID
 import com.vauthenticator.server.mask.SensitiveEmailMasker
 import com.vauthenticator.server.mfa.domain.EmailMfaDevice
+import com.vauthenticator.server.mfa.domain.MfaAccountMethodsRepository
 import com.vauthenticator.server.mfa.domain.MfaMethod.EMAIL_MFA_METHOD
 import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollment
 import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollmentAssociation
-import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
-import com.vauthenticator.server.oauth2.clientapp.ClientAppId
-import com.vauthenticator.server.oauth2.clientapp.Scope
-import com.vauthenticator.server.oauth2.clientapp.Scopes
+import com.vauthenticator.server.oauth2.clientapp.A_CLIENT_APP_ID
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
+import com.vauthenticator.server.oauth2.clientapp.domain.Scope
+import com.vauthenticator.server.oauth2.clientapp.domain.Scopes
 import com.vauthenticator.server.role.PermissionValidator
 import com.vauthenticator.server.support.AccountTestFixture
 import com.vauthenticator.server.support.MfaFixture.accountMfaAssociatedMfaMethods

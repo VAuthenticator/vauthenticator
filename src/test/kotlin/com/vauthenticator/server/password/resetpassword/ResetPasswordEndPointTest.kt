@@ -1,11 +1,11 @@
 package com.vauthenticator.server.password.resetpassword
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.vauthenticator.server.clientapp.A_CLIENT_APP_ID
-import com.vauthenticator.server.clientapp.ClientAppFixture.aClientApp
-import com.vauthenticator.server.oauth2.clientapp.ClientAppId
-import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
-import com.vauthenticator.server.oauth2.clientapp.Scope
+import com.vauthenticator.server.oauth2.clientapp.A_CLIENT_APP_ID
+import com.vauthenticator.server.oauth2.clientapp.ClientAppFixture.aClientApp
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
+import com.vauthenticator.server.oauth2.clientapp.domain.Scope
 import com.vauthenticator.server.role.PermissionValidator
 import com.vauthenticator.server.support.EMAIL
 import com.vauthenticator.server.support.SecurityFixture.principalFor

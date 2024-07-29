@@ -1,6 +1,7 @@
-package com.vauthenticator.server.oauth2.clientapp
+package com.vauthenticator.server.oauth2.clientapp.adapter.dynamodb
 
 import com.vauthenticator.server.extentions.*
+import com.vauthenticator.server.oauth2.clientapp.domain.*
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 
 

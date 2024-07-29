@@ -1,4 +1,4 @@
-package com.vauthenticator.server.oauth2.clientapp
+package com.vauthenticator.server.oauth2.clientapp.domain
 
 import java.util.*
 

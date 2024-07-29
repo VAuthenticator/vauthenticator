@@ -2,8 +2,8 @@ package com.vauthenticator.server.oauth2.token
 
 import com.vauthenticator.server.keys.KeyRepository
 import com.vauthenticator.server.keys.Kid
-import com.vauthenticator.server.oauth2.clientapp.ClientAppId
-import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.oauth2.core.AuthorizationGrantType

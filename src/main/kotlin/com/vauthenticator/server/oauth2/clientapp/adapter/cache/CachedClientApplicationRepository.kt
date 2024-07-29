@@ -1,7 +1,10 @@
-package com.vauthenticator.server.oauth2.clientapp
+package com.vauthenticator.server.oauth2.clientapp.adapter.cache
 
 import com.vauthenticator.server.cache.CacheContentConverter
 import com.vauthenticator.server.cache.CacheOperation
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplication
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
 import java.util.*
 
 class CachedClientApplicationRepository(

@@ -2,11 +2,11 @@ package com.vauthenticator.server.password.changepassword
 
 import com.vauthenticator.server.account.AccountNotFoundException
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.clientapp.A_CLIENT_APP_ID
 import com.vauthenticator.server.events.ChangePasswordEvent
 import com.vauthenticator.server.events.VAuthenticatorEventsDispatcher
-import com.vauthenticator.server.oauth2.clientapp.ClientAppId
-import com.vauthenticator.server.oauth2.clientapp.Scope
+import com.vauthenticator.server.oauth2.clientapp.A_CLIENT_APP_ID
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
+import com.vauthenticator.server.oauth2.clientapp.domain.Scope
 import com.vauthenticator.server.password.PasswordPolicy
 import com.vauthenticator.server.password.VAuthenticatorPasswordEncoder
 import com.vauthenticator.server.support.AccountTestFixture.anAccount

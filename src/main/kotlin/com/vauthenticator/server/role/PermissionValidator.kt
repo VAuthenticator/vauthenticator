@@ -3,10 +3,10 @@ package com.vauthenticator.server.role
 import com.vauthenticator.server.extentions.clientAppId
 import com.vauthenticator.server.extentions.hasEnoughScopes
 import com.vauthenticator.server.extentions.oauth2ClientId
-import com.vauthenticator.server.oauth2.clientapp.ClientApplicationNotFound
-import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
-import com.vauthenticator.server.oauth2.clientapp.InsufficientClientApplicationScopeException
-import com.vauthenticator.server.oauth2.clientapp.Scopes
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationNotFound
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
+import com.vauthenticator.server.oauth2.clientapp.domain.InsufficientClientApplicationScopeException
+import com.vauthenticator.server.oauth2.clientapp.domain.Scopes
 import jakarta.servlet.http.HttpSession
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import java.util.*

@@ -1,7 +1,7 @@
 package com.vauthenticator.server.mfa.web
 
-import com.vauthenticator.server.clientapp.ClientAppFixture
-import com.vauthenticator.server.oauth2.clientapp.*
+import com.vauthenticator.server.oauth2.clientapp.ClientAppFixture
+import com.vauthenticator.server.oauth2.clientapp.domain.*
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension

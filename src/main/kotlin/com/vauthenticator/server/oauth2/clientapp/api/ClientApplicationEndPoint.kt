@@ -1,5 +1,6 @@
-package com.vauthenticator.server.oauth2.clientapp
+package com.vauthenticator.server.oauth2.clientapp.api
 
+import com.vauthenticator.server.oauth2.clientapp.domain.*
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 

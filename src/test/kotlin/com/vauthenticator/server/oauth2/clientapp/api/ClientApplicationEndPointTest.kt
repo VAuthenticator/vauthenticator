@@ -1,9 +1,9 @@
-package com.vauthenticator.server.clientapp
+package com.vauthenticator.server.oauth2.clientapp.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.vauthenticator.server.clientapp.ClientAppFixture.aClientApp
-import com.vauthenticator.server.clientapp.ClientAppFixture.aClientAppId
-import com.vauthenticator.server.oauth2.clientapp.*
+import com.vauthenticator.server.oauth2.clientapp.ClientAppFixture.aClientApp
+import com.vauthenticator.server.oauth2.clientapp.ClientAppFixture.aClientAppId
+import com.vauthenticator.server.oauth2.clientapp.domain.*
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -17,7 +17,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.test.web.servlet.setup.MockMvcBuilders.*
+import org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup
 import java.util.*
 
 @ExtendWith(MockKExtension::class)

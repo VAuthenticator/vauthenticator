@@ -2,7 +2,7 @@ package com.vauthenticator.server.account.emailverification
 
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollmentAssociation
-import com.vauthenticator.server.oauth2.clientapp.ClientAppId
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
 import com.vauthenticator.server.support.AccountTestFixture
 import com.vauthenticator.server.support.TicketFixture
 import com.vauthenticator.server.ticket.InvalidTicketException

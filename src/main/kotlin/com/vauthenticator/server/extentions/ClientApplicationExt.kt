@@ -1,6 +1,6 @@
 package com.vauthenticator.server.extentions
 
-import com.vauthenticator.server.oauth2.clientapp.*
+import com.vauthenticator.server.oauth2.clientapp.domain.*
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 
 fun Scopes.asDynamoAttribute(): AttributeValue = AttributeValue.builder().ss(this.content.map { it.content }).build()
