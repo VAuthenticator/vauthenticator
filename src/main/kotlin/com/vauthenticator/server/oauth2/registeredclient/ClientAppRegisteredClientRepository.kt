@@ -1,6 +1,6 @@
 package com.vauthenticator.server.oauth2.registeredclient
 
-import com.vauthenticator.server.oauth2.clientapp.*
+import com.vauthenticator.server.oauth2.clientapp.domain.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.security.oauth2.core.AuthorizationGrantType

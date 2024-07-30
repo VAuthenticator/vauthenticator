@@ -2,9 +2,9 @@ package com.vauthenticator.server.password.changepassword
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.account.AccountNotFoundException
-import com.vauthenticator.server.clientapp.A_CLIENT_APP_ID
-import com.vauthenticator.server.oauth2.clientapp.ClientAppId
-import com.vauthenticator.server.oauth2.clientapp.Scope
+import com.vauthenticator.server.oauth2.clientapp.A_CLIENT_APP_ID
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
+import com.vauthenticator.server.oauth2.clientapp.domain.Scope
 import com.vauthenticator.server.password.PasswordPolicyViolation
 import com.vauthenticator.server.support.EMAIL
 import com.vauthenticator.server.support.SecurityFixture.principalFor

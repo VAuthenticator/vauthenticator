@@ -8,9 +8,8 @@ import com.vauthenticator.server.keys.KeyDecrypter
 import com.vauthenticator.server.keys.KeyRepository
 import com.vauthenticator.server.keys.MasterKid
 import com.vauthenticator.server.mask.SensitiveEmailMasker
+import com.vauthenticator.server.mfa.adapter.dynamodb.DynamoMfaAccountMethodsRepository
 import com.vauthenticator.server.mfa.domain.*
-import com.vauthenticator.server.mfa.repository.DynamoMfaAccountMethodsRepository
-import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
 import com.vauthenticator.server.ticket.TicketCreator
 import com.vauthenticator.server.ticket.TicketRepository
 import org.springframework.beans.factory.annotation.Value

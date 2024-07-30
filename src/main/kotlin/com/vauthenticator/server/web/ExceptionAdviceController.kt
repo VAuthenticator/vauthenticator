@@ -1,6 +1,6 @@
 package com.vauthenticator.server.web
 
-import com.vauthenticator.server.oauth2.clientapp.InsufficientClientApplicationScopeException
+import com.vauthenticator.server.oauth2.clientapp.domain.InsufficientClientApplicationScopeException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice

@@ -2,7 +2,7 @@ package com.vauthenticator.server.events
 
 import com.vauthenticator.server.account.Email
 import com.vauthenticator.server.extentions.oauth2ClientId
-import com.vauthenticator.server.oauth2.clientapp.ClientAppId
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
 import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher

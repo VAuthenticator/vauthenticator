@@ -1,4 +1,4 @@
-package com.vauthenticator.server.oauth2.clientapp
+package com.vauthenticator.server.oauth2.clientapp.domain
 
 data class ClientApplication(
     val clientAppId: ClientAppId,
@@ -80,6 +80,10 @@ data class Scope(val content: String) {
         val MFA_ALWAYS = Scope("mfa:always")
         val MFA_ENROLLMENT = Scope("mfa:enrollment")
 
+        val READ_CLIENT_APPLICATION = Scope("admin:client-app-reader")
+        val SAVE_CLIENT_APPLICATION = Scope("admin:client-app-writer")
+        val DELETE_CLIENT_APPLICATION = Scope("admin:client-app-eraser")
+
         val AVAILABLE_SCOPES = listOf(
             OPEN_ID,
             PROFILE,
@@ -98,7 +102,10 @@ data class Scope(val content: String) {
             MAIL_TEMPLATE_WRITER,
 
             MFA_ALWAYS,
-            MFA_ENROLLMENT
+            MFA_ENROLLMENT,
+
+            READ_CLIENT_APPLICATION,
+            SAVE_CLIENT_APPLICATION
         )
 
     }

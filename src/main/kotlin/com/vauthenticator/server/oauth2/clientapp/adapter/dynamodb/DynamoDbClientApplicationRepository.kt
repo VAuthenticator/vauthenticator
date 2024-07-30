@@ -1,9 +1,12 @@
-package com.vauthenticator.server.oauth2.clientapp
+package com.vauthenticator.server.oauth2.clientapp.adapter.dynamodb
 
 import com.vauthenticator.server.extentions.asDynamoAttribute
 import com.vauthenticator.server.extentions.filterEmptyMetadata
-import com.vauthenticator.server.oauth2.clientapp.DynamoClientApplicationConverter.fromDomainToDynamo
-import com.vauthenticator.server.oauth2.clientapp.DynamoClientApplicationConverter.fromDynamoToDomain
+import com.vauthenticator.server.oauth2.clientapp.adapter.dynamodb.DynamoClientApplicationConverter.fromDomainToDynamo
+import com.vauthenticator.server.oauth2.clientapp.adapter.dynamodb.DynamoClientApplicationConverter.fromDynamoToDomain
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplication
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest

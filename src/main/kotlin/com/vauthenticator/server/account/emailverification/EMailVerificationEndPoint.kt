@@ -2,8 +2,8 @@ package com.vauthenticator.server.account.emailverification
 
 import com.vauthenticator.server.i18n.I18nMessageInjector
 import com.vauthenticator.server.i18n.I18nScope
-import com.vauthenticator.server.oauth2.clientapp.Scope
-import com.vauthenticator.server.oauth2.clientapp.Scopes
+import com.vauthenticator.server.oauth2.clientapp.domain.Scope
+import com.vauthenticator.server.oauth2.clientapp.domain.Scopes
 import com.vauthenticator.server.role.PermissionValidator
 import jakarta.servlet.http.HttpSession
 import org.springframework.http.ResponseEntity

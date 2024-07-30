@@ -9,7 +9,7 @@ import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.email.*
 import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollment
 import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollmentAssociation
-import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
 import com.vauthenticator.server.ticket.TicketRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean

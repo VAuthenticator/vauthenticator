@@ -3,7 +3,7 @@ package com.vauthenticator.server.config
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.cache.CacheOperation
 import com.vauthenticator.server.cache.RedisCacheOperation
-import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
 import com.vauthenticator.server.role.PermissionValidator
 import com.vauthenticator.server.role.RoleCacheContentConverter
 import com.vauthenticator.server.role.repository.CachedRoleRepository

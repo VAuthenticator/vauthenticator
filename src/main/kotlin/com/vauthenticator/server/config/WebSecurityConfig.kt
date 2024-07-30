@@ -5,8 +5,8 @@ import com.vauthenticator.server.login.userdetails.AccountUserDetailsService
 import com.vauthenticator.server.login.workflow.CompositeLoginWorkflowEngine
 import com.vauthenticator.server.login.workflow.LOGIN_ENGINE_BROKER_PAGE
 import com.vauthenticator.server.mfa.web.MfaLoginWorkflowHandler
-import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
-import com.vauthenticator.server.oauth2.clientapp.Scope
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
+import com.vauthenticator.server.oauth2.clientapp.domain.Scope
 import com.vauthenticator.server.oidc.logout.ClearSessionStateLogoutHandler
 import com.vauthenticator.server.oidc.sessionmanagement.SessionManagementFactory
 import com.vauthenticator.server.password.BcryptVAuthenticatorPasswordEncoder

@@ -2,15 +2,10 @@ package com.vauthenticator.server.mfa.api
 
 import com.vauthenticator.server.extentions.clientAppId
 import com.vauthenticator.server.mask.SensitiveEmailMasker
-import com.vauthenticator.server.mfa.domain.EmailMfaDevice
-import com.vauthenticator.server.mfa.domain.MfaMethod
-import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollment
-import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollmentAssociation
-import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
-import com.vauthenticator.server.oauth2.clientapp.Scope
-import com.vauthenticator.server.oauth2.clientapp.Scopes
+import com.vauthenticator.server.mfa.domain.*
+import com.vauthenticator.server.oauth2.clientapp.domain.Scope
+import com.vauthenticator.server.oauth2.clientapp.domain.Scopes
 import com.vauthenticator.server.role.PermissionValidator
-import jakarta.servlet.http.HttpSession
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.ok
@@ -54,10 +49,9 @@ class MfaEnrolmentAssociationEndPoint(
     @PostMapping("/api/mfa/enrollment")
     fun enrollMfa(
         authentication: JwtAuthenticationToken,
-        httpSession: HttpSession,
         @RequestBody enrolling: MfaEnrollmentRequest
     ): ResponseEntity<MfaEnrollmentResponse> {
-        permissionValidator.validate(authentication, httpSession, Scopes.from(Scope.MFA_ENROLLMENT))
+        permissionValidator.validate(authentication, Scopes.from(Scope.MFA_ENROLLMENT))
         val ticketId = mfaMethodsEnrollment.enroll(
             authentication.name,
             enrolling.mfaMethod,
@@ -70,11 +64,10 @@ class MfaEnrolmentAssociationEndPoint(
 
     @PostMapping("/api/mfa/associate")
     fun associateMfaEnrollment(
-        httpSession: HttpSession,
         authentication: JwtAuthenticationToken,
         @RequestBody associationRequest: MfaEnrollmentAssociationRequest,
     ): ResponseEntity<Unit> {
-        permissionValidator.validate(authentication, httpSession, Scopes.from(Scope.MFA_ENROLLMENT))
+        permissionValidator.validate(authentication, Scopes.from(Scope.MFA_ENROLLMENT))
         mfaMethodsEnrolmentAssociation.associate(associationRequest.ticket, associationRequest.code)
         return ResponseEntity.noContent().build()
     }

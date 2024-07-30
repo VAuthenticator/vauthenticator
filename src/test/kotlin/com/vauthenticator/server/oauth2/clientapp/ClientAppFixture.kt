@@ -1,6 +1,6 @@
-package com.vauthenticator.server.clientapp
+package com.vauthenticator.server.oauth2.clientapp
 
-import com.vauthenticator.server.oauth2.clientapp.*
+import com.vauthenticator.server.oauth2.clientapp.domain.*
 
 const val A_CLIENT_APP_ID = "A_CLIENT_APP_ID"
 

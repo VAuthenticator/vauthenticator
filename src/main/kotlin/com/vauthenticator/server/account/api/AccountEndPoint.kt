@@ -7,9 +7,9 @@ import com.vauthenticator.server.account.api.SignUpAccountConverter.fromRepresen
 import com.vauthenticator.server.account.signup.SignUpUse
 import com.vauthenticator.server.extentions.clientAppId
 import com.vauthenticator.server.extentions.oauth2ClientId
-import com.vauthenticator.server.oauth2.clientapp.ClientAppId
-import com.vauthenticator.server.oauth2.clientapp.Scope
-import com.vauthenticator.server.oauth2.clientapp.Scopes
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
+import com.vauthenticator.server.oauth2.clientapp.domain.Scope
+import com.vauthenticator.server.oauth2.clientapp.domain.Scopes
 import com.vauthenticator.server.role.PermissionValidator
 import jakarta.servlet.http.HttpSession
 import org.slf4j.Logger

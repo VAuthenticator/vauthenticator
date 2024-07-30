@@ -1,6 +1,6 @@
-package com.vauthenticator.server.clientapp
+package com.vauthenticator.server.oauth2.clientapp.domain
 
-import com.vauthenticator.server.oauth2.clientapp.*
+import com.vauthenticator.server.oauth2.clientapp.ClientAppFixture
 import com.vauthenticator.server.password.VAuthenticatorPasswordEncoder
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -8,7 +8,7 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import java.util.*

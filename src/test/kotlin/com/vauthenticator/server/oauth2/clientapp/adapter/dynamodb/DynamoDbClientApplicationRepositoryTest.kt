@@ -1,8 +1,8 @@
-package com.vauthenticator.server.clientapp
+package com.vauthenticator.server.oauth2.clientapp.adapter.dynamodb
 
-import com.vauthenticator.server.oauth2.clientapp.ClientAppId
-import com.vauthenticator.server.oauth2.clientapp.ClientApplication
-import com.vauthenticator.server.oauth2.clientapp.DynamoDbClientApplicationRepository
+import com.vauthenticator.server.oauth2.clientapp.ClientAppFixture
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplication
 import com.vauthenticator.server.support.DynamoDbUtils.dynamoClientApplicationTableName
 import com.vauthenticator.server.support.DynamoDbUtils.dynamoDbClient
 import com.vauthenticator.server.support.DynamoDbUtils.resetDynamoDb

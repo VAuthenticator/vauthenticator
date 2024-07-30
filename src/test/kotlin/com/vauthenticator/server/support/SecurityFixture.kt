@@ -72,6 +72,22 @@ object SecurityFixture {
             )
         }
 
+    fun m2mPrincipalFor(
+        clientAppId: String,
+        scopes: List<String> = emptyList()
+    ) =
+        signedJWTFor(clientAppId, "", scopes).let { signedJWT ->
+            JwtAuthenticationToken(
+                Jwt(
+                    simpleJwtFor(clientAppId),
+                    Instant.now(),
+                    Instant.now().plusSeconds(100),
+                    signedJWT.header.toJSONObject(),
+                    signedJWT.payload.toJSONObject()
+                )
+            )
+        }
+
     fun principalFor(mail: String, authorities: List<String> = emptyList()): UsernamePasswordAuthenticationToken =
         UsernamePasswordAuthenticationToken.authenticated(mail, "", authorities.map(::SimpleGrantedAuthority))
 

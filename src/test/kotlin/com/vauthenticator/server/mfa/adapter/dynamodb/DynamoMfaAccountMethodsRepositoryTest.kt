@@ -1,7 +1,8 @@
-package com.vauthenticator.server.mfa.repository
+package com.vauthenticator.server.mfa.adapter.dynamodb
 
 import com.vauthenticator.server.keys.*
 import com.vauthenticator.server.mfa.domain.MfaAccountMethod
+import com.vauthenticator.server.mfa.domain.MfaAccountMethodsRepository
 import com.vauthenticator.server.mfa.domain.MfaMethod
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import com.vauthenticator.server.support.DynamoDbUtils.dynamoDbClient

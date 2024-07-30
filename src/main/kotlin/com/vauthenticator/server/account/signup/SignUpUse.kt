@@ -5,8 +5,8 @@ import com.vauthenticator.server.account.Email
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.events.SignUpEvent
 import com.vauthenticator.server.events.VAuthenticatorEventsDispatcher
-import com.vauthenticator.server.oauth2.clientapp.ClientAppId
-import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
 import com.vauthenticator.server.password.Password
 import com.vauthenticator.server.password.PasswordPolicy
 import com.vauthenticator.server.password.VAuthenticatorPasswordEncoder

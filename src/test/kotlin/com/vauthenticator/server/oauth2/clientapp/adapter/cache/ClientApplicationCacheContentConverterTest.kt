@@ -1,7 +1,6 @@
-package com.vauthenticator.server.clientapp
+package com.vauthenticator.server.oauth2.clientapp.adapter.cache
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.vauthenticator.server.oauth2.clientapp.ClientApplicationCacheContentConverter
 import com.vauthenticator.server.security.registeredclient.RegisteredClientRepositoryFixture.aClientApplication
 import com.vauthenticator.server.support.JsonUtils.prettifyInOneLineJsonFrom
 import org.junit.jupiter.api.Assertions

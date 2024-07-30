@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.events.EventFixture.vauthenticatorAuthEvent
 import com.vauthenticator.server.i18n.I18nMessageInjector
 import com.vauthenticator.server.login.LoginPageController
-import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension

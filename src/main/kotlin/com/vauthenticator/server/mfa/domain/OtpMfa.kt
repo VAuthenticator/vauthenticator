@@ -7,7 +7,6 @@ import com.vauthenticator.server.keys.KeyDecrypter
 import com.vauthenticator.server.keys.KeyPurpose
 import com.vauthenticator.server.keys.KeyRepository
 import com.vauthenticator.server.mfa.OtpConfigurationProperties
-import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
 import org.apache.commons.codec.binary.Hex
 
 interface OtpMfa {

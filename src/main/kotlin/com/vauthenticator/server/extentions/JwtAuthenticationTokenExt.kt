@@ -1,8 +1,8 @@
 package com.vauthenticator.server.extentions
 
-import com.vauthenticator.server.oauth2.clientapp.ClientAppId
-import com.vauthenticator.server.oauth2.clientapp.Scope
-import com.vauthenticator.server.oauth2.clientapp.Scopes
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
+import com.vauthenticator.server.oauth2.clientapp.domain.Scope
+import com.vauthenticator.server.oauth2.clientapp.domain.Scopes
 import org.springframework.security.core.Authentication
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 

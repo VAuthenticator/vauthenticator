@@ -1,9 +1,9 @@
 package com.vauthenticator.server.account.emailverification
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.vauthenticator.server.clientapp.A_CLIENT_APP_ID
-import com.vauthenticator.server.oauth2.clientapp.ClientApplicationRepository
-import com.vauthenticator.server.oauth2.clientapp.Scope
+import com.vauthenticator.server.oauth2.clientapp.A_CLIENT_APP_ID
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
+import com.vauthenticator.server.oauth2.clientapp.domain.Scope
 import com.vauthenticator.server.role.PermissionValidator
 import com.vauthenticator.server.support.EMAIL
 import com.vauthenticator.server.support.SecurityFixture

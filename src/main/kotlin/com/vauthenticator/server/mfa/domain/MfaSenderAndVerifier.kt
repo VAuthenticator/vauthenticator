@@ -2,7 +2,6 @@ package com.vauthenticator.server.mfa.domain
 
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.email.EMailSenderService
-import com.vauthenticator.server.mfa.repository.MfaAccountMethodsRepository
 
 
 interface OtpMfaSender {
