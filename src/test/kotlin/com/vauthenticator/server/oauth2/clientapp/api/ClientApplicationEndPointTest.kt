@@ -58,7 +58,7 @@ class ClientApplicationEndPointTest {
 
 
     @Test
-    fun `when store a new client app fails for insufficient scope`() {
+    fun `store a new client app fails for insufficient scope`() {
         val clientAppId = aClientAppId()
         val clientApplication = aClientApp(clientAppId)
         val representation = ClientAppRepresentation.fromDomainToRepresentation(clientApplication, storePassword = true)
@@ -114,6 +114,22 @@ class ClientApplicationEndPointTest {
 
     @ParameterizedTest
     @ValueSource(strings = ["/client-secret", ""])
+    fun `reset password for a client app fails for insufficient scope`(lastUrlSegment: String) {
+        val clientAppId = aClientAppId()
+        val jwtAuthenticationToken = m2mPrincipalFor(A_CLIENT_APP_ID, listOf(Scope.MFA_ENROLLMENT.content))
+
+        every { storeClientApplication.resetPassword(clientAppId, Secret("secret")) } just runs
+
+        mockMvc.perform(
+            patch("/api/client-applications/${clientAppId.content}$lastUrlSegment").contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(ClientAppSecretRepresentation("secret")))
+                .principal(jwtAuthenticationToken)
+        ).andExpect(status().isForbidden)
+
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = ["/client-secret", ""])
     fun `reset password for a not existing client app`(lastUrlSegment: String) {
         val jwtAuthenticationToken = m2mPrincipalFor(A_CLIENT_APP_ID, listOf(Scope.SAVE_CLIENT_APPLICATION.content))
 
@@ -128,7 +144,24 @@ class ClientApplicationEndPointTest {
                 .content(objectMapper.writeValueAsString(ClientAppSecretRepresentation("secret")))
                 .principal(jwtAuthenticationToken)
         ).andExpect(status().isNotFound)
+    }
 
+    @ParameterizedTest
+    @ValueSource(strings = ["/client-secret", ""])
+    fun `reset password for a not existing client app fails for insufficient scope`(lastUrlSegment: String) {
+        val jwtAuthenticationToken = m2mPrincipalFor(A_CLIENT_APP_ID, listOf(Scope.MFA_ENROLLMENT.content))
+
+        every {
+            storeClientApplication.resetPassword(
+                ClientAppId("clientApp"), Secret("secret")
+            )
+        } throws ClientApplicationNotFound("the client application clientApp was not found")
+
+        mockMvc.perform(
+            patch("/api/client-applications/clientApp${lastUrlSegment}").contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(ClientAppSecretRepresentation("secret")))
+                .principal(jwtAuthenticationToken)
+        ).andExpect(status().isForbidden)
     }
 
     @Test
@@ -156,6 +189,21 @@ class ClientApplicationEndPointTest {
     }
 
     @Test
+    fun `view all client app fails for insufficient scope`() {
+        val clientApplication = aClientApp(ClientAppId("clientApp"))
+        val jwtAuthenticationToken = m2mPrincipalFor(A_CLIENT_APP_ID, listOf(Scope.MFA_ENROLLMENT.content))
+
+        every { readClientApplication.findAll() } returns listOf(
+            clientApplication, clientApplication, clientApplication
+        )
+
+        mockMvc.perform(
+            get("/api/client-applications")
+                .principal(jwtAuthenticationToken)
+        ).andExpect(status().isForbidden)
+    }
+
+    @Test
     fun `view a specific client app`() {
         val clientApplication = aClientApp(ClientAppId("clientApp"))
         val body = ClientAppRepresentation.fromDomainToRepresentation(clientApplication)
@@ -163,11 +211,26 @@ class ClientApplicationEndPointTest {
 
         every { readClientApplication.findOne(ClientAppId("clientApp")) } returns Optional.of(aClientApp(ClientAppId("clientApp")))
 
-        mockMvc.perform(get("/api/client-applications/clientApp")
-            .principal(jwtAuthenticationToken))
+        mockMvc.perform(
+            get("/api/client-applications/clientApp")
+                .principal(jwtAuthenticationToken)
+        )
             .andExpect(status().isOk)
             .andExpect(content().json(objectMapper.writeValueAsString(body)))
+    }
 
+    @Test
+    fun `view a specific client app fails for insufficient scope`() {
+        val clientApplication = aClientApp(ClientAppId("clientApp"))
+        val body = ClientAppRepresentation.fromDomainToRepresentation(clientApplication)
+        val jwtAuthenticationToken = m2mPrincipalFor(A_CLIENT_APP_ID, listOf(Scope.MFA_ENROLLMENT.content))
+
+        every { readClientApplication.findOne(ClientAppId("clientApp")) } returns Optional.of(aClientApp(ClientAppId("clientApp")))
+
+        mockMvc.perform(
+            get("/api/client-applications/clientApp")
+                .principal(jwtAuthenticationToken)
+        ).andExpect(status().isForbidden)
     }
 
     @Test
@@ -176,9 +239,23 @@ class ClientApplicationEndPointTest {
 
         every { clientApplicationRepository.delete(ClientAppId("clientApp")) } just runs
 
-        mockMvc.perform(delete("/api/client-applications/clientApp")
-            .principal(jwtAuthenticationToken))
+        mockMvc.perform(
+            delete("/api/client-applications/clientApp")
+                .principal(jwtAuthenticationToken)
+        )
             .andExpect(status().isNoContent)
+    }
 
+    @Test
+    fun `delete a specific client app fails for insufficient scope`() {
+        val jwtAuthenticationToken = m2mPrincipalFor(A_CLIENT_APP_ID, listOf(Scope.MFA_ENROLLMENT.content))
+
+        every { clientApplicationRepository.delete(ClientAppId("clientApp")) } just runs
+
+        mockMvc.perform(
+            delete("/api/client-applications/clientApp")
+                .principal(jwtAuthenticationToken)
+        )
+            .andExpect(status().isForbidden)
     }
 }
