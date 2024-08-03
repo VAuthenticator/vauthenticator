@@ -77,7 +77,7 @@ resource "aws_dynamodb_table" "mfa_account_methods_table" {
 
   global_secondary_index {
     name            = "${var.mfa_account_methods_table_name}${var.table_name_suffix}_Index"
-    hash_key        = "key_id"
+    hash_key        = "mfa_device_id"
     projection_type = "ALL"
   }
 
