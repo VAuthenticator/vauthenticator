@@ -75,6 +75,12 @@ resource "aws_dynamodb_table" "mfa_account_methods_table" {
     type = "S"
   }
 
+  global_secondary_index {
+    name            = "${var.mfa_account_methods_table_name}${var.table_name_suffix}_Index"
+    hash_key        = "key_id"
+    projection_type = "ALL"
+  }
+
   tags = merge(tomap({ "Name" = var.mfa_account_methods_table_name }), var.common_resource_tags)
 }
 

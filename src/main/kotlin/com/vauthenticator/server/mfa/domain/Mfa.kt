@@ -1,25 +1,12 @@
 package com.vauthenticator.server.mfa.domain
 
-import com.vauthenticator.server.extentions.encoder
 import com.vauthenticator.server.keys.Kid
 import org.springframework.security.authentication.event.AbstractAuthenticationEvent
 import org.springframework.security.authentication.event.AbstractAuthenticationFailureEvent
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.AuthenticationException
 
-data class MfaDevice(val userName: String, val mfaMethod: MfaMethod, val mfaChannel: String)
-
-data class MfaAssociationId(val content: String) {
-
-    companion object {
-        fun from(mfaDevice: MfaDevice): MfaAssociationId =
-            MfaAssociationId(
-                encoder.encodeToString("${mfaDevice.userName} \t ${mfaDevice.mfaMethod.name} \t ${mfaDevice.mfaChannel}".toByteArray())
-            )
-
-    }
-
-}
+data class MfaDevice(val userName: String, val mfaMethod: MfaMethod, val mfaChannel: String, val keyId : String)
 
 class MfaFailureEvent(authentication: Authentication, exception: AuthenticationException) :
     AbstractAuthenticationFailureEvent(authentication, exception)
