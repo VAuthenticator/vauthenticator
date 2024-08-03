@@ -43,7 +43,7 @@ const MfaChallengePage: React.FC<MfaChallengePageProps> = ({ rawI18nMessages,raw
     const mfaIcon = (mfaMethod: MfaAccountEnrolledMethod) => {
         let icon
         if ("EMAIL_MFA_METHOD" === mfaMethod.mfaMethod) {
-            icon = <><EmailIcon/> EMail: {mfaMethod.email}</>
+            icon = <><EmailIcon/> EMail: {mfaMethod.mfaChannel}</>
         }
         return icon
     }

@@ -32,16 +32,11 @@ class MfaEnrolmentAssociationEndPoint(
         ok(
             mfaAccountMethodsRepository.findAll(authentication.name)
                 .map {
-                    when (it.method) {
-                        MfaMethod.EMAIL_MFA_METHOD -> EmailMfaDevice(
-                            sensitiveEmailMasker.mask(it.userName),
-                            it.method
-                        )
-
-                        MfaMethod.SMS_MFA_METHOD -> TODO()
-                        MfaMethod.OTP_MFA_METHOD -> TODO()
-                    }
-
+                    MfaDevice(
+                        sensitiveEmailMasker.mask(it.userName),
+                        it.method,
+                        sensitiveEmailMasker.mask(it.mfaChannel)
+                    )
                 }
         )
 

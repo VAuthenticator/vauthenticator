@@ -1,7 +1,7 @@
 export type MfaAccountEnrolledMethod = {
-
-    email: string
+    userName: string
     mfaMethod: string
+    mfaChannel: string
 }
 
 export async function sendMfaCode(): Promise<void> {
