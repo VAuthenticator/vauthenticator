@@ -87,7 +87,7 @@ class MfaEnrolmentAssociationEndPointTest {
                 content().json(
                     objectMapper.writeValueAsString(
                         listOf(
-                            MfaDevice(email, EMAIL_MFA_METHOD, email)
+                            MfaDevice(email, EMAIL_MFA_METHOD, email, "A_KID")
                         )
                     )
                 )
