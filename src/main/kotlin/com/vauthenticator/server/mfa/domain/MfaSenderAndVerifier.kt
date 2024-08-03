@@ -50,7 +50,7 @@ class AccountAwareOtpMfaVerifier(
         mfaChannel: String,
         challenge: MfaChallenge
     ) {
-        mfaAccountMethodsRepository.findOne(userName, MfaMethod.EMAIL_MFA_METHOD, mfaChannel)
+        mfaAccountMethodsRepository.findBy(userName, MfaMethod.EMAIL_MFA_METHOD, mfaChannel)
             .map {
                 val account = accountRepository.accountFor(userName).get()
                 if (!it.associated) {
@@ -67,7 +67,7 @@ class AccountAwareOtpMfaVerifier(
         mfaChannel: String,
         challenge: MfaChallenge
     ) {
-        mfaAccountMethodsRepository.findOne(userName, MfaMethod.EMAIL_MFA_METHOD, mfaChannel)
+        mfaAccountMethodsRepository.findBy(userName, MfaMethod.EMAIL_MFA_METHOD, mfaChannel)
             .map {
                 val account = accountRepository.accountFor(userName).get()
                 if (it.associated) {

@@ -27,7 +27,7 @@ class MfaMethodsEnrollment(
     ): TicketId {
         return accountRepository.accountFor(userName)
             .map {
-                mfaAccountMethodsRepository.findOne(userName, mfaMethod, mfaChannel)
+                mfaAccountMethodsRepository.findBy(userName, mfaMethod, mfaChannel)
                     .ifPresentOrElse({},
                         { mfaAccountMethodsRepository.save(userName, mfaMethod, mfaChannel, false) }
                     )

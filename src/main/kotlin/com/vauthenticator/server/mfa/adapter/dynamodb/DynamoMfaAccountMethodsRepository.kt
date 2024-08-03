@@ -6,6 +6,7 @@ import com.vauthenticator.server.extentions.valueAsStringFor
 import com.vauthenticator.server.keys.*
 import com.vauthenticator.server.mfa.domain.MfaAccountMethod
 import com.vauthenticator.server.mfa.domain.MfaAccountMethodsRepository
+import com.vauthenticator.server.mfa.domain.MfaDeviceId
 import com.vauthenticator.server.mfa.domain.MfaMethod
 import com.vauthenticator.server.mfa.domain.MfaMethod.valueOf
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
@@ -18,10 +19,11 @@ class DynamoMfaAccountMethodsRepository(
     private val tableName: String,
     private val dynamoDbClient: DynamoDbClient,
     private val keyRepository: KeyRepository,
-    private val masterKid: MasterKid
+    private val masterKid: MasterKid,
+    private val deviceIdGenerator: () -> MfaDeviceId
 ) : MfaAccountMethodsRepository {
 
-    override fun findOne(
+    override fun findBy(
         userName: String,
         mfaMfaMethod: MfaMethod,
         mfaChannel: String
@@ -31,6 +33,10 @@ class DynamoMfaAccountMethodsRepository(
                 .map { MfaAccountMethodMapper.fromDynamoToDomain(userName, it) }
                 .find { it.method == mfaMfaMethod }
         )
+    }
+
+    override fun findBy(deviceId: MfaDeviceId): Optional<MfaAccountMethod> {
+        TODO("Not yet implemented")
     }
 
 
@@ -62,12 +68,17 @@ class DynamoMfaAccountMethodsRepository(
         associated: Boolean
     ): MfaAccountMethod {
         val kid = keyRepository.createKeyFrom(masterKid, KeyType.SYMMETRIC, KeyPurpose.MFA)
-        storeOnDynamo(userName, mfaMfaMethod, mfaChannel, kid, associated)
-        return MfaAccountMethod(userName, kid, mfaMfaMethod, mfaChannel, associated)
+        val deviceId = deviceIdGenerator.invoke()
+        storeOnDynamo(userName, mfaMfaMethod, mfaChannel,deviceId, kid, associated)
+        return MfaAccountMethod(userName, deviceId, kid, mfaMfaMethod, mfaChannel, associated)
+    }
+
+    override fun setAsDefault(userName: String, mfaDeviceId: MfaDeviceId) {
+        TODO("Not yet implemented")
     }
 
     private fun storeOnDynamo(
-        userName: String, mfaMfaMethod: MfaMethod, mfaChannel: String, kid: Kid, associated: Boolean
+        userName: String, mfaMfaMethod: MfaMethod, mfaChannel: String, deviceId : MfaDeviceId, kid: Kid, associated: Boolean
     ) {
         dynamoDbClient.putItem(
             PutItemRequest.builder().tableName(tableName).item(
@@ -76,6 +87,7 @@ class DynamoMfaAccountMethodsRepository(
                     "user_name" to userName.asDynamoAttribute(),
                     "mfa_method" to mfaMfaMethod.name.asDynamoAttribute(),
                     "mfa_channel" to mfaChannel.asDynamoAttribute(),
+                    "mfa_device_id" to deviceId.content.asDynamoAttribute(),
                     "key_id" to kid.content().asDynamoAttribute(),
                     "associated" to associated.asDynamoAttribute()
                 )
@@ -93,6 +105,7 @@ object MfaAccountMethodMapper {
     ): MfaAccountMethod =
         MfaAccountMethod(
             userName,
+            MfaDeviceId(item.valueAsStringFor("mfa_device_id")),
             Kid(item.valueAsStringFor("key_id")),
             valueOf(item.valueAsStringFor("mfa_method")),
             item.valueAsStringFor("mfa_channel"),

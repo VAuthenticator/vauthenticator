@@ -3,6 +3,7 @@ package com.vauthenticator.server.mfa.adapter.dynamodb
 import com.vauthenticator.server.keys.*
 import com.vauthenticator.server.mfa.domain.MfaAccountMethod
 import com.vauthenticator.server.mfa.domain.MfaAccountMethodsRepository
+import com.vauthenticator.server.mfa.domain.MfaDeviceId
 import com.vauthenticator.server.mfa.domain.MfaMethod
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import com.vauthenticator.server.support.DynamoDbUtils.dynamoDbClient
@@ -28,25 +29,29 @@ class DynamoMfaAccountMethodsRepositoryTest {
 
     lateinit var underTest: MfaAccountMethodsRepository
 
+    private val mfaDeviceId = MfaDeviceId("A_MFA_DEVICE_ID")
+    private val key = Kid("")
+
     @BeforeEach
     fun setUp() {
+
         resetDynamoDb()
         underTest = DynamoMfaAccountMethodsRepository(
             dynamoMfaAccountMethodsTableName,
             dynamoDbClient,
             keyRepository,
             masterKid
-        )
+        ) { mfaDeviceId }
     }
 
     @Test
     fun `when a mfa account method is stored`() {
-        every { keyRepository.createKeyFrom(masterKid, KeyType.SYMMETRIC, KeyPurpose.MFA) } returns Kid("")
+        every { keyRepository.createKeyFrom(masterKid, KeyType.SYMMETRIC, KeyPurpose.MFA) } returns key
 
         underTest.save(email, MfaMethod.EMAIL_MFA_METHOD, email, true)
         val mfaAccountMethods = underTest.findAll(email)
         assertEquals(
-            listOf(MfaAccountMethod(email, Kid(""), MfaMethod.EMAIL_MFA_METHOD, email, true)),
+            listOf(MfaAccountMethod(email, mfaDeviceId, key, MfaMethod.EMAIL_MFA_METHOD, email, true)),
             mfaAccountMethods
         )
     }
@@ -62,16 +67,16 @@ class DynamoMfaAccountMethodsRepositoryTest {
         every { keyRepository.createKeyFrom(masterKid, KeyType.SYMMETRIC, KeyPurpose.MFA) } returns Kid("")
 
         underTest.save(email, MfaMethod.EMAIL_MFA_METHOD, email, true)
-        val mfaAccountMethods = underTest.findOne(email, MfaMethod.EMAIL_MFA_METHOD, email)
+        val mfaAccountMethods = underTest.findBy(email, MfaMethod.EMAIL_MFA_METHOD, email)
         assertEquals(
-            Optional.of(MfaAccountMethod(email, Kid(""), MfaMethod.EMAIL_MFA_METHOD, email, true)),
+            Optional.of(MfaAccountMethod(email, mfaDeviceId, key, MfaMethod.EMAIL_MFA_METHOD, email, true)),
             mfaAccountMethods
         )
     }
 
     @Test
     fun `when one specific enrolment association is not found`() {
-        val mfaAccountMethods = underTest.findOne(email, MfaMethod.EMAIL_MFA_METHOD, email)
+        val mfaAccountMethods = underTest.findBy(email, MfaMethod.EMAIL_MFA_METHOD, email)
         val expected = Optional.empty<Any>()
         assertEquals(expected, mfaAccountMethods)
     }

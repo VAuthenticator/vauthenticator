@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.mail.javamail.JavaMailSender
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import java.util.*
 
 @Configuration(proxyBeanMethods = false)
 class MfaConfig {
@@ -34,7 +35,7 @@ class MfaConfig {
             dynamoDbClient,
             keyRepository,
             MasterKid(masterKey)
-        )
+        ) { MfaDeviceId(UUID.randomUUID().toString()) }
 
     @Bean
     fun sensitiveEmailMasker() = SensitiveEmailMasker()

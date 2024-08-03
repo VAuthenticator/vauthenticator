@@ -8,14 +8,10 @@ import com.vauthenticator.server.oauth2.clientapp.domain.Scopes
 import com.vauthenticator.server.role.PermissionValidator
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.http.ResponseEntity.ok
-import org.springframework.http.ResponseEntity.status
+import org.springframework.http.ResponseEntity.*
 import org.springframework.security.core.Authentication
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 class MfaEnrolmentAssociationEndPoint(
@@ -39,6 +35,18 @@ class MfaEnrolmentAssociationEndPoint(
                         it.key.content()
                     )
                 }
+        )
+
+    @PutMapping("/api/mfa/device")
+    fun setDefaultEnrolledMfaMethods(
+        authentication: Authentication,
+        @RequestBody defaultMethod: SetDefaultMfaDeviceRequest
+    ) =
+        ok(
+            mfaAccountMethodsRepository.setAsDefault(
+                authentication.name,
+                MfaDeviceId(defaultMethod.deviceId)
+            )
         )
 
 
@@ -65,10 +73,14 @@ class MfaEnrolmentAssociationEndPoint(
     ): ResponseEntity<Unit> {
         permissionValidator.validate(authentication, Scopes.from(Scope.MFA_ENROLLMENT))
         mfaMethodsEnrolmentAssociation.associate(associationRequest.ticket, associationRequest.code)
-        return ResponseEntity.noContent().build()
+        return noContent().build()
     }
 
 }
+
+data class SetDefaultMfaDeviceRequest(
+    val deviceId: String
+)
 
 data class MfaEnrollmentRequest(
     val mfaChannel: String,

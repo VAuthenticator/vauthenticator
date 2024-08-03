@@ -6,12 +6,13 @@ import org.springframework.security.authentication.event.AbstractAuthenticationF
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.AuthenticationException
 
-data class MfaDevice(val userName: String, val mfaMethod: MfaMethod, val mfaChannel: String, val keyId : String)
+data class MfaDevice(val userName: String, val mfaMethod: MfaMethod, val mfaChannel: String, val keyId: String)
+data class MfaDeviceId(val content: String)
 
 class MfaFailureEvent(authentication: Authentication, exception: AuthenticationException) :
     AbstractAuthenticationFailureEvent(authentication, exception)
 
-class MfaSuccessEvent(authentication: Authentication) : AbstractAuthenticationEvent(authentication) {}
+class MfaSuccessEvent(authentication: Authentication) : AbstractAuthenticationEvent(authentication)
 
 @JvmInline
 value class MfaSecret(private val content: String) {
@@ -26,6 +27,7 @@ value class MfaChallenge(private val content: String) {
 enum class MfaMethod { EMAIL_MFA_METHOD, SMS_MFA_METHOD, OTP_MFA_METHOD }
 data class MfaAccountMethod(
     val userName: String,
+    val deviceId: MfaDeviceId,
     val key: Kid,
     val method: MfaMethod,
     val mfaChannel: String,

@@ -32,7 +32,8 @@ class MfaMethodsEnrollmentAssociationTest {
 
     private val mfaAccountMethod = MfaAccountMethod(
         email,
-        Kid(""),
+        MfaDeviceId("A_MFA_DEVICE_ID"),
+        Kid("A_KID"),
         MfaMethod.EMAIL_MFA_METHOD,
         email,
         true
