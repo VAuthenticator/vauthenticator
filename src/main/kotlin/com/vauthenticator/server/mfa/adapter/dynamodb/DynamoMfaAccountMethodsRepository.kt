@@ -20,7 +20,7 @@ class DynamoMfaAccountMethodsRepository(
     private val dynamoDbClient: DynamoDbClient,
     private val keyRepository: KeyRepository,
     private val masterKid: MasterKid,
-    private val deviceIdGenerator: () -> MfaDeviceId
+    private val mfaDeviceIdGenerator: () -> MfaDeviceId
 ) : MfaAccountMethodsRepository {
 
     override fun findBy(
@@ -35,7 +35,7 @@ class DynamoMfaAccountMethodsRepository(
         )
     }
 
-    override fun findBy(deviceId: MfaDeviceId): Optional<MfaAccountMethod> {
+    override fun findBy(mfaDeviceId: MfaDeviceId): Optional<MfaAccountMethod> {
         TODO("Not yet implemented")
     }
 
@@ -68,9 +68,9 @@ class DynamoMfaAccountMethodsRepository(
         associated: Boolean
     ): MfaAccountMethod {
         val kid = keyRepository.createKeyFrom(masterKid, KeyType.SYMMETRIC, KeyPurpose.MFA)
-        val deviceId = deviceIdGenerator.invoke()
-        storeOnDynamo(userName, mfaMfaMethod, mfaChannel,deviceId, kid, associated)
-        return MfaAccountMethod(userName, deviceId, kid, mfaMfaMethod, mfaChannel, associated)
+        val mfaDeviceId = mfaDeviceIdGenerator.invoke()
+        storeOnDynamo(userName, mfaMfaMethod, mfaChannel,mfaDeviceId, kid, associated)
+        return MfaAccountMethod(userName, mfaDeviceId, kid, mfaMfaMethod, mfaChannel, associated)
     }
 
     override fun setAsDefault(userName: String, mfaDeviceId: MfaDeviceId) {
@@ -78,7 +78,7 @@ class DynamoMfaAccountMethodsRepository(
     }
 
     private fun storeOnDynamo(
-        userName: String, mfaMfaMethod: MfaMethod, mfaChannel: String, deviceId : MfaDeviceId, kid: Kid, associated: Boolean
+        userName: String, mfaMfaMethod: MfaMethod, mfaChannel: String, mfaDeviceId : MfaDeviceId, kid: Kid, associated: Boolean
     ) {
         dynamoDbClient.putItem(
             PutItemRequest.builder().tableName(tableName).item(
@@ -87,7 +87,7 @@ class DynamoMfaAccountMethodsRepository(
                     "user_name" to userName.asDynamoAttribute(),
                     "mfa_method" to mfaMfaMethod.name.asDynamoAttribute(),
                     "mfa_channel" to mfaChannel.asDynamoAttribute(),
-                    "mfa_device_id" to deviceId.content.asDynamoAttribute(),
+                    "mfa_device_id" to mfaDeviceId.content.asDynamoAttribute(),
                     "key_id" to kid.content().asDynamoAttribute(),
                     "associated" to associated.asDynamoAttribute()
                 )
