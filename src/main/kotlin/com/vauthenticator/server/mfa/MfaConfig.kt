@@ -28,10 +28,12 @@ class MfaConfig {
         keyRepository: KeyRepository,
         dynamoDbClient: DynamoDbClient,
         @Value("\${key.master-key}") masterKey: String,
-        @Value("\${vauthenticator.dynamo-db.mfa-account-methods.table-name}") tableName: String
+        @Value("\${vauthenticator.dynamo-db.mfa-account-methods.table-name}") mfaAccountMethodTableName: String,
+        @Value("\${vauthenticator.dynamo-db.default-mfa-account-methods.table-name}") defaultMfaAccountMethodTableName: String
     ): MfaAccountMethodsRepository =
         DynamoMfaAccountMethodsRepository(
-            tableName,
+            mfaAccountMethodTableName,
+            defaultMfaAccountMethodTableName,
             dynamoDbClient,
             keyRepository,
             MasterKid(masterKey)

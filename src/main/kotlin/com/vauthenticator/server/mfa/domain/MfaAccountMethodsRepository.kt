@@ -9,5 +9,6 @@ interface MfaAccountMethodsRepository {
     fun findAll(userName: String): List<MfaAccountMethod>
     fun save(userName: String, mfaMfaMethod: MfaMethod, mfaChannel: String, associated: Boolean): MfaAccountMethod
     fun setAsDefault(userName: String, deviceId: MfaDeviceId)
+    fun getDefaultDevice(userName: String) : Optional<MfaDeviceId>
 }
 

@@ -89,6 +89,20 @@ resource "aws_dynamodb_table" "mfa_account_methods_table" {
   tags = merge(tomap({ "Name" = var.mfa_account_methods_table_name }), var.common_resource_tags)
 }
 
+resource "aws_dynamodb_table" "default_mfa_account_methods_table" {
+  name = "${var.default_mfa_account_methods_table_name}${var.table_name_suffix}"
+
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "user_name"
+
+  attribute {
+    name = "user_name"
+    type = "S"
+  }
+
+  tags = merge(tomap({ "Name" = var.default_mfa_account_methods_table_name }), var.common_resource_tags)
+}
+
 resource "aws_dynamodb_table" "mfa_keys_table" {
   name = "${var.mfa_keys_table_name}${var.table_name_suffix}"
 

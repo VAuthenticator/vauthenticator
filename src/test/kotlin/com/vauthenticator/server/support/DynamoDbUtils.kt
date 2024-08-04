@@ -17,6 +17,7 @@ object DynamoDbUtils {
     const val dynamoMfaKeysTableName: String = "TESTING_VAuthenticator_Mfa_Keys"
     const val dynamoTicketTableName: String = "TESTING_VAuthenticator_ticket"
     const val dynamoMfaAccountMethodsTableName: String = "TESTING_VAuthenticator_Mfa_Account_Methods"
+    const val dynamoDefaultMfaAccountMethodsTableName: String = "TESTING_VAuthenticator_Default_Mfa_Account_Methods"
 
     val dynamoDbClient: DynamoDbClient = DynamoDbClient.builder()
         .credentialsProvider(
@@ -95,9 +96,9 @@ object DynamoDbUtils {
             createDynamoMfaKeysTable()
             createDynamoTicketTable()
             createDynamoMfaAccountMethodsTable()
+            createDynamoDefaultMfaAccountMethodsTable()
         } catch (e: java.lang.Exception) {
         }
-
     }
 
     private fun createDynamoPasswordHistoryTable() {
@@ -127,7 +128,7 @@ object DynamoDbUtils {
                 )
                 .billingMode(BillingMode.PAY_PER_REQUEST)
                 .build()
-        );
+        )
     }
 
     private fun createDynamoMfaAccountMethodsTable() {
@@ -152,8 +153,7 @@ object DynamoDbUtils {
                     AttributeDefinition.builder()
                         .attributeName("mfa_channel")
                         .attributeType(ScalarAttributeType.S)
-                        .build()
-                    , AttributeDefinition.builder()
+                        .build(), AttributeDefinition.builder()
                         .attributeName("mfa_device_id")
                         .attributeType(ScalarAttributeType.S)
                         .build()
@@ -168,6 +168,27 @@ object DynamoDbUtils {
                                 .keyType(KeyType.HASH)
                                 .build(),
                         )
+                        .build()
+                )
+                .billingMode(BillingMode.PAY_PER_REQUEST)
+                .build()
+        )
+    }
+
+    private fun createDynamoDefaultMfaAccountMethodsTable() {
+        dynamoDbClient.createTable(
+            CreateTableRequest.builder()
+                .tableName(dynamoDefaultMfaAccountMethodsTableName)
+                .keySchema(
+                    KeySchemaElement.builder()
+                        .attributeName("user_name")
+                        .keyType(KeyType.HASH)
+                        .build(),
+                )
+                .attributeDefinitions(
+                    AttributeDefinition.builder()
+                        .attributeName("user_name")
+                        .attributeType(ScalarAttributeType.S)
                         .build()
                 )
                 .billingMode(BillingMode.PAY_PER_REQUEST)

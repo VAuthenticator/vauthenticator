@@ -16,7 +16,8 @@ import software.amazon.awssdk.services.dynamodb.model.QueryRequest
 import java.util.*
 
 class DynamoMfaAccountMethodsRepository(
-    private val tableName: String,
+    private val mfaAccountMethodTableName: String,
+    private val defaultMfaAccountMethodTableName: String,
     private val dynamoDbClient: DynamoDbClient,
     private val keyRepository: KeyRepository,
     private val masterKid: MasterKid,
@@ -50,8 +51,8 @@ class DynamoMfaAccountMethodsRepository(
     private fun getFromDynamoBy(mfaDeviceId: MfaDeviceId) =
         dynamoDbClient.query(
             QueryRequest.builder()
-                .tableName(tableName)
-                .indexName("${tableName}_Index")
+                .tableName(mfaAccountMethodTableName)
+                .indexName("${mfaAccountMethodTableName}_Index")
                 .keyConditionExpression("mfa_device_id=:mfaDeviceId")
                 .expressionAttributeValues(
                     mapOf(
@@ -62,14 +63,13 @@ class DynamoMfaAccountMethodsRepository(
         ).items()
 
 
-
     private fun getFromDynamoBy(email: String) = dynamoDbClient.query(
-        QueryRequest.builder().tableName(tableName).keyConditionExpression("user_name=:email")
+        QueryRequest.builder().tableName(mfaAccountMethodTableName).keyConditionExpression("user_name=:email")
             .expressionAttributeValues(mapOf(":email" to email.asDynamoAttribute())).build()
     ).items()
 
     private fun getFromDynamoBy(email: String, mfaChannel: String) = dynamoDbClient.query(
-        QueryRequest.builder().tableName(tableName)
+        QueryRequest.builder().tableName(mfaAccountMethodTableName)
             .keyConditionExpression("user_name=:email AND mfa_channel=:mfaChannel")
             .expressionAttributeValues(
                 mapOf(
@@ -93,7 +93,31 @@ class DynamoMfaAccountMethodsRepository(
     }
 
     override fun setAsDefault(userName: String, mfaDeviceId: MfaDeviceId) {
-        TODO("Not yet implemented")
+        dynamoDbClient.putItem(
+            PutItemRequest.builder()
+                .tableName(defaultMfaAccountMethodTableName)
+                .item(
+                    mapOf(
+                        "user_name" to userName.asDynamoAttribute(),
+                        "mfa_device_id" to mfaDeviceId.content.asDynamoAttribute()
+                    )
+                ).build()
+        )
+    }
+
+    override fun getDefaultDevice(userName: String): Optional<MfaDeviceId> {
+        val queryRequest = QueryRequest.builder()
+            .tableName(defaultMfaAccountMethodTableName)
+            .keyConditionExpression("user_name=:email")
+            .expressionAttributeValues(mapOf(":email" to userName.asDynamoAttribute()))
+            .build()
+
+        val mfaDeviceId = dynamoDbClient.query(queryRequest)
+            .items()
+            .map { MfaDeviceId(it.valueAsStringFor("mfa_device_id")) }
+            .firstOrNull()
+
+        return Optional.ofNullable(mfaDeviceId)
     }
 
     private fun storeOnDynamo(
@@ -105,16 +129,18 @@ class DynamoMfaAccountMethodsRepository(
         associated: Boolean
     ) {
         dynamoDbClient.putItem(
-            PutItemRequest.builder().tableName(tableName).item(
-                mapOf(
-                    "user_name" to userName.asDynamoAttribute(),
-                    "mfa_method" to mfaMfaMethod.name.asDynamoAttribute(),
-                    "mfa_channel" to mfaChannel.asDynamoAttribute(),
-                    "mfa_device_id" to mfaDeviceId.content.asDynamoAttribute(),
-                    "key_id" to kid.content().asDynamoAttribute(),
-                    "associated" to associated.asDynamoAttribute()
-                )
-            ).build()
+            PutItemRequest.builder()
+                .tableName(mfaAccountMethodTableName)
+                .item(
+                    mapOf(
+                        "user_name" to userName.asDynamoAttribute(),
+                        "mfa_method" to mfaMfaMethod.name.asDynamoAttribute(),
+                        "mfa_channel" to mfaChannel.asDynamoAttribute(),
+                        "mfa_device_id" to mfaDeviceId.content.asDynamoAttribute(),
+                        "key_id" to kid.content().asDynamoAttribute(),
+                        "associated" to associated.asDynamoAttribute()
+                    )
+                ).build()
         )
     }
 
