@@ -22,7 +22,7 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
 {
-  "email": "user5@email.com",
+  "email": "user@email.com",
   "password": "secret!",
   "firstName": "Admin",
   "lastName": "",

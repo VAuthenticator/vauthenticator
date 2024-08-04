@@ -49,7 +49,7 @@ class MfaController(
     @PostMapping("/mfa-challenge")
     fun processSecondFactor(
         @RequestParam("mfa-code") mfaCode: String,
-        @RequestParam("mfa-device-id") mfaDeviceId: String,
+        @RequestParam("mfa-device-id", required = false) mfaDeviceId: Optional<String>,
         @RequestParam("mfa-method") mfaMethod: MfaMethod,
         @RequestParam("mfa-channel", required = false) mfaChannel: Optional<String>,
         authentication: Authentication,
@@ -59,7 +59,12 @@ class MfaController(
         try {
             val defaultMfaChannel = mfaChannel.orElseGet { authentication.name }
 
-            otpMfaVerifier.verifyAssociatedMfaChallengeFor(authentication.name, mfaMethod, defaultMfaChannel, MfaChallenge(mfaCode))
+            otpMfaVerifier.verifyAssociatedMfaChallengeFor(
+                authentication.name,
+                mfaMethod,
+                defaultMfaChannel,
+                MfaChallenge(mfaCode)
+            )
             publisher.publishEvent(MfaSuccessEvent(authentication))
 
             nextHopeLoginWorkflowSuccessHandler.onAuthenticationSuccess(request, response, authentication)
