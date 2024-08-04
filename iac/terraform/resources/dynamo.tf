@@ -75,6 +75,11 @@ resource "aws_dynamodb_table" "mfa_account_methods_table" {
     type = "S"
   }
 
+  attribute {
+    name = "mfa_device_id"
+    type = "S"
+  }
+
   global_secondary_index {
     name            = "${var.mfa_account_methods_table_name}${var.table_name_suffix}_Index"
     hash_key        = "mfa_device_id"

@@ -29,27 +29,46 @@ class DynamoMfaAccountMethodsRepository(
         mfaChannel: String
     ): Optional<MfaAccountMethod> {
         return Optional.ofNullable(
-            getFromDynamo(userName, mfaChannel)
+            getFromDynamoBy(userName, mfaChannel)
                 .map { MfaAccountMethodMapper.fromDynamoToDomain(userName, it) }
-                .find { it.method == mfaMfaMethod }
+                .find { it.mfaMethod == mfaMfaMethod }
         )
     }
 
-    override fun findBy(mfaDeviceId: MfaDeviceId): Optional<MfaAccountMethod> {
-        TODO("Not yet implemented")
-    }
+    override fun findBy(mfaDeviceId: MfaDeviceId): Optional<MfaAccountMethod> =
+        Optional.ofNullable(
+            getFromDynamoBy(mfaDeviceId)
+                .map { MfaAccountMethodMapper.fromDynamoToDomain(it) }
+                .firstOrNull()
+        )
 
 
     override fun findAll(userName: String): List<MfaAccountMethod> =
-        getFromDynamo(userName)
+        getFromDynamoBy(userName)
             .map { MfaAccountMethodMapper.fromDynamoToDomain(userName, it) }
 
-    private fun getFromDynamo(email: String) = dynamoDbClient.query(
+    private fun getFromDynamoBy(mfaDeviceId: MfaDeviceId) =
+        dynamoDbClient.query(
+            QueryRequest.builder()
+                .tableName(tableName)
+                .indexName("${tableName}_Index")
+                .keyConditionExpression("mfa_device_id=:mfaDeviceId")
+                .expressionAttributeValues(
+                    mapOf(
+                        ":mfaDeviceId" to mfaDeviceId.content.asDynamoAttribute(),
+                    )
+                )
+                .build()
+        ).items()
+
+
+
+    private fun getFromDynamoBy(email: String) = dynamoDbClient.query(
         QueryRequest.builder().tableName(tableName).keyConditionExpression("user_name=:email")
             .expressionAttributeValues(mapOf(":email" to email.asDynamoAttribute())).build()
     ).items()
 
-    private fun getFromDynamo(email: String, mfaChannel: String) = dynamoDbClient.query(
+    private fun getFromDynamoBy(email: String, mfaChannel: String) = dynamoDbClient.query(
         QueryRequest.builder().tableName(tableName)
             .keyConditionExpression("user_name=:email AND mfa_channel=:mfaChannel")
             .expressionAttributeValues(
@@ -69,7 +88,7 @@ class DynamoMfaAccountMethodsRepository(
     ): MfaAccountMethod {
         val kid = keyRepository.createKeyFrom(masterKid, KeyType.SYMMETRIC, KeyPurpose.MFA)
         val mfaDeviceId = mfaDeviceIdGenerator.invoke()
-        storeOnDynamo(userName, mfaMfaMethod, mfaChannel,mfaDeviceId, kid, associated)
+        storeOnDynamo(userName, mfaMfaMethod, mfaChannel, mfaDeviceId, kid, associated)
         return MfaAccountMethod(userName, mfaDeviceId, kid, mfaMfaMethod, mfaChannel, associated)
     }
 
@@ -78,12 +97,16 @@ class DynamoMfaAccountMethodsRepository(
     }
 
     private fun storeOnDynamo(
-        userName: String, mfaMfaMethod: MfaMethod, mfaChannel: String, mfaDeviceId : MfaDeviceId, kid: Kid, associated: Boolean
+        userName: String,
+        mfaMfaMethod: MfaMethod,
+        mfaChannel: String,
+        mfaDeviceId: MfaDeviceId,
+        kid: Kid,
+        associated: Boolean
     ) {
         dynamoDbClient.putItem(
             PutItemRequest.builder().tableName(tableName).item(
                 mapOf(
-                    "user_name" to userName.asDynamoAttribute(),
                     "user_name" to userName.asDynamoAttribute(),
                     "mfa_method" to mfaMfaMethod.name.asDynamoAttribute(),
                     "mfa_channel" to mfaChannel.asDynamoAttribute(),
@@ -105,6 +128,18 @@ object MfaAccountMethodMapper {
     ): MfaAccountMethod =
         MfaAccountMethod(
             userName,
+            MfaDeviceId(item.valueAsStringFor("mfa_device_id")),
+            Kid(item.valueAsStringFor("key_id")),
+            valueOf(item.valueAsStringFor("mfa_method")),
+            item.valueAsStringFor("mfa_channel"),
+            item.valueAsBoolFor("associated")
+        )
+
+    fun fromDynamoToDomain(
+        item: MutableMap<String, AttributeValue>
+    ): MfaAccountMethod =
+        MfaAccountMethod(
+            item.valueAsStringFor("user_name"),
             MfaDeviceId(item.valueAsStringFor("mfa_device_id")),
             Kid(item.valueAsStringFor("key_id")),
             valueOf(item.valueAsStringFor("mfa_method")),

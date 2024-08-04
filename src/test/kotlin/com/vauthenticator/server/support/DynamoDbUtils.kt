@@ -153,6 +153,22 @@ object DynamoDbUtils {
                         .attributeName("mfa_channel")
                         .attributeType(ScalarAttributeType.S)
                         .build()
+                    , AttributeDefinition.builder()
+                        .attributeName("mfa_device_id")
+                        .attributeType(ScalarAttributeType.S)
+                        .build()
+                )
+                .globalSecondaryIndexes(
+                    GlobalSecondaryIndex.builder()
+                        .projection(Projection.builder().projectionType(ProjectionType.ALL).build())
+                        .indexName("${dynamoMfaAccountMethodsTableName}_Index")
+                        .keySchema(
+                            KeySchemaElement.builder()
+                                .attributeName("mfa_device_id")
+                                .keyType(KeyType.HASH)
+                                .build(),
+                        )
+                        .build()
                 )
                 .billingMode(BillingMode.PAY_PER_REQUEST)
                 .build()

@@ -49,6 +49,7 @@ class MfaController(
     @PostMapping("/mfa-challenge")
     fun processSecondFactor(
         @RequestParam("mfa-code") mfaCode: String,
+        @RequestParam("mfa-device-id") mfaDeviceId: String,
         @RequestParam("mfa-method") mfaMethod: MfaMethod,
         @RequestParam("mfa-channel", required = false) mfaChannel: Optional<String>,
         authentication: Authentication,
@@ -59,13 +60,15 @@ class MfaController(
             val defaultMfaChannel = mfaChannel.orElseGet { authentication.name }
 
             otpMfaVerifier.verifyAssociatedMfaChallengeFor(authentication.name, mfaMethod, defaultMfaChannel, MfaChallenge(mfaCode))
-
             publisher.publishEvent(MfaSuccessEvent(authentication))
+
             nextHopeLoginWorkflowSuccessHandler.onAuthenticationSuccess(request, response, authentication)
         } catch (e: Exception) {
             logger.error(e.message, e)
+
             val mfaException = MfaException("Invalid mfa code")
             publisher.publishEvent(MfaFailureEvent(authentication, mfaException))
+
             mfaFailureHandler.onAuthenticationFailure(request, response, mfaException)
         }
     }

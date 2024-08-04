@@ -75,6 +75,20 @@ class DynamoMfaAccountMethodsRepositoryTest {
     }
 
     @Test
+    fun `when one specific mfa account method is found by device id`() {
+        every { keyRepository.createKeyFrom(masterKid, KeyType.SYMMETRIC, KeyPurpose.MFA) } returns Kid("")
+
+        val savedMfaAccountMethod = underTest.save(email, MfaMethod.EMAIL_MFA_METHOD, email, true)
+        val mfaAccountMethods = underTest.findBy(savedMfaAccountMethod.mdaDeviceId)
+
+        assertEquals(
+            Optional.of(MfaAccountMethod(email, mfaDeviceId, key, MfaMethod.EMAIL_MFA_METHOD, email, true)),
+            mfaAccountMethods
+        )
+
+    }
+
+    @Test
     fun `when one specific enrolment association is not found`() {
         val mfaAccountMethods = underTest.findBy(email, MfaMethod.EMAIL_MFA_METHOD, email)
         val expected = Optional.empty<Any>()

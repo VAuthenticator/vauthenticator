@@ -30,7 +30,7 @@ class MfaEnrolmentAssociationEndPoint(
                 .map {
                     MfaDevice(
                         sensitiveEmailMasker.mask(it.userName),
-                        it.method,
+                        it.mfaMethod,
                         sensitiveEmailMasker.mask(it.mfaChannel),
                         it.key.content()
                     )
