@@ -39,15 +39,16 @@ class MfaEnrolmentAssociationEndPoint(
 
     @PutMapping("/api/mfa/device")
     fun setDefaultEnrolledMfaMethods(
-        authentication: Authentication,
+        authentication: JwtAuthenticationToken,
         @RequestBody defaultMethod: SetDefaultMfaDeviceRequest
-    ) =
-        ok(
-            mfaAccountMethodsRepository.setAsDefault(
-                authentication.name,
-                MfaDeviceId(defaultMethod.deviceId)
-            )
+    ): ResponseEntity<Unit> {
+        permissionValidator.validate(authentication, Scopes.from(Scope.MFA_ENROLLMENT))
+        mfaAccountMethodsRepository.setAsDefault(
+            authentication.name,
+            MfaDeviceId(defaultMethod.deviceId)
         )
+        return noContent().build()
+    }
 
 
     @PostMapping("/api/mfa/enrollment")
