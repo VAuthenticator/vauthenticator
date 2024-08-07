@@ -19,6 +19,7 @@ import java.util.*
 
 @Controller
 class MfaController(
+    private val mfaAccountMethodsRepository: MfaAccountMethodsRepository,
     private val i18nMessageInjector: I18nMessageInjector,
     private val publisher: ApplicationEventPublisher,
     private val nextHopeLoginWorkflowSuccessHandler: AuthenticationSuccessHandler,
@@ -57,25 +58,40 @@ class MfaController(
         response: HttpServletResponse
     ) {
         try {
-            val defaultMfaChannel = mfaChannel.orElseGet { authentication.name }
+            processSecondFactorFor(authentication, mfaCode)
+            nextHopeLoginWorkflowSuccessHandler.onAuthenticationSuccess(request, response, authentication)
+        } catch (e: MfaException) {
+            mfaFailureHandler.onAuthenticationFailure(request, response, e)
+        }
+    }
 
-            otpMfaVerifier.verifyAssociatedMfaChallengeFor(
-                authentication.name,
-                mfaMethod,
-                defaultMfaChannel,
-                MfaChallenge(mfaCode)
-            )
+    private fun processSecondFactorFor(authentication: Authentication, mfaCode: String) {
+        try {
+            mfaAccountMethodsRepository.getDefaultDevice(authentication.name)
+                .flatMap { mfaAccountMethodsRepository.findBy(it) }
+                .map {
+                    mapOf(
+                        "mfaMethod" to it.mfaMethod,
+                        "mfaChannel" to it.mfaChannel
+                    )
+                }
+                .map {
+                    otpMfaVerifier.verifyAssociatedMfaChallengeFor(
+                        authentication.name,
+                        it["mfaMethod"] as MfaMethod,
+                        it["mfaChannel"] as String,
+                        MfaChallenge(mfaCode)
+                    )
+                }
             publisher.publishEvent(MfaSuccessEvent(authentication))
 
-            nextHopeLoginWorkflowSuccessHandler.onAuthenticationSuccess(request, response, authentication)
-        } catch (e: Exception) {
+        } catch (e: RuntimeException) {
             logger.error(e.message, e)
-
             val mfaException = MfaException("Invalid mfa code")
             publisher.publishEvent(MfaFailureEvent(authentication, mfaException))
-
-            mfaFailureHandler.onAuthenticationFailure(request, response, mfaException)
+            throw mfaException
         }
+
     }
 }
 

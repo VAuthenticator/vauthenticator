@@ -2,10 +2,7 @@ package com.vauthenticator.server.mfa.web
 
 import com.vauthenticator.server.i18n.I18nMessageInjector
 import com.vauthenticator.server.i18n.I18nScope
-import com.vauthenticator.server.mfa.domain.MfaChallenge
-import com.vauthenticator.server.mfa.domain.MfaMethod
-import com.vauthenticator.server.mfa.domain.OtpMfaSender
-import com.vauthenticator.server.mfa.domain.OtpMfaVerifier
+import com.vauthenticator.server.mfa.domain.*
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import com.vauthenticator.server.support.SecurityFixture.principalFor
 import io.mockk.every
@@ -48,12 +45,17 @@ internal class MfaControllerTest {
 
     @MockK
     private lateinit var otpMfaVerifier: OtpMfaVerifier
+
+    @MockK
+    private lateinit var mfaAccountMethodsRepository: MfaAccountMethodsRepository
+
     private val account = anAccount()
 
     @BeforeEach
     internal fun setUp() {
         mokMvc = MockMvcBuilders.standaloneSetup(
             MfaController(
+                mfaAccountMethodsRepository,
                 i18nMessageInjector,
                 publisher,
                 successHandler,

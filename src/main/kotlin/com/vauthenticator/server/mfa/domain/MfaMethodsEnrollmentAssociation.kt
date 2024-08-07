@@ -13,9 +13,10 @@ class MfaMethodsEnrollmentAssociation(
     private val otpMfaVerifier: OtpMfaVerifier
 ) {
 
-    fun associate(ticketId: String) {
+    fun associate(ticketId: String, asDefaultMethod: Boolean = false) {
         associate(
             ticketId,
+            asDefaultMethod
         ) {
             if (it.context.isMfaNotSelfAssociable()) {
                 throw InvalidTicketException("Mfa association without code is allowed only if in the ticket context there is ${Ticket.MFA_SELF_ASSOCIATION_CONTEXT_KEY} feature enabled")
@@ -24,9 +25,10 @@ class MfaMethodsEnrollmentAssociation(
 
     }
 
-    fun associate(ticketId: String, code: String) {
+    fun associate(ticketId: String, code: String, asDefaultMethod: Boolean = false) {
         associate(
             ticketId,
+            asDefaultMethod
         ) {
             otpMfaVerifier.verifyMfaChallengeToBeAssociatedFor(
                 it.userName,
@@ -37,16 +39,19 @@ class MfaMethodsEnrollmentAssociation(
         }
     }
 
-    private fun associate(ticket: String, verifier: MfaAssociationVerifier) {
+    private fun associate(ticket: String, asDefaultMethod: Boolean, verifier: MfaAssociationVerifier) {
         ticketRepository.loadFor(TicketId(ticket))
             .map { ticket ->
                 verifier.invoke(ticket)
-                mfaAccountMethodsRepository.save(
+                val mfaAccountMethod = mfaAccountMethodsRepository.save(
                     ticket.userName,
                     ticket.context.mfaMethod(),
                     ticket.context.mfaChannel(),
                     true
                 )
+                if (asDefaultMethod) {
+                    mfaAccountMethodsRepository.setAsDefault(ticket.userName, mfaAccountMethod.mdaDeviceId)
+                }
                 revoke(ticket)
             }
             .orElseThrow { throw InvalidTicketException("The ticket $ticket is not a valid ticket, it seems to be expired") }
