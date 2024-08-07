@@ -1,5 +1,6 @@
 package com.vauthenticator.server.mfa.api
 
+import com.vauthenticator.server.mfa.domain.MfaAccountMethodsRepository
 import com.vauthenticator.server.mfa.domain.MfaMethod
 import com.vauthenticator.server.mfa.domain.OtpMfaSender
 import com.vauthenticator.server.support.AccountTestFixture
@@ -23,13 +24,15 @@ internal class MfaChallengeEndPointTest {
 
     @MockK
     private lateinit var otpMfaSender: OtpMfaSender
+    @MockK
+    private lateinit var mfaAccountMethodsRepository: MfaAccountMethodsRepository
 
     private val account = AccountTestFixture.anAccount()
 
     @BeforeEach
     internal fun setUp() {
         mokMvc = MockMvcBuilders.standaloneSetup(
-            MfaChallengeEndPoint(otpMfaSender)
+            MfaChallengeEndPoint(mfaAccountMethodsRepository, otpMfaSender)
         ).build()
     }
 

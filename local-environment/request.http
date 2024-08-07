@@ -11,7 +11,7 @@ GET {{host}}/.well-known/oauth-authorization-server
 POST {{host}}/oauth2/token
 Content-Type: application/x-www-form-urlencoded
 
-client_id=admin&client_secret=secret&grant_type=client_credentials&scope=admin:signup admin:key-editor admin:key-reader admin:email-verify
+client_id=admin&client_secret=secret&grant_type=client_credentials&scope=admin:signup admin:key-editor admin:key-reader admin:email-verify admin:client-app-writer
 
 > {% client.global.set("auth_token", response.body.access_token); %}
 
@@ -58,7 +58,7 @@ Authorization: Bearer {{auth_token}}
   "secret": "s#cr#t!@#",
   "withPkce": "false",
   "storePassword": "true",
-  "scopes": ["openid", "email", "profile"],
+  "scopes": ["openid", "email", "profile", "mfa:enrollment"],
   "authorizedGrantTypes": ["authorization_code"],
   "webServerRedirectUri": "http://user-introspection.com:7070/login/oauth2/code/client",
   "accessTokenValidity": "360",
@@ -72,11 +72,11 @@ Authorization: Bearer {{auth_token}}
 
 POST {{host}}/api/mfa/enrollment
 Content-Type: application/json
-Authorization: Bearer xxxx
+Authorization: Bearer eyJraWQiOiIwNmM5YjQ0NS1jNzRlLTRlYjgtOWRjZC01MzFlMmJmZjdjOTEiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ1c2VyQGVtYWlsLmNvbSIsImF1ZCI6InVzZXItaW50cm9zcGVjdGlvbiIsIm5iZiI6MTcyMzA2ODY5OCwidXNlcl9uYW1lIjoidXNlckBlbWFpbC5jb20iLCJzY29wZSI6WyJtZmE6ZW5yb2xsbWVudCIsIm9wZW5pZCIsImVtYWlsIiwicHJvZmlsZSJdLCJpc3MiOiJodHRwOi8vbG9jYWwuYXBpLnZhdXRoZW50aWNhdG9yLmNvbTo5MDkwIiwiZXhwIjoxNzIzMDY5MDU4LCJpYXQiOjE3MjMwNjg2OTgsImp0aSI6Ijg5OGIyYTY4LWJkODItNDg1MS1iN2RlLTNlMzg0NjAwYjA1ZSIsImF1dGhvcml0aWVzIjpbIlJPTEVfVVNFUiIsIlZBVVRIRU5USUNBVE9SX0FETUlOIl19.0hXT9ZzHY1G0jMBfrnWEvxjzD5gXXNt6Rb0CbHc2IrOPpDfar6iQAHJpTf0KJ6W-xsKGS1uJ3Dm4FgV4rOhhaYqofwnJDhpPjK_hpKLEe3w1ohg6zkS_cxDAyhqj1YN9qoeC-tWIkxIU0Fp5mDzOLdL8IjBgzyq_v6gyCRMarPz4MT5yYV8pLz5qV2nHLycMTCtXGE3y1H1KEkQDzaSgZkMNnLyrBAdeqsENIA16I2_MXoYfg-NcR_USx2pf3n_QqWq5HHqxe1BeLSS0h3rmlLuTG0hWHZ4dHEA5iy8kHVqaUrfDZS8CXOrXUOvousW5Cnc-hMkCSWDNYZ6L-_6big
 
 {
   "mfaMethod": "EMAIL_MFA_METHOD",
-  "mfaChannel" : "xxxx@email.com"
+  "mfaChannel" : "alternative_mfa_user@email.com"
 }
 
 
@@ -84,9 +84,9 @@ Authorization: Bearer xxxx
 
 POST {{host}}/api/mfa/associate
 Content-Type: application/json
-Authorization: Bearer xxx
+Authorization: Bearer eyJraWQiOiIwNmM5YjQ0NS1jNzRlLTRlYjgtOWRjZC01MzFlMmJmZjdjOTEiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ1c2VyQGVtYWlsLmNvbSIsImF1ZCI6InVzZXItaW50cm9zcGVjdGlvbiIsIm5iZiI6MTcyMzA2ODY5OCwidXNlcl9uYW1lIjoidXNlckBlbWFpbC5jb20iLCJzY29wZSI6WyJtZmE6ZW5yb2xsbWVudCIsIm9wZW5pZCIsImVtYWlsIiwicHJvZmlsZSJdLCJpc3MiOiJodHRwOi8vbG9jYWwuYXBpLnZhdXRoZW50aWNhdG9yLmNvbTo5MDkwIiwiZXhwIjoxNzIzMDY5MDU4LCJpYXQiOjE3MjMwNjg2OTgsImp0aSI6Ijg5OGIyYTY4LWJkODItNDg1MS1iN2RlLTNlMzg0NjAwYjA1ZSIsImF1dGhvcml0aWVzIjpbIlJPTEVfVVNFUiIsIlZBVVRIRU5USUNBVE9SX0FETUlOIl19.0hXT9ZzHY1G0jMBfrnWEvxjzD5gXXNt6Rb0CbHc2IrOPpDfar6iQAHJpTf0KJ6W-xsKGS1uJ3Dm4FgV4rOhhaYqofwnJDhpPjK_hpKLEe3w1ohg6zkS_cxDAyhqj1YN9qoeC-tWIkxIU0Fp5mDzOLdL8IjBgzyq_v6gyCRMarPz4MT5yYV8pLz5qV2nHLycMTCtXGE3y1H1KEkQDzaSgZkMNnLyrBAdeqsENIA16I2_MXoYfg-NcR_USx2pf3n_QqWq5HHqxe1BeLSS0h3rmlLuTG0hWHZ4dHEA5iy8kHVqaUrfDZS8CXOrXUOvousW5Cnc-hMkCSWDNYZ6L-_6big
 
 {
-  "ticket": "xxxx",
-  "code" : "xxxx"
+  "ticket": "3a19b133-d426-4637-834a-698a46ba06e7",
+  "code" : "008462"
 }

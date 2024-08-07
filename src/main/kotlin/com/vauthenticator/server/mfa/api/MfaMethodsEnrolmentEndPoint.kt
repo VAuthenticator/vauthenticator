@@ -28,11 +28,11 @@ class MfaEnrolmentAssociationEndPoint(
         ok(
             mfaAccountMethodsRepository.findAll(authentication.name)
                 .map {
-                    MfaDevice(
+                    MfaDeviceRepresentation(
                         sensitiveEmailMasker.mask(it.userName),
                         it.mfaMethod,
                         sensitiveEmailMasker.mask(it.mfaChannel),
-                        it.key.content()
+                        it.mdaDeviceId.content
                     )
                 }
         )
@@ -97,3 +97,9 @@ data class MfaEnrollmentAssociationRequest(
     val code: String,
 )
 
+data class MfaDeviceRepresentation(
+    val userName: String,
+    val mfaMethod: MfaMethod,
+    val mfaChannel: String,
+    val deviceId: String
+)

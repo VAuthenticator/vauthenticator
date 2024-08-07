@@ -1,5 +1,7 @@
 package com.vauthenticator.server.mfa.api
 
+import com.vauthenticator.server.mfa.domain.MfaAccountMethodsRepository
+import com.vauthenticator.server.mfa.domain.MfaDeviceId
 import com.vauthenticator.server.mfa.domain.MfaMethod
 import com.vauthenticator.server.mfa.domain.OtpMfaSender
 import org.springframework.security.core.Authentication
@@ -10,17 +12,41 @@ import java.util.*
 
 @RestController
 class MfaChallengeEndPoint(
+    private val mfaAccountMethodsRepository: MfaAccountMethodsRepository,
     private val otpMfaSender: OtpMfaSender
 ) {
 
     @PutMapping("/api/mfa/challenge")
-
     fun sendMfaChallenge(
         authentication: Authentication,
         @RequestParam("mfa-device-id", required = false) mfaDeviceId: Optional<String>,
     ) {
+        //todo it should be an usecase
+        mfaDeviceId.ifPresentOrElse(
+            {
+                mfaAccountMethodsRepository.findBy(MfaDeviceId(it))
+                    .map {
+                        otpMfaSender.sendMfaChallenge(
+                            authentication.name,
+                            MfaMethod.EMAIL_MFA_METHOD,
+                            it.mfaChannel
+                        )
+                    }
 
-        otpMfaSender.sendMfaChallenge(authentication.name, MfaMethod.EMAIL_MFA_METHOD, authentication.name)
+            },
+            {
+                mfaAccountMethodsRepository.getDefaultDevice(authentication.name)
+                    .flatMap { mfaAccountMethodsRepository.findBy(it) }
+                    .map {
+                        otpMfaSender.sendMfaChallenge(
+                            authentication.name,
+                            MfaMethod.EMAIL_MFA_METHOD,
+                            it.mfaChannel
+                        )
+                    }
+
+            }
+        )
     }
 
 }
