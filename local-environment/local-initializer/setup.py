@@ -9,14 +9,6 @@ from dotenv import load_dotenv
 def str2bool(v):
     return v.lower() in ("True")
 
-
-full_admin = set(
-    ["openid", "profile", "email", "admin:reset-password", "admin:change-password",
-     "admin:key-reader", "admin:key-editor",
-     "admin:client-app-reader", "admin:client-app-writer", "admin:client-app-eraser"
-                                                           "admin:email-template-reader",
-     "admin:email-template-writer"])
-
 load_dotenv(dotenv_path="env")
 
 isProduction = str2bool(os.getenv("IS_PRODUCITON"))
@@ -84,7 +76,10 @@ def store_sso_client_applications():
     print(f'client_id={client_id}&client_secret={client_secret}')
 
     table = dynamodb.Table(f"VAuthenticator_ClientApplication{table_suffix}")
-    scopes = full_admin
+    scopes = set(
+        ["openid", "profile", "email", "admin:reset-password", "admin:change-password", "admin:key-reader",
+         "admin:key-editor",
+         "admin:email-template-reader", "admin:email-template-writer"])
 
     if isProduction:
         scopes.add("mfa:always")
@@ -132,7 +127,14 @@ def store_client_applications():
         "client_id": client_id,
         "client_secret": pass_encoded(client_secret),
         "with_pkce": False,
-        "scopes": full_admin,
+        "scopes": set([
+            "openid", "profile", "email",
+            "admin:signup", "admin:welcome", "admin:email-verify", "admin:reset-password", "admin:change-password",
+            "admin:key-reader", "admin:key-editor",
+            "admin:client-app-reader", "admin:client-app-writer", "admin:client-app-eraser",
+            "admin:email-template-reader", "admin:email-template-writer",
+            "mfa:always"
+        ]),
         "authorized_grant_types": set(["CLIENT_CREDENTIALS"]),
         "web_server_redirect_uri": "",
         "access_token_validity": 180,
