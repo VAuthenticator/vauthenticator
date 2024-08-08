@@ -32,11 +32,15 @@ class MfaController(
     @GetMapping("/mfa-challenge/send")
     fun view(authentication: Authentication): String {
         //todo it should be an usecase
+        sendMfaChallengeFor(authentication)
+
+        return "redirect:/mfa-challenge"
+    }
+
+    private fun sendMfaChallengeFor(authentication: Authentication) {
         mfaAccountMethodsRepository.getDefaultDevice(authentication.name)
             .flatMap { mfaAccountMethodsRepository.findBy(it) }
             .map { otpMfaSender.sendMfaChallenge(authentication.name, MfaMethod.EMAIL_MFA_METHOD, it.mfaChannel) }
-
-        return "redirect:/mfa-challenge"
     }
 
     @GetMapping("/mfa-challenge")
@@ -62,7 +66,7 @@ class MfaController(
         response: HttpServletResponse
     ) {
         try {
-            processSecondFactorFor(authentication, mfaCode)
+            processMfaChallengeFor(authentication, mfaCode)
             nextHopeLoginWorkflowSuccessHandler.onAuthenticationSuccess(request, response, authentication)
         } catch (e: MfaException) {
             mfaFailureHandler.onAuthenticationFailure(request, response, e)
@@ -70,7 +74,7 @@ class MfaController(
     }
 
     // todo it should be an usecase
-    private fun processSecondFactorFor(authentication: Authentication, mfaCode: String) {
+    private fun processMfaChallengeFor(authentication: Authentication, mfaCode: String) {
         try {
             mfaAccountMethodsRepository.getDefaultDevice(authentication.name)
                 .flatMap { mfaAccountMethodsRepository.findBy(it) }

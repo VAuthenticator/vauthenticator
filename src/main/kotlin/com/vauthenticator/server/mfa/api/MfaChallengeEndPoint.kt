@@ -24,6 +24,7 @@ class MfaChallengeEndPoint(
         //todo it should be an usecase
         mfaDeviceId.ifPresentOrElse(
             {
+                //todo it should be improved checking if the mfa account method returned belong to the actual requesting user
                 mfaAccountMethodsRepository.findBy(MfaDeviceId(it))
                     .map {
                         otpMfaSender.sendMfaChallenge(

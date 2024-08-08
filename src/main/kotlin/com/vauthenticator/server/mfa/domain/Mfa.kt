@@ -6,7 +6,9 @@ import org.springframework.security.authentication.event.AbstractAuthenticationF
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.AuthenticationException
 
+//todo
 data class MfaDevice(val userName: String, val mfaMethod: MfaMethod, val mfaChannel: String, val deviceId: MfaDeviceId)
+
 data class MfaDeviceId(val content: String)
 
 class MfaFailureEvent(authentication: Authentication, exception: AuthenticationException) :
