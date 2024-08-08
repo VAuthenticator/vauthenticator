@@ -45,9 +45,7 @@ class MfaController(
 
     @GetMapping("/mfa-challenge")
     fun view(
-        model: Model,
-        authentication: Authentication,
-        httpServletRequest: HttpServletRequest
+        model: Model, authentication: Authentication, httpServletRequest: HttpServletRequest
     ): String {
         model.addAttribute("assetBundle", "mfa_bundle.js")
         i18nMessageInjector.setMessagedFor(I18nScope.MFA_PAGE, model)
@@ -59,48 +57,52 @@ class MfaController(
     fun processSecondFactor(
         @RequestParam("mfa-code") mfaCode: String,
         @RequestParam("mfa-device-id", required = false) mfaDeviceId: Optional<String>,
-        @RequestParam("mfa-method") mfaMethod: MfaMethod,
-        @RequestParam("mfa-channel", required = false) mfaChannel: Optional<String>,
         authentication: Authentication,
         request: HttpServletRequest,
         response: HttpServletResponse
     ) {
         try {
-            processMfaChallengeFor(authentication, mfaCode)
+            mfaDeviceId.ifPresentOrElse(
+                { processMfaChallengeFor(authentication, it, mfaCode) },
+                { processMfaChallengeFor(authentication, mfaCode) }
+            )
+
+            publisher.publishEvent(MfaSuccessEvent(authentication))
             nextHopeLoginWorkflowSuccessHandler.onAuthenticationSuccess(request, response, authentication)
-        } catch (e: MfaException) {
-            mfaFailureHandler.onAuthenticationFailure(request, response, e)
+        } catch (e: RuntimeException) {
+            logger.error(e.message, e)
+            val mfaException = MfaException("Invalid mfa code")
+            publisher.publishEvent(MfaFailureEvent(authentication, mfaException))
+            mfaFailureHandler.onAuthenticationFailure(request, response, mfaException)
         }
     }
 
     // todo it should be an usecase
     private fun processMfaChallengeFor(authentication: Authentication, mfaCode: String) {
-        try {
-            mfaAccountMethodsRepository.getDefaultDevice(authentication.name)
-                .flatMap { mfaAccountMethodsRepository.findBy(it) }
-                .map {
-                    mapOf(
-                        "mfaMethod" to it.mfaMethod,
-                        "mfaChannel" to it.mfaChannel
-                    )
-                }
-                .map {
-                    otpMfaVerifier.verifyAssociatedMfaChallengeFor(
-                        authentication.name,
-                        it["mfaMethod"] as MfaMethod,
-                        it["mfaChannel"] as String,
-                        MfaChallenge(mfaCode)
-                    )
-                }
-            publisher.publishEvent(MfaSuccessEvent(authentication))
+        mfaAccountMethodsRepository.getDefaultDevice(authentication.name)
+            .flatMap { mfaAccountMethodsRepository.findBy(it) }.map {
+                mapOf(
+                    "mfaMethod" to it.mfaMethod, "mfaChannel" to it.mfaChannel
+                )
+            }.map {
+                otpMfaVerifier.verifyAssociatedMfaChallengeFor(
+                    authentication.name, it["mfaMethod"] as MfaMethod, it["mfaChannel"] as String, MfaChallenge(mfaCode)
+                )
+            }
+    }
 
-        } catch (e: RuntimeException) {
-            logger.error(e.message, e)
-            val mfaException = MfaException("Invalid mfa code")
-            publisher.publishEvent(MfaFailureEvent(authentication, mfaException))
-            throw mfaException
-        }
-
+    // todo it should be an usecase
+    private fun processMfaChallengeFor(authentication: Authentication, mfaDeviceId: String, mfaCode: String) {
+        mfaAccountMethodsRepository.findBy(MfaDeviceId(mfaDeviceId))
+            .map {
+                mapOf(
+                    "mfaMethod" to it.mfaMethod, "mfaChannel" to it.mfaChannel
+                )
+            }.map {
+                otpMfaVerifier.verifyAssociatedMfaChallengeFor(
+                    authentication.name, it["mfaMethod"] as MfaMethod, it["mfaChannel"] as String, MfaChallenge(mfaCode)
+                )
+            }
     }
 }
 
