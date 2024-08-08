@@ -8,14 +8,10 @@ import com.vauthenticator.server.oauth2.clientapp.domain.Scopes
 import com.vauthenticator.server.role.PermissionValidator
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.http.ResponseEntity.ok
-import org.springframework.http.ResponseEntity.status
+import org.springframework.http.ResponseEntity.*
 import org.springframework.security.core.Authentication
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 class MfaEnrolmentAssociationEndPoint(
@@ -32,18 +28,27 @@ class MfaEnrolmentAssociationEndPoint(
         ok(
             mfaAccountMethodsRepository.findAll(authentication.name)
                 .map {
-                    when (it.method) {
-                        MfaMethod.EMAIL_MFA_METHOD -> EmailMfaDevice(
-                            sensitiveEmailMasker.mask(it.userName),
-                            it.method
-                        )
-
-                        MfaMethod.SMS_MFA_METHOD -> TODO()
-                        MfaMethod.OTP_MFA_METHOD -> TODO()
-                    }
-
+                    MfaDeviceRepresentation(
+                        sensitiveEmailMasker.mask(it.userName),
+                        it.mfaMethod,
+                        sensitiveEmailMasker.mask(it.mfaChannel),
+                        it.mdaDeviceId.content
+                    )
                 }
         )
+
+    @PutMapping("/api/mfa/device")
+    fun setDefaultEnrolledMfaMethods(
+        authentication: JwtAuthenticationToken,
+        @RequestBody defaultMethod: SetDefaultMfaDeviceRequest
+    ): ResponseEntity<Unit> {
+        permissionValidator.validate(authentication, Scopes.from(Scope.MFA_ENROLLMENT))
+        mfaAccountMethodsRepository.setAsDefault(
+            authentication.name,
+            MfaDeviceId(defaultMethod.deviceId)
+        )
+        return noContent().build()
+    }
 
 
     @PostMapping("/api/mfa/enrollment")
@@ -69,10 +74,14 @@ class MfaEnrolmentAssociationEndPoint(
     ): ResponseEntity<Unit> {
         permissionValidator.validate(authentication, Scopes.from(Scope.MFA_ENROLLMENT))
         mfaMethodsEnrolmentAssociation.associate(associationRequest.ticket, associationRequest.code)
-        return ResponseEntity.noContent().build()
+        return noContent().build()
     }
 
 }
+
+data class SetDefaultMfaDeviceRequest(
+    val deviceId: String
+)
 
 data class MfaEnrollmentRequest(
     val mfaChannel: String,
@@ -88,3 +97,9 @@ data class MfaEnrollmentAssociationRequest(
     val code: String,
 )
 
+data class MfaDeviceRepresentation(
+    val userName: String,
+    val mfaMethod: MfaMethod,
+    val mfaChannel: String,
+    val deviceId: String
+)

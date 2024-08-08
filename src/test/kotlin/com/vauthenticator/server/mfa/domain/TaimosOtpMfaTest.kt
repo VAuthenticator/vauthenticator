@@ -33,19 +33,20 @@ class TaimosOtpMfaTest {
         val underTest =
             TaimosOtpMfa(keyDecrypter, keyRepository, mfaAccountMethodsRepository, OtpConfigurationProperties(6, 60))
 
+        val kid = Kid("A_KID")
         val key = Key(
             DataKey.from("QV9FTkNSWVBURURfS0VZ", ""),
             MasterKid(""),
-            Kid("A_KID"),
+            kid,
             true,
             KeyType.SYMMETRIC,
             KeyPurpose.MFA,
             0L
         )
-        every { mfaAccountMethodsRepository.findOne(email, MfaMethod.EMAIL_MFA_METHOD, email) } returns
-                of(MfaAccountMethod(email, Kid("A_KID"), MfaMethod.EMAIL_MFA_METHOD, email, true))
+        every { mfaAccountMethodsRepository.findBy(email, MfaMethod.EMAIL_MFA_METHOD, email) } returns
+                of(MfaAccountMethod(email, MfaDeviceId("A_MFA_DEVICE_ID"),kid, MfaMethod.EMAIL_MFA_METHOD, email, true))
 
-        every { keyRepository.keyFor(Kid("A_KID"), KeyPurpose.MFA) } returns key
+        every { keyRepository.keyFor(kid, KeyPurpose.MFA) } returns key
         every { keyDecrypter.decryptKey("QV9FTkNSWVBURURfS0VZ") } returns "QV9ERUNSWVBURURfU1lNTUVUUklDX0tFWQ=="
         val actual = underTest.generateSecretKeyFor(account, MfaMethod.EMAIL_MFA_METHOD, email)
         val expectedSecret = Hex.encodeHexString(decoder.decode("QV9ERUNSWVBURURfU1lNTUVUUklDX0tFWQ=="))

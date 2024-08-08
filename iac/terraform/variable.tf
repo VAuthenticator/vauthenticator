@@ -31,7 +31,6 @@ variable "role_table_name" {
   type    = string
   default = "VAuthenticator_Role"
 }
-
 variable "ticket_table_name" {
   type    = string
   default = "VAuthenticator_Ticket"
@@ -47,6 +46,10 @@ variable "signature_keys_table_name" {
 variable "mfa_account_methods_table_name" {
   type    = string
   default = "VAuthenticator_Mfa_Account_Methods"
+}
+variable "default_mfa_account_methods_table_name" {
+  type    = string
+  default = "VAuthenticator_Default_Mfa_Account_Methods"
 }
 variable "password_history_table_name" {
   type    = string

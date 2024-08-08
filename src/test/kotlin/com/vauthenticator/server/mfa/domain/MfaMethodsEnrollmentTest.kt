@@ -46,6 +46,7 @@ class MfaMethodsEnrollmentTest {
     private val ticketId = TicketId("A_TICKET")
     private val emailMfaAccountMethod = MfaAccountMethod(
         userName,
+        MfaDeviceId("A_MFA_DEVICE_ID"),
         Kid("A_KID"),
         EMAIL_MFA_METHOD,
         emailMfaChannel,
@@ -65,7 +66,7 @@ class MfaMethodsEnrollmentTest {
     @Test
     fun `when the enrolment do not send the verification code together the verification ticket`() {
         every {
-            mfaAccountMethodsRepository.findOne(
+            mfaAccountMethodsRepository.findBy(
                 userName,
                 EMAIL_MFA_METHOD,
                 emailMfaChannel
@@ -77,7 +78,7 @@ class MfaMethodsEnrollmentTest {
         val actual = uut.enroll(userName, EMAIL_MFA_METHOD, emailMfaChannel, clientAppId, false)
 
         verify {
-            mfaAccountMethodsRepository.findOne(
+            mfaAccountMethodsRepository.findBy(
                 userName,
                 EMAIL_MFA_METHOD,
                 emailMfaChannel
@@ -92,7 +93,7 @@ class MfaMethodsEnrollmentTest {
     @Test
     fun `when the enrolment send the verification code together the verification ticket`() {
         every {
-            mfaAccountMethodsRepository.findOne(
+            mfaAccountMethodsRepository.findBy(
                 userName,
                 EMAIL_MFA_METHOD,
                 emailMfaChannel
@@ -105,7 +106,7 @@ class MfaMethodsEnrollmentTest {
         val actual = uut.enroll(userName, EMAIL_MFA_METHOD, emailMfaChannel, clientAppId, true)
 
         verify {
-            mfaAccountMethodsRepository.findOne(
+            mfaAccountMethodsRepository.findBy(
                 userName,
                 EMAIL_MFA_METHOD,
                 emailMfaChannel

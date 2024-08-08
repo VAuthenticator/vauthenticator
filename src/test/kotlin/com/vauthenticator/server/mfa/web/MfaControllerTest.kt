@@ -2,10 +2,8 @@ package com.vauthenticator.server.mfa.web
 
 import com.vauthenticator.server.i18n.I18nMessageInjector
 import com.vauthenticator.server.i18n.I18nScope
-import com.vauthenticator.server.mfa.domain.MfaChallenge
-import com.vauthenticator.server.mfa.domain.MfaMethod
-import com.vauthenticator.server.mfa.domain.OtpMfaSender
-import com.vauthenticator.server.mfa.domain.OtpMfaVerifier
+import com.vauthenticator.server.keys.Kid
+import com.vauthenticator.server.mfa.domain.*
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import com.vauthenticator.server.support.SecurityFixture.principalFor
 import io.mockk.every
@@ -26,6 +24,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.view
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
+import java.util.*
 
 @ExtendWith(MockKExtension::class)
 internal class MfaControllerTest {
@@ -48,12 +47,17 @@ internal class MfaControllerTest {
 
     @MockK
     private lateinit var otpMfaVerifier: OtpMfaVerifier
+
+    @MockK
+    private lateinit var mfaAccountMethodsRepository: MfaAccountMethodsRepository
+
     private val account = anAccount()
 
     @BeforeEach
     internal fun setUp() {
         mokMvc = MockMvcBuilders.standaloneSetup(
             MfaController(
+                mfaAccountMethodsRepository,
                 i18nMessageInjector,
                 publisher,
                 successHandler,
@@ -66,6 +70,11 @@ internal class MfaControllerTest {
 
     @Test
     internal fun `when an mfa challenge is sent`() {
+        val mfaDeviceId = MfaDeviceId("A_MFA_DEVICE_ID")
+        every { mfaAccountMethodsRepository.getDefaultDevice(account.email) } returns Optional.of(mfaDeviceId)
+        every { mfaAccountMethodsRepository.findBy(mfaDeviceId) } returns Optional.of(
+            MfaAccountMethod(account.email, mfaDeviceId, Kid("A_KID"), MfaMethod.EMAIL_MFA_METHOD, account.email, true)
+        )
         every { otpMfaSender.sendMfaChallenge(account.email, MfaMethod.EMAIL_MFA_METHOD, account.email) } just runs
 
         mokMvc.perform(

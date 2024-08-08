@@ -118,6 +118,9 @@ vauthenticator:
       table-name: VAuthenticator_Ticket_Local_Staging
     mfa_account_methods:
       table-name: VAuthenticator_Mfa_Account_Methods_Local_Staging
+    default-mfa-account-methods:
+      table-name: VAuthenticator_Default_Mfa_Account_Methods_Local_Staging
+
 iamUserAwsCredentialsProvider: true
 
 aws:

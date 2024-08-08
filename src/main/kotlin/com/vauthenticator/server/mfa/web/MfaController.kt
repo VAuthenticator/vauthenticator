@@ -19,6 +19,7 @@ import java.util.*
 
 @Controller
 class MfaController(
+    private val mfaAccountMethodsRepository: MfaAccountMethodsRepository,
     private val i18nMessageInjector: I18nMessageInjector,
     private val publisher: ApplicationEventPublisher,
     private val nextHopeLoginWorkflowSuccessHandler: AuthenticationSuccessHandler,
@@ -30,15 +31,21 @@ class MfaController(
 
     @GetMapping("/mfa-challenge/send")
     fun view(authentication: Authentication): String {
-        otpMfaSender.sendMfaChallenge(authentication.name, MfaMethod.EMAIL_MFA_METHOD, authentication.name)
+        //todo it should be an usecase
+        sendMfaChallengeFor(authentication)
+
         return "redirect:/mfa-challenge"
+    }
+
+    private fun sendMfaChallengeFor(authentication: Authentication) {
+        mfaAccountMethodsRepository.getDefaultDevice(authentication.name)
+            .flatMap { mfaAccountMethodsRepository.findBy(it) }
+            .map { otpMfaSender.sendMfaChallenge(authentication.name, MfaMethod.EMAIL_MFA_METHOD, it.mfaChannel) }
     }
 
     @GetMapping("/mfa-challenge")
     fun view(
-        model: Model,
-        authentication: Authentication,
-        httpServletRequest: HttpServletRequest
+        model: Model, authentication: Authentication, httpServletRequest: HttpServletRequest
     ): String {
         model.addAttribute("assetBundle", "mfa_bundle.js")
         i18nMessageInjector.setMessagedFor(I18nScope.MFA_PAGE, model)
@@ -49,25 +56,53 @@ class MfaController(
     @PostMapping("/mfa-challenge")
     fun processSecondFactor(
         @RequestParam("mfa-code") mfaCode: String,
-        @RequestParam("mfa-method") mfaMethod: MfaMethod,
-        @RequestParam("mfa-channel", required = false) mfaChannel: Optional<String>,
+        @RequestParam("mfa-device-id", required = false) mfaDeviceId: Optional<String>,
         authentication: Authentication,
         request: HttpServletRequest,
         response: HttpServletResponse
     ) {
         try {
-            val defaultMfaChannel = mfaChannel.orElseGet { authentication.name }
-
-            otpMfaVerifier.verifyAssociatedMfaChallengeFor(authentication.name, mfaMethod, defaultMfaChannel, MfaChallenge(mfaCode))
+            mfaDeviceId.ifPresentOrElse(
+                { processMfaChallengeFor(authentication, it, mfaCode) },
+                { processMfaChallengeFor(authentication, mfaCode) }
+            )
 
             publisher.publishEvent(MfaSuccessEvent(authentication))
             nextHopeLoginWorkflowSuccessHandler.onAuthenticationSuccess(request, response, authentication)
-        } catch (e: Exception) {
+        } catch (e: RuntimeException) {
             logger.error(e.message, e)
             val mfaException = MfaException("Invalid mfa code")
             publisher.publishEvent(MfaFailureEvent(authentication, mfaException))
             mfaFailureHandler.onAuthenticationFailure(request, response, mfaException)
         }
+    }
+
+    // todo it should be an usecase
+    private fun processMfaChallengeFor(authentication: Authentication, mfaCode: String) {
+        mfaAccountMethodsRepository.getDefaultDevice(authentication.name)
+            .flatMap { mfaAccountMethodsRepository.findBy(it) }.map {
+                mapOf(
+                    "mfaMethod" to it.mfaMethod, "mfaChannel" to it.mfaChannel
+                )
+            }.map {
+                otpMfaVerifier.verifyAssociatedMfaChallengeFor(
+                    authentication.name, it["mfaMethod"] as MfaMethod, it["mfaChannel"] as String, MfaChallenge(mfaCode)
+                )
+            }
+    }
+
+    // todo it should be an usecase
+    private fun processMfaChallengeFor(authentication: Authentication, mfaDeviceId: String, mfaCode: String) {
+        mfaAccountMethodsRepository.findBy(MfaDeviceId(mfaDeviceId))
+            .map {
+                mapOf(
+                    "mfaMethod" to it.mfaMethod, "mfaChannel" to it.mfaChannel
+                )
+            }.map {
+                otpMfaVerifier.verifyAssociatedMfaChallengeFor(
+                    authentication.name, it["mfaMethod"] as MfaMethod, it["mfaChannel"] as String, MfaChallenge(mfaCode)
+                )
+            }
     }
 }
 

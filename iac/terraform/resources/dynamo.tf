@@ -75,7 +75,32 @@ resource "aws_dynamodb_table" "mfa_account_methods_table" {
     type = "S"
   }
 
+  attribute {
+    name = "mfa_device_id"
+    type = "S"
+  }
+
+  global_secondary_index {
+    name            = "${var.mfa_account_methods_table_name}${var.table_name_suffix}_Index"
+    hash_key        = "mfa_device_id"
+    projection_type = "ALL"
+  }
+
   tags = merge(tomap({ "Name" = var.mfa_account_methods_table_name }), var.common_resource_tags)
+}
+
+resource "aws_dynamodb_table" "default_mfa_account_methods_table" {
+  name = "${var.default_mfa_account_methods_table_name}${var.table_name_suffix}"
+
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "user_name"
+
+  attribute {
+    name = "user_name"
+    type = "S"
+  }
+
+  tags = merge(tomap({ "Name" = var.default_mfa_account_methods_table_name }), var.common_resource_tags)
 }
 
 resource "aws_dynamodb_table" "mfa_keys_table" {

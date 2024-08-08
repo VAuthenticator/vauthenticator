@@ -59,12 +59,12 @@ internal class VerifyEMailChallengeTest {
                 ClientAppId.empty().content
             )
         )
-        every { mfaMethodsEnrollmentAssociation.associate(RAW_TICKET) } just runs
+        every { mfaMethodsEnrollmentAssociation.associate(RAW_TICKET, true) } just runs
         every { accountRepository.accountFor(account.email) } returns Optional.of(account)
         every { accountRepository.save(enabledAccount) } just runs
 
         underTest.verifyMail(RAW_TICKET)
-        verify(exactly = 1) { mfaMethodsEnrollmentAssociation.associate(RAW_TICKET) }
+        verify(exactly = 1) { mfaMethodsEnrollmentAssociation.associate(RAW_TICKET, true) }
     }
 
     @Test
@@ -80,7 +80,7 @@ internal class VerifyEMailChallengeTest {
             )
         )
         every { accountRepository.accountFor(account.email) } returns Optional.empty()
-        every { mfaMethodsEnrollmentAssociation.associate(RAW_TICKET) } just runs
+        every { mfaMethodsEnrollmentAssociation.associate(RAW_TICKET, true) } just runs
 
         assertThrows(InvalidTicketException::class.java) { underTest.verifyMail(RAW_TICKET) }
     }
