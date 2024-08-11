@@ -109,7 +109,7 @@ class SessionManagementIFrameController(
 class CheckSessionEndPoint(private val redisTemplate: RedisTemplate<String, String?>) {
 
     @GetMapping("/check_session")
-    fun checkSession(@RequestParam state: String) = Optional.ofNullable(
+    fun checkSession(@RequestParam state: String): ResponseEntity<CheckSessionResponse> = Optional.ofNullable(
         redisTemplate.opsForHash<String, String?>().get(state, state.toSha256())
     )
         .map { ResponseEntity.ok(CheckSessionResponse(it)) }
