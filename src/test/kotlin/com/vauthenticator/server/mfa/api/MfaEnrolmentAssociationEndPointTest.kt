@@ -31,6 +31,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
+import java.util.*
 
 @ExtendWith(MockKExtension::class)
 class MfaEnrolmentAssociationEndPointTest {
@@ -75,6 +76,7 @@ class MfaEnrolmentAssociationEndPointTest {
         val email = account.email
 
         every { sensitiveEmailMasker.mask(email) } returns email
+        every {  mfaAccountMethodsRepository.getDefaultDevice(email) } returns Optional.of(MfaDeviceId("A_MFA_DEVICE_ID"))
         every { mfaAccountMethodsRepository.findAll(email) } returns accountMfaAssociatedMfaMethods(email)
 
         mokMvc.perform(
@@ -86,7 +88,7 @@ class MfaEnrolmentAssociationEndPointTest {
                 content().json(
                     objectMapper.writeValueAsString(
                         listOf(
-                            MfaDeviceRepresentation(email, EMAIL_MFA_METHOD, email, "A_MFA_DEVICE_ID")
+                            MfaDeviceRepresentation(email, EMAIL_MFA_METHOD, email, "A_MFA_DEVICE_ID", true)
                         )
                     )
                 )

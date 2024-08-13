@@ -2,24 +2,11 @@ import React, {useEffect, useState} from "react";
 import ErrorBanner from "../component/ErrorBanner";
 import {getMfaMethods, MfaAccountEnrolledMethod, sendMfaCode} from "./MfaRepository";
 import EmailIcon from "@mui/icons-material/Email";
-import {
-    Box,
-    Chip,
-    Divider,
-    Grid,
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableRow,
-    ThemeProvider,
-    Typography
-} from "@mui/material";
+import {Box, Divider, Grid, ThemeProvider, Typography} from "@mui/material";
 import theme from "../component/styles";
 import Modal from "../component/Modal";
 import Template from "../component/Template";
-import {Person, VpnKey} from "@mui/icons-material";
+import {Check, Person, VpnKey} from "@mui/icons-material";
 import FormInputTextField from "../component/FormInputTextField";
 import Separator from "../component/Separator";
 import FormButton from "../component/FormButton";
@@ -44,6 +31,7 @@ const MfaChallengePage: React.FC<MfaChallengePageProps> = ({
 
     const errorsBanner = <ErrorBanner errorMessage={errorMessage}/>
     const [openChooseMFAModal, setOpenChooseMFAModal] = React.useState(false)
+    const [defaultMfaDevice, setDefaultMfaDevice] = useState<string>("")
     const [mfaAccountEnrolledMethod, setMfaAccountEnrolledMethod] = useState<MfaAccountEnrolledMethod[]>()
     const handleCloseChooseMFAModal = () => {
         setOpenChooseMFAModal(false);
@@ -54,16 +42,36 @@ const MfaChallengePage: React.FC<MfaChallengePageProps> = ({
 
     useEffect(() => {
         getMfaMethods()
-            .then(result => setMfaAccountEnrolledMethod(result))
+            .then(result => {
+                setMfaAccountEnrolledMethod(result)
+                result.forEach((method) => {
+                    if (method.default) {
+                        setDefaultMfaDevice(method.mfaDeviceId)
+                    }
+                })
+            })
+
     }, [])
 
     const mfaIcon = (mfaMethod: MfaAccountEnrolledMethod) => {
         let icon
         if ("EMAIL_MFA_METHOD" === mfaMethod.mfaMethod) {
-            icon = <><EmailIcon/> EMail: {mfaMethod.mfaChannel}</>
+            icon = <div onClick={() => setDefaultMfaDevice(mfaMethod.mfaDeviceId)}>
+                <EmailIcon/> EMail: {mfaMethod.mfaChannel} {mfaIconCheckIconFor(mfaMethod)}</div>
         }
         return icon
     }
+
+    const mfaIconCheckIconFor = (mfaMethod: MfaAccountEnrolledMethod) => {
+        let icon = <Check/>
+        if (defaultMfaDevice === mfaMethod.mfaDeviceId) {
+            icon = <Check sx={{color: "green"}}/>
+        }
+
+        return icon
+    }
+
+
     return (
         <ThemeProvider theme={theme}>
 
@@ -75,27 +83,7 @@ const MfaChallengePage: React.FC<MfaChallengePageProps> = ({
                    onCloseButtonLabel={i18nMessages["changeMfaMethodModalCloseButtonText"]}
                    headerLabel={i18nMessages["changeMfaMethodModalHeaderText"]}
                    title={i18nMessages["changeMfaMethodModalTitleText"]}>
-                <TableContainer component={Paper}>
-                    <Table sx={{
-                        width: '100%',
-                        overflowX: 'auto'
-                    }} aria-label="simple table">
-                        <TableBody>
-                            {mfaAccountEnrolledMethod?.map(method =>
-                                <TableRow style={{
-                                    // width: '100%',
-                                    overflowX: 'auto'
-                                }}>
-                                    <TableCell component="th" scope="row">
-                                        {mfaIcon(method)}
-                                    </TableCell>
-                                    <TableCell align="right"> <Chip label="Chip Filled"/></TableCell>
-                                    <TableCell align="right"> <Chip label="Chip Filled"/></TableCell>
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                {mfaAccountEnrolledMethod?.map(method => <p>{mfaIcon(method)}</p>)}
             </Modal>
 
             <Template maxWidth="sm">
@@ -112,6 +100,7 @@ const MfaChallengePage: React.FC<MfaChallengePageProps> = ({
                     <Box>
                         <input name="mfa-method" type="hidden" value="EMAIL_MFA_METHOD"/>
                         <input name={csrfName} type="hidden" value={csrfToken}/>
+                        <input name="mfa-device-id" type="hidden" value={defaultMfaDevice}/>
 
                         <FormInputTextField id="mfa-code"
                                             label={i18nMessages["mfaPlaceholderText"]}
@@ -128,7 +117,7 @@ const MfaChallengePage: React.FC<MfaChallengePageProps> = ({
                         <Grid container sm={12}>
                             <Grid item sm={4}>
                                 <FormButton type="button" label={i18nMessages["sendAgainButtonText"]}
-                                            onClickHandler={() => sendMfaCode()}/>
+                                            onClickHandler={() => sendMfaCode(defaultMfaDevice)}/>
                             </Grid>
                             <Grid item sm={4}> </Grid>
                             <Grid item sm={4}>

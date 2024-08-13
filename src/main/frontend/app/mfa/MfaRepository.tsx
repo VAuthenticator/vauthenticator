@@ -2,10 +2,12 @@ export type MfaAccountEnrolledMethod = {
     userName: string
     mfaMethod: string
     mfaChannel: string
+    mfaDeviceId: string,
+    default: boolean
 }
 
-export async function sendMfaCode(): Promise<void> {
-    await fetch("/api/mfa/challenge", {
+export async function sendMfaCode(mfaDeviceId : string): Promise<void> {
+    await fetch(`/api/mfa/challenge?mfa-device-id=${mfaDeviceId}`, {
         method: 'PUT', // *GET, POST, PUT, DELETE, etc.
         credentials: 'same-origin', // include, *same-origin, omit
     });

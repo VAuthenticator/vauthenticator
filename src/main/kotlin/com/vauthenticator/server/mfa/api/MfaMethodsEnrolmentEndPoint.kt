@@ -26,15 +26,20 @@ class MfaEnrolmentAssociationEndPoint(
     @GetMapping("/api/mfa/enrollment")
     fun findAllAssociatedEnrolledMfaMethods(authentication: Authentication) =
         ok(
-            mfaAccountMethodsRepository.findAll(authentication.name)
-                .map {
-                    MfaDeviceRepresentation(
-                        sensitiveEmailMasker.mask(it.userName),
-                        it.mfaMethod,
-                        sensitiveEmailMasker.mask(it.mfaChannel),
-                        it.mdaDeviceId.content
-                    )
+            mfaAccountMethodsRepository.getDefaultDevice(authentication.name)
+                .map { defaultMfaDevice ->
+                    mfaAccountMethodsRepository.findAll(authentication.name)
+                        .map {
+                            MfaDeviceRepresentation(
+                                sensitiveEmailMasker.mask(it.userName),
+                                it.mfaMethod,
+                                sensitiveEmailMasker.mask(it.mfaChannel),
+                                it.mdaDeviceId.content,
+                                it.mdaDeviceId.content == defaultMfaDevice.content
+                            )
+                        }
                 }
+
         )
 
     @PutMapping("/api/mfa/device")
@@ -45,7 +50,7 @@ class MfaEnrolmentAssociationEndPoint(
         permissionValidator.validate(authentication, Scopes.from(Scope.MFA_ENROLLMENT))
         mfaAccountMethodsRepository.setAsDefault(
             authentication.name,
-            MfaDeviceId(defaultMethod.deviceId)
+            MfaDeviceId(defaultMethod.mfaDeviceId)
         )
         return noContent().build()
     }
@@ -80,7 +85,7 @@ class MfaEnrolmentAssociationEndPoint(
 }
 
 data class SetDefaultMfaDeviceRequest(
-    val deviceId: String
+    val mfaDeviceId: String
 )
 
 data class MfaEnrollmentRequest(
@@ -101,5 +106,6 @@ data class MfaDeviceRepresentation(
     val userName: String,
     val mfaMethod: MfaMethod,
     val mfaChannel: String,
-    val deviceId: String
+    val mfaDeviceId: String,
+    val default: Boolean
 )
