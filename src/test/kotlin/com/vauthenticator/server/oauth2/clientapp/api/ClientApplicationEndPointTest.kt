@@ -220,9 +220,20 @@ class ClientApplicationEndPointTest {
     }
 
     @Test
+    fun `when a client app does not exist`() {
+        val jwtAuthenticationToken = m2mPrincipalFor(A_CLIENT_APP_ID, listOf(Scope.READ_CLIENT_APPLICATION.content))
+
+        every { readClientApplication.findOne(ClientAppId("clientApp")) } returns Optional.empty()
+
+        mockMvc.perform(
+            get("/api/client-applications/clientApp")
+                .principal(jwtAuthenticationToken)
+        )
+            .andExpect(status().isNotFound)
+    }
+
+    @Test
     fun `view a specific client app fails for insufficient scope`() {
-        val clientApplication = aClientApp(ClientAppId("clientApp"))
-        val body = ClientAppRepresentation.fromDomainToRepresentation(clientApplication)
         val jwtAuthenticationToken = m2mPrincipalFor(A_CLIENT_APP_ID, listOf(Scope.MFA_ENROLLMENT.content))
 
         every { readClientApplication.findOne(ClientAppId("clientApp")) } returns Optional.of(aClientApp(ClientAppId("clientApp")))

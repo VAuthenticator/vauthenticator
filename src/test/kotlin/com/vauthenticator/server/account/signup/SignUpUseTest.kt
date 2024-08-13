@@ -6,7 +6,6 @@ import com.vauthenticator.server.events.SignUpEvent
 import com.vauthenticator.server.events.VAuthenticatorEventsDispatcher
 import com.vauthenticator.server.oauth2.clientapp.ClientAppFixture.aClientApp
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
-import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.domain.Scope.Companion.SIGN_UP
 import com.vauthenticator.server.oauth2.clientapp.domain.Scopes
 import com.vauthenticator.server.password.Password
@@ -24,16 +23,12 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import java.time.Instant
-import java.util.*
 
 @ExtendWith(MockKExtension::class)
 internal class SignUpUseTest {
 
     @MockK
     lateinit var accountRepository: AccountRepository
-
-    @MockK
-    lateinit var clientAccountRepository: ClientApplicationRepository
 
     @MockK
     lateinit var passwordPolicy: PasswordPolicy
@@ -50,7 +45,6 @@ internal class SignUpUseTest {
     internal fun setUp() {
         underTest = SignUpUse(
             passwordPolicy,
-            clientAccountRepository,
             accountRepository,
             vAuthenticatorPasswordEncoder,
             vAuthenticatorEventsDispatcher
@@ -70,7 +64,6 @@ internal class SignUpUseTest {
         val signUpEvent = SignUpEvent(Email(account.email), clientAppId, now, Password("encrypted_secret"))
 
         every { passwordPolicy.accept(account.email, "secret") } just runs
-        every { clientAccountRepository.findOne(clientAppId) } returns Optional.of(aClientApp)
         every { vAuthenticatorPasswordEncoder.encode("secret") } returns "encrypted_secret"
         every { accountRepository.create(account) } just runs
         every { vAuthenticatorEventsDispatcher.dispatch(signUpEvent) } just runs
@@ -79,7 +72,6 @@ internal class SignUpUseTest {
         underTest.execute(clientAppId, account.copy(password = "secret"))
 
         verify { passwordPolicy.accept(account.email, "secret") }
-        verify { clientAccountRepository.findOne(clientAppId) }
         verify { vAuthenticatorPasswordEncoder.encode("secret") }
         verify { accountRepository.create(account) }
         verify { vAuthenticatorEventsDispatcher.dispatch(signUpEvent) }

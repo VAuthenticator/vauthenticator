@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import ErrorBanner from "../component/ErrorBanner";
 import {getMfaMethods, MfaAccountEnrolledMethod, sendMfaCode} from "./MfaRepository";
 import EmailIcon from "@mui/icons-material/Email";
-import {Box, Divider, Grid, ThemeProvider, Typography} from "@mui/material";
+import {Box, Button, Divider, Grid, ThemeProvider, Typography} from "@mui/material";
 import theme from "../component/styles";
 import Modal from "../component/Modal";
 import Template from "../component/Template";
@@ -56,8 +56,12 @@ const MfaChallengePage: React.FC<MfaChallengePageProps> = ({
     const mfaIcon = (mfaMethod: MfaAccountEnrolledMethod) => {
         let icon
         if ("EMAIL_MFA_METHOD" === mfaMethod.mfaMethod) {
-            icon = <div onClick={() => setDefaultMfaDevice(mfaMethod.mfaDeviceId)}>
-                <EmailIcon/> EMail: {mfaMethod.mfaChannel} {mfaIconCheckIconFor(mfaMethod)}</div>
+            icon = <Button
+                type="button"
+                style={{textTransform: "none", color: "black"}}
+                onClick={() => setDefaultMfaDevice(mfaMethod.mfaDeviceId)}>
+                <EmailIcon/> EMail: {mfaMethod.mfaChannel} {mfaIconCheckIconFor(mfaMethod)}
+            </Button>
         }
         return icon
     }
