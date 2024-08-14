@@ -6,7 +6,7 @@ import {Box, Button, Divider, Grid, ThemeProvider, Typography} from "@mui/materi
 import theme from "../component/styles";
 import Modal from "../component/Modal";
 import Template from "../component/Template";
-import {Check, Person, VpnKey} from "@mui/icons-material";
+import {CheckCircle, Person, VpnKey} from "@mui/icons-material";
 import FormInputTextField from "../component/FormInputTextField";
 import Separator from "../component/Separator";
 import FormButton from "../component/FormButton";
@@ -67,9 +67,9 @@ const MfaChallengePage: React.FC<MfaChallengePageProps> = ({
     }
 
     const mfaIconCheckIconFor = (mfaMethod: MfaAccountEnrolledMethod) => {
-        let icon = <Check/>
+        let icon = <CheckCircle/>
         if (defaultMfaDevice === mfaMethod.mfaDeviceId) {
-            icon = <Check sx={{color: "green"}}/>
+            icon = <CheckCircle sx={{color: "green"}}/>
         }
 
         return icon
