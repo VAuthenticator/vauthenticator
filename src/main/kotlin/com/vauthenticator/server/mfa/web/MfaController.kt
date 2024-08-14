@@ -40,7 +40,7 @@ class MfaController(
     private fun sendMfaChallengeFor(authentication: Authentication) {
         mfaAccountMethodsRepository.getDefaultDevice(authentication.name)
             .flatMap { mfaAccountMethodsRepository.findBy(it) }
-            .map { otpMfaSender.sendMfaChallenge(authentication.name, MfaMethod.EMAIL_MFA_METHOD, it.mfaChannel) }
+            .map { otpMfaSender.sendMfaChallengeFor(authentication.name, MfaMethod.EMAIL_MFA_METHOD, it.mfaChannel) }
     }
 
     @GetMapping("/mfa-challenge")

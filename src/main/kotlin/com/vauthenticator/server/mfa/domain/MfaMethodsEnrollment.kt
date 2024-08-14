@@ -33,7 +33,7 @@ class MfaMethodsEnrollment(
                     )
 
                 if (sendChallengeCode) {
-                    mfaSender.sendMfaChallenge(userName, mfaMethod, mfaChannel)
+                    mfaSender.sendMfaChallengeFor(userName, mfaMethod, mfaChannel)
                 }
 
                 ticketCreator.createTicketFor(

@@ -75,13 +75,13 @@ internal class MfaControllerTest {
         every { mfaAccountMethodsRepository.findBy(mfaDeviceId) } returns Optional.of(
             MfaAccountMethod(account.email, mfaDeviceId, Kid("A_KID"), MfaMethod.EMAIL_MFA_METHOD, account.email, true)
         )
-        every { otpMfaSender.sendMfaChallenge(account.email, MfaMethod.EMAIL_MFA_METHOD, account.email) } just runs
+        every { otpMfaSender.sendMfaChallengeFor(account.email, MfaMethod.EMAIL_MFA_METHOD, account.email) } just runs
 
         mokMvc.perform(
             get("/mfa-challenge/send")
                 .principal(principalFor(account.email))
         ).andExpect(redirectedUrl("/mfa-challenge"))
-        verify { otpMfaSender.sendMfaChallenge(account.email, MfaMethod.EMAIL_MFA_METHOD, account.email) }
+        verify { otpMfaSender.sendMfaChallengeFor(account.email, MfaMethod.EMAIL_MFA_METHOD, account.email) }
     }
 
     @Test

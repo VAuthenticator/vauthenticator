@@ -27,7 +27,7 @@ class MfaChallengeEndPoint(
                 //todo it should be improved checking if the mfa account method returned belong to the actual requesting user
                 mfaAccountMethodsRepository.findBy(MfaDeviceId(it))
                     .map {
-                        otpMfaSender.sendMfaChallenge(
+                        otpMfaSender.sendMfaChallengeFor(
                             authentication.name,
                             MfaMethod.EMAIL_MFA_METHOD,
                             it.mfaChannel
@@ -39,7 +39,7 @@ class MfaChallengeEndPoint(
                 mfaAccountMethodsRepository.getDefaultDevice(authentication.name)
                     .flatMap { mfaAccountMethodsRepository.findBy(it) }
                     .map {
-                        otpMfaSender.sendMfaChallenge(
+                        otpMfaSender.sendMfaChallengeFor(
                             authentication.name,
                             MfaMethod.EMAIL_MFA_METHOD,
                             it.mfaChannel
