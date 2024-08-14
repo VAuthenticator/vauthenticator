@@ -7,6 +7,7 @@ import com.vauthenticator.server.email.EMailSenderService
 interface OtpMfaSender {
     fun sendMfaChallengeFor(userName: String, mfaMethod: MfaMethod, mfaChannel: String)
     fun sendMfaChallengeFor(userName: String, mfaDeviceId: MfaDeviceId)
+    fun sendMfaChallengeFor(userName: String)
 }
 
 
@@ -30,6 +31,18 @@ class OtpMfaEmailSender(
                 sendMfaChallengeFor(
                     userName,
                     it.mfaMethod,
+                    it.mfaChannel
+                )
+            }
+    }
+
+    override fun sendMfaChallengeFor(userName: String) {
+        mfaAccountMethodsRepository.getDefaultDevice(userName)
+            .flatMap { mfaAccountMethodsRepository.findBy(it) }
+            .map {
+                sendMfaChallengeFor(
+                    userName,
+                    MfaMethod.EMAIL_MFA_METHOD,
                     it.mfaChannel
                 )
             }

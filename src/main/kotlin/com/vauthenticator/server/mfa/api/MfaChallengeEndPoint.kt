@@ -45,7 +45,6 @@ class MfaChallengeEndPoint(
                             it.mfaChannel
                         )
                     }
-
             }
         )
     }

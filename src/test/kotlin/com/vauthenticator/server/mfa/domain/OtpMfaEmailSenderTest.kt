@@ -9,6 +9,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import java.util.*
@@ -26,7 +27,21 @@ internal class OtpMfaEmailSenderTest {
     lateinit var mfaMailSender: EMailSenderService
 
     @MockK
-    lateinit var mfaAccountMethodsRepository : MfaAccountMethodsRepository
+    lateinit var mfaAccountMethodsRepository: MfaAccountMethodsRepository
+
+    lateinit var uut: OtpMfaEmailSender
+
+    private val mfaSecret = MfaSecret("AN_MFA_SECRET")
+    private val mfaDeviceId = MfaDeviceId("A_MFA_DEVICE_ID")
+    private val mfaChallenge = MfaChallenge("A_MFA_CHALLENGE")
+    private val account = anAccount()
+    private val userName = account.email
+    private val mfaChannel = account.email
+
+    @BeforeEach
+    fun setUp() {
+        uut = OtpMfaEmailSender(accountRepository, otp, mfaMailSender, mfaAccountMethodsRepository)
+    }
 
     @Test
     internal fun `when a otp is sent via mail`() {
@@ -49,18 +64,18 @@ internal class OtpMfaEmailSenderTest {
     }
 
     @Test
-    internal fun `when a otp is sent via mail with a  defined mfa device id`() {
-        val mfaSecret = MfaSecret("AN_MFA_SECRET")
-        val mfaDeviceId = MfaDeviceId("A_MFA_DEVICE_ID")
-        val mfaChallenge = MfaChallenge("A_MFA_CHALLENGE")
-        val account = anAccount()
-        val underTest = OtpMfaEmailSender(accountRepository, otp, mfaMailSender, mfaAccountMethodsRepository)
-
-        val userName = account.email
-        val mfaChannel = account.email
-
+    internal fun `when a otp is sent via mail with a defined mfa device id`() {
+        every { mfaAccountMethodsRepository.findBy(mfaDeviceId) } returns Optional.of(
+            MfaAccountMethod(
+                userName,
+                mfaDeviceId,
+                Kid("A_KID"),
+                MfaMethod.EMAIL_MFA_METHOD,
+                mfaChannel,
+                true
+            )
+        )
         every { accountRepository.accountFor(userName) } returns Optional.of(account)
-        every { mfaAccountMethodsRepository.findBy(mfaDeviceId) } returns Optional.of(MfaAccountMethod(userName, mfaDeviceId, Kid("A_KID"), MfaMethod.EMAIL_MFA_METHOD, mfaChannel, true))
         every { otp.generateSecretKeyFor(account, MfaMethod.EMAIL_MFA_METHOD, mfaChannel) } returns mfaSecret
         every { otp.getTOTPCode(mfaSecret) } returns mfaChallenge
         every {
@@ -70,6 +85,32 @@ internal class OtpMfaEmailSenderTest {
             )
         } just runs
 
-        underTest.sendMfaChallengeFor(userName, mfaDeviceId)
+        uut.sendMfaChallengeFor(userName, mfaDeviceId)
+    }
+
+    @Test
+    internal fun `when a otp is sent via mail when it is the default mfa enrolled device`() {
+        every { mfaAccountMethodsRepository.getDefaultDevice(userName) } returns Optional.of(mfaDeviceId)
+        every { mfaAccountMethodsRepository.findBy(mfaDeviceId) } returns Optional.of(
+            MfaAccountMethod(
+                userName,
+                mfaDeviceId,
+                Kid("A_KID"),
+                MfaMethod.EMAIL_MFA_METHOD,
+                mfaChannel,
+                true
+            )
+        )
+        every { accountRepository.accountFor(userName) } returns Optional.of(account)
+        every { otp.generateSecretKeyFor(account, MfaMethod.EMAIL_MFA_METHOD, mfaChannel) } returns mfaSecret
+        every { otp.getTOTPCode(mfaSecret) } returns mfaChallenge
+        every {
+            mfaMailSender.sendFor(
+                account,
+                mapOf("email" to userName, "mfaCode" to mfaChallenge.content())
+            )
+        } just runs
+
+        uut.sendMfaChallengeFor(userName)
     }
 }
