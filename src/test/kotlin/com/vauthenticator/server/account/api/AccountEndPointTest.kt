@@ -5,14 +5,14 @@ import com.vauthenticator.server.account.Phone
 import com.vauthenticator.server.account.SaveAccount
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.account.signup.SignUpUse
-import com.vauthenticator.server.oauth2.clientapp.A_CLIENT_APP_ID
-import com.vauthenticator.server.oauth2.clientapp.ClientAppFixture
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.domain.Scope
 import com.vauthenticator.server.oauth2.clientapp.domain.Scopes
 import com.vauthenticator.server.role.PermissionValidator
+import com.vauthenticator.server.support.A_CLIENT_APP_ID
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
+import com.vauthenticator.server.support.ClientAppFixture
 import com.vauthenticator.server.support.EMAIL
 import com.vauthenticator.server.support.SecurityFixture.principalFor
 import com.vauthenticator.server.support.VAUTHENTICATOR_ADMIN

@@ -1,9 +1,16 @@
 package com.vauthenticator.server.mfa.api
 
-import com.vauthenticator.server.keys.Kid
-import com.vauthenticator.server.mfa.domain.*
+import com.vauthenticator.server.mfa.domain.MfaDeviceId
+import com.vauthenticator.server.mfa.domain.OtpMfaSender
+import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
+import com.vauthenticator.server.oauth2.clientapp.domain.Scope
+import com.vauthenticator.server.role.PermissionValidator
+import com.vauthenticator.server.support.A_CLIENT_APP_ID
 import com.vauthenticator.server.support.AccountTestFixture
+import com.vauthenticator.server.support.ClientAppFixture.aClientApp
+import com.vauthenticator.server.support.ClientAppFixture.aClientAppId
 import com.vauthenticator.server.support.SecurityFixture
+import com.vauthenticator.server.web.ExceptionAdviceController
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -15,57 +22,74 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
+import org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup
 import java.util.*
+
 
 @ExtendWith(MockKExtension::class)
 internal class MfaChallengeEndPointTest {
     lateinit var mokMvc: MockMvc
 
+    private val account = AccountTestFixture.anAccount()
+    private val clientAppId = aClientAppId()
+    private val aClientApp = aClientApp(clientAppId)
+
+    @MockK
+    private lateinit var clientApplicationRepository: ClientApplicationRepository
+
     @MockK
     private lateinit var otpMfaSender: OtpMfaSender
-    @MockK
-    private lateinit var mfaAccountMethodsRepository: MfaAccountMethodsRepository
-
-    private val account = AccountTestFixture.anAccount()
 
     @BeforeEach
     internal fun setUp() {
-        mokMvc = MockMvcBuilders.standaloneSetup(
-            MfaChallengeEndPoint(mfaAccountMethodsRepository, otpMfaSender)
-        ).build()
+        val permissionValidator = PermissionValidator(clientApplicationRepository)
+        val mfaChallengeEndPoint = MfaChallengeEndPoint(permissionValidator, otpMfaSender)
+        mokMvc = standaloneSetup(mfaChallengeEndPoint)
+            .setControllerAdvice(ExceptionAdviceController())
+            .build()
     }
+
+    private val principalWithValidScopes =
+        SecurityFixture.principalFor(A_CLIENT_APP_ID, account.email, scopes = listOf(Scope.MFA_ALWAYS.content))
+    private val principalWithoutValidScopes =
+        SecurityFixture.principalFor(A_CLIENT_APP_ID, account.email, scopes = listOf(Scope.OPEN_ID.content))
 
 
     @Test
     internal fun `when an mfa challenge is sent to the default mfa device`() {
-        val mfaDeviceId = MfaDeviceId("A_MFA_DEVICE_ID")
-        every { mfaAccountMethodsRepository.getDefaultDevice(account.email) } returns Optional.of(mfaDeviceId)
-        every { mfaAccountMethodsRepository.findBy(mfaDeviceId) } returns Optional.of(
-            MfaAccountMethod(account.email, mfaDeviceId, Kid("A_KID"), MfaMethod.EMAIL_MFA_METHOD, account.email, true)
-        )
-        every { otpMfaSender.sendMfaChallengeFor(account.email, MfaMethod.EMAIL_MFA_METHOD, account.email) } just runs
+        every { clientApplicationRepository.findOne(clientAppId) } returns Optional.of(aClientApp)
+        every { otpMfaSender.sendMfaChallengeFor(account.email) } just runs
 
         mokMvc.perform(
             put("/api/mfa/challenge")
-                .principal(SecurityFixture.principalFor(account.email))
+                .principal(principalWithValidScopes)
         ).andExpect(status().isOk)
     }
 
     @Test
     internal fun `when an mfa challenge is sent to a specific mfa device`() {
-        val mfaChannel = "another_email@email.com"
         val mfaDeviceId = MfaDeviceId("A_WELL_DEFINED_MFA_DEVICE_ID")
 
-        every { mfaAccountMethodsRepository.findBy(mfaDeviceId) } returns Optional.of(
-            MfaAccountMethod(account.email, mfaDeviceId, Kid("A_KID"), MfaMethod.EMAIL_MFA_METHOD, mfaChannel, true)
-        )
-        every { otpMfaSender.sendMfaChallengeFor(account.email, MfaMethod.EMAIL_MFA_METHOD, mfaChannel) } just runs
+        every { clientApplicationRepository.findOne(clientAppId) } returns Optional.of(aClientApp)
+        every { otpMfaSender.sendMfaChallengeFor(account.email, mfaDeviceId) } just runs
 
         mokMvc.perform(
             put("/api/mfa/challenge")
                 .param("mfa-device-id", "A_WELL_DEFINED_MFA_DEVICE_ID")
-                .principal(SecurityFixture.principalFor(account.email))
+                .principal(principalWithValidScopes)
         ).andExpect(status().isOk)
+    }
+
+    @Test
+    internal fun `when an mfa challenge fails for insufficient scopes`() {
+        val mfaDeviceId = MfaDeviceId("A_WELL_DEFINED_MFA_DEVICE_ID")
+        every { clientApplicationRepository.findOne(clientAppId) } returns Optional.of(aClientApp)
+        every { otpMfaSender.sendMfaChallengeFor(account.email, mfaDeviceId) } just runs
+
+        mokMvc.perform(
+            put("/api/mfa/challenge")
+                .param("mfa-device-id", "A_WELL_DEFINED_MFA_DEVICE_ID")
+                .principal(principalWithoutValidScopes)
+        ).andExpect(status().isForbidden)
     }
 }

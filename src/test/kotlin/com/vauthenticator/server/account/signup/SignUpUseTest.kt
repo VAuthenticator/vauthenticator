@@ -4,7 +4,6 @@ import com.vauthenticator.server.account.Email
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.events.SignUpEvent
 import com.vauthenticator.server.events.VAuthenticatorEventsDispatcher
-import com.vauthenticator.server.oauth2.clientapp.ClientAppFixture.aClientApp
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
 import com.vauthenticator.server.oauth2.clientapp.domain.Scope.Companion.SIGN_UP
 import com.vauthenticator.server.oauth2.clientapp.domain.Scopes
@@ -13,6 +12,7 @@ import com.vauthenticator.server.password.PasswordPolicy
 import com.vauthenticator.server.password.VAuthenticatorPasswordEncoder
 import com.vauthenticator.server.role.Role
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
+import com.vauthenticator.server.support.ClientAppFixture.aClientApp
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension

@@ -5,7 +5,6 @@ import com.vauthenticator.server.email.EMailSenderService
 
 
 interface OtpMfaSender {
-    fun sendMfaChallengeFor(userName: String, mfaMethod: MfaMethod, mfaChannel: String)
     fun sendMfaChallengeFor(userName: String, mfaDeviceId: MfaDeviceId)
     fun sendMfaChallengeFor(userName: String)
 }
@@ -17,13 +16,6 @@ class OtpMfaEmailSender(
     private val mfaMailSender: EMailSenderService,
     private val mfaAccountMethodsRepository: MfaAccountMethodsRepository
 ) : OtpMfaSender {
-
-    override fun sendMfaChallengeFor(userName: String, mfaMethod: MfaMethod, mfaChannel: String) {
-        val account = accountRepository.accountFor(userName).get()
-        val mfaSecret = otpMfa.generateSecretKeyFor(account, mfaMethod, mfaChannel)
-        val mfaCode = otpMfa.getTOTPCode(mfaSecret).content()
-        mfaMailSender.sendFor(account, mapOf("email" to mfaChannel, "mfaCode" to mfaCode))
-    }
 
     override fun sendMfaChallengeFor(userName: String, mfaDeviceId: MfaDeviceId) {
         mfaAccountMethodsRepository.findBy(mfaDeviceId)
@@ -46,5 +38,12 @@ class OtpMfaEmailSender(
                     it.mfaChannel
                 )
             }
+    }
+
+    private fun sendMfaChallengeFor(userName: String, mfaMethod: MfaMethod, mfaChannel: String) {
+        val account = accountRepository.accountFor(userName).get()
+        val mfaSecret = otpMfa.generateSecretKeyFor(account, mfaMethod, mfaChannel)
+        val mfaCode = otpMfa.getTOTPCode(mfaSecret).content()
+        mfaMailSender.sendFor(account, mapOf("email" to mfaChannel, "mfaCode" to mfaCode))
     }
 }

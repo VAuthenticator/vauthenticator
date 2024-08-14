@@ -23,10 +23,11 @@ class MfaEnrolmentAssociationEndPoint(
 ) {
 
 
+
     @GetMapping("/api/mfa/enrollment")
     fun findAllAssociatedEnrolledMfaMethods(authentication: Authentication) =
         ok(
-            mfaAccountMethodsRepository.getDefaultDevice(authentication.name)
+            mfaAccountMethodsRepository.getDefaultDevice(authentication.name) //todo it should be an usecase
                 .map { defaultMfaDevice ->
                     mfaAccountMethodsRepository.findAll(authentication.name)
                         .map {

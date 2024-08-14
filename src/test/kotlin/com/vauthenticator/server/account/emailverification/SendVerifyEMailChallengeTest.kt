@@ -5,13 +5,13 @@ import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.email.EMailSenderService
 import com.vauthenticator.server.mfa.domain.MfaMethod
 import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollment
-import com.vauthenticator.server.oauth2.clientapp.A_CLIENT_APP_ID
-import com.vauthenticator.server.oauth2.clientapp.ClientAppFixture.aClientApp
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.domain.Scope
 import com.vauthenticator.server.oauth2.clientapp.domain.Scopes
+import com.vauthenticator.server.support.A_CLIENT_APP_ID
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
+import com.vauthenticator.server.support.ClientAppFixture.aClientApp
 import com.vauthenticator.server.ticket.Ticket
 import com.vauthenticator.server.ticket.Ticket.Companion.MFA_SELF_ASSOCIATION_CONTEXT_VALUE
 import com.vauthenticator.server.ticket.TicketId

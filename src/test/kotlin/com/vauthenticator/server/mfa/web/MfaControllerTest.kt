@@ -2,7 +2,6 @@ package com.vauthenticator.server.mfa.web
 
 import com.vauthenticator.server.i18n.I18nMessageInjector
 import com.vauthenticator.server.i18n.I18nScope
-import com.vauthenticator.server.keys.Kid
 import com.vauthenticator.server.mfa.domain.*
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import com.vauthenticator.server.support.SecurityFixture.principalFor
@@ -24,7 +23,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.view
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
-import java.util.*
 
 @ExtendWith(MockKExtension::class)
 internal class MfaControllerTest {
@@ -70,18 +68,13 @@ internal class MfaControllerTest {
 
     @Test
     internal fun `when an mfa challenge is sent`() {
-        val mfaDeviceId = MfaDeviceId("A_MFA_DEVICE_ID")
-        every { mfaAccountMethodsRepository.getDefaultDevice(account.email) } returns Optional.of(mfaDeviceId)
-        every { mfaAccountMethodsRepository.findBy(mfaDeviceId) } returns Optional.of(
-            MfaAccountMethod(account.email, mfaDeviceId, Kid("A_KID"), MfaMethod.EMAIL_MFA_METHOD, account.email, true)
-        )
-        every { otpMfaSender.sendMfaChallengeFor(account.email, MfaMethod.EMAIL_MFA_METHOD, account.email) } just runs
+        every { otpMfaSender.sendMfaChallengeFor(account.email) } just runs
 
         mokMvc.perform(
             get("/mfa-challenge/send")
                 .principal(principalFor(account.email))
         ).andExpect(redirectedUrl("/mfa-challenge"))
-        verify { otpMfaSender.sendMfaChallengeFor(account.email, MfaMethod.EMAIL_MFA_METHOD, account.email) }
+        verify { otpMfaSender.sendMfaChallengeFor(account.email) }
     }
 
     @Test

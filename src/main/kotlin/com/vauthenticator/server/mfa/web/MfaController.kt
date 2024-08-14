@@ -31,16 +31,9 @@ class MfaController(
 
     @GetMapping("/mfa-challenge/send")
     fun view(authentication: Authentication): String {
-        //todo it should be an usecase
-        sendMfaChallengeFor(authentication)
+        otpMfaSender.sendMfaChallengeFor(authentication.name)
 
         return "redirect:/mfa-challenge"
-    }
-
-    private fun sendMfaChallengeFor(authentication: Authentication) {
-        mfaAccountMethodsRepository.getDefaultDevice(authentication.name)
-            .flatMap { mfaAccountMethodsRepository.findBy(it) }
-            .map { otpMfaSender.sendMfaChallengeFor(authentication.name, MfaMethod.EMAIL_MFA_METHOD, it.mfaChannel) }
     }
 
     @GetMapping("/mfa-challenge")

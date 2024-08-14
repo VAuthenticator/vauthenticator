@@ -27,13 +27,11 @@ class MfaMethodsEnrollment(
     ): TicketId {
         return accountRepository.accountFor(userName)
             .map {
-                mfaAccountMethodsRepository.findBy(userName, mfaMethod, mfaChannel)
-                    .ifPresentOrElse({},
-                        { mfaAccountMethodsRepository.save(userName, mfaMethod, mfaChannel, false) }
-                    )
+                val mfaAccountMethod = mfaAccountMethodsRepository.findBy(userName, mfaMethod, mfaChannel)
+                    .orElseGet { mfaAccountMethodsRepository.save(userName, mfaMethod, mfaChannel, false) }
 
                 if (sendChallengeCode) {
-                    mfaSender.sendMfaChallengeFor(userName, mfaMethod, mfaChannel)
+                    mfaSender.sendMfaChallengeFor(mfaAccountMethod.userName, mfaAccountMethod.mdaDeviceId)
                 }
 
                 ticketCreator.createTicketFor(

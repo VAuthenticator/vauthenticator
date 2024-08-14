@@ -98,7 +98,7 @@ class MfaConfig {
             JinjavaMailTemplateResolver(Jinjava()),
             SimpleEMailMessageFactory(
                 noReplyEMailConfiguration.from,
-                noReplyEMailConfiguration.mfaEMailSubject, // todo chenge the subject
+                noReplyEMailConfiguration.mfaEMailSubject,
                 EMailType.MFA
             )
         )

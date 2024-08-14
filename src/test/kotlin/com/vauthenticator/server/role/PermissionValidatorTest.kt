@@ -1,11 +1,11 @@
 package com.vauthenticator.server.role
 
-import com.vauthenticator.server.oauth2.clientapp.ClientAppFixture.aClientApp
-import com.vauthenticator.server.oauth2.clientapp.ClientAppFixture.aClientAppId
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.domain.InsufficientClientApplicationScopeException
 import com.vauthenticator.server.oauth2.clientapp.domain.Scope
 import com.vauthenticator.server.oauth2.clientapp.domain.Scopes
+import com.vauthenticator.server.support.ClientAppFixture.aClientApp
+import com.vauthenticator.server.support.ClientAppFixture.aClientAppId
 import com.vauthenticator.server.support.EMAIL
 import com.vauthenticator.server.support.SecurityFixture
 import io.mockk.every

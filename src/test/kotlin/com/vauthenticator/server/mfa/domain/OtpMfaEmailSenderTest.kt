@@ -16,6 +16,12 @@ import java.util.*
 
 @ExtendWith(MockKExtension::class)
 internal class OtpMfaEmailSenderTest {
+    private val mfaSecret = MfaSecret("AN_MFA_SECRET")
+    private val mfaDeviceId = MfaDeviceId("A_MFA_DEVICE_ID")
+    private val mfaChallenge = MfaChallenge("A_MFA_CHALLENGE")
+    private val account = anAccount()
+    private val userName = account.email
+    private val mfaChannel = account.email
 
     @MockK
     lateinit var otp: OtpMfa
@@ -31,36 +37,9 @@ internal class OtpMfaEmailSenderTest {
 
     lateinit var uut: OtpMfaEmailSender
 
-    private val mfaSecret = MfaSecret("AN_MFA_SECRET")
-    private val mfaDeviceId = MfaDeviceId("A_MFA_DEVICE_ID")
-    private val mfaChallenge = MfaChallenge("A_MFA_CHALLENGE")
-    private val account = anAccount()
-    private val userName = account.email
-    private val mfaChannel = account.email
-
     @BeforeEach
     fun setUp() {
         uut = OtpMfaEmailSender(accountRepository, otp, mfaMailSender, mfaAccountMethodsRepository)
-    }
-
-    @Test
-    internal fun `when a otp is sent via mail`() {
-        val mfaSecret = MfaSecret("AN_MFA_SECRET")
-        val mfaChallenge = MfaChallenge("A_MFA_CHALLENGE")
-        val account = anAccount()
-        val underTest = OtpMfaEmailSender(accountRepository, otp, mfaMailSender, mfaAccountMethodsRepository)
-
-        every { accountRepository.accountFor(account.email) } returns Optional.of(account)
-        every { otp.generateSecretKeyFor(account, MfaMethod.EMAIL_MFA_METHOD, account.email) } returns mfaSecret
-        every { otp.getTOTPCode(mfaSecret) } returns mfaChallenge
-        every {
-            mfaMailSender.sendFor(
-                account,
-                mapOf("email" to account.email, "mfaCode" to mfaChallenge.content())
-            )
-        } just runs
-
-        underTest.sendMfaChallengeFor(account.email, MfaMethod.EMAIL_MFA_METHOD, account.email)
     }
 
     @Test

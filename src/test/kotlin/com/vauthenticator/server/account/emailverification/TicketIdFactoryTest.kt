@@ -1,7 +1,7 @@
 package com.vauthenticator.server.account.emailverification
 
-import com.vauthenticator.server.oauth2.clientapp.A_CLIENT_APP_ID
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
+import com.vauthenticator.server.support.A_CLIENT_APP_ID
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import com.vauthenticator.server.support.EMAIL
 import com.vauthenticator.server.support.TicketFixture.ticketContext
