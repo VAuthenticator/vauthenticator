@@ -52,13 +52,13 @@ class MfaMethodsEnrollmentAssociationTest {
     lateinit var mfaAccountMethodsRepository: MfaAccountMethodsRepository
 
     @MockK
-    lateinit var otpMfaVerifier: OtpMfaVerifier
+    lateinit var mfaVerifier: MfaVerifier
 
     lateinit var underTest: MfaMethodsEnrollmentAssociation
 
     @BeforeEach
     fun setUp() {
-        underTest = MfaMethodsEnrollmentAssociation(ticketRepository, mfaAccountMethodsRepository, otpMfaVerifier)
+        underTest = MfaMethodsEnrollmentAssociation(ticketRepository, mfaAccountMethodsRepository, mfaVerifier)
     }
 
     @Test
@@ -100,7 +100,7 @@ class MfaMethodsEnrollmentAssociationTest {
     fun `when mfa is associated`() {
         every { ticketRepository.loadFor(ticketId) } returns Optional.of(ticket)
         every {
-            otpMfaVerifier.verifyMfaChallengeToBeAssociatedFor(
+            mfaVerifier.verifyMfaChallengeToBeAssociatedFor(
                 userName,
                 ticket.context.mfaDeviceId(),
                 MfaChallenge(CODE)
@@ -129,7 +129,7 @@ class MfaMethodsEnrollmentAssociationTest {
             )
         }
         verify {
-            otpMfaVerifier.verifyMfaChallengeToBeAssociatedFor(
+            mfaVerifier.verifyMfaChallengeToBeAssociatedFor(
                 userName,
                 ticket.context.mfaDeviceId(),
                 MfaChallenge(CODE)

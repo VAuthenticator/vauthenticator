@@ -46,13 +46,13 @@ class MfaConfig {
     fun mfaMethodsEnrolmentAssociation(
         ticketRepository: TicketRepository,
         mfaAccountMethodsRepository: MfaAccountMethodsRepository,
-        otpMfaVerifier: OtpMfaVerifier
+        mfaVerifier: MfaVerifier
     ) =
-        MfaMethodsEnrollmentAssociation(ticketRepository, mfaAccountMethodsRepository, otpMfaVerifier)
+        MfaMethodsEnrollmentAssociation(ticketRepository, mfaAccountMethodsRepository, mfaVerifier)
 
     @Bean
     fun mfaMethodsEnrollment(
-        mfaSender: OtpMfaSender,
+        mfaSender: MfaChallengeSender,
         ticketCreator: TicketCreator,
         accountRepository: AccountRepository,
         mfaAccountMethodsRepository: MfaAccountMethodsRepository
@@ -77,14 +77,14 @@ class MfaConfig {
         otpMfa: OtpMfa,
         mfaMailSender: EMailSenderService,
         mfaAccountMethodsRepository: MfaAccountMethodsRepository
-    ) = OtpMfaEmailSender(accountRepository, otpMfa, mfaMailSender, mfaAccountMethodsRepository)
+    ) = EmailMfaChallengeSender(accountRepository, otpMfa, mfaMailSender, mfaAccountMethodsRepository)
 
     @Bean
     fun otpMfaVerifier(
         otpMfa: OtpMfa,
         accountRepository: AccountRepository,
         mfaAccountMethodsRepository: MfaAccountMethodsRepository,
-    ) = AccountAwareOtpMfaVerifier(accountRepository, otpMfa, mfaAccountMethodsRepository)
+    ) = OtpMfaVerifier(accountRepository, otpMfa, mfaAccountMethodsRepository)
 
     @Bean
     fun mfaMailSender(

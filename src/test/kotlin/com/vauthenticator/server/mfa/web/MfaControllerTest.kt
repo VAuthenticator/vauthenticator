@@ -41,10 +41,10 @@ class MfaControllerTest {
     private lateinit var i18nMessageInjector: I18nMessageInjector
 
     @MockK
-    private lateinit var otpMfaSender: OtpMfaSender
+    private lateinit var mfaChallengeSender: MfaChallengeSender
 
     @MockK
-    private lateinit var otpMfaVerifier: OtpMfaVerifier
+    private lateinit var mfaVerifier: MfaVerifier
 
     private val account = anAccount()
 
@@ -56,21 +56,21 @@ class MfaControllerTest {
                 publisher,
                 successHandler,
                 failureHandler,
-                otpMfaSender,
-                otpMfaVerifier
+                mfaChallengeSender,
+                mfaVerifier
             )
         ).build()
     }
 
     @Test
     internal fun `when an mfa challenge is sent`() {
-        every { otpMfaSender.sendMfaChallengeFor(account.email) } just runs
+        every { mfaChallengeSender.sendMfaChallengeFor(account.email) } just runs
 
         mokMvc.perform(
             get("/mfa-challenge/send")
                 .principal(principalFor(account.email))
         ).andExpect(redirectedUrl("/mfa-challenge"))
-        verify { otpMfaSender.sendMfaChallengeFor(account.email) }
+        verify { mfaChallengeSender.sendMfaChallengeFor(account.email) }
     }
 
     @Test
@@ -91,7 +91,7 @@ class MfaControllerTest {
         val mfaAuthentication = principalFor(userName)
 
         every {
-            otpMfaVerifier.verifyAssociatedMfaChallengeFor(
+            mfaVerifier.verifyAssociatedMfaChallengeFor(
                 userName,
                 MfaChallenge("AN_MFA_CHALLENGE_CODE")
             )
@@ -107,7 +107,7 @@ class MfaControllerTest {
 
         verify { publisher.publishEvent(MfaSuccessEvent(mfaAuthentication)) }
         verify {
-            otpMfaVerifier.verifyAssociatedMfaChallengeFor(
+            mfaVerifier.verifyAssociatedMfaChallengeFor(
                 userName,
                 MfaChallenge("AN_MFA_CHALLENGE_CODE")
             )
@@ -121,7 +121,7 @@ class MfaControllerTest {
         val mfaAuthentication = principalFor(userName)
 
         every {
-            otpMfaVerifier.verifyAssociatedMfaChallengeFor(
+            mfaVerifier.verifyAssociatedMfaChallengeFor(
                 userName,
                 MfaDeviceId("A_MFA_DEVICE_ID"),
                 MfaChallenge("AN_MFA_CHALLENGE_CODE")
@@ -139,7 +139,7 @@ class MfaControllerTest {
 
         verify { publisher.publishEvent(MfaSuccessEvent(mfaAuthentication)) }
         verify {
-            otpMfaVerifier.verifyAssociatedMfaChallengeFor(
+            mfaVerifier.verifyAssociatedMfaChallengeFor(
                 userName,
                 MfaDeviceId("A_MFA_DEVICE_ID"),
                 MfaChallenge("AN_MFA_CHALLENGE_CODE")
@@ -156,7 +156,7 @@ class MfaControllerTest {
         val mfaFailureEvent = MfaFailureEvent(mfaAuthentication, mfaException)
 
         every {
-            otpMfaVerifier.verifyAssociatedMfaChallengeFor(
+            mfaVerifier.verifyAssociatedMfaChallengeFor(
                 userName,
                 MfaChallenge("AN_MFA_CHALLENGE_CODE")
             )
@@ -171,7 +171,7 @@ class MfaControllerTest {
         )
 
         verify {
-            otpMfaVerifier.verifyAssociatedMfaChallengeFor(
+            mfaVerifier.verifyAssociatedMfaChallengeFor(
                 userName,
                 MfaChallenge("AN_MFA_CHALLENGE_CODE")
             )
@@ -188,7 +188,7 @@ class MfaControllerTest {
         val mfaFailureEvent = MfaFailureEvent(mfaAuthentication, mfaException)
 
         every {
-            otpMfaVerifier.verifyAssociatedMfaChallengeFor(
+            mfaVerifier.verifyAssociatedMfaChallengeFor(
                 userName,
                 MfaDeviceId("A_MFA_DEVICE_ID"),
                 MfaChallenge("AN_MFA_CHALLENGE_CODE")
@@ -205,7 +205,7 @@ class MfaControllerTest {
         )
 
         verify {
-            otpMfaVerifier.verifyAssociatedMfaChallengeFor(
+            mfaVerifier.verifyAssociatedMfaChallengeFor(
                 userName,
                 MfaDeviceId("A_MFA_DEVICE_ID"),
                 MfaChallenge("AN_MFA_CHALLENGE_CODE")

@@ -4,18 +4,18 @@ import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.email.EMailSenderService
 
 
-interface OtpMfaSender {
+interface MfaChallengeSender {
     fun sendMfaChallengeFor(userName: String, mfaDeviceId: MfaDeviceId)
     fun sendMfaChallengeFor(userName: String)
 }
 
 
-class OtpMfaEmailSender(
+class EmailMfaChallengeSender(
     private val accountRepository: AccountRepository,
     private val otpMfa: OtpMfa,
     private val mfaMailSender: EMailSenderService,
     private val mfaAccountMethodsRepository: MfaAccountMethodsRepository
-) : OtpMfaSender {
+) : MfaChallengeSender {
 
     override fun sendMfaChallengeFor(userName: String, mfaDeviceId: MfaDeviceId) {
         mfaAccountMethodsRepository.findBy(mfaDeviceId)

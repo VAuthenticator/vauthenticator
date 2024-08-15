@@ -1,7 +1,7 @@
 package com.vauthenticator.server.mfa.api
 
+import com.vauthenticator.server.mfa.domain.MfaChallengeSender
 import com.vauthenticator.server.mfa.domain.MfaDeviceId
-import com.vauthenticator.server.mfa.domain.OtpMfaSender
 import com.vauthenticator.server.oauth2.clientapp.domain.Scope
 import com.vauthenticator.server.oauth2.clientapp.domain.Scopes
 import com.vauthenticator.server.role.PermissionValidator
@@ -14,7 +14,7 @@ import java.util.*
 @RestController
 class MfaChallengeEndPoint(
     private val permissionValidator: PermissionValidator,
-    private val otpMfaSender: OtpMfaSender
+    private val mfaChallengeSender: MfaChallengeSender
 ) {
 
     @PutMapping("/api/mfa/challenge")
@@ -24,8 +24,8 @@ class MfaChallengeEndPoint(
     ) {
         permissionValidator.validate(authentication, Scopes.from(Scope.MFA_ALWAYS))
         mfaDeviceId.ifPresentOrElse(
-            { otpMfaSender.sendMfaChallengeFor(authentication.name, MfaDeviceId(it)) },
-            { otpMfaSender.sendMfaChallengeFor(authentication.name) }
+            { mfaChallengeSender.sendMfaChallengeFor(authentication.name, MfaDeviceId(it)) },
+            { mfaChallengeSender.sendMfaChallengeFor(authentication.name) }
         )
     }
 

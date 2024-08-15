@@ -1,7 +1,7 @@
 package com.vauthenticator.server.mfa.api
 
+import com.vauthenticator.server.mfa.domain.MfaChallengeSender
 import com.vauthenticator.server.mfa.domain.MfaDeviceId
-import com.vauthenticator.server.mfa.domain.OtpMfaSender
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.domain.Scope
 import com.vauthenticator.server.role.PermissionValidator
@@ -38,12 +38,12 @@ internal class MfaChallengeEndPointTest {
     private lateinit var clientApplicationRepository: ClientApplicationRepository
 
     @MockK
-    private lateinit var otpMfaSender: OtpMfaSender
+    private lateinit var mfaChallengeSender: MfaChallengeSender
 
     @BeforeEach
     internal fun setUp() {
         val permissionValidator = PermissionValidator(clientApplicationRepository)
-        val mfaChallengeEndPoint = MfaChallengeEndPoint(permissionValidator, otpMfaSender)
+        val mfaChallengeEndPoint = MfaChallengeEndPoint(permissionValidator, mfaChallengeSender)
         mokMvc = standaloneSetup(mfaChallengeEndPoint)
             .setControllerAdvice(ExceptionAdviceController())
             .build()
@@ -58,7 +58,7 @@ internal class MfaChallengeEndPointTest {
     @Test
     internal fun `when an mfa challenge is sent to the default mfa device`() {
         every { clientApplicationRepository.findOne(clientAppId) } returns Optional.of(aClientApp)
-        every { otpMfaSender.sendMfaChallengeFor(account.email) } just runs
+        every { mfaChallengeSender.sendMfaChallengeFor(account.email) } just runs
 
         mokMvc.perform(
             put("/api/mfa/challenge")
@@ -71,7 +71,7 @@ internal class MfaChallengeEndPointTest {
         val mfaDeviceId = MfaDeviceId("A_WELL_DEFINED_MFA_DEVICE_ID")
 
         every { clientApplicationRepository.findOne(clientAppId) } returns Optional.of(aClientApp)
-        every { otpMfaSender.sendMfaChallengeFor(account.email, mfaDeviceId) } just runs
+        every { mfaChallengeSender.sendMfaChallengeFor(account.email, mfaDeviceId) } just runs
 
         mokMvc.perform(
             put("/api/mfa/challenge")
@@ -84,7 +84,7 @@ internal class MfaChallengeEndPointTest {
     internal fun `when an mfa challenge fails for insufficient scopes`() {
         val mfaDeviceId = MfaDeviceId("A_WELL_DEFINED_MFA_DEVICE_ID")
         every { clientApplicationRepository.findOne(clientAppId) } returns Optional.of(aClientApp)
-        every { otpMfaSender.sendMfaChallengeFor(account.email, mfaDeviceId) } just runs
+        every { mfaChallengeSender.sendMfaChallengeFor(account.email, mfaDeviceId) } just runs
 
         mokMvc.perform(
             put("/api/mfa/challenge")

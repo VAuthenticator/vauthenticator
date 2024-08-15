@@ -10,7 +10,7 @@ typealias MfaAssociationVerifier = (ticket: Ticket) -> Unit
 class MfaMethodsEnrollmentAssociation(
     private val ticketRepository: TicketRepository,
     private val mfaAccountMethodsRepository: MfaAccountMethodsRepository,
-    private val otpMfaVerifier: OtpMfaVerifier
+    private val mfaVerifier: MfaVerifier
 ) {
 
     fun associate(ticketId: String, asDefaultMethod: Boolean = false) {
@@ -30,7 +30,7 @@ class MfaMethodsEnrollmentAssociation(
             ticketId,
             asDefaultMethod
         ) {
-            otpMfaVerifier.verifyMfaChallengeToBeAssociatedFor(
+            mfaVerifier.verifyMfaChallengeToBeAssociatedFor(
                 it.userName,
                 it.context.mfaDeviceId(),
                 MfaChallenge(code)

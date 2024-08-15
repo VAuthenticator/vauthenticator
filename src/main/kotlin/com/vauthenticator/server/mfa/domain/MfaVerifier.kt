@@ -2,7 +2,7 @@ package com.vauthenticator.server.mfa.domain
 
 import com.vauthenticator.server.account.repository.AccountRepository
 
-interface OtpMfaVerifier {
+interface MfaVerifier {
     fun verifyMfaChallengeToBeAssociatedFor(
         userName: String,
         mfaDeviceId: MfaDeviceId,
@@ -21,12 +21,11 @@ interface OtpMfaVerifier {
     )
 }
 
-//todo it can be a stand alone domain object
-class AccountAwareOtpMfaVerifier(
+class OtpMfaVerifier(
     private val accountRepository: AccountRepository,
     private val otpMfa: OtpMfa,
     private val mfaAccountMethodsRepository: MfaAccountMethodsRepository
-) : OtpMfaVerifier {
+) : MfaVerifier {
     override fun verifyMfaChallengeToBeAssociatedFor(
         userName: String,
         mfaDeviceId: MfaDeviceId,

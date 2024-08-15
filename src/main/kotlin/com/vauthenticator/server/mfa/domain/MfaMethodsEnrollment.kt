@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory
 class MfaMethodsEnrollment(
     private val accountRepository: AccountRepository,
     private val ticketCreator: TicketCreator,
-    private val mfaSender: OtpMfaSender,
+    private val mfaSender: MfaChallengeSender,
     private val mfaAccountMethodsRepository: MfaAccountMethodsRepository
 ) {
 

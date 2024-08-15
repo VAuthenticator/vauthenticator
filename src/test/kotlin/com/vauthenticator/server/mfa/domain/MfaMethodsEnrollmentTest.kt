@@ -32,7 +32,7 @@ class MfaMethodsEnrollmentTest {
     private lateinit var accountRepository: AccountRepository
 
     @MockK
-    private lateinit var mfaSender: OtpMfaSender
+    private lateinit var mfaSender: MfaChallengeSender
 
     @MockK
     private lateinit var mfaAccountMethodsRepository: MfaAccountMethodsRepository

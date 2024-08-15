@@ -21,7 +21,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import java.util.*
 
 @ExtendWith(MockKExtension::class)
-class AccountAwareOtpMfaVerifierAssociationTest {
+class OtpMfaVerifierAssociationTest {
 
     @MockK
     lateinit var accountRepository: AccountRepository
@@ -31,11 +31,11 @@ class AccountAwareOtpMfaVerifierAssociationTest {
 
     @MockK
     lateinit var otpMfa: OtpMfa
-    lateinit var underTest: OtpMfaVerifier
+    lateinit var underTest: MfaVerifier
 
     @BeforeEach
     fun setUp() {
-        underTest = AccountAwareOtpMfaVerifier(accountRepository, otpMfa, mfaAccountMethodsRepository)
+        underTest = OtpMfaVerifier(accountRepository, otpMfa, mfaAccountMethodsRepository)
     }
 
     @Test

@@ -23,14 +23,14 @@ class MfaController(
     private val publisher: ApplicationEventPublisher,
     private val nextHopeLoginWorkflowSuccessHandler: AuthenticationSuccessHandler,
     private val mfaFailureHandler: AuthenticationFailureHandler,
-    private val otpMfaSender: OtpMfaSender,
-    private val otpMfaVerifier: OtpMfaVerifier
+    private val mfaChallengeSender: MfaChallengeSender,
+    private val mfaVerifier: MfaVerifier
 ) {
     private val logger = LoggerFactory.getLogger(MfaController::class.java)
 
     @GetMapping("/mfa-challenge/send")
     fun view(authentication: Authentication): String {
-        otpMfaSender.sendMfaChallengeFor(authentication.name)
+        mfaChallengeSender.sendMfaChallengeFor(authentication.name)
 
         return "redirect:/mfa-challenge"
     }
@@ -58,14 +58,14 @@ class MfaController(
             val challenge = MfaChallenge(mfaCode)
             mfaDeviceId.ifPresentOrElse(
                 {
-                    otpMfaVerifier.verifyAssociatedMfaChallengeFor(
+                    mfaVerifier.verifyAssociatedMfaChallengeFor(
                         userName,
                         MfaDeviceId(it),
                         challenge
                     )
                 },
                 {
-                    otpMfaVerifier.verifyAssociatedMfaChallengeFor(userName, challenge)
+                    mfaVerifier.verifyAssociatedMfaChallengeFor(userName, challenge)
                 }
             )
 
