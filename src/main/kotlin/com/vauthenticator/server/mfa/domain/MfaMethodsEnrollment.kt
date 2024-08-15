@@ -38,6 +38,7 @@ class MfaMethodsEnrollment(
                     it,
                     clientAppId,
                     TicketContext.mfaContextFor(
+                        mfaDeviceId = mfaAccountMethod.mdaDeviceId.content,
                         mfaMethod = mfaMethod,
                         mfaChannel = mfaChannel,
                         ticketContextAdditionalProperties = ticketContextAdditionalProperties

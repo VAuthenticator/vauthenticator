@@ -56,7 +56,10 @@ internal class TicketIdFactoryTest {
         every { ticketRepository.store(ticket) } just runs
 
         val expected = TicketId(ticketGenerator.invoke())
-        val actual = underTest.createTicketFor(account, ClientAppId(A_CLIENT_APP_ID), ticketContext(account.email))
+        val actual = underTest.createTicketFor(account, ClientAppId(A_CLIENT_APP_ID), ticketContext(
+            account.email,
+            mfaDeviceId = "A_MFA_DEVICE_ID"
+        ))
 
         assertEquals(expected, actual)
     }

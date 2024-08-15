@@ -5,11 +5,9 @@ import com.vauthenticator.server.account.repository.AccountRepository
 interface OtpMfaVerifier {
     fun verifyMfaChallengeToBeAssociatedFor(
         userName: String,
-        mfaMethod: MfaMethod,
-        mfaChannel: String,
+        mfaDeviceId: MfaDeviceId,
         challenge: MfaChallenge
     )
-
 
     fun verifyAssociatedMfaChallengeFor(
         userName: String,
@@ -29,22 +27,21 @@ class AccountAwareOtpMfaVerifier(
     private val otpMfa: OtpMfa,
     private val mfaAccountMethodsRepository: MfaAccountMethodsRepository
 ) : OtpMfaVerifier {
-
     override fun verifyMfaChallengeToBeAssociatedFor(
         userName: String,
-        mfaMethod: MfaMethod,
-        mfaChannel: String,
+        mfaDeviceId: MfaDeviceId,
         challenge: MfaChallenge
     ) {
-        mfaAccountMethodsRepository.findBy(userName, MfaMethod.EMAIL_MFA_METHOD, mfaChannel)
-            .map {
+        mfaAccountMethodsRepository.findBy(mfaDeviceId)
+            .map { mfaAccountMethod ->
                 val account = accountRepository.accountFor(userName).get()
-                if (!it.associated) {
-                    otpMfa.verify(account, mfaMethod, mfaChannel, challenge)
+                if (!mfaAccountMethod.associated) {
+                    otpMfa.verify(account, mfaAccountMethod.mfaMethod, mfaAccountMethod.mfaChannel, challenge)
                 } else {
                     throw AssociatedMfaVerificationException("Mfa Challenge verification failed: this mfa method is already associated")
                 }
             }
+
     }
 
     private fun verifyAssociatedMfaChallengeFor(

@@ -65,7 +65,11 @@ class MfaMethodsEnrollmentAssociationTest {
     fun `when mfa is associated with auto association feature enabled`() {
         val ticketWithAutoAssociationFeatureEnabled =
             ticket.copy(
-                context = TicketFixture.ticketContext(userName, Ticket.MFA_SELF_ASSOCIATION_CONTEXT_VALUE)
+                context = TicketFixture.ticketContext(
+                    userName,
+                    Ticket.MFA_SELF_ASSOCIATION_CONTEXT_VALUE,
+                    "A_MFA_DEVICE_ID"
+                )
             )
         every { ticketRepository.loadFor(ticketId) } returns Optional.of(ticketWithAutoAssociationFeatureEnabled)
         every {
@@ -98,8 +102,7 @@ class MfaMethodsEnrollmentAssociationTest {
         every {
             otpMfaVerifier.verifyMfaChallengeToBeAssociatedFor(
                 userName,
-                ticket.context.mfaMethod(),
-                ticket.context.mfaChannel(),
+                ticket.context.mfaDeviceId(),
                 MfaChallenge(CODE)
             )
         } just runs
@@ -128,8 +131,7 @@ class MfaMethodsEnrollmentAssociationTest {
         verify {
             otpMfaVerifier.verifyMfaChallengeToBeAssociatedFor(
                 userName,
-                ticket.context.mfaMethod(),
-                ticket.context.mfaChannel(),
+                ticket.context.mfaDeviceId(),
                 MfaChallenge(CODE)
             )
         }

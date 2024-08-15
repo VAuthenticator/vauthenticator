@@ -1,8 +1,10 @@
 package com.vauthenticator.server.mfa.domain
 
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.keys.Kid
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
+import com.vauthenticator.server.support.MfaFixture.challenge
+import com.vauthenticator.server.support.MfaFixture.keyId
+import com.vauthenticator.server.support.MfaFixture.mfaDeviceId
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -20,8 +22,7 @@ class AccountAwareOtpMfaVerifierWithDefaultMfaDeviceTest {
 
     private val account = anAccount()
     private val userName = account.email
-    private val email = "a_new_email@email.com"
-    private val challenge = MfaChallenge("AN_MFA_CHALLENGE")
+    private val email = account.email
 
     @MockK
     lateinit var accountRepository: AccountRepository
@@ -33,8 +34,6 @@ class AccountAwareOtpMfaVerifierWithDefaultMfaDeviceTest {
     lateinit var otpMfa: OtpMfa
 
     lateinit var underTest: OtpMfaVerifier
-    private val mfaDeviceId = MfaDeviceId("A_MFA_DEVICE_ID")
-    private val keyId = Kid("A_KID")
 
     @BeforeEach
     fun setUp() {

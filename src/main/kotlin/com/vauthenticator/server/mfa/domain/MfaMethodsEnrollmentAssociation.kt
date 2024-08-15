@@ -32,8 +32,7 @@ class MfaMethodsEnrollmentAssociation(
         ) {
             otpMfaVerifier.verifyMfaChallengeToBeAssociatedFor(
                 it.userName,
-                it.context.mfaMethod(),
-                it.context.mfaChannel(),
+                it.context.mfaDeviceId(),
                 MfaChallenge(code)
             )
         }

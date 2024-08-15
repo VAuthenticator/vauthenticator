@@ -7,8 +7,9 @@ import com.vauthenticator.server.ticket.TicketId
 
 object TicketFixture {
 
-    fun ticketContext(email: String, selfAssociation: String = "false") = TicketContext(
+    fun ticketContext(email: String, selfAssociation: String = "false", mfaDeviceId: String = "A_MFA_DEVICE_ID") = TicketContext(
         mapOf(
+            "mfaDeviceId" to mfaDeviceId,
             "mfaChannel" to email,
             "mfaMethod" to MfaMethod.EMAIL_MFA_METHOD.name,
             "selfAssociation" to selfAssociation
@@ -19,7 +20,7 @@ object TicketFixture {
 
         return Ticket(
             TicketId(verificationTicketValue), email, clientAppId, 200,
-            ticketContext(email)
+            ticketContext(email, mfaDeviceId = "A_MFA_DEVICE_ID")
         )
     }
 }
