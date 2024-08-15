@@ -25,7 +25,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.view
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
 @ExtendWith(MockKExtension::class)
-internal class MfaControllerTest {
+class MfaControllerTest {
     lateinit var mokMvc: MockMvc
 
     @MockK
@@ -46,16 +46,12 @@ internal class MfaControllerTest {
     @MockK
     private lateinit var otpMfaVerifier: OtpMfaVerifier
 
-    @MockK
-    private lateinit var mfaAccountMethodsRepository: MfaAccountMethodsRepository
-
     private val account = anAccount()
 
     @BeforeEach
     internal fun setUp() {
         mokMvc = MockMvcBuilders.standaloneSetup(
             MfaController(
-                mfaAccountMethodsRepository,
                 i18nMessageInjector,
                 publisher,
                 successHandler,
@@ -90,23 +86,132 @@ internal class MfaControllerTest {
     }
 
     @Test
-    internal fun `when an mfa challenge is verified`() {
+    internal fun `when an mfa challenge is verified via default mfa device`() {
+        val userName = account.email
+        val mfaAuthentication = principalFor(userName)
+
         every {
             otpMfaVerifier.verifyAssociatedMfaChallengeFor(
-                account.email,
-                MfaMethod.EMAIL_MFA_METHOD,
-                account.email,
+                userName,
                 MfaChallenge("AN_MFA_CHALLENGE_CODE")
             )
         } just runs
-
-        val mfaAuthentication = principalFor(account.email)
+        every { publisher.publishEvent(MfaSuccessEvent(mfaAuthentication)) } just runs
         every { successHandler.onAuthenticationSuccess(any(), any(), mfaAuthentication) } just runs
 
         mokMvc.perform(
             post("/mfa-challenge")
-                .requestAttr("mfa-code", "AN_MFA_CHALLENGE_CODE")
+                .param("mfa-code", "AN_MFA_CHALLENGE_CODE")
                 .principal(mfaAuthentication)
         )
+
+        verify { publisher.publishEvent(MfaSuccessEvent(mfaAuthentication)) }
+        verify {
+            otpMfaVerifier.verifyAssociatedMfaChallengeFor(
+                userName,
+                MfaChallenge("AN_MFA_CHALLENGE_CODE")
+            )
+        }
+        verify { successHandler.onAuthenticationSuccess(any(), any(), mfaAuthentication) }
+    }
+
+    @Test
+    internal fun `when an mfa challenge is verified with a specific mfa device`() {
+        val userName = account.email
+        val mfaAuthentication = principalFor(userName)
+
+        every {
+            otpMfaVerifier.verifyAssociatedMfaChallengeFor(
+                userName,
+                MfaDeviceId("A_MFA_DEVICE_ID"),
+                MfaChallenge("AN_MFA_CHALLENGE_CODE")
+            )
+        } just runs
+        every { publisher.publishEvent(MfaSuccessEvent(mfaAuthentication)) } just runs
+        every { successHandler.onAuthenticationSuccess(any(), any(), mfaAuthentication) } just runs
+
+        mokMvc.perform(
+            post("/mfa-challenge")
+                .param("mfa-code", "AN_MFA_CHALLENGE_CODE")
+                .param("mfa-device-id", "A_MFA_DEVICE_ID")
+                .principal(mfaAuthentication)
+        )
+
+        verify { publisher.publishEvent(MfaSuccessEvent(mfaAuthentication)) }
+        verify {
+            otpMfaVerifier.verifyAssociatedMfaChallengeFor(
+                userName,
+                MfaDeviceId("A_MFA_DEVICE_ID"),
+                MfaChallenge("AN_MFA_CHALLENGE_CODE")
+            )
+        }
+        verify { successHandler.onAuthenticationSuccess(any(), any(), mfaAuthentication) }
+    }
+
+    @Test
+    internal fun `when an mfa challenge is verified via default mfa device fail`() {
+        val userName = account.email
+        val mfaAuthentication = principalFor(userName)
+        val mfaException = MfaException("Invalid mfa code")
+        val mfaFailureEvent = MfaFailureEvent(mfaAuthentication, mfaException)
+
+        every {
+            otpMfaVerifier.verifyAssociatedMfaChallengeFor(
+                userName,
+                MfaChallenge("AN_MFA_CHALLENGE_CODE")
+            )
+        } throws mfaException
+        every { publisher.publishEvent(mfaFailureEvent) } just runs
+        every { failureHandler.onAuthenticationFailure(any(), any(), mfaException) } just runs
+
+        mokMvc.perform(
+            post("/mfa-challenge")
+                .param("mfa-code", "AN_MFA_CHALLENGE_CODE")
+                .principal(mfaAuthentication)
+        )
+
+        verify {
+            otpMfaVerifier.verifyAssociatedMfaChallengeFor(
+                userName,
+                MfaChallenge("AN_MFA_CHALLENGE_CODE")
+            )
+        }
+        verify { publisher.publishEvent(mfaFailureEvent) }
+        verify { failureHandler.onAuthenticationFailure(any(), any(), mfaException) }
+    }
+
+    @Test
+    internal fun `when an mfa challenge is verified with a specific mfa device fail`() {
+        val userName = account.email
+        val mfaAuthentication = principalFor(userName)
+        val mfaException = MfaException("Invalid mfa code")
+        val mfaFailureEvent = MfaFailureEvent(mfaAuthentication, mfaException)
+
+        every {
+            otpMfaVerifier.verifyAssociatedMfaChallengeFor(
+                userName,
+                MfaDeviceId("A_MFA_DEVICE_ID"),
+                MfaChallenge("AN_MFA_CHALLENGE_CODE")
+            )
+        } throws mfaException
+        every { publisher.publishEvent(mfaFailureEvent) } just runs
+        every { failureHandler.onAuthenticationFailure(any(), any(), mfaException) } just runs
+
+        mokMvc.perform(
+            post("/mfa-challenge")
+                .param("mfa-code", "AN_MFA_CHALLENGE_CODE")
+                .param("mfa-device-id", "A_MFA_DEVICE_ID")
+                .principal(mfaAuthentication)
+        )
+
+        verify {
+            otpMfaVerifier.verifyAssociatedMfaChallengeFor(
+                userName,
+                MfaDeviceId("A_MFA_DEVICE_ID"),
+                MfaChallenge("AN_MFA_CHALLENGE_CODE")
+            )
+        }
+        verify { publisher.publishEvent(mfaFailureEvent) }
+        verify { failureHandler.onAuthenticationFailure(any(), any(), mfaException) }
     }
 }

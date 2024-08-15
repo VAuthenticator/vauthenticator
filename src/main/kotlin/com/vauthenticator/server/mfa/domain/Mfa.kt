@@ -12,9 +12,29 @@ data class MfaDevice(val userName: String, val mfaMethod: MfaMethod, val mfaChan
 data class MfaDeviceId(val content: String)
 
 class MfaFailureEvent(authentication: Authentication, exception: AuthenticationException) :
-    AbstractAuthenticationFailureEvent(authentication, exception)
+    AbstractAuthenticationFailureEvent(authentication, exception) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        return true
+    }
 
-class MfaSuccessEvent(authentication: Authentication) : AbstractAuthenticationEvent(authentication)
+    override fun hashCode(): Int {
+        return javaClass.hashCode()
+    }
+}
+
+class MfaSuccessEvent(authentication: Authentication) : AbstractAuthenticationEvent(authentication) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return javaClass.hashCode()
+    }
+}
 
 @JvmInline
 value class MfaSecret(private val content: String) {
@@ -36,7 +56,17 @@ data class MfaAccountMethod(
     val associated: Boolean
 )
 
-class MfaException(message: String) : AuthenticationException(message)
+class MfaException(message: String) : AuthenticationException(message) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return javaClass.hashCode()
+    }
+}
 
 class UnAssociatedMfaVerificationException(message: String) : AuthenticationException(message)
 class AssociatedMfaVerificationException(message: String) : AuthenticationException(message)

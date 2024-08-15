@@ -10,14 +10,20 @@ interface OtpMfaVerifier {
         challenge: MfaChallenge
     )
 
+
     fun verifyAssociatedMfaChallengeFor(
         userName: String,
-        mfaMethod: MfaMethod,
-        mfaChannel: String,
+        challenge: MfaChallenge
+    )
+
+    fun verifyAssociatedMfaChallengeFor(
+        userName: String,
+        mfaDeviceId: MfaDeviceId,
         challenge: MfaChallenge
     )
 }
 
+//todo it can be a stand alone domain object
 class AccountAwareOtpMfaVerifier(
     private val accountRepository: AccountRepository,
     private val otpMfa: OtpMfa,
@@ -41,7 +47,7 @@ class AccountAwareOtpMfaVerifier(
             }
     }
 
-    override fun verifyAssociatedMfaChallengeFor(
+    private fun verifyAssociatedMfaChallengeFor(
         userName: String,
         mfaMethod: MfaMethod,
         mfaChannel: String,
@@ -55,6 +61,25 @@ class AccountAwareOtpMfaVerifier(
                 } else {
                     throw UnAssociatedMfaVerificationException("Mfa Challenge verification failed: this mfa method has to be associated")
                 }
+            }
+    }
+
+    override fun verifyAssociatedMfaChallengeFor(userName: String, challenge: MfaChallenge) {
+        mfaAccountMethodsRepository.getDefaultDevice(userName)
+            .flatMap { mfaAccountMethodsRepository.findBy(it) }
+            .map {
+                verifyAssociatedMfaChallengeFor(
+                    userName, it.mfaMethod, it.mfaChannel, challenge
+                )
+            }
+    }
+
+    override fun verifyAssociatedMfaChallengeFor(userName: String, mfaDeviceId: MfaDeviceId, challenge: MfaChallenge) {
+        mfaAccountMethodsRepository.findBy(mfaDeviceId)
+            .map {
+                verifyAssociatedMfaChallengeFor(
+                    userName, it.mfaMethod, it.mfaChannel, challenge
+                )
             }
     }
 

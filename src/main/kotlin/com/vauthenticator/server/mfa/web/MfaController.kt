@@ -19,7 +19,6 @@ import java.util.*
 
 @Controller
 class MfaController(
-    private val mfaAccountMethodsRepository: MfaAccountMethodsRepository,
     private val i18nMessageInjector: I18nMessageInjector,
     private val publisher: ApplicationEventPublisher,
     private val nextHopeLoginWorkflowSuccessHandler: AuthenticationSuccessHandler,
@@ -55,14 +54,25 @@ class MfaController(
         response: HttpServletResponse
     ) {
         try {
+            val userName = authentication.name
+            val challenge = MfaChallenge(mfaCode)
             mfaDeviceId.ifPresentOrElse(
-                { processMfaChallengeFor(authentication, it, mfaCode) },
-                { processMfaChallengeFor(authentication, mfaCode) }
+                {
+                    otpMfaVerifier.verifyAssociatedMfaChallengeFor(
+                        userName,
+                        MfaDeviceId(it),
+                        challenge
+                    )
+                },
+                {
+                    otpMfaVerifier.verifyAssociatedMfaChallengeFor(userName, challenge)
+                }
             )
 
             publisher.publishEvent(MfaSuccessEvent(authentication))
             nextHopeLoginWorkflowSuccessHandler.onAuthenticationSuccess(request, response, authentication)
         } catch (e: RuntimeException) {
+            println("ERROR")
             logger.error(e.message, e)
             val mfaException = MfaException("Invalid mfa code")
             publisher.publishEvent(MfaFailureEvent(authentication, mfaException))
@@ -70,32 +80,5 @@ class MfaController(
         }
     }
 
-    // todo it should be an usecase
-    private fun processMfaChallengeFor(authentication: Authentication, mfaCode: String) {
-        mfaAccountMethodsRepository.getDefaultDevice(authentication.name)
-            .flatMap { mfaAccountMethodsRepository.findBy(it) }.map {
-                mapOf(
-                    "mfaMethod" to it.mfaMethod, "mfaChannel" to it.mfaChannel
-                )
-            }.map {
-                otpMfaVerifier.verifyAssociatedMfaChallengeFor(
-                    authentication.name, it["mfaMethod"] as MfaMethod, it["mfaChannel"] as String, MfaChallenge(mfaCode)
-                )
-            }
-    }
-
-    // todo it should be an usecase
-    private fun processMfaChallengeFor(authentication: Authentication, mfaDeviceId: String, mfaCode: String) {
-        mfaAccountMethodsRepository.findBy(MfaDeviceId(mfaDeviceId))
-            .map {
-                mapOf(
-                    "mfaMethod" to it.mfaMethod, "mfaChannel" to it.mfaChannel
-                )
-            }.map {
-                otpMfaVerifier.verifyAssociatedMfaChallengeFor(
-                    authentication.name, it["mfaMethod"] as MfaMethod, it["mfaChannel"] as String, MfaChallenge(mfaCode)
-                )
-            }
-    }
 }
 
