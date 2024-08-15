@@ -1,11 +1,13 @@
 package com.vauthenticator.server.mfa.domain
 
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.support.AccountTestFixture.anAccount
+import com.vauthenticator.server.support.MfaFixture.account
 import com.vauthenticator.server.support.MfaFixture.associatedMfaAccountMethod
 import com.vauthenticator.server.support.MfaFixture.challenge
+import com.vauthenticator.server.support.MfaFixture.email
 import com.vauthenticator.server.support.MfaFixture.mfaDeviceId
 import com.vauthenticator.server.support.MfaFixture.notAssociatedMfaAccountMethod
+import com.vauthenticator.server.support.MfaFixture.userName
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -20,10 +22,6 @@ import java.util.*
 
 @ExtendWith(MockKExtension::class)
 class AccountAwareOtpMfaVerifierAssociationTest {
-
-    private val account = anAccount()
-    private val userName = account.email
-    private val email = "a_new_email@email.com"
 
     @MockK
     lateinit var accountRepository: AccountRepository

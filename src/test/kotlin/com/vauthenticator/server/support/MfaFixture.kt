@@ -5,6 +5,7 @@ import com.vauthenticator.server.mfa.domain.MfaAccountMethod
 import com.vauthenticator.server.mfa.domain.MfaChallenge
 import com.vauthenticator.server.mfa.domain.MfaDeviceId
 import com.vauthenticator.server.mfa.domain.MfaMethod
+import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import java.util.*
 
 object MfaFixture {
@@ -19,6 +20,9 @@ object MfaFixture {
     fun notAssociatedMfaAccountMethod(userName: String, email: String) =
        Optional.of(MfaAccountMethod(userName, mfaDeviceId, keyId, MfaMethod.EMAIL_MFA_METHOD, email, false))
 
+    val account = anAccount()
+    val userName = account.email
+    val email = "a_new_email@email.com"
     val challenge = MfaChallenge("AN_MFA_CHALLENGE")
     val mfaDeviceId = MfaDeviceId("A_MFA_DEVICE_ID")
     val keyId = Kid("A_KID")

@@ -1,10 +1,14 @@
 package com.vauthenticator.server.mfa.domain
 
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.support.AccountTestFixture.anAccount
+import com.vauthenticator.server.support.MfaFixture.account
+import com.vauthenticator.server.support.MfaFixture.associatedMfaAccountMethod
 import com.vauthenticator.server.support.MfaFixture.challenge
+import com.vauthenticator.server.support.MfaFixture.email
 import com.vauthenticator.server.support.MfaFixture.keyId
 import com.vauthenticator.server.support.MfaFixture.mfaDeviceId
+import com.vauthenticator.server.support.MfaFixture.notAssociatedMfaAccountMethod
+import com.vauthenticator.server.support.MfaFixture.userName
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -19,10 +23,6 @@ import java.util.*
 
 @ExtendWith(MockKExtension::class)
 class AccountAwareOtpMfaVerifierWithDefaultMfaDeviceTest {
-
-    private val account = anAccount()
-    private val userName = account.email
-    private val email = account.email
 
     @MockK
     lateinit var accountRepository: AccountRepository
@@ -51,17 +51,7 @@ class AccountAwareOtpMfaVerifierWithDefaultMfaDeviceTest {
                 mfaDeviceId, keyId, MfaMethod.EMAIL_MFA_METHOD, email, true
             )
         )
-        every { mfaAccountMethodsRepository.findBy(userName, MfaMethod.EMAIL_MFA_METHOD, email) } returns
-                Optional.of(
-                    MfaAccountMethod(
-                        userName,
-                        mfaDeviceId,
-                        keyId,
-                        MfaMethod.EMAIL_MFA_METHOD,
-                        email,
-                        true
-                    )
-                )
+        every { mfaAccountMethodsRepository.findBy(userName, MfaMethod.EMAIL_MFA_METHOD, email) } returns associatedMfaAccountMethod(userName, email)
         every { accountRepository.accountFor(userName) } returns Optional.of(account)
         every { otpMfa.verify(account, MfaMethod.EMAIL_MFA_METHOD, email, challenge) } just runs
 
@@ -84,17 +74,7 @@ class AccountAwareOtpMfaVerifierWithDefaultMfaDeviceTest {
                 mfaDeviceId, keyId, MfaMethod.EMAIL_MFA_METHOD, email, false
             )
         )
-        every { mfaAccountMethodsRepository.findBy(userName, MfaMethod.EMAIL_MFA_METHOD, email) } returns
-                Optional.of(
-                    MfaAccountMethod(
-                        userName,
-                        mfaDeviceId,
-                        keyId,
-                        MfaMethod.EMAIL_MFA_METHOD,
-                        email,
-                        false
-                    )
-                )
+        every { mfaAccountMethodsRepository.findBy(userName, MfaMethod.EMAIL_MFA_METHOD, email) } returns notAssociatedMfaAccountMethod(userName, email)
         every { accountRepository.accountFor(userName) } returns Optional.of(account)
         every { otpMfa.verify(account, MfaMethod.EMAIL_MFA_METHOD, email, challenge) } just runs
 
@@ -114,25 +94,10 @@ class AccountAwareOtpMfaVerifierWithDefaultMfaDeviceTest {
     @Test
     fun `when associated mfa challenge fails on verification with default mfa device`() {
         every { mfaAccountMethodsRepository.getDefaultDevice(userName) } returns Optional.of(mfaDeviceId)
-        every { mfaAccountMethodsRepository.findBy(mfaDeviceId) } returns Optional.of(
-            MfaAccountMethod(
-                userName,
-                mfaDeviceId, keyId, MfaMethod.EMAIL_MFA_METHOD, email, true
-            )
-        )
+        every { mfaAccountMethodsRepository.findBy(mfaDeviceId) } returns associatedMfaAccountMethod(userName, email)
         every { accountRepository.accountFor(account.email) } returns Optional.of(account)
         every { otpMfa.verify(account, MfaMethod.EMAIL_MFA_METHOD, email, challenge) } throws MfaException("")
-        every { mfaAccountMethodsRepository.findBy(userName, MfaMethod.EMAIL_MFA_METHOD, email) } returns
-                Optional.of(
-                    MfaAccountMethod(
-                        userName,
-                        mfaDeviceId,
-                        keyId,
-                        MfaMethod.EMAIL_MFA_METHOD,
-                        email,
-                        true
-                    )
-                )
+        every { mfaAccountMethodsRepository.findBy(userName, MfaMethod.EMAIL_MFA_METHOD, email) } returns associatedMfaAccountMethod(userName, email)
         assertThrows(MfaException::class.java) {
             underTest.verifyAssociatedMfaChallengeFor(
                 userName,
