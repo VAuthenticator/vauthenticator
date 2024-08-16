@@ -1,7 +1,7 @@
 package com.vauthenticator.server.ticket
 
 import com.vauthenticator.server.extentions.asDynamoAttribute
-import com.vauthenticator.server.oauth2.clientapp.A_CLIENT_APP_ID
+import com.vauthenticator.server.support.A_CLIENT_APP_ID
 import com.vauthenticator.server.support.DynamoDbUtils
 import com.vauthenticator.server.support.DynamoDbUtils.dynamoTicketTableName
 import com.vauthenticator.server.support.DynamoDbUtils.resetDynamoDb

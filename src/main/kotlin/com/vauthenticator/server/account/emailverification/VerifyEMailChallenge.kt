@@ -16,7 +16,7 @@ class VerifyEMailChallenge(
     fun verifyMail(ticket: String) {
         ticketRepository.loadFor(TicketId(ticket))
             .map {
-                mfaMethodsEnrollmentAssociation.associate(ticket)
+                mfaMethodsEnrollmentAssociation.associate(ticket, true)
                 enableAccountFrom(it.userName)
             }
             .orElseThrow { throw InvalidTicketException("The ticket $ticket is not a valid ticket") }

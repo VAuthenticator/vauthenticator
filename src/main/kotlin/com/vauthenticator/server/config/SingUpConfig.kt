@@ -22,7 +22,6 @@ class SingUpConfig {
     ): SignUpUse =
         SignUpUse(
             passwordPolicy,
-            clientAccountRepository,
             accountRepository,
             vAuthenticatorPasswordEncoder,
             vAuthenticatorEventsDispatcher

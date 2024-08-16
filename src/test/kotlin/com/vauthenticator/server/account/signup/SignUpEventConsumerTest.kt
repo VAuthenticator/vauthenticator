@@ -2,9 +2,9 @@ package com.vauthenticator.server.account.signup
 
 import com.vauthenticator.server.account.Email
 import com.vauthenticator.server.events.SignUpEvent
-import com.vauthenticator.server.oauth2.clientapp.ClientAppFixture
 import com.vauthenticator.server.password.Password
 import com.vauthenticator.server.password.PasswordHistoryRepository
+import com.vauthenticator.server.support.ClientAppFixture
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension

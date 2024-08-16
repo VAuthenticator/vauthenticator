@@ -1,6 +1,6 @@
 package com.vauthenticator.server.oauth2.clientapp.domain
 
-import com.vauthenticator.server.oauth2.clientapp.ClientAppFixture.aClientApp
+import com.vauthenticator.server.support.ClientAppFixture.aClientApp
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension

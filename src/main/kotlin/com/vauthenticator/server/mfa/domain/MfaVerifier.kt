@@ -1,73 +1,55 @@
 package com.vauthenticator.server.mfa.domain
 
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.email.EMailSenderService
 
-
-interface OtpMfaSender {
-    fun sendMfaChallenge(userName: String, mfaMethod: MfaMethod, mfaChannel: String)
-}
-
-interface OtpMfaVerifier {
+interface MfaVerifier {
     fun verifyMfaChallengeToBeAssociatedFor(
         userName: String,
-        mfaMethod: MfaMethod,
-        mfaChannel: String,
+        mfaDeviceId: MfaDeviceId,
         challenge: MfaChallenge
     )
 
     fun verifyAssociatedMfaChallengeFor(
         userName: String,
-        mfaMethod: MfaMethod,
-        mfaChannel: String,
+        challenge: MfaChallenge
+    )
+
+    fun verifyAssociatedMfaChallengeFor(
+        userName: String,
+        mfaDeviceId: MfaDeviceId,
         challenge: MfaChallenge
     )
 }
 
-class OtpMfaEmailSender(
-    private val accountRepository: AccountRepository,
-    private val otpMfa: OtpMfa,
-    private val mfaMailSender: EMailSenderService
-) : OtpMfaSender {
-
-    override fun sendMfaChallenge(userName: String, mfaMethod: MfaMethod, mfaChannel: String) {
-        val account = accountRepository.accountFor(userName).get()
-        val mfaSecret = otpMfa.generateSecretKeyFor(account, mfaMethod, mfaChannel)
-        val mfaCode = otpMfa.getTOTPCode(mfaSecret).content()
-        mfaMailSender.sendFor(account, mapOf("email" to mfaChannel, "mfaCode" to mfaCode))
-    }
-}
-
-class AccountAwareOtpMfaVerifier(
+class OtpMfaVerifier(
     private val accountRepository: AccountRepository,
     private val otpMfa: OtpMfa,
     private val mfaAccountMethodsRepository: MfaAccountMethodsRepository
-) : OtpMfaVerifier {
-
+) : MfaVerifier {
     override fun verifyMfaChallengeToBeAssociatedFor(
         userName: String,
-        mfaMethod: MfaMethod,
-        mfaChannel: String,
+        mfaDeviceId: MfaDeviceId,
         challenge: MfaChallenge
     ) {
-        mfaAccountMethodsRepository.findOne(userName, MfaMethod.EMAIL_MFA_METHOD, mfaChannel)
-            .map {
+        mfaAccountMethodsRepository.findBy(mfaDeviceId)
+            .map { mfaAccountMethod ->
                 val account = accountRepository.accountFor(userName).get()
-                if (!it.associated) {
-                    otpMfa.verify(account, mfaMethod, mfaChannel, challenge)
+                if (!mfaAccountMethod.associated) {
+                    otpMfa.verify(account, mfaAccountMethod.mfaMethod, mfaAccountMethod.mfaChannel, challenge)
                 } else {
                     throw AssociatedMfaVerificationException("Mfa Challenge verification failed: this mfa method is already associated")
                 }
             }
+
     }
 
-    override fun verifyAssociatedMfaChallengeFor(
+    private fun verifyAssociatedMfaChallengeFor(
         userName: String,
         mfaMethod: MfaMethod,
         mfaChannel: String,
         challenge: MfaChallenge
     ) {
-        mfaAccountMethodsRepository.findOne(userName, MfaMethod.EMAIL_MFA_METHOD, mfaChannel)
+        mfaAccountMethodsRepository.findBy(userName, MfaMethod.EMAIL_MFA_METHOD, mfaChannel)
             .map {
                 val account = accountRepository.accountFor(userName).get()
                 if (it.associated) {
@@ -75,6 +57,25 @@ class AccountAwareOtpMfaVerifier(
                 } else {
                     throw UnAssociatedMfaVerificationException("Mfa Challenge verification failed: this mfa method has to be associated")
                 }
+            }
+    }
+
+    override fun verifyAssociatedMfaChallengeFor(userName: String, challenge: MfaChallenge) {
+        mfaAccountMethodsRepository.getDefaultDevice(userName)
+            .flatMap { mfaAccountMethodsRepository.findBy(it) }
+            .map {
+                verifyAssociatedMfaChallengeFor(
+                    userName, it.mfaMethod, it.mfaChannel, challenge
+                )
+            }
+    }
+
+    override fun verifyAssociatedMfaChallengeFor(userName: String, mfaDeviceId: MfaDeviceId, challenge: MfaChallenge) {
+        mfaAccountMethodsRepository.findBy(mfaDeviceId)
+            .map {
+                verifyAssociatedMfaChallengeFor(
+                    userName, it.mfaMethod, it.mfaChannel, challenge
+                )
             }
     }
 

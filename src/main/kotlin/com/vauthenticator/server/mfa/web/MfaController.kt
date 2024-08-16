@@ -23,22 +23,21 @@ class MfaController(
     private val publisher: ApplicationEventPublisher,
     private val nextHopeLoginWorkflowSuccessHandler: AuthenticationSuccessHandler,
     private val mfaFailureHandler: AuthenticationFailureHandler,
-    private val otpMfaSender: OtpMfaSender,
-    private val otpMfaVerifier: OtpMfaVerifier
+    private val mfaChallengeSender: MfaChallengeSender,
+    private val mfaVerifier: MfaVerifier
 ) {
     private val logger = LoggerFactory.getLogger(MfaController::class.java)
 
     @GetMapping("/mfa-challenge/send")
     fun view(authentication: Authentication): String {
-        otpMfaSender.sendMfaChallenge(authentication.name, MfaMethod.EMAIL_MFA_METHOD, authentication.name)
+        mfaChallengeSender.sendMfaChallengeFor(authentication.name)
+
         return "redirect:/mfa-challenge"
     }
 
     @GetMapping("/mfa-challenge")
     fun view(
-        model: Model,
-        authentication: Authentication,
-        httpServletRequest: HttpServletRequest
+        model: Model, authentication: Authentication, httpServletRequest: HttpServletRequest
     ): String {
         model.addAttribute("assetBundle", "mfa_bundle.js")
         i18nMessageInjector.setMessagedFor(I18nScope.MFA_PAGE, model)
@@ -49,25 +48,37 @@ class MfaController(
     @PostMapping("/mfa-challenge")
     fun processSecondFactor(
         @RequestParam("mfa-code") mfaCode: String,
-        @RequestParam("mfa-method") mfaMethod: MfaMethod,
-        @RequestParam("mfa-channel", required = false) mfaChannel: Optional<String>,
+        @RequestParam("mfa-device-id", required = false) mfaDeviceId: Optional<String>,
         authentication: Authentication,
         request: HttpServletRequest,
         response: HttpServletResponse
     ) {
         try {
-            val defaultMfaChannel = mfaChannel.orElseGet { authentication.name }
-
-            otpMfaVerifier.verifyAssociatedMfaChallengeFor(authentication.name, mfaMethod, defaultMfaChannel, MfaChallenge(mfaCode))
+            val userName = authentication.name
+            val challenge = MfaChallenge(mfaCode)
+            mfaDeviceId.ifPresentOrElse(
+                {
+                    mfaVerifier.verifyAssociatedMfaChallengeFor(
+                        userName,
+                        MfaDeviceId(it),
+                        challenge
+                    )
+                },
+                {
+                    mfaVerifier.verifyAssociatedMfaChallengeFor(userName, challenge)
+                }
+            )
 
             publisher.publishEvent(MfaSuccessEvent(authentication))
             nextHopeLoginWorkflowSuccessHandler.onAuthenticationSuccess(request, response, authentication)
-        } catch (e: Exception) {
+        } catch (e: RuntimeException) {
+            println("ERROR")
             logger.error(e.message, e)
             val mfaException = MfaException("Invalid mfa code")
             publisher.publishEvent(MfaFailureEvent(authentication, mfaException))
             mfaFailureHandler.onAuthenticationFailure(request, response, mfaException)
         }
     }
+
 }
 

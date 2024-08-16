@@ -131,6 +131,7 @@ def store_client_applications():
             "openid", "profile", "email",
             "admin:signup", "admin:welcome", "admin:email-verify", "admin:reset-password", "admin:change-password",
             "admin:key-reader", "admin:key-editor",
+            "admin:client-app-reader", "admin:client-app-writer", "admin:client-app-eraser",
             "admin:email-template-reader", "admin:email-template-writer",
             "mfa:always"
         ]),

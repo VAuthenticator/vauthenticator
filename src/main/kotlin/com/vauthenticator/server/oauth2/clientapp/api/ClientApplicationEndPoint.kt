@@ -40,6 +40,7 @@ class ClientApplicationEndPoint(
         return ResponseEntity.noContent().build()
     }
 
+    @Deprecated("resetPasswordForClientApplicationV2 should be used")
     @PatchMapping("/api/client-applications/{clientAppId}")
     fun resetPasswordForClientApplication(
         principal: JwtAuthenticationToken,
@@ -65,7 +66,6 @@ class ClientApplicationEndPoint(
 
     }
 
-    // todo add a test for 404
     @GetMapping("/api/client-applications/{clientAppId}")
     fun viewAClientApplication(
         principal: JwtAuthenticationToken,

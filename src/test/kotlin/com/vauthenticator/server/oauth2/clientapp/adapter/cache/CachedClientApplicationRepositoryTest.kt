@@ -2,10 +2,10 @@ package com.vauthenticator.server.oauth2.clientapp.adapter.cache
 
 import com.vauthenticator.server.cache.CacheContentConverter
 import com.vauthenticator.server.cache.CacheOperation
-import com.vauthenticator.server.oauth2.clientapp.ClientAppFixture.aClientApp
-import com.vauthenticator.server.oauth2.clientapp.ClientAppFixture.aClientAppId
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplication
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
+import com.vauthenticator.server.support.ClientAppFixture.aClientApp
+import com.vauthenticator.server.support.ClientAppFixture.aClientAppId
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension

@@ -50,6 +50,9 @@ data aws_dynamodb_table ticket_table {
 data aws_dynamodb_table mfa_account_methods_table {
   name = "${var.mfa_account_methods_table_name}${var.table_name_suffix}"
 }
+data aws_dynamodb_table default_mfa_account_methods_table {
+  name = "${var.default_mfa_account_methods_table_name}${var.table_name_suffix}"
+}
 data aws_dynamodb_table mfa_keys_table {
   name = "${var.mfa_keys_table_name}${var.table_name_suffix}"
 }

@@ -6,15 +6,40 @@ import org.springframework.security.authentication.event.AbstractAuthenticationF
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.AuthenticationException
 
-sealed class MfaDevice(val mfaMethod: MfaMethod)
+data class MfaDevice(
+    val userName: String,
+    val mfaMethod: MfaMethod,
+    val mfaChannel: String,
+    val mfaDeviceId: MfaDeviceId,
+    val default: Boolean
+)
 
-class EmailMfaDevice(val email: String, mfaMethod: MfaMethod) : MfaDevice(mfaMethod)
-
+data class MfaDeviceId(val content: String)
 
 class MfaFailureEvent(authentication: Authentication, exception: AuthenticationException) :
-    AbstractAuthenticationFailureEvent(authentication, exception) {}
+    AbstractAuthenticationFailureEvent(authentication, exception) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        return true
+    }
 
-class MfaSuccessEvent(authentication: Authentication) : AbstractAuthenticationEvent(authentication) {}
+    override fun hashCode(): Int {
+        return javaClass.hashCode()
+    }
+}
+
+class MfaSuccessEvent(authentication: Authentication) : AbstractAuthenticationEvent(authentication) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return javaClass.hashCode()
+    }
+}
 
 @JvmInline
 value class MfaSecret(private val content: String) {
@@ -29,13 +54,24 @@ value class MfaChallenge(private val content: String) {
 enum class MfaMethod { EMAIL_MFA_METHOD, SMS_MFA_METHOD, OTP_MFA_METHOD }
 data class MfaAccountMethod(
     val userName: String,
+    val mfaDeviceId: MfaDeviceId,
     val key: Kid,
-    val method: MfaMethod,
+    val mfaMethod: MfaMethod,
     val mfaChannel: String,
     val associated: Boolean
 )
 
-class MfaException(message: String) : AuthenticationException(message)
+class MfaException(message: String) : AuthenticationException(message) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return javaClass.hashCode()
+    }
+}
 
 class UnAssociatedMfaVerificationException(message: String) : AuthenticationException(message)
 class AssociatedMfaVerificationException(message: String) : AuthenticationException(message)

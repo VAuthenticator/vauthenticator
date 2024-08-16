@@ -1,8 +1,8 @@
 package com.vauthenticator.server.ticket
 
 import com.vauthenticator.server.extentions.expirationTimeStampInSecondFromNow
-import com.vauthenticator.server.oauth2.clientapp.ClientAppFixture
 import com.vauthenticator.server.support.AccountTestFixture
+import com.vauthenticator.server.support.ClientAppFixture
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension

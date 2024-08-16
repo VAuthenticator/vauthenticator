@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.mail.javamail.JavaMailSender
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import java.util.*
 
 @Configuration(proxyBeanMethods = false)
 class MfaConfig {
@@ -27,14 +28,16 @@ class MfaConfig {
         keyRepository: KeyRepository,
         dynamoDbClient: DynamoDbClient,
         @Value("\${key.master-key}") masterKey: String,
-        @Value("\${vauthenticator.dynamo-db.mfa-account-methods.table-name}") tableName: String
+        @Value("\${vauthenticator.dynamo-db.mfa-account-methods.table-name}") mfaAccountMethodTableName: String,
+        @Value("\${vauthenticator.dynamo-db.default-mfa-account-methods.table-name}") defaultMfaAccountMethodTableName: String
     ): MfaAccountMethodsRepository =
         DynamoMfaAccountMethodsRepository(
-            tableName,
+            mfaAccountMethodTableName,
+            defaultMfaAccountMethodTableName,
             dynamoDbClient,
             keyRepository,
             MasterKid(masterKey)
-        )
+        ) { MfaDeviceId(UUID.randomUUID().toString()) }
 
     @Bean
     fun sensitiveEmailMasker() = SensitiveEmailMasker()
@@ -43,17 +46,18 @@ class MfaConfig {
     fun mfaMethodsEnrolmentAssociation(
         ticketRepository: TicketRepository,
         mfaAccountMethodsRepository: MfaAccountMethodsRepository,
-        otpMfaVerifier: OtpMfaVerifier
+        mfaVerifier: MfaVerifier
     ) =
-        MfaMethodsEnrollmentAssociation(ticketRepository, mfaAccountMethodsRepository, otpMfaVerifier)
+        MfaMethodsEnrollmentAssociation(ticketRepository, mfaAccountMethodsRepository, mfaVerifier)
 
     @Bean
     fun mfaMethodsEnrollment(
-        mfaSender: OtpMfaSender,
+        mfaSender: MfaChallengeSender,
         ticketCreator: TicketCreator,
         accountRepository: AccountRepository,
-        mfaAccountMethodsRepository: MfaAccountMethodsRepository
-    ) = MfaMethodsEnrollment(accountRepository, ticketCreator, mfaSender, mfaAccountMethodsRepository)
+        mfaAccountMethodsRepository: MfaAccountMethodsRepository,
+        sensitiveEmailMasker: SensitiveEmailMasker
+    ) = MfaMethodsEnrollment(accountRepository, ticketCreator, mfaSender, mfaAccountMethodsRepository, sensitiveEmailMasker)
 
     @Bean
     fun otpMfa(
@@ -72,15 +76,16 @@ class MfaConfig {
     fun otpMfaSender(
         accountRepository: AccountRepository,
         otpMfa: OtpMfa,
-        mfaMailSender: EMailSenderService
-    ) = OtpMfaEmailSender(accountRepository, otpMfa, mfaMailSender)
+        mfaMailSender: EMailSenderService,
+        mfaAccountMethodsRepository: MfaAccountMethodsRepository
+    ) = EmailMfaChallengeSender(accountRepository, otpMfa, mfaMailSender, mfaAccountMethodsRepository)
 
     @Bean
     fun otpMfaVerifier(
         otpMfa: OtpMfa,
         accountRepository: AccountRepository,
         mfaAccountMethodsRepository: MfaAccountMethodsRepository,
-    ) = AccountAwareOtpMfaVerifier(accountRepository, otpMfa, mfaAccountMethodsRepository)
+    ) = OtpMfaVerifier(accountRepository, otpMfa, mfaAccountMethodsRepository)
 
     @Bean
     fun mfaMailSender(
@@ -94,7 +99,7 @@ class MfaConfig {
             JinjavaMailTemplateResolver(Jinjava()),
             SimpleEMailMessageFactory(
                 noReplyEMailConfiguration.from,
-                noReplyEMailConfiguration.mfaEMailSubject, // todo chenge the subject
+                noReplyEMailConfiguration.mfaEMailSubject,
                 EMailType.MFA
             )
         )
