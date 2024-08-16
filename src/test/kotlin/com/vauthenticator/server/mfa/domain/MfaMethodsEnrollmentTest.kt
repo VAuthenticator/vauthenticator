@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import java.util.*
 
-private const val emailMfaChannel = "a_new_anmail@email.com"
 
 @ExtendWith(MockKExtension::class)
 class MfaMethodsEnrollmentTest {
@@ -52,6 +51,13 @@ class MfaMethodsEnrollmentTest {
     private val ticketId = TicketId("A_TICKET")
     private val emailMfaAccountMethod = notAssociatedMfaAccountMethod(userName, email)
 
+    private val defaultMfaDevice = emailMfaAccountMethod.get()
+    private val anotherMfaDeviceId = MfaDeviceId("A_NEW_MFA_DEVICE_ID")
+    private val anotherEmail = "irrelevant_$email"
+    private val anotherMfaDevice = emailMfaAccountMethod.get()
+        .copy(mfaDeviceId = anotherMfaDeviceId, mfaChannel = anotherEmail)
+
+
     @BeforeEach
     fun setUp() {
         uut = MfaMethodsEnrollment(
@@ -69,33 +75,33 @@ class MfaMethodsEnrollmentTest {
             mfaAccountMethodsRepository.findBy(
                 userName,
                 EMAIL_MFA_METHOD,
-                emailMfaChannel
+                email
             )
         } returns emailMfaAccountMethod
         every { accountRepository.accountFor(userName) } returns Optional.of(account)
         every {
             ticketCreator.createTicketFor(
                 account, clientAppId, ticketContext(
-                    emailMfaChannel,
+                    email,
                     mfaDeviceId = mfaDeviceId.content
                 )
             )
         } returns ticketId
 
-        val actual = uut.enroll(userName, EMAIL_MFA_METHOD, emailMfaChannel, clientAppId, false)
+        val actual = uut.enroll(userName, EMAIL_MFA_METHOD, email, clientAppId, false)
 
         verify {
             mfaAccountMethodsRepository.findBy(
                 userName,
                 EMAIL_MFA_METHOD,
-                emailMfaChannel
+                email
             )
         }
         verify { accountRepository.accountFor(userName) }
         verify {
             ticketCreator.createTicketFor(
                 account, clientAppId, ticketContext(
-                    emailMfaChannel,
+                    email,
                     mfaDeviceId = mfaDeviceId.content
                 )
             )
@@ -110,14 +116,14 @@ class MfaMethodsEnrollmentTest {
             mfaAccountMethodsRepository.findBy(
                 userName,
                 EMAIL_MFA_METHOD,
-                emailMfaChannel
+                email
             )
         } returns Optional.empty()
         every {
             mfaAccountMethodsRepository.save(
                 userName,
                 EMAIL_MFA_METHOD,
-                emailMfaChannel,
+                email,
                 false
             )
         } returns emailMfaAccountMethod.get()
@@ -126,26 +132,26 @@ class MfaMethodsEnrollmentTest {
         every {
             ticketCreator.createTicketFor(
                 account, clientAppId, ticketContext(
-                    emailMfaChannel,
+                    email,
                     mfaDeviceId = mfaDeviceId.content
                 )
             )
         } returns ticketId
 
-        val actual = uut.enroll(userName, EMAIL_MFA_METHOD, emailMfaChannel, clientAppId, false)
+        val actual = uut.enroll(userName, EMAIL_MFA_METHOD, email, clientAppId, false)
 
         verify {
             mfaAccountMethodsRepository.findBy(
                 userName,
                 EMAIL_MFA_METHOD,
-                emailMfaChannel
+                email
             )
         }
         verify {
             mfaAccountMethodsRepository.save(
                 userName,
                 EMAIL_MFA_METHOD,
-                emailMfaChannel,
+                email,
                 false
             )
         }
@@ -153,7 +159,7 @@ class MfaMethodsEnrollmentTest {
         verify {
             ticketCreator.createTicketFor(
                 account, clientAppId, ticketContext(
-                    emailMfaChannel,
+                    email,
                     mfaDeviceId = mfaDeviceId.content
                 )
             )
@@ -168,15 +174,15 @@ class MfaMethodsEnrollmentTest {
             mfaAccountMethodsRepository.findBy(
                 userName,
                 EMAIL_MFA_METHOD,
-                emailMfaChannel
+                email
             )
         } returns emailMfaAccountMethod
         every { accountRepository.accountFor(userName) } returns Optional.of(account)
         every {
             ticketCreator.createTicketFor(
                 account, clientAppId, ticketContext(
-                    emailMfaChannel,
-                    mfaDeviceId =  mfaDeviceId.content
+                    email,
+                    mfaDeviceId = mfaDeviceId.content
                 )
             )
         } returns ticketId
@@ -187,20 +193,20 @@ class MfaMethodsEnrollmentTest {
             )
         } just runs
 
-        val actual = uut.enroll(userName, EMAIL_MFA_METHOD, emailMfaChannel, clientAppId, true)
+        val actual = uut.enroll(userName, EMAIL_MFA_METHOD, email, clientAppId, true)
 
         verify {
             mfaAccountMethodsRepository.findBy(
                 userName,
                 EMAIL_MFA_METHOD,
-                emailMfaChannel
+                email
             )
         }
         verify { accountRepository.accountFor(userName) }
         verify {
             ticketCreator.createTicketFor(
                 account, clientAppId, ticketContext(
-                    emailMfaChannel,
+                    email,
                     mfaDeviceId = mfaDeviceId.content
                 )
             )
@@ -213,5 +219,53 @@ class MfaMethodsEnrollmentTest {
         }
 
         assertEquals(ticketId, actual)
+    }
+
+    @Test
+    fun `find all mfa enrollments for an account`() {
+        every { mfaAccountMethodsRepository.getDefaultDevice(userName) } returns Optional.of(mfaDeviceId)
+        every {
+            mfaAccountMethodsRepository.findAll(userName)
+        } returns listOf(
+            defaultMfaDevice,
+            anotherMfaDevice
+        )
+        val actual = uut.getEnrollmentsFor(userName)
+
+        val expected = listOf(
+            MfaDevice(userName, EMAIL_MFA_METHOD, email, mfaDeviceId, true),
+            MfaDevice(userName, EMAIL_MFA_METHOD, anotherEmail, anotherMfaDeviceId, false),
+        )
+
+        assertEquals(expected, actual)
+
+        verify { mfaAccountMethodsRepository.findAll(userName) }
+    }
+
+    @Test
+    fun `find all mfa enrollments for an account with masked sensible information`() {
+        every { mfaAccountMethodsRepository.getDefaultDevice(userName) } returns Optional.of(mfaDeviceId)
+        every {
+            mfaAccountMethodsRepository.findAll(userName)
+        } returns listOf(
+            defaultMfaDevice,
+            anotherMfaDevice
+        )
+        every { sensitiveEmailMasker.mask(userName) } returns userName
+        every { sensitiveEmailMasker.mask(email) } returns email
+        every { sensitiveEmailMasker.mask(anotherEmail) } returns anotherEmail
+        val actual = uut.getEnrollmentsFor(userName, true)
+
+        val expected = listOf(
+            MfaDevice(userName, EMAIL_MFA_METHOD, email, mfaDeviceId, true),
+            MfaDevice(userName, EMAIL_MFA_METHOD, anotherEmail, anotherMfaDeviceId, false),
+        )
+
+        assertEquals(expected, actual)
+
+        verify { mfaAccountMethodsRepository.findAll(userName) }
+        verify { sensitiveEmailMasker.mask(userName) }
+        verify { sensitiveEmailMasker.mask(email) }
+        verify { sensitiveEmailMasker.mask(anotherEmail) }
     }
 }
