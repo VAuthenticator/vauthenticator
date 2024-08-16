@@ -1,7 +1,6 @@
 package com.vauthenticator.server.mfa.api
 
 import com.vauthenticator.server.extentions.clientAppId
-import com.vauthenticator.server.mask.SensitiveEmailMasker
 import com.vauthenticator.server.mfa.domain.*
 import com.vauthenticator.server.oauth2.clientapp.domain.Scope
 import com.vauthenticator.server.oauth2.clientapp.domain.Scopes
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 class MfaEnrolmentAssociationEndPoint(
-    private val sensitiveEmailMasker: SensitiveEmailMasker,
     private val mfaAccountMethodsRepository: MfaAccountMethodsRepository,
     private val mfaMethodsEnrollment: MfaMethodsEnrollment,
     private val mfaMethodsEnrolmentAssociation: MfaMethodsEnrollmentAssociation,
@@ -23,23 +21,18 @@ class MfaEnrolmentAssociationEndPoint(
 ) {
 
 
-
     @GetMapping("/api/mfa/enrollment")
     fun findAllAssociatedEnrolledMfaMethods(authentication: Authentication) =
-        ok(
-            mfaAccountMethodsRepository.getDefaultDevice(authentication.name) //todo it should be an usecase
-                .map { defaultMfaDevice ->
-                    mfaAccountMethodsRepository.findAll(authentication.name)
-                        .map {
-                            MfaDeviceRepresentation(
-                                sensitiveEmailMasker.mask(it.userName),
-                                it.mfaMethod,
-                                sensitiveEmailMasker.mask(it.mfaChannel),
-                                it.mdaDeviceId.content,
-                                it.mdaDeviceId.content == defaultMfaDevice.content
-                            )
-                        }
-                }
+        ok(mfaMethodsEnrollment.getEnrollmentsFor(authentication.name, true)
+            .map {
+                MfaDeviceRepresentation(
+                    it.userName,
+                    it.mfaMethod,
+                    it.mfaChannel,
+                    it.mfaDeviceId.content,
+                    it.default
+                )
+            }
 
         )
 

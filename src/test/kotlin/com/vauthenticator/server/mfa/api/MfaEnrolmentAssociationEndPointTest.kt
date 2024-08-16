@@ -1,19 +1,15 @@
 package com.vauthenticator.server.mfa.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.vauthenticator.server.mask.SensitiveEmailMasker
-import com.vauthenticator.server.mfa.domain.MfaAccountMethodsRepository
-import com.vauthenticator.server.mfa.domain.MfaDeviceId
+import com.vauthenticator.server.mfa.domain.*
 import com.vauthenticator.server.mfa.domain.MfaMethod.EMAIL_MFA_METHOD
-import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollment
-import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollmentAssociation
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.domain.Scope
 import com.vauthenticator.server.role.PermissionValidator
 import com.vauthenticator.server.support.A_CLIENT_APP_ID
 import com.vauthenticator.server.support.AccountTestFixture
-import com.vauthenticator.server.support.MfaFixture.accountMfaAssociatedMfaMethods
+import com.vauthenticator.server.support.MfaFixture.mfaDeviceId
 import com.vauthenticator.server.support.SecurityFixture.principalFor
 import com.vauthenticator.server.ticket.TicketId
 import com.vauthenticator.server.web.ExceptionAdviceController
@@ -31,7 +27,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
-import java.util.*
 
 @ExtendWith(MockKExtension::class)
 class MfaEnrolmentAssociationEndPointTest {
@@ -39,9 +34,6 @@ class MfaEnrolmentAssociationEndPointTest {
     lateinit var mokMvc: MockMvc
 
     private val objectMapper = ObjectMapper()
-
-    @MockK
-    private lateinit var sensitiveEmailMasker: SensitiveEmailMasker
 
     @MockK
     private lateinit var mfaAccountMethodsRepository: MfaAccountMethodsRepository
@@ -60,7 +52,6 @@ class MfaEnrolmentAssociationEndPointTest {
     internal fun setUp() {
         mokMvc = MockMvcBuilders.standaloneSetup(
             MfaEnrolmentAssociationEndPoint(
-                sensitiveEmailMasker,
                 mfaAccountMethodsRepository,
                 mfaMethodsEnrollment,
                 mfaMethodsEnrolmentAssociation,
@@ -75,9 +66,7 @@ class MfaEnrolmentAssociationEndPointTest {
         val account = AccountTestFixture.anAccount()
         val email = account.email
 
-        every { sensitiveEmailMasker.mask(email) } returns email
-        every {  mfaAccountMethodsRepository.getDefaultDevice(email) } returns Optional.of(MfaDeviceId("A_MFA_DEVICE_ID"))
-        every { mfaAccountMethodsRepository.findAll(email) } returns accountMfaAssociatedMfaMethods(email)
+        every {  mfaMethodsEnrollment.getEnrollmentsFor(email, true) } returns listOf(MfaDevice(email, EMAIL_MFA_METHOD, email, mfaDeviceId, true))
 
         mokMvc.perform(
             get("/api/mfa/enrollment")
@@ -88,7 +77,7 @@ class MfaEnrolmentAssociationEndPointTest {
                 content().json(
                     objectMapper.writeValueAsString(
                         listOf(
-                            MfaDeviceRepresentation(email, EMAIL_MFA_METHOD, email, "A_MFA_DEVICE_ID", true)
+                            MfaDeviceRepresentation(email, EMAIL_MFA_METHOD, email, "AN_MFA_DEVICE_ID", true)
                         )
                     )
                 )

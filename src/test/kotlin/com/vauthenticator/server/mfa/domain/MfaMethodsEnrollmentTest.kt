@@ -2,6 +2,7 @@ package com.vauthenticator.server.mfa.domain
 
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.keys.Kid
+import com.vauthenticator.server.mask.SensitiveEmailMasker
 import com.vauthenticator.server.mfa.domain.MfaMethod.EMAIL_MFA_METHOD
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import com.vauthenticator.server.support.ClientAppFixture.aClientAppId
@@ -24,6 +25,9 @@ private const val emailMfaChannel = "a_new_anmail@email.com"
 
 @ExtendWith(MockKExtension::class)
 class MfaMethodsEnrollmentTest {
+
+    @MockK
+    private lateinit var sensitiveEmailMasker: SensitiveEmailMasker
 
     @MockK
     private lateinit var ticketCreator: TicketCreator
@@ -59,7 +63,8 @@ class MfaMethodsEnrollmentTest {
             accountRepository,
             ticketCreator,
             mfaSender,
-            mfaAccountMethodsRepository
+            mfaAccountMethodsRepository,
+            sensitiveEmailMasker
         )
     }
 
@@ -73,10 +78,14 @@ class MfaMethodsEnrollmentTest {
             )
         } returns Optional.of(emailMfaAccountMethod)
         every { accountRepository.accountFor(userName) } returns Optional.of(account)
-        every { ticketCreator.createTicketFor(account, clientAppId, ticketContext(
-            emailMfaChannel,
-            mfaDeviceId = "A_MFA_DEVICE_ID"
-        )) } returns ticketId
+        every {
+            ticketCreator.createTicketFor(
+                account, clientAppId, ticketContext(
+                    emailMfaChannel,
+                    mfaDeviceId = "A_MFA_DEVICE_ID"
+                )
+            )
+        } returns ticketId
 
         val actual = uut.enroll(userName, EMAIL_MFA_METHOD, emailMfaChannel, clientAppId, false)
 
@@ -88,10 +97,14 @@ class MfaMethodsEnrollmentTest {
             )
         }
         verify { accountRepository.accountFor(userName) }
-        verify { ticketCreator.createTicketFor(account, clientAppId, ticketContext(
-            emailMfaChannel,
-            mfaDeviceId = "A_MFA_DEVICE_ID"
-        )) }
+        verify {
+            ticketCreator.createTicketFor(
+                account, clientAppId, ticketContext(
+                    emailMfaChannel,
+                    mfaDeviceId = "A_MFA_DEVICE_ID"
+                )
+            )
+        }
 
         assertEquals(ticketId, actual)
     }
@@ -115,10 +128,14 @@ class MfaMethodsEnrollmentTest {
         } returns emailMfaAccountMethod
 
         every { accountRepository.accountFor(userName) } returns Optional.of(account)
-        every { ticketCreator.createTicketFor(account, clientAppId, ticketContext(
-            emailMfaChannel,
-            mfaDeviceId = "A_MFA_DEVICE_ID"
-        )) } returns ticketId
+        every {
+            ticketCreator.createTicketFor(
+                account, clientAppId, ticketContext(
+                    emailMfaChannel,
+                    mfaDeviceId = "A_MFA_DEVICE_ID"
+                )
+            )
+        } returns ticketId
 
         val actual = uut.enroll(userName, EMAIL_MFA_METHOD, emailMfaChannel, clientAppId, false)
 
@@ -139,10 +156,14 @@ class MfaMethodsEnrollmentTest {
             )
         }
         verify { accountRepository.accountFor(userName) }
-        verify { ticketCreator.createTicketFor(account, clientAppId, ticketContext(
-            emailMfaChannel,
-            mfaDeviceId = "A_MFA_DEVICE_ID"
-        )) }
+        verify {
+            ticketCreator.createTicketFor(
+                account, clientAppId, ticketContext(
+                    emailMfaChannel,
+                    mfaDeviceId = "A_MFA_DEVICE_ID"
+                )
+            )
+        }
 
         assertEquals(ticketId, actual)
     }
@@ -157,10 +178,14 @@ class MfaMethodsEnrollmentTest {
             )
         } returns Optional.of(emailMfaAccountMethod)
         every { accountRepository.accountFor(userName) } returns Optional.of(account)
-        every { ticketCreator.createTicketFor(account, clientAppId, ticketContext(
-            emailMfaChannel,
-            mfaDeviceId = "A_MFA_DEVICE_ID"
-        )) } returns ticketId
+        every {
+            ticketCreator.createTicketFor(
+                account, clientAppId, ticketContext(
+                    emailMfaChannel,
+                    mfaDeviceId = "A_MFA_DEVICE_ID"
+                )
+            )
+        } returns ticketId
         every {
             mfaSender.sendMfaChallengeFor(
                 emailMfaAccountMethod.userName,
@@ -178,10 +203,14 @@ class MfaMethodsEnrollmentTest {
             )
         }
         verify { accountRepository.accountFor(userName) }
-        verify { ticketCreator.createTicketFor(account, clientAppId, ticketContext(
-            emailMfaChannel,
-            mfaDeviceId = "A_MFA_DEVICE_ID"
-        )) }
+        verify {
+            ticketCreator.createTicketFor(
+                account, clientAppId, ticketContext(
+                    emailMfaChannel,
+                    mfaDeviceId = "A_MFA_DEVICE_ID"
+                )
+            )
+        }
         verify {
             mfaSender.sendMfaChallengeFor(
                 emailMfaAccountMethod.userName,
