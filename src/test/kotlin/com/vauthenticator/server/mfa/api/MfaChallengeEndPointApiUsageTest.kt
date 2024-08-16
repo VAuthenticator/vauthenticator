@@ -6,9 +6,7 @@ import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationReposi
 import com.vauthenticator.server.oauth2.clientapp.domain.Scope
 import com.vauthenticator.server.role.PermissionValidator
 import com.vauthenticator.server.support.A_CLIENT_APP_ID
-import com.vauthenticator.server.support.AccountTestFixture
-import com.vauthenticator.server.support.ClientAppFixture.aClientApp
-import com.vauthenticator.server.support.ClientAppFixture.aClientAppId
+import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import com.vauthenticator.server.support.SecurityFixture
 import com.vauthenticator.server.web.ExceptionAdviceController
 import io.mockk.every
@@ -23,16 +21,13 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup
-import java.util.*
 
 
 @ExtendWith(MockKExtension::class)
 class MfaChallengeEndPointApiUsageTest {
     lateinit var mokMvc: MockMvc
 
-    private val account = AccountTestFixture.anAccount()
-    private val clientAppId = aClientAppId()
-    private val aClientApp = aClientApp(clientAppId)
+    private val account = anAccount()
 
     @MockK
     private lateinit var clientApplicationRepository: ClientApplicationRepository
@@ -57,7 +52,6 @@ class MfaChallengeEndPointApiUsageTest {
 
     @Test
     fun `when an mfa challenge is sent to the default mfa device`() {
-        every { clientApplicationRepository.findOne(clientAppId) } returns Optional.of(aClientApp)
         every { mfaChallengeSender.sendMfaChallengeFor(account.email) } just runs
 
         mokMvc.perform(
@@ -69,7 +63,6 @@ class MfaChallengeEndPointApiUsageTest {
     @Test
     fun `when an mfa challenge is sent to a specific mfa device`() {
         val mfaDeviceId = MfaDeviceId("A_WELL_DEFINED_MFA_DEVICE_ID")
-        every { clientApplicationRepository.findOne(clientAppId) } returns Optional.of(aClientApp)
         every { mfaChallengeSender.sendMfaChallengeFor(account.email, mfaDeviceId) } just runs
 
         mokMvc.perform(
@@ -82,7 +75,6 @@ class MfaChallengeEndPointApiUsageTest {
     @Test
     fun `when an mfa challenge fails for insufficient scopes`() {
         val mfaDeviceId = MfaDeviceId("A_WELL_DEFINED_MFA_DEVICE_ID")
-        every { clientApplicationRepository.findOne(clientAppId) } returns Optional.of(aClientApp)
         every { mfaChallengeSender.sendMfaChallengeFor(account.email, mfaDeviceId) } just runs
 
         mokMvc.perform(
