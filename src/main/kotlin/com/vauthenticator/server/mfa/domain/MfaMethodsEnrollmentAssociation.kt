@@ -49,7 +49,7 @@ class MfaMethodsEnrollmentAssociation(
                     true
                 )
                 if (asDefaultMethod) {
-                    mfaAccountMethodsRepository.setAsDefault(ticket.userName, mfaAccountMethod.mdaDeviceId)
+                    mfaAccountMethodsRepository.setAsDefault(ticket.userName, mfaAccountMethod.mfaDeviceId)
                 }
                 revoke(ticket)
             }

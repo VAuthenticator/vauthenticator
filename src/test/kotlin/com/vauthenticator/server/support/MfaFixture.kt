@@ -8,7 +8,7 @@ import java.util.*
 object MfaFixture {
 
     fun accountMfaAssociatedMfaMethods(email: String) = listOf(
-        MfaAccountMethod(email, MfaDeviceId("A_MFA_DEVICE_ID"), Kid("A_KID"), MfaMethod.EMAIL_MFA_METHOD, email, true)
+        MfaAccountMethod(email, mfaDeviceId, keyId, MfaMethod.EMAIL_MFA_METHOD, email, true)
     )
 
     fun associatedMfaAccountMethod(userName: String, email: String) =

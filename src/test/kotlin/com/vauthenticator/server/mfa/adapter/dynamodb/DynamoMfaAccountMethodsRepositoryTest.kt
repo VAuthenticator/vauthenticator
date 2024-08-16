@@ -80,7 +80,7 @@ class DynamoMfaAccountMethodsRepositoryTest {
         every { keyRepository.createKeyFrom(masterKid, KeyType.SYMMETRIC, KeyPurpose.MFA) } returns Kid("")
 
         val savedMfaAccountMethod = underTest.save(email, MfaMethod.EMAIL_MFA_METHOD, email, true)
-        val mfaAccountMethods = underTest.findBy(savedMfaAccountMethod.mdaDeviceId)
+        val mfaAccountMethods = underTest.findBy(savedMfaAccountMethod.mfaDeviceId)
 
         assertEquals(
             Optional.of(MfaAccountMethod(email, mfaDeviceId, key, MfaMethod.EMAIL_MFA_METHOD, email, true)),

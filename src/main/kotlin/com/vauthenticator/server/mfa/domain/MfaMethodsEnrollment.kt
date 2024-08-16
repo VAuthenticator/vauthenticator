@@ -28,8 +28,8 @@ class MfaMethodsEnrollment(
                             if (withMaskedSensibleInformation) sensitiveEmailMasker.mask(it.userName) else it.userName,
                             it.mfaMethod,
                             if (withMaskedSensibleInformation) sensitiveEmailMasker.mask(it.mfaChannel) else it.mfaChannel,
-                            it.mdaDeviceId,
-                            it.mdaDeviceId.content == defaultMfaDevice.content
+                            it.mfaDeviceId,
+                            it.mfaDeviceId.content == defaultMfaDevice.content
                         )
                     }
             }.orElseGet { emptyList() }
@@ -49,14 +49,14 @@ class MfaMethodsEnrollment(
                     .orElseGet { mfaAccountMethodsRepository.save(userName, mfaMethod, mfaChannel, false) }
 
                 if (sendChallengeCode) {
-                    mfaSender.sendMfaChallengeFor(mfaAccountMethod.userName, mfaAccountMethod.mdaDeviceId)
+                    mfaSender.sendMfaChallengeFor(mfaAccountMethod.userName, mfaAccountMethod.mfaDeviceId)
                 }
 
                 ticketCreator.createTicketFor(
                     it,
                     clientAppId,
                     TicketContext.mfaContextFor(
-                        mfaDeviceId = mfaAccountMethod.mdaDeviceId.content,
+                        mfaDeviceId = mfaAccountMethod.mfaDeviceId.content,
                         mfaMethod = mfaMethod,
                         mfaChannel = mfaChannel,
                         ticketContextAdditionalProperties = ticketContextAdditionalProperties
