@@ -27,7 +27,7 @@ import java.util.*
 
 
 @ExtendWith(MockKExtension::class)
-internal class MfaChallengeEndPointTest {
+class MfaChallengeEndPointApiUsageTest {
     lateinit var mokMvc: MockMvc
 
     private val account = AccountTestFixture.anAccount()
@@ -41,7 +41,7 @@ internal class MfaChallengeEndPointTest {
     private lateinit var mfaChallengeSender: MfaChallengeSender
 
     @BeforeEach
-    internal fun setUp() {
+    fun setUp() {
         val permissionValidator = PermissionValidator(clientApplicationRepository)
         val mfaChallengeEndPoint = MfaChallengeEndPoint(permissionValidator, mfaChallengeSender)
         mokMvc = standaloneSetup(mfaChallengeEndPoint)
@@ -56,7 +56,7 @@ internal class MfaChallengeEndPointTest {
 
 
     @Test
-    internal fun `when an mfa challenge is sent to the default mfa device`() {
+    fun `when an mfa challenge is sent to the default mfa device`() {
         every { clientApplicationRepository.findOne(clientAppId) } returns Optional.of(aClientApp)
         every { mfaChallengeSender.sendMfaChallengeFor(account.email) } just runs
 
@@ -67,9 +67,8 @@ internal class MfaChallengeEndPointTest {
     }
 
     @Test
-    internal fun `when an mfa challenge is sent to a specific mfa device`() {
+    fun `when an mfa challenge is sent to a specific mfa device`() {
         val mfaDeviceId = MfaDeviceId("A_WELL_DEFINED_MFA_DEVICE_ID")
-
         every { clientApplicationRepository.findOne(clientAppId) } returns Optional.of(aClientApp)
         every { mfaChallengeSender.sendMfaChallengeFor(account.email, mfaDeviceId) } just runs
 
@@ -81,7 +80,7 @@ internal class MfaChallengeEndPointTest {
     }
 
     @Test
-    internal fun `when an mfa challenge fails for insufficient scopes`() {
+    fun `when an mfa challenge fails for insufficient scopes`() {
         val mfaDeviceId = MfaDeviceId("A_WELL_DEFINED_MFA_DEVICE_ID")
         every { clientApplicationRepository.findOne(clientAppId) } returns Optional.of(aClientApp)
         every { mfaChallengeSender.sendMfaChallengeFor(account.email, mfaDeviceId) } just runs
