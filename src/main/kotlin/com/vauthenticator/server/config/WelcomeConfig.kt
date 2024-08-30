@@ -5,7 +5,7 @@ import com.vauthenticator.document.repository.DocumentRepository
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.account.welcome.SayWelcome
 import com.vauthenticator.server.account.welcome.SendWelcomeMailUponSignUpEventConsumer
-import com.vauthenticator.server.email.*
+import com.vauthenticator.server.communication.email.*
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.mail.javamail.JavaMailSender

@@ -1,4 +1,4 @@
-package com.vauthenticator.server.email
+package com.vauthenticator.server.communication.email
 
 import com.vauthenticator.document.repository.DocumentRepository
 import com.vauthenticator.document.repository.DocumentType
@@ -16,7 +16,8 @@ fun interface EMailMessageFactory {
     fun makeMailMessageFor(account: Account, requestContext: EMailContext): EMailMessage
 }
 
-class SimpleEMailMessageFactory(val from: String, val subject: String, private val emailType: EMailType) : EMailMessageFactory {
+class SimpleEMailMessageFactory(val from: String, val subject: String, private val emailType: EMailType) :
+    EMailMessageFactory {
 
     override fun makeMailMessageFor(account: Account, requestContext: EMailContext): EMailMessage {
         val context = mapOf(

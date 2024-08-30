@@ -3,7 +3,7 @@ package com.vauthenticator.server.config
 import com.hubspot.jinjava.Jinjava
 import com.vauthenticator.document.repository.DocumentRepository
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.email.*
+import com.vauthenticator.server.communication.email.*
 import com.vauthenticator.server.events.VAuthenticatorEventsDispatcher
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
 import com.vauthenticator.server.password.PasswordPolicy

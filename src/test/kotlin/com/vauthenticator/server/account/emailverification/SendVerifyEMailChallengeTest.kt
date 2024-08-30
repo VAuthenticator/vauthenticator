@@ -2,7 +2,7 @@ package com.vauthenticator.server.account.emailverification
 
 import com.vauthenticator.server.account.AccountNotFoundException
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.email.EMailSenderService
+import com.vauthenticator.server.communication.email.EMailSenderService
 import com.vauthenticator.server.mfa.domain.MfaMethod
 import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollment
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId

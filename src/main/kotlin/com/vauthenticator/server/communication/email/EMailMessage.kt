@@ -1,4 +1,4 @@
-package com.vauthenticator.server.email
+package com.vauthenticator.server.communication.email
 
 typealias EMailContext = Map<String, Any>
 

@@ -1,4 +1,4 @@
-package com.vauthenticator.server.email
+package com.vauthenticator.server.communication.email
 
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import org.junit.jupiter.api.Assertions.assertEquals

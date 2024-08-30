@@ -1,4 +1,4 @@
-package com.vauthenticator.server.email
+package com.vauthenticator.server.communication.email
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.document.repository.Document

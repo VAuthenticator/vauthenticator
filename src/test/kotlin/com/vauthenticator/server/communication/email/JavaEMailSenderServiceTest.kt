@@ -1,4 +1,4 @@
-package com.vauthenticator.server.email
+package com.vauthenticator.server.communication.email
 
 import com.hubspot.jinjava.Jinjava
 import com.icegreen.greenmail.configuration.GreenMailConfiguration
