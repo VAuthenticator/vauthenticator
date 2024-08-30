@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.springframework.mail.javamail.JavaMailSenderImpl
 
-internal class JavaEMailSenderServiceTest {
+internal class JavaSmsSenderServiceTest {
     @RegisterExtension
     val greenMail: GreenMailExtension = GreenMailExtension(ServerSetupTest.SMTP)
         .withConfiguration(GreenMailConfiguration.aConfig().withUser("user", "pwd"))
