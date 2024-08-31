@@ -51,7 +51,7 @@ value class MfaChallenge(private val content: String) {
     fun content() = content
 }
 
-enum class MfaMethod { EMAIL_MFA_METHOD, SMS_MFA_METHOD, OTP_MFA_METHOD }
+enum class MfaMethod { EMAIL_MFA_METHOD, SMS_MFA_METHOD}
 data class MfaAccountMethod(
     val userName: String,
     val mfaDeviceId: MfaDeviceId,

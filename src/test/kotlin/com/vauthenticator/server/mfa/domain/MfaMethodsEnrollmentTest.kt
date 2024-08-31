@@ -49,7 +49,7 @@ class MfaMethodsEnrollmentTest {
 
     private val clientAppId = aClientAppId()
     private val ticketId = TicketId("A_TICKET")
-    private val emailMfaAccountMethod = notAssociatedMfaAccountMethod(userName, email)
+    private val emailMfaAccountMethod = notAssociatedMfaAccountMethod(userName, email, EMAIL_MFA_METHOD)
 
     private val defaultMfaDevice = emailMfaAccountMethod.get()
     private val anotherMfaDeviceId = MfaDeviceId("A_NEW_MFA_DEVICE_ID")

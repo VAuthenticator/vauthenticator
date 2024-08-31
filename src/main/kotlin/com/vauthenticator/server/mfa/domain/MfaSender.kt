@@ -2,22 +2,18 @@ package com.vauthenticator.server.mfa.domain
 
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.communication.domain.EMailSenderService
+import com.vauthenticator.server.communication.domain.SmsSenderService
 
 
-interface MfaChallengeSender {
-    fun sendMfaChallengeFor(userName: String, mfaDeviceId: MfaDeviceId)
-    fun sendMfaChallengeFor(userName: String)
-}
-
-
-class EmailMfaChallengeSender(
+class MfaChallengeSender(
     private val accountRepository: AccountRepository,
     private val otpMfa: OtpMfa,
     private val mfaMailSender: EMailSenderService,
+    private val smsSenderService: SmsSenderService,
     private val mfaAccountMethodsRepository: MfaAccountMethodsRepository
-) : MfaChallengeSender {
+) {
 
-    override fun sendMfaChallengeFor(userName: String, mfaDeviceId: MfaDeviceId) {
+    fun sendMfaChallengeFor(userName: String, mfaDeviceId: MfaDeviceId) {
         mfaAccountMethodsRepository.findBy(mfaDeviceId)
             .map {
                 sendMfaChallengeFor(
@@ -28,13 +24,14 @@ class EmailMfaChallengeSender(
             }
     }
 
-    override fun sendMfaChallengeFor(userName: String) {
+
+    fun sendMfaChallengeFor(userName: String) {
         mfaAccountMethodsRepository.getDefaultDevice(userName)
             .flatMap { mfaAccountMethodsRepository.findBy(it) }
             .map {
                 sendMfaChallengeFor(
                     userName,
-                    MfaMethod.EMAIL_MFA_METHOD,
+                    it.mfaMethod,
                     it.mfaChannel
                 )
             }
@@ -44,6 +41,16 @@ class EmailMfaChallengeSender(
         val account = accountRepository.accountFor(userName).get()
         val mfaSecret = otpMfa.generateSecretKeyFor(account, mfaMethod, mfaChannel)
         val mfaCode = otpMfa.getTOTPCode(mfaSecret).content()
-        mfaMailSender.sendFor(account, mapOf("email" to mfaChannel, "mfaCode" to mfaCode))
+
+        when (mfaMethod) {
+            MfaMethod.EMAIL_MFA_METHOD -> {
+                mfaMailSender.sendFor(account, mapOf("email" to mfaChannel, "mfaCode" to mfaCode))
+            }
+
+            MfaMethod.SMS_MFA_METHOD -> {
+                smsSenderService.sendFor(account, mapOf("phone" to mfaChannel, "mfaCode" to mfaCode))
+            }
+        }
+
     }
 }

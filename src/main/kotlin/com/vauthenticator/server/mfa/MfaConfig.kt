@@ -9,6 +9,7 @@ import com.vauthenticator.server.communication.adapter.email.JavaEMailSenderServ
 import com.vauthenticator.server.communication.domain.EMailSenderService
 import com.vauthenticator.server.communication.domain.EMailType
 import com.vauthenticator.server.communication.domain.SimpleEMailMessageFactory
+import com.vauthenticator.server.communication.domain.SmsSenderService
 import com.vauthenticator.server.keys.KeyDecrypter
 import com.vauthenticator.server.keys.KeyRepository
 import com.vauthenticator.server.keys.MasterKid
@@ -82,8 +83,9 @@ class MfaConfig {
         accountRepository: AccountRepository,
         otpMfa: OtpMfa,
         mfaMailSender: EMailSenderService,
+        smsSenderService: SmsSenderService,
         mfaAccountMethodsRepository: MfaAccountMethodsRepository
-    ) = EmailMfaChallengeSender(accountRepository, otpMfa, mfaMailSender, mfaAccountMethodsRepository)
+    ) = MfaChallengeSender(accountRepository, otpMfa, mfaMailSender, smsSenderService, mfaAccountMethodsRepository)
 
     @Bean
     fun otpMfaVerifier(
