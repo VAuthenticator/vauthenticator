@@ -1,25 +1,18 @@
-package com.vauthenticator.server.communication.sms
+package com.vauthenticator.server.communication.adapter.sms
 
 import com.vauthenticator.server.account.Account
+import com.vauthenticator.server.communication.domain.MessageContext
+import com.vauthenticator.server.communication.domain.SmsMessageFactory
+import com.vauthenticator.server.communication.domain.SmsSenderService
 import software.amazon.awssdk.services.sns.SnsClient
 import software.amazon.awssdk.services.sns.model.PublishRequest
-
-typealias SmsContext = Map<String, String>
-
-fun interface SmsSenderService {
-    fun sendFor(account: Account, smsContext: SmsContext)
-}
-
-fun interface SmsMessageFactory {
-    fun makeSmsMessageFor(account: Account, requestContext: SmsContext): SmsMessage
-}
 
 
 class SnsSmsSenderService(
     private val snsClient: SnsClient,
     private val smsMessageFactory: SmsMessageFactory
 ) : SmsSenderService {
-    override fun sendFor(account: Account, smsContext: SmsContext) {
+    override fun sendFor(account: Account, smsContext: MessageContext) {
         val smsMessage = smsMessageFactory.makeSmsMessageFor(account, smsContext)
         snsClient.publish(
             PublishRequest.builder()

@@ -1,8 +1,10 @@
-package com.vauthenticator.server.communication.email
+package com.vauthenticator.server.communication.api
 
 import com.vauthenticator.document.repository.Document
 import com.vauthenticator.document.repository.DocumentRepository
 import com.vauthenticator.document.repository.DocumentType
+import com.vauthenticator.server.communication.domain.EMailTemplate
+import com.vauthenticator.server.communication.domain.EMailType
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*

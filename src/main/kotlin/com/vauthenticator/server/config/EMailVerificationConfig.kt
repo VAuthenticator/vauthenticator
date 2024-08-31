@@ -6,7 +6,12 @@ import com.vauthenticator.server.account.emailverification.SendVerifyEMailChalle
 import com.vauthenticator.server.account.emailverification.SendVerifyEMailChallengeUponSignUpEventConsumer
 import com.vauthenticator.server.account.emailverification.VerifyEMailChallenge
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.communication.email.*
+import com.vauthenticator.server.communication.NoReplyEMailConfiguration
+import com.vauthenticator.server.communication.adapter.JinJavaTemplateResolver
+import com.vauthenticator.server.communication.adapter.email.JavaEMailSenderService
+import com.vauthenticator.server.communication.domain.EMailSenderService
+import com.vauthenticator.server.communication.domain.EMailType
+import com.vauthenticator.server.communication.domain.SimpleEMailMessageFactory
 import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollment
 import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollmentAssociation
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
@@ -55,7 +60,7 @@ class EMailVerificationConfig {
         JavaEMailSenderService(
             documentRepository,
             javaMailSender,
-            JinjavaMailTemplateResolver(Jinjava()),
+            JinJavaTemplateResolver(Jinjava()),
             SimpleEMailMessageFactory(
                 noReplyEMailConfiguration.from,
                 noReplyEMailConfiguration.welcomeEMailSubject,

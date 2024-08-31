@@ -1,4 +1,4 @@
-package com.vauthenticator.server.communication.email
+package com.vauthenticator.server.communication
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 

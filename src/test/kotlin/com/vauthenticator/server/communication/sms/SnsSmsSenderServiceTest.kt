@@ -1,6 +1,9 @@
 package com.vauthenticator.server.communication.sms
 
 import com.vauthenticator.server.account.Phone.Companion.phoneFor
+import com.vauthenticator.server.communication.adapter.sms.SnsSmsSenderService
+import com.vauthenticator.server.communication.domain.SmsMessage
+import com.vauthenticator.server.communication.domain.SmsMessageFactory
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import com.vauthenticator.server.support.SmsUtils
 import com.vauthenticator.server.support.SmsUtils.resetSmsProvider

@@ -3,7 +3,12 @@ package com.vauthenticator.server.mfa
 import com.hubspot.jinjava.Jinjava
 import com.vauthenticator.document.repository.DocumentRepository
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.communication.email.*
+import com.vauthenticator.server.communication.NoReplyEMailConfiguration
+import com.vauthenticator.server.communication.adapter.JinJavaTemplateResolver
+import com.vauthenticator.server.communication.adapter.email.JavaEMailSenderService
+import com.vauthenticator.server.communication.domain.EMailSenderService
+import com.vauthenticator.server.communication.domain.EMailType
+import com.vauthenticator.server.communication.domain.SimpleEMailMessageFactory
 import com.vauthenticator.server.keys.KeyDecrypter
 import com.vauthenticator.server.keys.KeyRepository
 import com.vauthenticator.server.keys.MasterKid
@@ -96,7 +101,7 @@ class MfaConfig {
         JavaEMailSenderService(
             documentRepository,
             javaMailSender,
-            JinjavaMailTemplateResolver(Jinjava()),
+            JinJavaTemplateResolver(Jinjava()),
             SimpleEMailMessageFactory(
                 noReplyEMailConfiguration.from,
                 noReplyEMailConfiguration.mfaEMailSubject,

@@ -3,7 +3,12 @@ package com.vauthenticator.server.config
 import com.hubspot.jinjava.Jinjava
 import com.vauthenticator.document.repository.DocumentRepository
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.communication.email.*
+import com.vauthenticator.server.communication.NoReplyEMailConfiguration
+import com.vauthenticator.server.communication.adapter.JinJavaTemplateResolver
+import com.vauthenticator.server.communication.adapter.email.JavaEMailSenderService
+import com.vauthenticator.server.communication.domain.EMailSenderService
+import com.vauthenticator.server.communication.domain.EMailType
+import com.vauthenticator.server.communication.domain.SimpleEMailMessageFactory
 import com.vauthenticator.server.events.VAuthenticatorEventsDispatcher
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
 import com.vauthenticator.server.password.PasswordPolicy
@@ -54,7 +59,7 @@ class ResetPasswordConfig {
         JavaEMailSenderService(
             documentRepository,
             javaMailSender,
-            JinjavaMailTemplateResolver(Jinjava()),
+            JinJavaTemplateResolver(Jinjava()),
             SimpleEMailMessageFactory(
                 noReplyEMailConfiguration.from,
                 noReplyEMailConfiguration.resetPasswordEMailSubject,

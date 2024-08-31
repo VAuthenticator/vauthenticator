@@ -5,6 +5,12 @@ import com.icegreen.greenmail.configuration.GreenMailConfiguration
 import com.icegreen.greenmail.junit5.GreenMailExtension
 import com.icegreen.greenmail.util.ServerSetupTest
 import com.vauthenticator.document.repository.DocumentRepository
+import com.vauthenticator.server.communication.adapter.JinJavaTemplateResolver
+import com.vauthenticator.server.communication.adapter.email.JavaEMailSenderService
+import com.vauthenticator.server.communication.domain.EMailSenderService
+import com.vauthenticator.server.communication.domain.EMailType
+import com.vauthenticator.server.communication.domain.MessageTemplateResolver
+import com.vauthenticator.server.communication.domain.SimpleEMailMessageFactory
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import io.mockk.every
 import io.mockk.mockk
@@ -13,7 +19,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.springframework.mail.javamail.JavaMailSenderImpl
 
-internal class JavaSmsSenderServiceTest {
+class JavaEMailSenderServiceTest {
+
     @RegisterExtension
     val greenMail: GreenMailExtension = GreenMailExtension(ServerSetupTest.SMTP)
         .withConfiguration(GreenMailConfiguration.aConfig().withUser("user", "pwd"))
@@ -26,7 +33,7 @@ internal class JavaSmsSenderServiceTest {
     private lateinit var emailSenderService: EMailSenderService
     private val documentRepository: DocumentRepository = mockk()
 
-    private val templateResolver: MailTemplateResolver = JinjavaMailTemplateResolver(Jinjava())
+    private val templateResolver: MessageTemplateResolver = JinJavaTemplateResolver(Jinjava())
 
     private fun newJavaMail(): JavaMailSenderImpl {
         val javaMailSender = JavaMailSenderImpl()
@@ -74,7 +81,12 @@ internal class JavaSmsSenderServiceTest {
             )
         )
 
-        every { documentRepository.loadDocument("mail", EMailType.EMAIL_VERIFICATION.path).content } returns mailTemplateContent
+        every {
+            documentRepository.loadDocument(
+                "mail",
+                EMailType.EMAIL_VERIFICATION.path
+            ).content
+        } returns mailTemplateContent
 
         emailSenderService.sendFor(
             account,
@@ -102,7 +114,12 @@ internal class JavaSmsSenderServiceTest {
             )
         )
 
-        every { documentRepository.loadDocument("mail", EMailType.RESET_PASSWORD.path).content } returns mailTemplateContent
+        every {
+            documentRepository.loadDocument(
+                "mail",
+                EMailType.RESET_PASSWORD.path
+            ).content
+        } returns mailTemplateContent
 
         emailSenderService.sendFor(
             account,

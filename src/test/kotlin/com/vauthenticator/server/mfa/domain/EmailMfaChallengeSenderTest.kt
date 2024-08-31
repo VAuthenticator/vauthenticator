@@ -1,7 +1,7 @@
 package com.vauthenticator.server.mfa.domain
 
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.communication.email.EMailSenderService
+import com.vauthenticator.server.communication.domain.EMailSenderService
 import com.vauthenticator.server.support.MfaFixture.account
 import com.vauthenticator.server.support.MfaFixture.associatedMfaAccountMethod
 import com.vauthenticator.server.support.MfaFixture.challenge

@@ -2,7 +2,7 @@ package com.vauthenticator.server.account.welcome
 
 import com.vauthenticator.server.account.AccountNotFoundException
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.communication.email.EMailSenderService
+import com.vauthenticator.server.communication.domain.EMailSenderService
 
 class SayWelcome(
     private val accountRepository: AccountRepository,
