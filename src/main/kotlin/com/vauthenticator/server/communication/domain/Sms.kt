@@ -13,3 +13,13 @@ fun interface SmsMessageFactory {
     fun makeSmsMessageFor(account: Account, requestContext: MessageContext): SmsMessage
 }
 
+class SimpleSmsMessageFactory :
+    SmsMessageFactory {
+
+    override fun makeSmsMessageFor(account: Account, requestContext: MessageContext): SmsMessage {
+        val context = messageContextFrom(account) + requestContext
+        return SmsMessage(context["phone"]!! as String, requestContext["mfaCode"]!! as String)
+    }
+
+
+}

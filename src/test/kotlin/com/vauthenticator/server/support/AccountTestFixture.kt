@@ -21,5 +21,19 @@ object AccountTestFixture {
         mandatoryAction = AccountMandatoryAction.NO_ACTION
     )
 
+    fun anAccountWithPhoneNumber() = Account(
+        enabled = true,
+        username = EMAIL,
+        password = "secret",
+        authorities = emptySet(),
+        email = EMAIL,
+        firstName = "A First Name",
+        lastName = "A Last Name",
+        birthDate = Date.empty(),
+        phone = Phone.phoneFor("+39 339 2323223"),
+        locale = UserLocale.empty(),
+        mandatoryAction = AccountMandatoryAction.NO_ACTION
+    )
+
     fun anAccount(roles: Set<Role>) = anAccount().copy(authorities = roles.map { it.name }.toSet())
 }
