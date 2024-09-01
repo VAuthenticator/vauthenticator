@@ -6,10 +6,8 @@ import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.communication.NoReplyEMailConfiguration
 import com.vauthenticator.server.communication.adapter.JinJavaTemplateResolver
 import com.vauthenticator.server.communication.adapter.email.JavaEMailSenderService
-import com.vauthenticator.server.communication.domain.EMailSenderService
-import com.vauthenticator.server.communication.domain.EMailType
-import com.vauthenticator.server.communication.domain.SimpleEMailMessageFactory
-import com.vauthenticator.server.communication.domain.SmsSenderService
+import com.vauthenticator.server.communication.adapter.sms.SnsSmsSenderService
+import com.vauthenticator.server.communication.domain.*
 import com.vauthenticator.server.keys.KeyDecrypter
 import com.vauthenticator.server.keys.KeyRepository
 import com.vauthenticator.server.keys.MasterKid
@@ -24,6 +22,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.mail.javamail.JavaMailSender
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import software.amazon.awssdk.services.sns.SnsClient
 import java.util.*
 
 @Configuration(proxyBeanMethods = false)
@@ -63,7 +62,13 @@ class MfaConfig {
         accountRepository: AccountRepository,
         mfaAccountMethodsRepository: MfaAccountMethodsRepository,
         sensitiveEmailMasker: SensitiveEmailMasker
-    ) = MfaMethodsEnrollment(accountRepository, ticketCreator, mfaSender, mfaAccountMethodsRepository, sensitiveEmailMasker)
+    ) = MfaMethodsEnrollment(
+        accountRepository,
+        ticketCreator,
+        mfaSender,
+        mfaAccountMethodsRepository,
+        sensitiveEmailMasker
+    )
 
     @Bean
     fun otpMfa(
@@ -93,6 +98,11 @@ class MfaConfig {
         accountRepository: AccountRepository,
         mfaAccountMethodsRepository: MfaAccountMethodsRepository,
     ) = OtpMfaVerifier(accountRepository, otpMfa, mfaAccountMethodsRepository)
+
+    @Bean
+    fun mfaSmsSender(
+        snsClient: SnsClient
+    ) = SnsSmsSenderService(snsClient, SimpleSmsMessageFactory())
 
     @Bean
     fun mfaMailSender(

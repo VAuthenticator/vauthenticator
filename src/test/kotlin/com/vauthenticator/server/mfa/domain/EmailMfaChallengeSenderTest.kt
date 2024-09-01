@@ -65,26 +65,7 @@ class MfaChallengeSenderTest {
         mfaMethod: MfaMethod,
         testAccount: Account
     ) {
-        every { mfaAccountMethodsRepository.findBy(mfaDeviceId) } returns associatedMfaAccountMethod(
-            userName,
-            mfaChannel,
-            mfaMethod
-        )
-        every { accountRepository.accountFor(userName) } returns Optional.of(testAccount)
-        every { otp.generateSecretKeyFor(testAccount, mfaMethod, mfaChannel) } returns mfaSecret
-        every { otp.getTOTPCode(mfaSecret) } returns challenge
-        every {
-            smsSenderService.sendFor(
-                testAccount,
-                mapOf("phone" to mfaChannel, "mfaCode" to challenge.content())
-            )
-        } just runs
-        every {
-            emailSenderService.sendFor(
-                testAccount,
-                mapOf("email" to mfaChannel, "mfaCode" to challenge.content())
-            )
-        } just runs
+        testSetup(mfaChannel, mfaMethod, testAccount)
 
         uut.sendMfaChallengeFor(userName, mfaDeviceId)
     }
@@ -97,6 +78,16 @@ class MfaChallengeSenderTest {
         testAccount: Account
     ) {
         every { mfaAccountMethodsRepository.getDefaultDevice(userName) } returns Optional.of(mfaDeviceId)
+        testSetup(mfaChannel, mfaMethod, testAccount)
+
+        uut.sendMfaChallengeFor(userName)
+    }
+
+    private fun testSetup(
+        mfaChannel: String,
+        mfaMethod: MfaMethod,
+        testAccount: Account
+    ) {
         every { mfaAccountMethodsRepository.findBy(mfaDeviceId) } returns associatedMfaAccountMethod(
             userName,
             mfaChannel,
@@ -118,9 +109,6 @@ class MfaChallengeSenderTest {
                 mapOf("email" to mfaChannel, "mfaCode" to challenge.content())
             )
         } just runs
-
-
-        uut.sendMfaChallengeFor(userName)
     }
 
     companion object {
