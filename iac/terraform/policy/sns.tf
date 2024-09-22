@@ -15,6 +15,8 @@ data "aws_iam_policy_document" "vauthenticator_sns_send_sms_policy" {
 
 resource "aws_iam_policy" "vauthenticator_sns_send_sms_iam_policy" {
   name   = data.aws_iam_user.vauthenticator.user_name
+  path = var.path
+
   policy = data.aws_iam_policy_document.vauthenticator_sns_send_sms_policy.json
 }
 
