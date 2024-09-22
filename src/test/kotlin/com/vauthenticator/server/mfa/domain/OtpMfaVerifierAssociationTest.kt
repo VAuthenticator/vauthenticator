@@ -40,7 +40,11 @@ class OtpMfaVerifierAssociationTest {
 
     @Test
     fun `when not associated mfa verification succeed on association verification`() {
-        every { mfaAccountMethodsRepository.findBy(mfaDeviceId) } returns notAssociatedMfaAccountMethod(userName, email)
+        every { mfaAccountMethodsRepository.findBy(mfaDeviceId) } returns notAssociatedMfaAccountMethod(
+            userName,
+            email,
+            MfaMethod.EMAIL_MFA_METHOD
+        )
         every { accountRepository.accountFor(account.email) } returns Optional.of(account)
         every { otpMfa.verify(account, MfaMethod.EMAIL_MFA_METHOD, email, challenge) } just runs
 
@@ -55,7 +59,11 @@ class OtpMfaVerifierAssociationTest {
     }
     @Test
     fun `when not associated mfa verification fails on association verification`() {
-        every { mfaAccountMethodsRepository.findBy(mfaDeviceId) } returns notAssociatedMfaAccountMethod(userName, email)
+        every { mfaAccountMethodsRepository.findBy(mfaDeviceId) } returns notAssociatedMfaAccountMethod(
+            userName,
+            email,
+            MfaMethod.EMAIL_MFA_METHOD
+        )
         every { accountRepository.accountFor(account.email) } returns Optional.of(account)
         every { otpMfa.verify(account, MfaMethod.EMAIL_MFA_METHOD, email, challenge) } throws MfaException("invalid code")
 
@@ -73,7 +81,11 @@ class OtpMfaVerifierAssociationTest {
 
     @Test
     fun `when associated mfa verification fails on association verification`() {
-        every { mfaAccountMethodsRepository.findBy(mfaDeviceId) }  returns associatedMfaAccountMethod(userName, email)
+        every { mfaAccountMethodsRepository.findBy(mfaDeviceId) }  returns associatedMfaAccountMethod(
+            userName,
+            email,
+            MfaMethod.EMAIL_MFA_METHOD
+        )
         every { accountRepository.accountFor(account.email) } returns Optional.of(account)
         every { otpMfa.verify(account, MfaMethod.EMAIL_MFA_METHOD, email, challenge) } throws AssociatedMfaVerificationException("Mfa Challenge verification failed: this mfa method is already associated")
 

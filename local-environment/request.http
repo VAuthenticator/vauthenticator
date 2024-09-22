@@ -43,7 +43,7 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
 {
-  "email": "xxx@email.com"
+  "email": "user@email.com"
 }
 
 
@@ -79,6 +79,17 @@ Authorization: Bearer xxxx
   "mfaChannel" : "xxxx@email.com"
 }
 
+### enroll new phone
+
+POST {{host}}/api/mfa/enrollment
+Content-Type: application/json
+Authorization: Bearer xxx
+
+{
+  "mfaMethod": "SMS_MFA_METHOD",
+  "mfaChannel" : "+39 233 2323233"
+}
+
 
 ### associate new email
 
@@ -90,3 +101,8 @@ Authorization: Bearer xxx
   "ticket": "xxxx",
   "code" : "xxxx"
 }
+
+
+### get all sms from SNS
+
+GET http://localhost:4566/_aws/sns/sms-messages?region=eu-central-1

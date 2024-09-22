@@ -1,6 +1,7 @@
 package com.vauthenticator.server.mfa.domain
 
 import com.vauthenticator.server.account.repository.AccountRepository
+import com.vauthenticator.server.mask.SensitiveDataMaskerResolver
 import com.vauthenticator.server.mask.SensitiveEmailMasker
 import com.vauthenticator.server.mfa.domain.MfaMethod.EMAIL_MFA_METHOD
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
@@ -49,7 +50,7 @@ class MfaMethodsEnrollmentTest {
 
     private val clientAppId = aClientAppId()
     private val ticketId = TicketId("A_TICKET")
-    private val emailMfaAccountMethod = notAssociatedMfaAccountMethod(userName, email)
+    private val emailMfaAccountMethod = notAssociatedMfaAccountMethod(userName, email, EMAIL_MFA_METHOD)
 
     private val defaultMfaDevice = emailMfaAccountMethod.get()
     private val anotherMfaDeviceId = MfaDeviceId("A_NEW_MFA_DEVICE_ID")
@@ -65,7 +66,9 @@ class MfaMethodsEnrollmentTest {
             ticketCreator,
             mfaSender,
             mfaAccountMethodsRepository,
-            sensitiveEmailMasker
+            SensitiveDataMaskerResolver(
+                mapOf(EMAIL_MFA_METHOD to sensitiveEmailMasker)
+            )
         )
     }
 

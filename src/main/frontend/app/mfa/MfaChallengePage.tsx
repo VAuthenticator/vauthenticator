@@ -1,12 +1,11 @@
 import React, {useEffect, useState} from "react";
 import ErrorBanner from "../component/ErrorBanner";
 import {getMfaMethods, MfaAccountEnrolledMethod, sendMfaCode} from "./MfaRepository";
-import EmailIcon from "@mui/icons-material/Email";
 import {Box, Button, Divider, Grid, ThemeProvider, Typography} from "@mui/material";
 import theme from "../component/styles";
 import Modal from "../component/Modal";
 import Template from "../component/Template";
-import {CheckCircle, Person, VpnKey} from "@mui/icons-material";
+import {Call, CheckCircle, Email, Person, VpnKey} from "@mui/icons-material";
 import FormInputTextField from "../component/FormInputTextField";
 import Separator from "../component/Separator";
 import FormButton from "../component/FormButton";
@@ -60,7 +59,14 @@ const MfaChallengePage: React.FC<MfaChallengePageProps> = ({
                 type="button"
                 style={{textTransform: "none", color: "black"}}
                 onClick={() => setDefaultMfaDevice(mfaMethod.mfaDeviceId)}>
-                <EmailIcon/> EMail: {mfaMethod.mfaChannel} {mfaIconCheckIconFor(mfaMethod)}
+                <Email/> EMail: {mfaMethod.mfaChannel} {mfaIconCheckIconFor(mfaMethod)}
+            </Button>
+        } else if ("SMS_MFA_METHOD" === mfaMethod.mfaMethod) {
+            icon = <Button
+                type="button"
+                style={{textTransform: "none", color: "black"}}
+                onClick={() => setDefaultMfaDevice(mfaMethod.mfaDeviceId)}>
+                <Call/> Phone: {mfaMethod.mfaChannel} {mfaIconCheckIconFor(mfaMethod)}
             </Button>
         }
         return icon

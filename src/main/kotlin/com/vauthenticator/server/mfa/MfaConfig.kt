@@ -3,11 +3,17 @@ package com.vauthenticator.server.mfa
 import com.hubspot.jinjava.Jinjava
 import com.vauthenticator.document.repository.DocumentRepository
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.email.*
+import com.vauthenticator.server.communication.NoReplyEMailConfiguration
+import com.vauthenticator.server.communication.adapter.JinJavaTemplateResolver
+import com.vauthenticator.server.communication.adapter.email.JavaEMailSenderService
+import com.vauthenticator.server.communication.adapter.sms.SnsSmsSenderService
+import com.vauthenticator.server.communication.domain.*
 import com.vauthenticator.server.keys.KeyDecrypter
 import com.vauthenticator.server.keys.KeyRepository
 import com.vauthenticator.server.keys.MasterKid
+import com.vauthenticator.server.mask.SensitiveDataMaskerResolver
 import com.vauthenticator.server.mask.SensitiveEmailMasker
+import com.vauthenticator.server.mask.SensitivePhoneMasker
 import com.vauthenticator.server.mfa.adapter.dynamodb.DynamoMfaAccountMethodsRepository
 import com.vauthenticator.server.mfa.domain.*
 import com.vauthenticator.server.ticket.TicketCreator
@@ -18,6 +24,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.mail.javamail.JavaMailSender
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import software.amazon.awssdk.services.sns.SnsClient
 import java.util.*
 
 @Configuration(proxyBeanMethods = false)
@@ -43,6 +50,20 @@ class MfaConfig {
     fun sensitiveEmailMasker() = SensitiveEmailMasker()
 
     @Bean
+    fun sensitivePhoneMasker() = SensitivePhoneMasker()
+
+    @Bean
+    fun sensitiveDataMaskerResolver(
+        sensitiveEmailMasker: SensitiveEmailMasker,
+        sensitivePhoneMasker: SensitivePhoneMasker
+    ) = SensitiveDataMaskerResolver(
+        mapOf(
+            MfaMethod.EMAIL_MFA_METHOD to sensitiveEmailMasker,
+            MfaMethod.SMS_MFA_METHOD to sensitivePhoneMasker
+        )
+    )
+
+    @Bean
     fun mfaMethodsEnrolmentAssociation(
         ticketRepository: TicketRepository,
         mfaAccountMethodsRepository: MfaAccountMethodsRepository,
@@ -56,8 +77,14 @@ class MfaConfig {
         ticketCreator: TicketCreator,
         accountRepository: AccountRepository,
         mfaAccountMethodsRepository: MfaAccountMethodsRepository,
-        sensitiveEmailMasker: SensitiveEmailMasker
-    ) = MfaMethodsEnrollment(accountRepository, ticketCreator, mfaSender, mfaAccountMethodsRepository, sensitiveEmailMasker)
+        sensitiveDataMaskerResolver: SensitiveDataMaskerResolver
+    ) = MfaMethodsEnrollment(
+        accountRepository,
+        ticketCreator,
+        mfaSender,
+        mfaAccountMethodsRepository,
+        sensitiveDataMaskerResolver
+    )
 
     @Bean
     fun otpMfa(
@@ -77,8 +104,9 @@ class MfaConfig {
         accountRepository: AccountRepository,
         otpMfa: OtpMfa,
         mfaMailSender: EMailSenderService,
+        smsSenderService: SmsSenderService,
         mfaAccountMethodsRepository: MfaAccountMethodsRepository
-    ) = EmailMfaChallengeSender(accountRepository, otpMfa, mfaMailSender, mfaAccountMethodsRepository)
+    ) = MfaChallengeSender(accountRepository, otpMfa, mfaMailSender, smsSenderService, mfaAccountMethodsRepository)
 
     @Bean
     fun otpMfaVerifier(
@@ -86,6 +114,11 @@ class MfaConfig {
         accountRepository: AccountRepository,
         mfaAccountMethodsRepository: MfaAccountMethodsRepository,
     ) = OtpMfaVerifier(accountRepository, otpMfa, mfaAccountMethodsRepository)
+
+    @Bean
+    fun mfaSmsSender(
+        snsClient: SnsClient
+    ) = SnsSmsSenderService(snsClient, SimpleSmsMessageFactory())
 
     @Bean
     fun mfaMailSender(
@@ -96,7 +129,7 @@ class MfaConfig {
         JavaEMailSenderService(
             documentRepository,
             javaMailSender,
-            JinjavaMailTemplateResolver(Jinjava()),
+            JinJavaTemplateResolver(Jinjava()),
             SimpleEMailMessageFactory(
                 noReplyEMailConfiguration.from,
                 noReplyEMailConfiguration.mfaEMailSubject,

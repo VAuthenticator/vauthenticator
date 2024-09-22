@@ -5,7 +5,12 @@ import com.vauthenticator.document.repository.DocumentRepository
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.account.welcome.SayWelcome
 import com.vauthenticator.server.account.welcome.SendWelcomeMailUponSignUpEventConsumer
-import com.vauthenticator.server.email.*
+import com.vauthenticator.server.communication.NoReplyEMailConfiguration
+import com.vauthenticator.server.communication.adapter.JinJavaTemplateResolver
+import com.vauthenticator.server.communication.adapter.email.JavaEMailSenderService
+import com.vauthenticator.server.communication.domain.EMailSenderService
+import com.vauthenticator.server.communication.domain.EMailType
+import com.vauthenticator.server.communication.domain.SimpleEMailMessageFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.mail.javamail.JavaMailSender
@@ -28,7 +33,7 @@ class WelcomeConfig {
         JavaEMailSenderService(
             documentRepository,
             javaMailSender,
-            JinjavaMailTemplateResolver(Jinjava()),
+            JinJavaTemplateResolver(Jinjava()),
             SimpleEMailMessageFactory(
                 noReplyEMailConfiguration.from,
                 noReplyEMailConfiguration.welcomeEMailSubject,

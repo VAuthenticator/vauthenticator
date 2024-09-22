@@ -12,6 +12,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.kms.KmsClient
 import software.amazon.awssdk.services.lambda.LambdaClient
 import software.amazon.awssdk.services.s3.S3Client
+import software.amazon.awssdk.services.sns.SnsClient
 import java.net.URI
 import java.util.*
 
@@ -32,6 +33,14 @@ class AwsConfig {
             .roleSessionName("vauthenticator-${UUID.randomUUID()}")
             .build()
     }
+
+    @Bean
+    fun snsClient(
+        awsCredentialsProvider: AwsCredentialsProvider,
+        @Value("\${aws.sns.endpointOverride:}") endpointOverride: String
+    ): SnsClient = SnsClient.builder().credentialsProvider(awsCredentialsProvider)
+        .applyMutation { setEndPoint(endpointOverride, it) }
+        .build()
 
     @Bean
     fun s3Client(
