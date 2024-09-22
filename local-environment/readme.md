@@ -18,7 +18,14 @@ client app for admin M2M purpose.
 In order to have all the needed infrastructure you can avail on the [docker-compose.yml](..%2Fdocker-compose.yml)`, while
 it is possible to instantiate a container to install a new tenant usable for local development using the command: 
 
-> docker run --pull=always -it mrflick72/vauthenticator-local-tenant-installer:latest
+```shell
+docker run --pull=always --add-host=host.docker.internal:host-gateway -it mrflick72/vauthenticator-local-tenant-installer:latest
+``` 
+
+if you need a specific branch docker image you can use the following command
+```shell
+docker run --pull=always --add-host=host.docker.internal:host-gateway -it mrflick72/vauthenticator-local-tenant-installer:$(git rev-parse --abbrev-ref HEAD)
+``` 
 
 
 # local host config
@@ -54,6 +61,14 @@ client secret: secret
 client_id=vauthenticator-management-ui&client_secret=secret
 
 ```
+
+in order to get IAM access key you can use the following command:
+
+```shell
+
+aws iam create-access-key --user-name vauthenticator-local-dev --endpoint http://localhost:4566
+
+```
 ### ui and mail template local environment
 In order to make simple the ui assets build for local development take in consideration to enable the following spring configuration properties:
 
@@ -86,9 +101,9 @@ cp *  ../../../dist/mail/templates
 
 ## Postgres usage
 
-Postgres is an available option as storage, it is experimental right now and it is supported only for account and roles.
+Postgres is an available option as storage, it is experimental right now, and it is supported only for account and roles.
 
-In order to activate it is needed to add the corrisponding spring profile '''experimental_database_persistence''' and 
+In order to activate it is needed to add the corresponding spring profile '''experimental_database_persistence''' and 
 for the init process add to the docker run the environment variable '''experimental_database_persistence=true'''with the command like below:
 
 > docker run --pull=always -e experimental_database_persistence=true -it mrflick72/vauthenticator-local-tenant-installer:latest
