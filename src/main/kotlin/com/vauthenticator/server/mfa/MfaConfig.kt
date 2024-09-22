@@ -11,7 +11,9 @@ import com.vauthenticator.server.communication.domain.*
 import com.vauthenticator.server.keys.KeyDecrypter
 import com.vauthenticator.server.keys.KeyRepository
 import com.vauthenticator.server.keys.MasterKid
+import com.vauthenticator.server.mask.SensitiveDataMaskerResolver
 import com.vauthenticator.server.mask.SensitiveEmailMasker
+import com.vauthenticator.server.mask.SensitivePhoneMasker
 import com.vauthenticator.server.mfa.adapter.dynamodb.DynamoMfaAccountMethodsRepository
 import com.vauthenticator.server.mfa.domain.*
 import com.vauthenticator.server.ticket.TicketCreator
@@ -48,6 +50,20 @@ class MfaConfig {
     fun sensitiveEmailMasker() = SensitiveEmailMasker()
 
     @Bean
+    fun sensitivePhoneMasker() = SensitivePhoneMasker()
+
+    @Bean
+    fun sensitiveDataMaskerResolver(
+        sensitiveEmailMasker: SensitiveEmailMasker,
+        sensitivePhoneMasker: SensitivePhoneMasker
+    ) = SensitiveDataMaskerResolver(
+        mapOf(
+            MfaMethod.EMAIL_MFA_METHOD to sensitiveEmailMasker,
+            MfaMethod.SMS_MFA_METHOD to sensitivePhoneMasker
+        )
+    )
+
+    @Bean
     fun mfaMethodsEnrolmentAssociation(
         ticketRepository: TicketRepository,
         mfaAccountMethodsRepository: MfaAccountMethodsRepository,
@@ -61,13 +77,13 @@ class MfaConfig {
         ticketCreator: TicketCreator,
         accountRepository: AccountRepository,
         mfaAccountMethodsRepository: MfaAccountMethodsRepository,
-        sensitiveEmailMasker: SensitiveEmailMasker
+        sensitiveDataMaskerResolver: SensitiveDataMaskerResolver
     ) = MfaMethodsEnrollment(
         accountRepository,
         ticketCreator,
         mfaSender,
         mfaAccountMethodsRepository,
-        sensitiveEmailMasker
+        sensitiveDataMaskerResolver
     )
 
     @Bean

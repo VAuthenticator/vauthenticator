@@ -1,6 +1,7 @@
 package com.vauthenticator.server.mfa.domain
 
 import com.vauthenticator.server.account.repository.AccountRepository
+import com.vauthenticator.server.mask.SensitiveDataMaskerResolver
 import com.vauthenticator.server.mask.SensitiveEmailMasker
 import com.vauthenticator.server.mfa.domain.MfaMethod.EMAIL_MFA_METHOD
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
@@ -65,7 +66,9 @@ class MfaMethodsEnrollmentTest {
             ticketCreator,
             mfaSender,
             mfaAccountMethodsRepository,
-            sensitiveEmailMasker
+            SensitiveDataMaskerResolver(
+                mapOf(EMAIL_MFA_METHOD to sensitiveEmailMasker)
+            )
         )
     }
 

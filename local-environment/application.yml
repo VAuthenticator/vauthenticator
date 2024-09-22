@@ -128,6 +128,8 @@ aws:
     endpointOverride: "http://localhost:4566"
   dynamodb:
     endpointOverride: "http://localhost:4566"
+  sns:
+    endpointOverride: "http://localhost:4566"
 
 
 ---

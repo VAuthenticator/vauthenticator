@@ -2,7 +2,7 @@ package com.vauthenticator.server.mfa.domain
 
 import com.vauthenticator.server.account.AccountNotFoundException
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.mask.SensitiveEmailMasker
+import com.vauthenticator.server.mask.SensitiveDataMaskerResolver
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
 import com.vauthenticator.server.ticket.TicketContext
 import com.vauthenticator.server.ticket.TicketCreator
@@ -14,7 +14,7 @@ class MfaMethodsEnrollment(
     private val ticketCreator: TicketCreator,
     private val mfaSender: MfaChallengeSender,
     private val mfaAccountMethodsRepository: MfaAccountMethodsRepository,
-    private val sensitiveEmailMasker: SensitiveEmailMasker,
+    private val sensitiveDataMaskerResolver: SensitiveDataMaskerResolver
 ) {
 
     private val logger = LoggerFactory.getLogger(MfaMethodsEnrollment::class.java)
@@ -24,10 +24,11 @@ class MfaMethodsEnrollment(
             .map { defaultMfaDevice ->
                 mfaAccountMethodsRepository.findAll(userName)
                     .map {
+                        val sensitiveDataMasker = sensitiveDataMaskerResolver.getSensitiveDataMasker(it.mfaMethod)
                         MfaDevice(
-                            if (withMaskedSensibleInformation) sensitiveEmailMasker.mask(it.userName) else it.userName,
+                            if (withMaskedSensibleInformation) sensitiveDataMasker.mask(it.userName) else it.userName,
                             it.mfaMethod,
-                            if (withMaskedSensibleInformation) sensitiveEmailMasker.mask(it.mfaChannel) else it.mfaChannel,
+                            if (withMaskedSensibleInformation) sensitiveDataMasker.mask(it.mfaChannel) else it.mfaChannel,
                             it.mfaDeviceId,
                             it.mfaDeviceId.content == defaultMfaDevice.content
                         )
