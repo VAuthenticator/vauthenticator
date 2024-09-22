@@ -14,8 +14,8 @@ data "aws_iam_policy_document" "vauthenticator_sns_send_sms_policy" {
 }
 
 resource "aws_iam_policy" "vauthenticator_sns_send_sms_iam_policy" {
+  name   = data.aws_iam_user.vauthenticator.user_name
   policy = data.aws_iam_policy_document.vauthenticator_sns_send_sms_policy.json
-  user   = data.aws_iam_user.vauthenticator.user_name
 }
 
 resource "aws_iam_user_policy_attachment" "vauthenticator_sns_send_sms_iam_policy-attach" {
