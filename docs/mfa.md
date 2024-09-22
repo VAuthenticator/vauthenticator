@@ -22,7 +22,7 @@ It is possible to register multiple email via api.
 ```json
 {
   "mfaChannel": "your mfa channel: mail sms and so on ",
-  "mfaMethod": "EMAIL_MFA_METHOD, SMS_MFA_METHOD, OTP_MFA_METHOD"
+  "mfaMethod": "EMAIL_MFA_METHOD, SMS_MFA_METHOD"
 }
 ```
 *Response Body:*
