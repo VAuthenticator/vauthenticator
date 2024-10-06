@@ -19,8 +19,7 @@ class DynamoDbClientApplicationRepository(
         private val dynamoClientApplicationTableName: String
 ) : ClientApplicationRepository {
     override fun findOne(clientAppId: ClientAppId): Optional<ClientApplication> {
-        return Optional.of(clientAppId.content)
-            .flatMap { if (it.isEmpty()) Optional.empty() else Optional.of(clientAppId) }
+        return  if (clientAppId.content.isEmpty()) Optional.empty() else Optional.of(clientAppId)
             .map {
                 dynamoDbClient.getItem(
                     GetItemRequest.builder()

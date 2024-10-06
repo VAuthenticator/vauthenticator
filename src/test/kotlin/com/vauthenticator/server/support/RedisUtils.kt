@@ -17,7 +17,7 @@ object RedisUtils {
         val lettuceConnectionFactory = LettuceConnectionFactory()
         lettuceConnectionFactory.afterPropertiesSet()
 
-        redisTemplate.setConnectionFactory(lettuceConnectionFactory)
+        redisTemplate.connectionFactory = lettuceConnectionFactory
         redisTemplate.afterPropertiesSet()
         return redisTemplate
     }

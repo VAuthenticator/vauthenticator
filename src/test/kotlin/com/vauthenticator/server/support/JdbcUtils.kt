@@ -24,6 +24,7 @@ object JdbcUtils {
 
     fun resetDb() {
         try {
+            jdbcTemplate.execute("DROP TABLE IF EXISTS CLIENT_APPLICATION;")
             jdbcTemplate.execute("DROP TABLE IF EXISTS ROLE CASCADE;")
             jdbcTemplate.execute("DROP TABLE IF EXISTS ACCOUNT CASCADE;")
             jdbcTemplate.execute("DROP TABLE IF EXISTS ACCOUNT_ROLE;")
