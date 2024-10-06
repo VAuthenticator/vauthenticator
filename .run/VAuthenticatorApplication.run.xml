@@ -11,6 +11,11 @@
         <option name="name" value="key.master-key" />
         <option name="value" value="xxx" />
       </param>
+      <param>
+        <option name="enabled" value="true" />
+        <option name="name" value="spring.profiles.active" />
+        <option name="value" value="default" />
+      </param>
     </additionalParameters>
     <envs>
       <env name="AWS_ACCESS_KEY_ID" value="xxx" />
