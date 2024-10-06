@@ -16,6 +16,6 @@ python3 key_setup.py $MASTER_KEY $TABLES_SUFFIX
 python3 setup.py admin@email.com $TABLES_SUFFIX
 python3 database_setup.py admin@email.com host.docker.internal
 
-aws iam create-access-key --user-name vauthenticator-local-dev --endpoint http://localhost:4566 > user-access-key.json
+aws iam create-access-key --user-name vauthenticator-local-dev --endpoint http://host.docker.internal:4566 > user-access-key.json
 echo "Local User IAM VAuthenticator AccessKeyId: "$(cat user-access-key.json | jq -r .AccessKey.AccessKeyId)
 echo "Local User IAM VAuthenticator SecretAccessKey: "$(cat user-access-key.json | jq -r .AccessKey.SecretAccessKey)
