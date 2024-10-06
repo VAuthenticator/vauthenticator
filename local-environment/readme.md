@@ -59,16 +59,11 @@ client_id=admin&client_secret=secret
 client id: vauthenticator-management-ui
 client secret: secret
 client_id=vauthenticator-management-ui&client_secret=secret
+Local User IAM VAuthenticator AccessKeyId: LKIAQAAAAAAABPAIE4RX
+Local User IAM VAuthenticator SecretAccessKey: U2lSO7CfwtxQJdAyoP15ccz9y4PEFtTm/bK+8SKw
 
 ```
 
-in order to get IAM access key you can use the following command:
-
-```shell
-
-aws iam create-access-key --user-name vauthenticator-local-dev --endpoint http://localhost:4566
-
-```
 ### ui and mail template local environment
 In order to make simple the ui assets build for local development take in consideration to enable the following spring configuration properties:
 

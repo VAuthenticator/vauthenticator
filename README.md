@@ -25,6 +25,7 @@ Right now it is based, as said before to the latest version on spring oauth2/ope
 - access_token/id_token customization via lambda, see [here](docs/lambda.md) for more details
 - MFA
   - mail
+  - sms
   - see [here](docs/mfa.md) for more details
 - Post login flow 
   - force to reset password

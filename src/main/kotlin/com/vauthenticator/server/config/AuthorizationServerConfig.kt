@@ -23,15 +23,20 @@ import com.vauthenticator.server.oidc.token.IdTokenEnhancer
 import com.vauthenticator.server.oidc.userinfo.UserInfoEnhancer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.support.lob.DefaultLobHandler
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.oauth2.jwt.JwtEncoder
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder
+import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration
@@ -93,9 +98,20 @@ class AuthorizationServerConfig {
         return ClientAppRegisteredClientRepository(storeClientApplication, clientRepository)
     }
 
-    @Bean
-    fun oAuth2AuthorizationService(redisTemplate: RedisTemplate<Any, Any>): OAuth2AuthorizationService {
+    @Bean("oAuth2AuthorizationService")
+    @Profile("!experimental_database_persistence")
+    fun redisOAuth2AuthorizationService(redisTemplate: RedisTemplate<Any, Any>): OAuth2AuthorizationService {
         return RedisOAuth2AuthorizationService(redisTemplate)
+    }
+
+
+    @Bean("oAuth2AuthorizationService")
+    @Profile("experimental_database_persistence")
+    fun jdbcOAuth2AuthorizationService(
+        jdbcTemplate : JdbcTemplate,
+        registeredClientRepository : RegisteredClientRepository
+    ): OAuth2AuthorizationService {
+        return JdbcOAuth2AuthorizationService(jdbcTemplate, registeredClientRepository, DefaultLobHandler())
     }
 
     @Bean
