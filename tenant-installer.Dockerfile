@@ -4,7 +4,8 @@ RUN yum install -y yum-utils && \
     yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo && \
     yum -y install terraform && \
     yum update && yum install -y python3-pip && \
-    yum install -y unzip
+    yum install -y unzip && \
+    yum install -y jq
 
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
      unzip awscliv2.zip && \
