@@ -14,7 +14,7 @@ import com.vauthenticator.server.support.DynamoDbUtils.resetDynamoDb
 internal class DynamoDbAbstractAccountRepositoryTest : AbstractAccountRepositoryTest() {
 
 
-    override fun initAccountRepository(roleRepository: RoleRepository): AccountRepository =
+    override fun initUnitUnderTest(roleRepository: RoleRepository): AccountRepository =
         DynamoDbAccountRepository(
             dynamoDbClient,
             dynamoAccountTableName,

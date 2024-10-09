@@ -10,7 +10,7 @@ import com.vauthenticator.server.support.JdbcUtils.resetDb
 
 class JdbcAccountRepositoryTest : AbstractAccountRepositoryTest() {
 
-    override fun initAccountRepository(roleRepository: RoleRepository): AccountRepository =
+    override fun initUnitUnderTest(roleRepository: RoleRepository): AccountRepository =
         JdbcAccountRepository(jdbcTemplate)
 
     override fun initRoleRepository(): RoleRepository = JdbcRoleRepository(jdbcTemplate, protectedRoleNames)
