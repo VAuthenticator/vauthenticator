@@ -7,6 +7,9 @@ import com.vauthenticator.server.keys.KeyPurpose.MFA
 import com.vauthenticator.server.keys.KeyPurpose.SIGNATURE
 import com.vauthenticator.server.keys.KeyType.ASYMMETRIC
 import com.vauthenticator.server.keys.KeyType.SYMMETRIC
+import com.vauthenticator.server.keys.adapter.dynamo.DynamoDbKeyRepository
+import com.vauthenticator.server.keys.adapter.kms.KmsKeyGenerator
+import com.vauthenticator.server.keys.domain.KeyRepository
 import com.vauthenticator.server.support.DynamoDbUtils.dynamoDbClient
 import com.vauthenticator.server.support.DynamoDbUtils.dynamoMfaKeysTableName
 import com.vauthenticator.server.support.DynamoDbUtils.dynamoSignatureKeysTableName
@@ -26,7 +29,7 @@ import java.time.Instant
 import java.time.ZoneId
 import java.util.*
 
-internal class AwsKeyRepositoryTest {
+internal class DynamoDbKeyRepositoryTest {
 
     private lateinit var keyRepository: KeyRepository
     private lateinit var wrapper: KmsClientWrapper
@@ -39,7 +42,7 @@ internal class AwsKeyRepositoryTest {
         resetDynamoDb()
         wrapper = KmsClientWrapper(kmsClient)
         keyRepository =
-            AwsKeyRepository(
+            DynamoDbKeyRepository(
                 Clock.fixed(now, ZoneId.systemDefault()),
                 kidGenerator,
                 dynamoSignatureKeysTableName,

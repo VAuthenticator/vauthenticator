@@ -1,6 +1,12 @@
-package com.vauthenticator.server.keys
+package com.vauthenticator.server.keys.api
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.vauthenticator.server.keys.KeyDeletionException
+import com.vauthenticator.server.keys.KeyPurpose
+import com.vauthenticator.server.keys.Kid
+import com.vauthenticator.server.keys.MasterKid
+import com.vauthenticator.server.keys.domain.KeyRepository
+import com.vauthenticator.server.keys.domain.SignatureKeyRotation
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

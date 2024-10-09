@@ -1,6 +1,12 @@
 package com.vauthenticator.server.config
 
-import com.vauthenticator.server.keys.*
+import com.vauthenticator.server.keys.adapter.dynamo.DynamoDbKeyRepository
+import com.vauthenticator.server.keys.adapter.kms.KmsKeyDecrypter
+import com.vauthenticator.server.keys.adapter.kms.KmsKeyGenerator
+import com.vauthenticator.server.keys.domain.KeyDecrypter
+import com.vauthenticator.server.keys.domain.KeyGenerator
+import com.vauthenticator.server.keys.domain.KeyRepository
+import com.vauthenticator.server.keys.domain.SignatureKeyRotation
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -27,7 +33,7 @@ class KeyConfig {
         @Value("\${vauthenticator.dynamo-db.keys.signature.table-name}") signatureTableName: String,
         @Value("\${vauthenticator.dynamo-db.keys.mfa.table-name}") mfaTableName: String
     ): KeyRepository =
-        AwsKeyRepository(
+        DynamoDbKeyRepository(
             clock,
             { UUID.randomUUID().toString() },
             signatureTableName,

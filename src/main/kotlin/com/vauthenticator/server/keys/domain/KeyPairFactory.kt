@@ -1,4 +1,4 @@
-package com.vauthenticator.server.keys
+package com.vauthenticator.server.keys.domain
 
 import com.vauthenticator.server.extentions.decoder
 import java.security.KeyFactory

@@ -1,16 +1,14 @@
-package com.vauthenticator.server.keys
+package com.vauthenticator.server.keys.adapter.kms
 
+import com.vauthenticator.server.keys.DataKey
+import com.vauthenticator.server.keys.MasterKid
+import com.vauthenticator.server.keys.domain.KeyGenerator
 import software.amazon.awssdk.services.kms.KmsClient
 import software.amazon.awssdk.services.kms.model.DataKeyPairSpec
 import software.amazon.awssdk.services.kms.model.DataKeySpec
 import software.amazon.awssdk.services.kms.model.GenerateDataKeyPairRequest
 import software.amazon.awssdk.services.kms.model.GenerateDataKeyRequest
 import java.util.*
-
-interface KeyGenerator {
-    fun dataKeyPairFor(masterKid: MasterKid): DataKey
-    fun dataKeyFor(masterKid: MasterKid): DataKey
-}
 
 class KmsKeyGenerator(private val kmsClient: KmsClient) : KeyGenerator {
 

@@ -1,5 +1,7 @@
 package com.vauthenticator.server.keys
 
+import com.vauthenticator.server.keys.domain.KeyRepository
+import com.vauthenticator.server.keys.domain.SignatureKeyRotation
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension

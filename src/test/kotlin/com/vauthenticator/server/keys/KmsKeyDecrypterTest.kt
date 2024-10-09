@@ -1,6 +1,7 @@
 package com.vauthenticator.server.keys
 
 import com.vauthenticator.server.extentions.encoder
+import com.vauthenticator.server.keys.adapter.kms.KmsKeyDecrypter
 import com.vauthenticator.server.support.KeysUtils.aNewMasterKey
 import com.vauthenticator.server.support.KeysUtils.kmsClient
 import org.junit.jupiter.api.Assertions.assertEquals

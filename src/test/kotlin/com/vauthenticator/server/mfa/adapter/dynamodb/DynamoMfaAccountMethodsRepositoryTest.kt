@@ -1,6 +1,10 @@
 package com.vauthenticator.server.mfa.adapter.dynamodb
 
-import com.vauthenticator.server.keys.*
+import com.vauthenticator.server.keys.KeyPurpose
+import com.vauthenticator.server.keys.KeyType
+import com.vauthenticator.server.keys.Kid
+import com.vauthenticator.server.keys.MasterKid
+import com.vauthenticator.server.keys.domain.KeyRepository
 import com.vauthenticator.server.mfa.domain.MfaAccountMethod
 import com.vauthenticator.server.mfa.domain.MfaAccountMethodsRepository
 import com.vauthenticator.server.mfa.domain.MfaDeviceId

@@ -1,30 +1,17 @@
-package com.vauthenticator.server.keys
+package com.vauthenticator.server.keys.adapter.dynamo
 
 import com.vauthenticator.server.extentions.*
+import com.vauthenticator.server.keys.*
+import com.vauthenticator.server.keys.KeyType
+import com.vauthenticator.server.keys.domain.KeyGenerator
+import com.vauthenticator.server.keys.domain.KeyRepository
 import org.slf4j.LoggerFactory
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.*
 import java.time.Clock
 import java.time.Duration
 
-private val DELETE_NOW = Duration.ofSeconds(0)
-
-interface KeyRepository {
-    fun createKeyFrom(
-        masterKid: MasterKid,
-        keyType: KeyType = KeyType.ASYMMETRIC,
-        keyPurpose: KeyPurpose = KeyPurpose.SIGNATURE
-    ): Kid
-
-    fun deleteKeyFor(kid: Kid, keyPurpose: KeyPurpose, ttl: Duration = DELETE_NOW)
-
-    fun signatureKeys(): Keys
-
-    fun keyFor(kid: Kid, mfa: KeyPurpose): Key
-}
-
-
-open class AwsKeyRepository(
+open class DynamoDbKeyRepository(
     private val clock: Clock,
     private val kidGenerator: () -> String,
     private val signatureTableName: String,
@@ -33,7 +20,7 @@ open class AwsKeyRepository(
     private val dynamoDbClient: DynamoDbClient
 ) : KeyRepository {
 
-    private val logger = LoggerFactory.getLogger(AwsKeyRepository::class.java)
+    private val logger = LoggerFactory.getLogger(DynamoDbKeyRepository::class.java)
 
     override fun createKeyFrom(masterKid: MasterKid, keyType: KeyType, keyPurpose: KeyPurpose): Kid {
         val dataKey = keyPairFor(masterKid, keyType)
@@ -83,9 +70,11 @@ open class AwsKeyRepository(
     override fun deleteKeyFor(kid: Kid, keyPurpose: KeyPurpose, ttl: Duration) {
         val key = keyFor(kid, keyPurpose)
         if (!key.enabled){
-            throw KeyDeletionException("The key with kid: $kid is a rotated key.... it can not be deleted or rotated again." +
-                    " Let's wait for the expiration time." +
-                    " This key is not enabled to sign new token, only to verify already signed token before the rotation request")
+            throw KeyDeletionException(
+                "The key with kid: $kid is a rotated key.... it can not be deleted or rotated again." +
+                        " Let's wait for the expiration time." +
+                        " This key is not enabled to sign new token, only to verify already signed token before the rotation request"
+            )
         }
         val keys = validSignatureKeys()
 
