@@ -1,6 +1,6 @@
 package com.vauthenticator.server.support
 
-import com.vauthenticator.server.keys.*
+import com.vauthenticator.server.keys.domain.*
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
 import software.amazon.awssdk.regions.Region

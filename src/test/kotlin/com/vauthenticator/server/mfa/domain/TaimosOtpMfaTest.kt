@@ -1,9 +1,7 @@
 package com.vauthenticator.server.mfa.domain
 
 import com.vauthenticator.server.extentions.decoder
-import com.vauthenticator.server.keys.*
-import com.vauthenticator.server.keys.domain.KeyDecrypter
-import com.vauthenticator.server.keys.domain.KeyRepository
+import com.vauthenticator.server.keys.domain.*
 import com.vauthenticator.server.mfa.OtpConfigurationProperties
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import io.mockk.every

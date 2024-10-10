@@ -1,10 +1,8 @@
 package com.vauthenticator.server.keys.adapter.dynamo
 
 import com.vauthenticator.server.extentions.*
-import com.vauthenticator.server.keys.*
-import com.vauthenticator.server.keys.KeyType
-import com.vauthenticator.server.keys.domain.KeyGenerator
-import com.vauthenticator.server.keys.domain.KeyRepository
+import com.vauthenticator.server.keys.domain.*
+import com.vauthenticator.server.keys.domain.KeyType
 import org.slf4j.LoggerFactory
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.*

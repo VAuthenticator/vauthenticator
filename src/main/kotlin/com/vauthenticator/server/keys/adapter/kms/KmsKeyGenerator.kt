@@ -1,8 +1,8 @@
 package com.vauthenticator.server.keys.adapter.kms
 
-import com.vauthenticator.server.keys.DataKey
-import com.vauthenticator.server.keys.MasterKid
+import com.vauthenticator.server.keys.domain.DataKey
 import com.vauthenticator.server.keys.domain.KeyGenerator
+import com.vauthenticator.server.keys.domain.MasterKid
 import software.amazon.awssdk.services.kms.KmsClient
 import software.amazon.awssdk.services.kms.model.DataKeyPairSpec
 import software.amazon.awssdk.services.kms.model.DataKeySpec
