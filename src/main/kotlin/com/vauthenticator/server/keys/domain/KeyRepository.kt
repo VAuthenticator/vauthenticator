@@ -1,6 +1,5 @@
 package com.vauthenticator.server.keys.domain
 
-import com.vauthenticator.server.keys.*
 import java.time.Duration
 
 private val DELETE_NOW = Duration.ofSeconds(0)

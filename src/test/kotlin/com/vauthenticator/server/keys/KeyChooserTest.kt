@@ -1,5 +1,7 @@
 package com.vauthenticator.server.keys
 
+import com.vauthenticator.server.keys.domain.Keys
+import com.vauthenticator.server.keys.domain.Kid
 import com.vauthenticator.server.support.KeysUtils.aKeyFor
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
