@@ -3,7 +3,7 @@ package com.vauthenticator.server.keys.domain
 import java.time.Duration
 
 interface KeyStorage {
-    fun store(masterKid: MasterKid, kidContent: String, dataKey: DataKey, keyType: KeyType, keyPurpose: KeyPurpose)
+    fun store(masterKid: MasterKid, kid: Kid, dataKey: DataKey, keyType: KeyType, keyPurpose: KeyPurpose)
 
     fun signatureKeys(): Keys
 

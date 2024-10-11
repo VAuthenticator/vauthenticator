@@ -1,6 +1,6 @@
 package com.vauthenticator.server.config
 
-import com.vauthenticator.server.keys.adapter.dynamo.DynamoDbKeyRepository
+import com.vauthenticator.server.keys.adapter.dynamo.DynamoDbKeyStorage
 import com.vauthenticator.server.keys.adapter.kms.KmsKeyDecrypter
 import com.vauthenticator.server.keys.adapter.kms.KmsKeyGenerator
 import com.vauthenticator.server.keys.domain.KeyDecrypter
@@ -33,14 +33,17 @@ class KeyConfig {
         @Value("\${vauthenticator.dynamo-db.keys.signature.table-name}") signatureTableName: String,
         @Value("\${vauthenticator.dynamo-db.keys.mfa.table-name}") mfaTableName: String
     ): KeyRepository =
-        DynamoDbKeyRepository(
-            clock,
+        KeyRepository(
             { UUID.randomUUID().toString() },
-            signatureTableName,
-            mfaTableName,
+            DynamoDbKeyStorage(
+                clock,
+                dynamoDbClient,
+                signatureTableName,
+                mfaTableName,
+            ),
             keyGenerator,
-            dynamoDbClient
         )
+
 
     @Bean
     fun signatureKeyRotation(keyRepository: KeyRepository) = SignatureKeyRotation(keyRepository)

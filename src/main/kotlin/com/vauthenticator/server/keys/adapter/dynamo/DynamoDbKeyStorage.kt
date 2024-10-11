@@ -20,7 +20,7 @@ class DynamoDbKeyStorage(
 
     override fun store(
         masterKid: MasterKid,
-        kidContent: String,
+        kid: Kid,
         dataKey: DataKey,
         keyType: KeyType,
         keyPurpose: KeyPurpose
@@ -32,7 +32,7 @@ class DynamoDbKeyStorage(
                 .item(
                     mapOf(
                         "master_key_id" to masterKid.content().asDynamoAttribute(),
-                        "key_id" to kidContent.asDynamoAttribute(),
+                        "key_id" to kid.content().asDynamoAttribute(),
                         "encrypted_private_key" to dataKey.encryptedPrivateKeyAsString().asDynamoAttribute(),
                         "public_key" to dataKey.publicKeyAsString().asDynamoAttribute(),
                         "key_purpose" to keyPurpose.name.asDynamoAttribute(),
@@ -42,13 +42,15 @@ class DynamoDbKeyStorage(
 
                     )
                 ).build()
-        )    }
+        )
+    }
 
     override fun signatureKeys(): Keys {
         val keysOnDynamo = findAllFrom(signatureTableName)
         val items = keysOnDynamo.items()
         val keys = keysListFrom(items)
-        return Keys(keys)    }
+        return Keys(keys)
+    }
 
     override fun findOne(kid: Kid, keyPurpose: KeyPurpose): Key {
         val tableName = tableNameBasedOn(keyPurpose)

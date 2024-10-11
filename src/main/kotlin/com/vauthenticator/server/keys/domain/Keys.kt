@@ -63,7 +63,14 @@ data class DataKey(val encryptedPrivateKey: ByteArray, val publicKey: Optional<B
 
     companion object {
         fun from(encryptedPrivateKey: String, pubKey: String): DataKey {
-            return DataKey(decoder.decode(encryptedPrivateKey), Optional.of(decoder.decode(pubKey)))
+            return DataKey(
+                decoder.decode(encryptedPrivateKey),
+                if (pubKey.isEmpty()) {
+                    Optional.empty<ByteArray>()
+                } else {
+                    Optional.of(decoder.decode(pubKey))
+                }
+            )
         }
     }
 
@@ -76,6 +83,7 @@ data class DataKey(val encryptedPrivateKey: ByteArray, val publicKey: Optional<B
 
     fun encryptedPrivateKeyAsString(): String = encoder.encode(encryptedPrivateKey).decodeToString()
     fun publicKeyAsString(): String = publicKey.map { encoder.encode(it).decodeToString() }.orElseGet { "" }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -85,9 +93,7 @@ data class DataKey(val encryptedPrivateKey: ByteArray, val publicKey: Optional<B
         if (!encryptedPrivateKey.contentEquals(other.encryptedPrivateKey)) return false
 
         if (!(publicKey.isEmpty && other.publicKey.isEmpty)) {
-            if (!publicKey.get().contentEquals(other.publicKey.get())) return false
-        } else {
-            return false
+            return publicKey.get().contentEquals(other.publicKey.get())
         }
 
         return true
