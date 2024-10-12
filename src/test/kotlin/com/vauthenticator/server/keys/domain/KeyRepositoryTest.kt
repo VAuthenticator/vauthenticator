@@ -13,6 +13,7 @@ import com.vauthenticator.server.support.DynamoDbUtils.dynamoDbClient
 import com.vauthenticator.server.support.DynamoDbUtils.dynamoMfaKeysTableName
 import com.vauthenticator.server.support.DynamoDbUtils.dynamoSignatureKeysTableName
 import com.vauthenticator.server.support.DynamoDbUtils.resetDynamoDb
+import com.vauthenticator.server.support.KeysUtils.aMasterKey
 import com.vauthenticator.server.support.KeysUtils.aNewMasterKey
 import com.vauthenticator.server.support.KeysUtils.aSignatureDataKey
 import com.vauthenticator.server.support.KeysUtils.kmsClient
@@ -50,7 +51,7 @@ class KeyRepositoryTest {
     private lateinit var keyRepository: KeyRepository
     private lateinit var wrapper: KmsClientWrapper
 
-    private val kidGenerator = { UUID.randomUUID().toString() }
+    private val kidGenerator = { "A_KID"}
     private val now = Instant.now()
 
     private val A_KID = Kid(kidGenerator.invoke())
@@ -77,7 +78,7 @@ class KeyRepositoryTest {
 
     @Test
     fun `when create a new data key pair`() {
-        val masterKid = aNewMasterKey()
+        val masterKid = aMasterKey
 
         every { keyGenerator.dataKeyPairFor(masterKid) } returns aSignatureDataKey
         every { keyStorage.store(masterKid, A_KID, aSignatureDataKey, ASYMMETRIC, SIGNATURE) } just runs
