@@ -86,10 +86,11 @@ class DynamoDbKeyStorage(
                     .expressionAttributeValues(
                         mapOf(
                             ":enabled" to false.asDynamoAttribute(),
-                            ":timestamp" to ttl.expirationTimeStampInSecondFromNow(clock).asDynamoAttribute()
+                            ":timestamp" to ttl.expirationTimeStampInSecondFromNow(clock).asDynamoAttribute(),
+                            ":zero" to Duration.ZERO.toSeconds().asDynamoAttribute()
                         )
                     )
-                    .conditionExpression("key_expiration_date_timestamp <> :timestamp")
+                    .conditionExpression("key_expiration_date_timestamp = :zero")
                     .build()
             )
         } catch (e: ConditionalCheckFailedException) {

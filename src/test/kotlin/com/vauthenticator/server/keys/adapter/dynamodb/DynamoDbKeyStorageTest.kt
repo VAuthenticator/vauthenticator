@@ -27,15 +27,17 @@ import org.junit.jupiter.api.Test
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
 import java.time.Clock
+import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
+import kotlin.test.assertNotNull
 
 class DynamoDbKeyStorageTest {
 
-    val masterKid = aMasterKey
-    private lateinit var uut: KeyStorage
-
+    private val masterKid = aMasterKey
     private val now = Instant.now()
+
+    private lateinit var uut: KeyStorage
 
     @BeforeEach
     fun setUp() {
@@ -108,103 +110,52 @@ class DynamoDbKeyStorageTest {
         assertEquals(excpected, actual)
     }
 
-    /*
+    @Test
+    fun `when a signature key is deleted`() {
+        uut.store(masterKid, aKid, aSignatureDataKey, ASYMMETRIC, SIGNATURE)
+        val storedKey = uut.findOne(aKid, SIGNATURE)
+        assertNotNull(storedKey)
 
+        uut.justDeleteKey(aKid, SIGNATURE)
+        val actual = getActual(aKid, dynamoSignatureKeysTableName)
+        assertEquals(emptyMap<String, AttributeValue>(), actual)
+    }
 
-        @Test
-        fun `when a signature key is deleted`() {
-            val masterKid = aNewMasterKey()
-            val kid = keyRepository.createKeyFrom(masterKid)
-            keyRepository.createKeyFrom(masterKid)
-            val ttl = Duration.ofSeconds(1)
-            keyRepository.deleteKeyFor(kid, SIGNATURE, ttl)
+    @Test
+    fun `when a signature key planned  to be deleted`() {
+        uut.store(masterKid, aKid, aSignatureDataKey, ASYMMETRIC, SIGNATURE)
+        val storedKey = uut.findOne(aKid, SIGNATURE)
+        assertNotNull(storedKey)
 
-            val actual = getActual(kid, dynamoSignatureKeysTableName)
-            val expectedTTl = now.epochSecond + 1
-            assertEquals(false, (actual["enabled"] as AttributeValue).bool())
-            assertEquals(expectedTTl, (actual["key_expiration_date_timestamp"] as AttributeValue).n().toLong())
-        }
+        val ttl = Duration.ofSeconds(1)
+        uut.keyDeleteJodPlannedFor(aKid, ttl, SIGNATURE)
 
-        @Test
-        fun `when delete a rotated signature key`() {
-            val masterKid = aNewMasterKey()
-            val kid = keyRepository.createKeyFrom(masterKid)
-            keyRepository.createKeyFrom(masterKid)
-            keyRepository.createKeyFrom(masterKid)
-            keyRepository.createKeyFrom(masterKid)
-            keyRepository.createKeyFrom(masterKid)
-            val ttl = Duration.ofSeconds(1)
-            keyRepository.deleteKeyFor(kid, SIGNATURE, ttl)
+        val actual = getActual(aKid, dynamoSignatureKeysTableName)
+        val expectedTTl = now.epochSecond + 1
+        assertEquals(false, (actual["enabled"] as AttributeValue).bool())
+        assertEquals(expectedTTl, (actual["key_expiration_date_timestamp"] as AttributeValue).n().toLong())
+    }
 
-            val actual = getActual(kid, dynamoSignatureKeysTableName)
-            val expectedTTl = now.epochSecond + 1
-            assertEquals(false, (actual["enabled"] as AttributeValue).bool())
-            assertEquals(expectedTTl, (actual["key_expiration_date_timestamp"] as AttributeValue).n().toLong())
+    @Test
+    fun `when a signature key deletion planning is ignored`() {
+        uut.store(masterKid, aKid, aSignatureDataKey, ASYMMETRIC, SIGNATURE)
+        val storedKey = uut.findOne(aKid, SIGNATURE)
+        assertNotNull(storedKey)
 
-            assertThrows(KeyDeletionException::class.java) {
-                keyRepository.deleteKeyFor(kid, SIGNATURE)
-            }
-        }
+        uut.keyDeleteJodPlannedFor(aKid, Duration.ofSeconds(1), SIGNATURE)
 
-        @Test
-        fun `when a signature key deleted request is ignored due to only one valid key is left`() {
-            val masterKid = aNewMasterKey()
-            val firstKid = keyRepository.createKeyFrom(masterKid)
-            val secondKid = keyRepository.createKeyFrom(masterKid)
+        val actual = getActual(aKid, dynamoSignatureKeysTableName)
+        val expectedTTl = now.epochSecond + 1
+        assertEquals(false, (actual["enabled"] as AttributeValue).bool())
+        assertEquals(expectedTTl, (actual["key_expiration_date_timestamp"] as AttributeValue).n().toLong())
 
-            val ttl = Duration.ofSeconds(10)
-            keyRepository.deleteKeyFor(firstKid, SIGNATURE, ttl)
+        uut.keyDeleteJodPlannedFor(aKid, Duration.ofSeconds(10), SIGNATURE)
 
-            assertThrows(KeyDeletionException::class.java) {
-                keyRepository.deleteKeyFor(secondKid, SIGNATURE)
-            }
-
-        }
-
-        @Test
-        fun `when a signature key deletion goes in error`() {
-            val masterKid = aNewMasterKey()
-            val kid = keyRepository.createKeyFrom(masterKid)
-
-            assertThrows(KeyDeletionException::class.java) { keyRepository.deleteKeyFor(kid, SIGNATURE) }
-        }
-
-        @Test
-        fun `when a mfa key is deleted`() {
-            val masterKid = aNewMasterKey()
-            val kid = keyRepository.createKeyFrom(masterKid = masterKid, keyPurpose = MFA)
-            keyRepository.deleteKeyFor(kid, MFA)
-
-            val actual = getActual(kid, dynamoMfaKeysTableName)
-            assertEquals(emptyMap<String, AttributeValue>(), actual)
-        }
-
-
-
-
-        @Test
-        fun `when a key is found by id and purpose`() {
-            val masterKid = aNewMasterKey()
-            val kid = keyRepository.createKeyFrom(masterKid, SYMMETRIC, MFA)
-
-            val actual = keyRepository.keyFor(kid, MFA)
-            val expected = Key(
-                DataKey.from(
-                    encoder.encode(wrapper.generateDataKeyRecorder.get().ciphertextBlob().asByteArray())
-                        .decodeToString(),
-                    ""
-                ),
-                masterKid,
-                kid,
-                true,
-                SYMMETRIC,
-                MFA,
-                0L
-            )
-
-            assertEquals(expected, actual)
-        }
-    */
+        val actualAfterReplanning = getActual(aKid, dynamoSignatureKeysTableName)
+        val expectedTTlAfterReplanning = now.epochSecond + 1
+        assertEquals(false, (actualAfterReplanning["enabled"] as AttributeValue).bool())
+        assertEquals(expectedTTlAfterReplanning, (actualAfterReplanning["key_expiration_date_timestamp"] as AttributeValue).n().toLong())
+    }
 
     private fun getActual(kid: Kid, tableName: String): MutableMap<String, AttributeValue> =
         dynamoDbClient.getItem(
