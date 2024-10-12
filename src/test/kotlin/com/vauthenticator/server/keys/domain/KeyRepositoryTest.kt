@@ -1,23 +1,34 @@
-package com.vauthenticator.server.keys
+package com.vauthenticator.server.keys.domain
 
 import com.vauthenticator.server.extentions.asDynamoAttribute
 import com.vauthenticator.server.extentions.encoder
 import com.vauthenticator.server.extentions.valueAsStringFor
-import com.vauthenticator.server.keys.KeyPurpose.MFA
-import com.vauthenticator.server.keys.KeyPurpose.SIGNATURE
-import com.vauthenticator.server.keys.KeyType.ASYMMETRIC
-import com.vauthenticator.server.keys.KeyType.SYMMETRIC
+import com.vauthenticator.server.keys.adapter.dynamo.DynamoDbKeyStorage
+import com.vauthenticator.server.keys.adapter.kms.KmsKeyGenerator
+import com.vauthenticator.server.keys.domain.KeyPurpose.MFA
+import com.vauthenticator.server.keys.domain.KeyPurpose.SIGNATURE
+import com.vauthenticator.server.keys.domain.KeyType.ASYMMETRIC
+import com.vauthenticator.server.keys.domain.KeyType.SYMMETRIC
 import com.vauthenticator.server.support.DynamoDbUtils.dynamoDbClient
 import com.vauthenticator.server.support.DynamoDbUtils.dynamoMfaKeysTableName
 import com.vauthenticator.server.support.DynamoDbUtils.dynamoSignatureKeysTableName
 import com.vauthenticator.server.support.DynamoDbUtils.resetDynamoDb
+import com.vauthenticator.server.support.KeysUtils.aMasterKey
 import com.vauthenticator.server.support.KeysUtils.aNewMasterKey
+import com.vauthenticator.server.support.KeysUtils.aSignatureDataKey
 import com.vauthenticator.server.support.KeysUtils.kmsClient
 import com.vauthenticator.server.support.KmsClientWrapper
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
+import io.mockk.just
+import io.mockk.runs
+import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
 import java.time.Clock
@@ -26,50 +37,61 @@ import java.time.Instant
 import java.time.ZoneId
 import java.util.*
 
-internal class AwsKeyRepositoryTest {
+@ExtendWith(MockKExtension::class)
+class KeyRepositoryTest {
+
+    @MockK
+    private lateinit var keyGenerator: KeyGenerator
+
+    @MockK
+    private lateinit var keyStorage: KeyStorage
+
+    private lateinit var uut: KeyRepository
 
     private lateinit var keyRepository: KeyRepository
     private lateinit var wrapper: KmsClientWrapper
 
-    private val kidGenerator = { UUID.randomUUID().toString() }
+    private val kidGenerator = { "A_KID"}
     private val now = Instant.now()
 
+    private val A_KID = Kid(kidGenerator.invoke())
+
     @BeforeEach
-    internal fun setUp() {
+    fun setUp() {
+        uut = KeyRepository(kidGenerator, keyStorage, keyGenerator)
         resetDynamoDb()
+
+
         wrapper = KmsClientWrapper(kmsClient)
         keyRepository =
-            AwsKeyRepository(
-                Clock.fixed(now, ZoneId.systemDefault()),
+            KeyRepository(
                 kidGenerator,
-                dynamoSignatureKeysTableName,
-                dynamoMfaKeysTableName,
-                KmsKeyGenerator(wrapper),
-                dynamoDbClient
+                DynamoDbKeyStorage(
+                    Clock.fixed(now, ZoneId.systemDefault()),
+                    dynamoDbClient,
+                    dynamoSignatureKeysTableName,
+                    dynamoMfaKeysTableName
+                ),
+                KmsKeyGenerator(wrapper)
             )
     }
 
     @Test
-    internal fun `when create a new data key pair`() {
-        val masterKid = aNewMasterKey()
+    fun `when create a new data key pair`() {
+        val masterKid = aMasterKey
 
-        val kid = keyRepository.createKeyFrom(masterKid, ASYMMETRIC)
+        every { keyGenerator.dataKeyPairFor(masterKid) } returns aSignatureDataKey
+        every { keyStorage.store(masterKid, A_KID, aSignatureDataKey, ASYMMETRIC, SIGNATURE) } just runs
 
-        val actual = getActual(kid, dynamoSignatureKeysTableName)
-        assertEquals(kid.content(), actual.valueAsStringFor("key_id"))
-        assertEquals(masterKid.content(), actual.valueAsStringFor("master_key_id"))
-        assertEquals(
-            encoder.encode(wrapper.generateDataKeyPairRecorder.get().privateKeyCiphertextBlob().asByteArray())
-                .decodeToString(), actual.valueAsStringFor("encrypted_private_key")
-        )
-        assertEquals(
-            encoder.encode(wrapper.generateDataKeyPairRecorder.get().publicKey().asByteArray()).decodeToString(),
-            actual.valueAsStringFor("public_key")
-        )
+        val kid = uut.createKeyFrom(masterKid, ASYMMETRIC)
+
+        assertEquals(kid.content(), A_KID.content())
+        verify { keyGenerator.dataKeyPairFor(masterKid) }
+        verify { keyStorage.store(masterKid, A_KID, aSignatureDataKey, ASYMMETRIC, SIGNATURE) }
     }
 
     @Test
-    internal fun `when create a new data key`() {
+    fun `when create a new data key`() {
         val masterKid = aNewMasterKey()
         val kid = keyRepository.createKeyFrom(masterKid, SYMMETRIC)
 
@@ -83,7 +105,7 @@ internal class AwsKeyRepositoryTest {
     }
 
     @Test
-    internal fun `when create a new data key for mfa`() {
+    fun `when create a new data key for mfa`() {
         val masterKid = aNewMasterKey()
         val kid = keyRepository.createKeyFrom(masterKid, SYMMETRIC, MFA)
 
@@ -97,7 +119,7 @@ internal class AwsKeyRepositoryTest {
     }
 
     @Test
-    internal fun `when a signature key is deleted`() {
+    fun `when a signature key is deleted`() {
         val masterKid = aNewMasterKey()
         val kid = keyRepository.createKeyFrom(masterKid)
         keyRepository.createKeyFrom(masterKid)
@@ -111,7 +133,7 @@ internal class AwsKeyRepositoryTest {
     }
 
     @Test
-    internal fun `when delete a rotated signature key`() {
+    fun `when delete a rotated signature key`() {
         val masterKid = aNewMasterKey()
         val kid = keyRepository.createKeyFrom(masterKid)
         keyRepository.createKeyFrom(masterKid)
@@ -132,7 +154,7 @@ internal class AwsKeyRepositoryTest {
     }
 
     @Test
-    internal fun `when a signature key deleted request is ignored due to only one valid key is left`() {
+    fun `when a signature key deleted request is ignored due to only one valid key is left`() {
         val masterKid = aNewMasterKey()
         val firstKid = keyRepository.createKeyFrom(masterKid)
         val secondKid = keyRepository.createKeyFrom(masterKid)
@@ -147,7 +169,7 @@ internal class AwsKeyRepositoryTest {
     }
 
     @Test
-    internal fun `when a signature key deletion goes in error`() {
+    fun `when a signature key deletion goes in error`() {
         val masterKid = aNewMasterKey()
         val kid = keyRepository.createKeyFrom(masterKid)
 
@@ -155,7 +177,7 @@ internal class AwsKeyRepositoryTest {
     }
 
     @Test
-    internal fun `when a mfa key is deleted`() {
+    fun `when a mfa key is deleted`() {
         val masterKid = aNewMasterKey()
         val kid = keyRepository.createKeyFrom(masterKid = masterKid, keyPurpose = MFA)
         keyRepository.deleteKeyFor(kid, MFA)
@@ -177,7 +199,7 @@ internal class AwsKeyRepositoryTest {
         ).item()
 
     @Test
-    internal fun `when a key is found by id and purpose`() {
+    fun `when a key is found by id and purpose`() {
         val masterKid = aNewMasterKey()
         val kid = keyRepository.createKeyFrom(masterKid, SYMMETRIC, MFA)
 

@@ -2,7 +2,7 @@ package com.vauthenticator.server.mfa.adapter.dynamodb
 
 import com.vauthenticator.server.extentions.valueAsBoolFor
 import com.vauthenticator.server.extentions.valueAsStringFor
-import com.vauthenticator.server.keys.Kid
+import com.vauthenticator.server.keys.domain.Kid
 import com.vauthenticator.server.mfa.domain.MfaAccountMethod
 import com.vauthenticator.server.mfa.domain.MfaDeviceId
 import com.vauthenticator.server.mfa.domain.MfaMethod.valueOf

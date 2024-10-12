@@ -1,6 +1,7 @@
-package com.vauthenticator.server.keys
+package com.vauthenticator.server.keys.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.vauthenticator.server.keys.domain.*
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension

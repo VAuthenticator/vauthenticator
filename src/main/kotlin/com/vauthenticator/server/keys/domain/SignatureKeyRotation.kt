@@ -1,4 +1,4 @@
-package com.vauthenticator.server.keys
+package com.vauthenticator.server.keys.domain
 
 import java.time.Duration
 

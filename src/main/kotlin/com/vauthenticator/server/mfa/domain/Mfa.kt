@@ -1,6 +1,6 @@
 package com.vauthenticator.server.mfa.domain
 
-import com.vauthenticator.server.keys.Kid
+import com.vauthenticator.server.keys.domain.Kid
 import org.springframework.security.authentication.event.AbstractAuthenticationEvent
 import org.springframework.security.authentication.event.AbstractAuthenticationFailureEvent
 import org.springframework.security.core.Authentication

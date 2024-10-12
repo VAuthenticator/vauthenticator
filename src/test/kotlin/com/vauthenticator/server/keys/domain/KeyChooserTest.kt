@@ -1,4 +1,4 @@
-package com.vauthenticator.server.keys
+package com.vauthenticator.server.keys.domain
 
 import com.vauthenticator.server.support.KeysUtils.aKeyFor
 import org.junit.jupiter.api.Assertions.assertEquals
