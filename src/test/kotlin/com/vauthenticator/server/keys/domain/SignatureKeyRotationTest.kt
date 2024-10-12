@@ -1,6 +1,5 @@
-package com.vauthenticator.server.keys
+package com.vauthenticator.server.keys.domain
 
-import com.vauthenticator.server.keys.domain.*
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension

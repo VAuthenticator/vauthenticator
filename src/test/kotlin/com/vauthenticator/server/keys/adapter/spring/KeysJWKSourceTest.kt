@@ -1,8 +1,7 @@
-package com.vauthenticator.server.keys
+package com.vauthenticator.server.keys.adapter.spring
 
 import com.nimbusds.jose.jwk.JWKMatcher
 import com.nimbusds.jose.jwk.JWKSelector
-import com.vauthenticator.server.keys.adapter.spring.KeysJWKSource
 import com.vauthenticator.server.keys.domain.KeyDecrypter
 import com.vauthenticator.server.keys.domain.KeyRepository
 import com.vauthenticator.server.keys.domain.Keys

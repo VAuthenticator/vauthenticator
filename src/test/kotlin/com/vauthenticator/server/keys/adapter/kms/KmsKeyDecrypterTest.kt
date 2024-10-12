@@ -1,7 +1,6 @@
-package com.vauthenticator.server.keys
+package com.vauthenticator.server.keys.adapter.kms
 
 import com.vauthenticator.server.extentions.encoder
-import com.vauthenticator.server.keys.adapter.kms.KmsKeyDecrypter
 import com.vauthenticator.server.keys.domain.DataKey
 import com.vauthenticator.server.support.KeysUtils.aNewMasterKey
 import com.vauthenticator.server.support.KeysUtils.kmsClient
