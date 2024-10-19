@@ -1,6 +1,6 @@
 package com.vauthenticator.server.mfa.domain
 
-import com.vauthenticator.server.keys.Kid
+import com.vauthenticator.server.keys.domain.Kid
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
 import com.vauthenticator.server.support.AccountTestFixture
 import com.vauthenticator.server.support.TicketFixture

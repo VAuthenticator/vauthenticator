@@ -4,7 +4,7 @@ import com.vauthenticator.server.account.repository.AbstractAccountRepositoryTes
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.role.RoleRepository
 import com.vauthenticator.server.role.protectedRoleNames
-import com.vauthenticator.server.role.repository.dynamodb.DynamoDbRoleRepository
+import com.vauthenticator.server.role.adapter.dynamodb.DynamoDbRoleRepository
 import com.vauthenticator.server.support.DynamoDbUtils.dynamoAccountTableName
 import com.vauthenticator.server.support.DynamoDbUtils.dynamoDbClient
 import com.vauthenticator.server.support.DynamoDbUtils.dynamoRoleTableName

@@ -1,6 +1,6 @@
 package com.vauthenticator.server.support
 
-import com.vauthenticator.server.keys.Kid
+import com.vauthenticator.server.keys.domain.Kid
 import com.vauthenticator.server.mfa.domain.*
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import com.vauthenticator.server.support.AccountTestFixture.anAccountWithPhoneNumber
