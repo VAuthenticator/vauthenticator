@@ -1,4 +1,4 @@
-package com.vauthenticator.server.role.repository
+package com.vauthenticator.server.role.adapter
 
 import com.vauthenticator.server.cache.CacheContentConverter
 import com.vauthenticator.server.cache.CacheOperation

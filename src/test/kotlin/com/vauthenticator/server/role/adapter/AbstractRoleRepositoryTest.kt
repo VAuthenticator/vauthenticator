@@ -1,4 +1,4 @@
-package com.vauthenticator.server.role.repository
+package com.vauthenticator.server.role.adapter
 
 import com.vauthenticator.server.role.ProtectedRoleFromDeletionException
 import com.vauthenticator.server.role.Role
@@ -8,21 +8,21 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 abstract class AbstractRoleRepositoryTest {
-    private lateinit var roleRepository: RoleRepository
+    private lateinit var uut: RoleRepository
 
     abstract fun initRoleRepository(): RoleRepository
     abstract fun resetDatabase()
 
     @BeforeEach
     fun setUp() {
-        roleRepository = initRoleRepository()
+        uut = initRoleRepository()
         resetDatabase()
     }
 
 
     @Test
     fun findAllRoles() {
-        val actual = roleRepository.findAll()
+        val actual = uut.findAll()
         val expected: List<Role> = listOf(Role("a_role", "A_ROLE"))
 
         assertEquals(expected, actual)
@@ -30,8 +30,8 @@ abstract class AbstractRoleRepositoryTest {
 
     @Test
     fun `save a new role`() {
-        roleRepository.save(Role("another_role", "ANOTHER_ROLE"))
-        val expected = roleRepository.findAll().toSet()
+        uut.save(Role("another_role", "ANOTHER_ROLE"))
+        val expected = uut.findAll().toSet()
         val actual = listOf(Role("a_role", "A_ROLE"), Role("another_role", "ANOTHER_ROLE")).toSet()
 
         assertEquals(expected, actual)
@@ -39,9 +39,9 @@ abstract class AbstractRoleRepositoryTest {
 
     @Test
     fun `save a new role again`() {
-        roleRepository.save(Role("another_role", "ANOTHER_ROLE"))
-        roleRepository.save(Role("another_role", "ANOTHER_ROLE AGAIN"))
-        val expected = roleRepository.findAll().toSet()
+        uut.save(Role("another_role", "ANOTHER_ROLE"))
+        uut.save(Role("another_role", "ANOTHER_ROLE AGAIN"))
+        val expected = uut.findAll().toSet()
         val actual = listOf(Role("a_role", "A_ROLE"), Role("another_role", "ANOTHER_ROLE AGAIN")).toSet()
 
         assertEquals(expected, actual)
@@ -49,14 +49,14 @@ abstract class AbstractRoleRepositoryTest {
 
     @Test
     fun `delete a role`() {
-        roleRepository.delete("a_role")
-        val roles = roleRepository.findAll()
+        uut.delete("a_role")
+        val roles = uut.findAll()
 
         assertTrue { roles.isEmpty() }
     }
 
     @Test
     fun `when default role is attempted to be deleted`() {
-        assertThrows(ProtectedRoleFromDeletionException::class.java) { roleRepository.delete("ROLE_USER") }
+        assertThrows(ProtectedRoleFromDeletionException::class.java) { uut.delete("ROLE_USER") }
     }
 }

@@ -1,8 +1,8 @@
-package com.vauthenticator.server.role.repository.jdbc
+package com.vauthenticator.server.role.adapter.jdbc
 
 import com.vauthenticator.server.role.RoleRepository
 import com.vauthenticator.server.role.protectedRoleNames
-import com.vauthenticator.server.role.repository.AbstractRoleRepositoryTest
+import com.vauthenticator.server.role.adapter.AbstractRoleRepositoryTest
 import com.vauthenticator.server.support.JdbcUtils.initRoleTestsInDB
 import com.vauthenticator.server.support.JdbcUtils.jdbcTemplate
 import com.vauthenticator.server.support.JdbcUtils.resetDb

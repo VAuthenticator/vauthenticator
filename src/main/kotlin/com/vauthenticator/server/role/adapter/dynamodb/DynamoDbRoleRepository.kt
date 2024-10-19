@@ -1,4 +1,4 @@
-package com.vauthenticator.server.role.repository.dynamodb
+package com.vauthenticator.server.role.adapter.dynamodb
 
 import com.vauthenticator.server.role.DynamoDbRoleMapper
 import com.vauthenticator.server.role.ProtectedRoleFromDeletionException

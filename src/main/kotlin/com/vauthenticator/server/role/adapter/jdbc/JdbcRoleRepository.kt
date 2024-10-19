@@ -1,4 +1,4 @@
-package com.vauthenticator.server.role.repository.jdbc
+package com.vauthenticator.server.role.adapter.jdbc
 
 import com.vauthenticator.server.role.ProtectedRoleFromDeletionException
 import com.vauthenticator.server.role.Role
