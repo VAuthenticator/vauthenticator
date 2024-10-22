@@ -1,9 +1,8 @@
 package com.vauthenticator.server.role.adapter.dynamodb
 
-import com.vauthenticator.server.role.DynamoDbRoleMapper
-import com.vauthenticator.server.role.ProtectedRoleFromDeletionException
-import com.vauthenticator.server.role.Role
-import com.vauthenticator.server.role.RoleRepository
+import com.vauthenticator.server.role.domain.ProtectedRoleFromDeletionException
+import com.vauthenticator.server.role.domain.Role
+import com.vauthenticator.server.role.domain.RoleRepository
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 
 class DynamoDbRoleRepository(

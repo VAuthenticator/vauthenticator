@@ -1,7 +1,7 @@
 package com.vauthenticator.server.oauth2.clientapp.api
 
 import com.vauthenticator.server.oauth2.clientapp.domain.*
-import com.vauthenticator.server.role.PermissionValidator
+import com.vauthenticator.server.role.domain.PermissionValidator
 import org.springframework.http.ResponseEntity
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.web.bind.annotation.*

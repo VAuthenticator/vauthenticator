@@ -1,4 +1,6 @@
-package com.vauthenticator.server.role
+package com.vauthenticator.server.support
+
+import com.vauthenticator.server.role.domain.Role
 
 
 val defaultRole = Role("ROLE_USER", "Default User Role")

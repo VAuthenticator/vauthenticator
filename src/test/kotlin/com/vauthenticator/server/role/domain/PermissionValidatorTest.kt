@@ -1,4 +1,4 @@
-package com.vauthenticator.server.role
+package com.vauthenticator.server.role.domain
 
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.domain.InsufficientClientApplicationScopeException

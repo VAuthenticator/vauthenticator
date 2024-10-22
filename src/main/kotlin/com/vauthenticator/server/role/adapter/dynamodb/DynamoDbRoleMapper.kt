@@ -1,19 +1,12 @@
-package com.vauthenticator.server.role
+package com.vauthenticator.server.role.adapter.dynamodb
 
 import com.vauthenticator.server.extentions.asDynamoAttribute
 import com.vauthenticator.server.extentions.valueAsStringFor
+import com.vauthenticator.server.role.domain.Role
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
 import software.amazon.awssdk.services.dynamodb.model.ScanRequest
-
-interface RoleRepository {
-
-    fun findAll(): List<Role>
-    fun save(role: Role)
-    fun delete(role: String)
-
-}
 
 object DynamoDbRoleMapper {
     fun findAllRequestFor(tableName: String): ScanRequest =

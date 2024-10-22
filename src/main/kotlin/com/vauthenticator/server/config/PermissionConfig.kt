@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.cache.CacheOperation
 import com.vauthenticator.server.cache.RedisCacheOperation
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
-import com.vauthenticator.server.role.PermissionValidator
-import com.vauthenticator.server.role.RoleCacheContentConverter
+import com.vauthenticator.server.role.domain.PermissionValidator
+import com.vauthenticator.server.role.domain.RoleCacheContentConverter
 import com.vauthenticator.server.role.adapter.CachedRoleRepository
 import com.vauthenticator.server.role.adapter.dynamodb.DynamoDbRoleRepository
 import com.vauthenticator.server.role.adapter.jdbc.JdbcRoleRepository

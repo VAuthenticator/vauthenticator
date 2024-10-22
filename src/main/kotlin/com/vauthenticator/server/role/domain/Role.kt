@@ -1,4 +1,4 @@
-package com.vauthenticator.server.role
+package com.vauthenticator.server.role.domain
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper

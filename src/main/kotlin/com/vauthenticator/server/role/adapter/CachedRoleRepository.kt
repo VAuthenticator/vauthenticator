@@ -2,8 +2,8 @@ package com.vauthenticator.server.role.adapter
 
 import com.vauthenticator.server.cache.CacheContentConverter
 import com.vauthenticator.server.cache.CacheOperation
-import com.vauthenticator.server.role.Role
-import com.vauthenticator.server.role.RoleRepository
+import com.vauthenticator.server.role.domain.Role
+import com.vauthenticator.server.role.domain.RoleRepository
 
 private const val ROLES_CACHE_KEY = "roles"
 

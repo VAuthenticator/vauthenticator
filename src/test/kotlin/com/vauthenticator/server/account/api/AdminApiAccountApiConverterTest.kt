@@ -2,7 +2,7 @@ package com.vauthenticator.server.account.api
 
 import com.vauthenticator.server.account.api.AdminApiAccountApiConverter.fromDomainToAccountAdminApiRepresentation
 import com.vauthenticator.server.config.adminRole
-import com.vauthenticator.server.role.Role
+import com.vauthenticator.server.role.domain.Role
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import io.mockk.mockk
 import org.junit.jupiter.api.Assertions.assertEquals

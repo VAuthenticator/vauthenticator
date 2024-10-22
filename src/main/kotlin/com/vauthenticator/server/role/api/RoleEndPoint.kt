@@ -1,5 +1,8 @@
-package com.vauthenticator.server.role
+package com.vauthenticator.server.role.api
 
+import com.vauthenticator.server.role.domain.ProtectedRoleFromDeletionException
+import com.vauthenticator.server.role.domain.Role
+import com.vauthenticator.server.role.domain.RoleRepository
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.noContent

@@ -1,6 +1,8 @@
-package com.vauthenticator.server.role
+package com.vauthenticator.server.role.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.vauthenticator.server.role.domain.Role
+import com.vauthenticator.server.role.domain.RoleRepository
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension

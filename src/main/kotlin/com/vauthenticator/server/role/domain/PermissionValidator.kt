@@ -1,4 +1,4 @@
-package com.vauthenticator.server.role
+package com.vauthenticator.server.role.domain
 
 import com.vauthenticator.server.extentions.clientAppId
 import com.vauthenticator.server.extentions.hasEnoughScopes

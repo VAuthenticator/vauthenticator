@@ -3,7 +3,7 @@ package com.vauthenticator.server.account.welcome
 import com.vauthenticator.server.account.AccountNotFoundException
 import com.vauthenticator.server.oauth2.clientapp.domain.Scope
 import com.vauthenticator.server.oauth2.clientapp.domain.Scopes
-import com.vauthenticator.server.role.PermissionValidator
+import com.vauthenticator.server.role.domain.PermissionValidator
 import jakarta.servlet.http.HttpSession
 import org.springframework.http.ResponseEntity
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken

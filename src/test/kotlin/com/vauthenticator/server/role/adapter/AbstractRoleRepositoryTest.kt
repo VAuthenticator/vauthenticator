@@ -1,8 +1,8 @@
 package com.vauthenticator.server.role.adapter
 
-import com.vauthenticator.server.role.ProtectedRoleFromDeletionException
-import com.vauthenticator.server.role.Role
-import com.vauthenticator.server.role.RoleRepository
+import com.vauthenticator.server.role.domain.ProtectedRoleFromDeletionException
+import com.vauthenticator.server.role.domain.Role
+import com.vauthenticator.server.role.domain.RoleRepository
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

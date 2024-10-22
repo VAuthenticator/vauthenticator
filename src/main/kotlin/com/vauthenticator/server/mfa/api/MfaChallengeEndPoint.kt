@@ -4,7 +4,7 @@ import com.vauthenticator.server.mfa.domain.MfaChallengeSender
 import com.vauthenticator.server.mfa.domain.MfaDeviceId
 import com.vauthenticator.server.oauth2.clientapp.domain.Scope
 import com.vauthenticator.server.oauth2.clientapp.domain.Scopes
-import com.vauthenticator.server.role.PermissionValidator
+import com.vauthenticator.server.role.domain.PermissionValidator
 import jakarta.servlet.http.HttpSession
 import org.springframework.security.core.Authentication
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken

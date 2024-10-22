@@ -2,7 +2,11 @@ package com.vauthenticator.server.role.adapter
 
 import com.vauthenticator.server.cache.CacheContentConverter
 import com.vauthenticator.server.cache.CacheOperation
-import com.vauthenticator.server.role.*
+import com.vauthenticator.server.role.domain.Role
+import com.vauthenticator.server.role.domain.RoleRepository
+import com.vauthenticator.server.support.adminRole
+import com.vauthenticator.server.support.defaultRole
+import com.vauthenticator.server.support.roles
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension

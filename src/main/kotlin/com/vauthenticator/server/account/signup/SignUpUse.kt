@@ -9,7 +9,7 @@ import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
 import com.vauthenticator.server.password.Password
 import com.vauthenticator.server.password.PasswordPolicy
 import com.vauthenticator.server.password.VAuthenticatorPasswordEncoder
-import com.vauthenticator.server.role.Role
+import com.vauthenticator.server.role.domain.Role
 import java.time.Instant
 
 open class SignUpUse(
