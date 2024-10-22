@@ -61,6 +61,7 @@ class KeyRepository(
         return keyStorage.signatureKeys()
     }
 
+    // todo would be better return an optional?
     fun keyFor(kid: Kid, keyPurpose: KeyPurpose): Key {
         return keyStorage.findOne(kid, keyPurpose)
     }

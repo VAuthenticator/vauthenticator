@@ -3,6 +3,7 @@ package com.vauthenticator.server.keys.adapter.dynamodb
 import com.vauthenticator.server.extentions.asDynamoAttribute
 import com.vauthenticator.server.keys.adapter.AbstractKeyStorageTest
 import com.vauthenticator.server.keys.adapter.dynamo.DynamoDbKeyStorage
+import com.vauthenticator.server.keys.domain.KeyPurpose
 import com.vauthenticator.server.keys.domain.KeyStorage
 import com.vauthenticator.server.keys.domain.Kid
 import com.vauthenticator.server.support.DynamoDbUtils.dynamoDbClient
@@ -17,10 +18,8 @@ import java.time.ZoneId
 
 class DynamoDbKeyStorageTest : AbstractKeyStorageTest() {
 
-    private val now = Instant.now()
-
     override fun initKeyStorage(): KeyStorage = DynamoDbKeyStorage(
-        Clock.fixed(now, ZoneId.systemDefault()),
+        clock(),
         dynamoDbClient,
         dynamoSignatureKeysTableName,
         dynamoMfaKeysTableName
@@ -30,9 +29,9 @@ class DynamoDbKeyStorageTest : AbstractKeyStorageTest() {
         resetDynamoDb()
     }
 
-    override fun getActual(kid: Kid, tableName: String): MutableMap<String, AttributeValue> =
+    override fun getActual(kid: Kid, keyPurpose: KeyPurpose): MutableMap<String, AttributeValue> =
         dynamoDbClient.getItem(
-            GetItemRequest.builder().tableName(tableName)
+            GetItemRequest.builder().tableName(tableNameFor(keyPurpose))
                 .key(
                     mapOf(
                         "key_id" to kid.content().asDynamoAttribute()
@@ -40,4 +39,10 @@ class DynamoDbKeyStorageTest : AbstractKeyStorageTest() {
                 )
                 .build()
         ).item()
+
+
+    private fun tableNameFor(keyPurpose: KeyPurpose) =  when (keyPurpose) {
+        KeyPurpose.MFA -> dynamoMfaKeysTableName
+        KeyPurpose.SIGNATURE -> dynamoSignatureKeysTableName
+    }
 }

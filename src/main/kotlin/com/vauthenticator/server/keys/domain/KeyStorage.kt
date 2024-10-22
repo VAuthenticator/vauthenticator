@@ -7,6 +7,7 @@ interface KeyStorage {
 
     fun signatureKeys(): Keys
 
+    // todo would be better return an optional?
     fun findOne(kid: Kid, keyPurpose: KeyPurpose): Key
 
     fun justDeleteKey(kid: Kid, keyPurpose: KeyPurpose)

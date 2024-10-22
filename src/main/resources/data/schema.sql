@@ -37,6 +37,21 @@ CREATE TABLE ACCOUNT_ROLE
     FOREIGN KEY (role_name) REFERENCES ROLE (name) on delete cascade
 );
 
+CREATE TABLE KEY
+(
+    key_id                        varchar(255) not null primary key,
+    master_key_id                 varchar(255) not null,
+    key_purpose                   varchar(255) not null,
+    key_type                      varchar(255) not null,
+    encrypted_private_key         text,
+    public_key                    text,
+    enabled                                    not null default false,
+    key_expiration_date_timestamp bigint_field not null default 0,
+
+);
+
+CREATE INDEX keys_key_purpose ON KEY (key_purpose);
+
 CREATE TABLE CLIENT_APPLICATION
 (
     client_app_id            varchar(255) not null PRIMARY KEY,

@@ -2,6 +2,8 @@ package com.vauthenticator.server.keys.adapter
 
 import com.vauthenticator.server.extentions.encoder
 import com.vauthenticator.server.extentions.valueAsStringFor
+import com.vauthenticator.server.keys.adapter.dynamo.DynamoDbKeyStorage
+import com.vauthenticator.server.keys.domain.KeyPurpose
 import com.vauthenticator.server.keys.domain.KeyPurpose.MFA
 import com.vauthenticator.server.keys.domain.KeyPurpose.SIGNATURE
 import com.vauthenticator.server.keys.domain.KeyStorage
@@ -9,6 +11,7 @@ import com.vauthenticator.server.keys.domain.KeyType.ASYMMETRIC
 import com.vauthenticator.server.keys.domain.KeyType.SYMMETRIC
 import com.vauthenticator.server.keys.domain.Keys
 import com.vauthenticator.server.keys.domain.Kid
+import com.vauthenticator.server.support.DynamoDbUtils.dynamoDbClient
 import com.vauthenticator.server.support.DynamoDbUtils.dynamoMfaKeysTableName
 import com.vauthenticator.server.support.DynamoDbUtils.dynamoSignatureKeysTableName
 import com.vauthenticator.server.support.KeysUtils.aKeyFor
@@ -21,8 +24,10 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
+import java.time.Clock
 import java.time.Duration
 import java.time.Instant
+import java.time.ZoneId
 import kotlin.test.assertNotNull
 
 abstract class AbstractKeyStorageTest {
@@ -34,8 +39,9 @@ abstract class AbstractKeyStorageTest {
 
     abstract fun initKeyStorage(): KeyStorage
     abstract fun resetDatabase()
-    abstract fun getActual(kid: Kid, tableName: String): MutableMap<String, AttributeValue>
+    abstract fun getActual(kid: Kid, keyPurpose: KeyPurpose): MutableMap<String, AttributeValue>
 
+    fun clock(): Clock = Clock.fixed(now, ZoneId.systemDefault())
 
     @BeforeEach
     fun setUp() {
@@ -47,7 +53,7 @@ abstract class AbstractKeyStorageTest {
     fun `when store a new data key pair`() {
         uut.store(masterKid, aKid, aSignatureDataKey, ASYMMETRIC, SIGNATURE)
 
-        val actual = getActual(aKid, dynamoSignatureKeysTableName)
+        val actual = getActual(aKid, SIGNATURE)
         assertEquals(aKid.content(), actual.valueAsStringFor("key_id"))
         assertEquals(masterKid.content(), actual.valueAsStringFor("master_key_id"))
         assertEquals(
@@ -64,7 +70,7 @@ abstract class AbstractKeyStorageTest {
     fun `when store a new data key for mfa`() {
         uut.store(masterKid, aKid, aSimmetricDataKey, SYMMETRIC, MFA)
 
-        val actual = getActual(aKid, dynamoMfaKeysTableName)
+        val actual = getActual(aKid, MFA)
         assertEquals(aKid.content(), actual.valueAsStringFor("key_id"))
         assertEquals(masterKid.content(), actual.valueAsStringFor("master_key_id"))
         assertEquals(
@@ -110,7 +116,7 @@ abstract class AbstractKeyStorageTest {
         assertNotNull(storedKey)
 
         uut.justDeleteKey(aKid, SIGNATURE)
-        val actual = getActual(aKid, dynamoSignatureKeysTableName)
+        val actual = getActual(aKid, SIGNATURE)
         assertEquals(emptyMap<String, AttributeValue>(), actual)
     }
 
@@ -123,7 +129,7 @@ abstract class AbstractKeyStorageTest {
         val ttl = Duration.ofSeconds(1)
         uut.keyDeleteJodPlannedFor(aKid, ttl, SIGNATURE)
 
-        val actual = getActual(aKid, dynamoSignatureKeysTableName)
+        val actual = getActual(aKid, SIGNATURE)
         val expectedTTl = now.epochSecond + 1
         assertEquals(false, (actual["enabled"] as AttributeValue).bool())
         assertEquals(expectedTTl, (actual["key_expiration_date_timestamp"] as AttributeValue).n().toLong())
@@ -137,14 +143,14 @@ abstract class AbstractKeyStorageTest {
 
         uut.keyDeleteJodPlannedFor(aKid, Duration.ofSeconds(1), SIGNATURE)
 
-        val actual = getActual(aKid, dynamoSignatureKeysTableName)
+        val actual = getActual(aKid, SIGNATURE)
         val expectedTTl = now.epochSecond + 1
         assertEquals(false, (actual["enabled"] as AttributeValue).bool())
         assertEquals(expectedTTl, (actual["key_expiration_date_timestamp"] as AttributeValue).n().toLong())
 
         uut.keyDeleteJodPlannedFor(aKid, Duration.ofSeconds(10), SIGNATURE)
 
-        val actualAfterReplanning = getActual(aKid, dynamoSignatureKeysTableName)
+        val actualAfterReplanning = getActual(aKid, SIGNATURE)
         val expectedTTlAfterReplanning = now.epochSecond + 1
         assertEquals(false, (actualAfterReplanning["enabled"] as AttributeValue).bool())
         assertEquals(expectedTTlAfterReplanning, (actualAfterReplanning["key_expiration_date_timestamp"] as AttributeValue).n().toLong())
