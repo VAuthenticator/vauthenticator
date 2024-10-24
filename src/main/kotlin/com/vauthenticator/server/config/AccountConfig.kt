@@ -10,7 +10,7 @@ import com.vauthenticator.server.account.repository.dynamodb.DynamoDbAccountRepo
 import com.vauthenticator.server.account.repository.jdbc.JdbcAccountRepository
 import com.vauthenticator.server.cache.CacheOperation
 import com.vauthenticator.server.cache.RedisCacheOperation
-import com.vauthenticator.server.role.RoleRepository
+import com.vauthenticator.server.role.domain.RoleRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean

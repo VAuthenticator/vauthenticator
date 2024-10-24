@@ -3,9 +3,9 @@ package com.vauthenticator.server.mfa.domain
 import com.j256.twofactorauth.TimeBasedOneTimePasswordUtil
 import com.vauthenticator.server.account.Account
 import com.vauthenticator.server.extentions.decoder
-import com.vauthenticator.server.keys.KeyDecrypter
-import com.vauthenticator.server.keys.KeyPurpose
-import com.vauthenticator.server.keys.KeyRepository
+import com.vauthenticator.server.keys.domain.KeyDecrypter
+import com.vauthenticator.server.keys.domain.KeyPurpose
+import com.vauthenticator.server.keys.domain.KeyRepository
 import com.vauthenticator.server.mfa.OtpConfigurationProperties
 import org.apache.commons.codec.binary.Hex
 

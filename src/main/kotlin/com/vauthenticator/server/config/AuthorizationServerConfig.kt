@@ -3,10 +3,10 @@ package com.vauthenticator.server.config
 import com.nimbusds.jose.jwk.source.JWKSource
 import com.nimbusds.jose.proc.SecurityContext
 import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.keys.KeyDecrypter
-import com.vauthenticator.server.keys.KeyRepository
-import com.vauthenticator.server.keys.KeysJWKSource
-import com.vauthenticator.server.keys.Kid
+import com.vauthenticator.server.keys.adapter.spring.KeysJWKSource
+import com.vauthenticator.server.keys.domain.KeyDecrypter
+import com.vauthenticator.server.keys.domain.KeyRepository
+import com.vauthenticator.server.keys.domain.Kid
 import com.vauthenticator.server.lambdas.AwsLambdaFunctionContextFactory
 import com.vauthenticator.server.lambdas.LambdaFunction
 import com.vauthenticator.server.lambdas.LambdaTokenEnhancer
@@ -23,7 +23,6 @@ import com.vauthenticator.server.oidc.token.IdTokenEnhancer
 import com.vauthenticator.server.oidc.userinfo.UserInfoEnhancer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile

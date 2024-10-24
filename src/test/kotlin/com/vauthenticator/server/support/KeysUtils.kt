@@ -1,6 +1,6 @@
 package com.vauthenticator.server.support
 
-import com.vauthenticator.server.keys.*
+import com.vauthenticator.server.keys.domain.*
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
 import software.amazon.awssdk.regions.Region
@@ -12,6 +12,12 @@ import java.util.*
 
 object KeysUtils {
 
+    val aSignatureDataKey: DataKey = DataKey(ByteArray(2323), Optional.of(ByteArray(23)))
+    val aSimmetricDataKey: DataKey = DataKey(ByteArray(0), Optional.empty())
+
+    val aKid: Kid = Kid("A_KID")
+    val anotherKid: Kid = Kid("ANOTHER_KID")
+    val aMasterKey: MasterKid = MasterKid("A_MASTER_KEY")
 
     private val policy = """
         {
@@ -52,13 +58,20 @@ object KeysUtils {
         ).keyMetadata().keyId()
     )
 
-    fun aKeyFor(masterKey: String, kid: String) = Key(
-        DataKey(ByteArray(0), Optional.empty<ByteArray>()),
+    fun aKeyFor(
+        masterKey: String,
+        kid: String,
+        keyType: KeyType = KeyType.ASYMMETRIC,
+        keyPurpose: KeyPurpose = KeyPurpose.SIGNATURE
+    ) = Key(
+        if(keyType == KeyType.ASYMMETRIC) {
+            aSignatureDataKey} else {
+            aSimmetricDataKey},
         MasterKid(masterKey),
         Kid(kid),
         true,
-        KeyType.ASYMMETRIC,
-        KeyPurpose.SIGNATURE,
+        keyType,
+        keyPurpose,
         0L
     )
 }
@@ -74,6 +87,7 @@ class KmsClientWrapper(
         generateDataKeyPairRecorder = Optional.of(generateDataKeyPair)
         return generateDataKeyPair
     }
+
     override fun generateDataKey(request: GenerateDataKeyRequest): GenerateDataKeyResponse {
         val generateDataKey = kmsClient.generateDataKey(request)
         generateDataKeyRecorder = Optional.of(generateDataKey)

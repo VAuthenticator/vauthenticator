@@ -7,7 +7,7 @@ import com.vauthenticator.server.account.repository.dynamodb.DynamoAccountConver
 import com.vauthenticator.server.account.repository.dynamodb.DynamoAccountQueryFactory.findAccountQueryForUserName
 import com.vauthenticator.server.account.repository.dynamodb.DynamoAccountQueryFactory.storeAccountQueryFor
 import com.vauthenticator.server.extentions.filterEmptyMetadata
-import com.vauthenticator.server.role.RoleRepository
+import com.vauthenticator.server.role.domain.RoleRepository
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.ConditionalCheckFailedException
 import java.util.*

@@ -2,11 +2,11 @@ package com.vauthenticator.server.account.repository
 
 import com.vauthenticator.server.account.Account
 import com.vauthenticator.server.account.AccountMandatoryAction.RESET_PASSWORD
-import com.vauthenticator.server.role.Role
-import com.vauthenticator.server.role.RoleRepository
-import com.vauthenticator.server.role.defaultRole
-import com.vauthenticator.server.role.protectedRoleName
+import com.vauthenticator.server.role.domain.Role
+import com.vauthenticator.server.role.domain.RoleRepository
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
+import com.vauthenticator.server.support.defaultRole
+import com.vauthenticator.server.support.protectedRoleName
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach

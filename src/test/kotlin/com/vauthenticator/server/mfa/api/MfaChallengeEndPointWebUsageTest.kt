@@ -5,7 +5,7 @@ import com.vauthenticator.server.mfa.domain.MfaDeviceId
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.domain.Scope
 import com.vauthenticator.server.oauth2.clientapp.domain.Scopes
-import com.vauthenticator.server.role.PermissionValidator
+import com.vauthenticator.server.role.domain.PermissionValidator
 import com.vauthenticator.server.support.AccountTestFixture
 import com.vauthenticator.server.support.ClientAppFixture.aClientApp
 import com.vauthenticator.server.support.ClientAppFixture.aClientAppId

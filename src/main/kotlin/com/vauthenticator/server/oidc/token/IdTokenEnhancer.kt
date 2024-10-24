@@ -1,7 +1,7 @@
 package com.vauthenticator.server.oidc.token
 
-import com.vauthenticator.server.keys.KeyRepository
-import com.vauthenticator.server.keys.Kid
+import com.vauthenticator.server.keys.domain.KeyRepository
+import com.vauthenticator.server.keys.domain.Kid
 import org.springframework.security.core.Authentication
 import org.springframework.security.oauth2.core.AuthorizationGrantType
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext
