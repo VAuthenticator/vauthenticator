@@ -5,8 +5,8 @@ import com.vauthenticator.document.repository.DocumentRepository
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.communication.NoReplyEMailConfiguration
 import com.vauthenticator.server.communication.adapter.JinJavaTemplateResolver
-import com.vauthenticator.server.communication.adapter.email.JavaEMailSenderService
-import com.vauthenticator.server.communication.adapter.sms.SnsSmsSenderService
+import com.vauthenticator.server.communication.adapter.javamail.JavaEMailSenderService
+import com.vauthenticator.server.communication.adapter.sns.SnsSmsSenderService
 import com.vauthenticator.server.communication.domain.*
 import com.vauthenticator.server.keys.domain.KeyDecrypter
 import com.vauthenticator.server.keys.domain.KeyRepository

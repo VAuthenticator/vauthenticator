@@ -1,8 +1,5 @@
-package com.vauthenticator.server.communication.email
+package com.vauthenticator.server.communication.domain
 
-import com.vauthenticator.server.communication.domain.EMailMessage
-import com.vauthenticator.server.communication.domain.EMailType
-import com.vauthenticator.server.communication.domain.SimpleEMailMessageFactory
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

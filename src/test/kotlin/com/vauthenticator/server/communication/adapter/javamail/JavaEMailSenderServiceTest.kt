@@ -1,4 +1,4 @@
-package com.vauthenticator.server.communication.email
+package com.vauthenticator.server.communication.adapter.javamail
 
 import com.hubspot.jinjava.Jinjava
 import com.icegreen.greenmail.configuration.GreenMailConfiguration
@@ -6,7 +6,6 @@ import com.icegreen.greenmail.junit5.GreenMailExtension
 import com.icegreen.greenmail.util.ServerSetupTest
 import com.vauthenticator.document.repository.DocumentRepository
 import com.vauthenticator.server.communication.adapter.JinJavaTemplateResolver
-import com.vauthenticator.server.communication.adapter.email.JavaEMailSenderService
 import com.vauthenticator.server.communication.domain.EMailSenderService
 import com.vauthenticator.server.communication.domain.EMailType
 import com.vauthenticator.server.communication.domain.MessageTemplateResolver

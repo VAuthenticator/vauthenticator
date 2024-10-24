@@ -1,4 +1,4 @@
-package com.vauthenticator.server.communication.adapter.email
+package com.vauthenticator.server.communication.adapter.javamail
 
 import com.vauthenticator.document.repository.DocumentRepository
 import com.vauthenticator.document.repository.DocumentType

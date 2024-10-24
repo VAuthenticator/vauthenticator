@@ -37,7 +37,7 @@ CREATE TABLE ACCOUNT_ROLE
     FOREIGN KEY (role_name) REFERENCES ROLE (name) on delete cascade
 );
 
-CREATE TABLE KEY
+CREATE TABLE KEYS
 (
     key_id                        varchar(255) not null primary key,
     master_key_id                 varchar(255) not null,
@@ -45,12 +45,11 @@ CREATE TABLE KEY
     key_type                      varchar(255) not null,
     encrypted_private_key         text,
     public_key                    text,
-    enabled                                    not null default false,
-    key_expiration_date_timestamp bigint_field not null default 0,
-
+    enabled                       boolean             not null default false,
+    key_expiration_date_timestamp bigint not null default 0
 );
 
-CREATE INDEX keys_key_purpose ON KEY (key_purpose);
+CREATE INDEX keys_key_purpose ON KEYS (key_purpose);
 
 CREATE TABLE CLIENT_APPLICATION
 (

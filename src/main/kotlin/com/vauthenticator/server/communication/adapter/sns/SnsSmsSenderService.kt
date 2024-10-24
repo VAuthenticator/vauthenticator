@@ -1,4 +1,4 @@
-package com.vauthenticator.server.communication.adapter.sms
+package com.vauthenticator.server.communication.adapter.sns
 
 import com.vauthenticator.server.account.Account
 import com.vauthenticator.server.communication.domain.MessageContext
