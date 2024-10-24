@@ -19,6 +19,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup
 
+private const val A_ROLE_DESCRIPTION = "A Role description"
+
 @ExtendWith(MockKExtension::class)
 internal class RoleEndPointTest {
 
@@ -37,9 +39,9 @@ internal class RoleEndPointTest {
     @Test
     internal fun `find al roles`() {
         val roles = listOf(
-            Role("a_role1", "A Role description"),
-            Role("a_role2", "A Role description"),
-            Role("a_role3", "A Role description")
+            Role("a_role1", A_ROLE_DESCRIPTION),
+            Role("a_role2", A_ROLE_DESCRIPTION),
+            Role("a_role3", A_ROLE_DESCRIPTION)
         )
 
         every { roleRepository.findAll() } returns roles
@@ -55,7 +57,7 @@ internal class RoleEndPointTest {
 
     @Test
     internal fun `save a new role`() {
-        val role = Role("a_role", "A Role description")
+        val role = Role("a_role", A_ROLE_DESCRIPTION)
         every { roleRepository.save(role) } just runs
 
         mokMvc.perform(

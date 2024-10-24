@@ -13,12 +13,7 @@ import com.vauthenticator.server.support.DynamoDbUtils.dynamoDbClient
 import com.vauthenticator.server.support.DynamoDbUtils.dynamoMfaKeysTableName
 import com.vauthenticator.server.support.DynamoDbUtils.dynamoSignatureKeysTableName
 import com.vauthenticator.server.support.DynamoDbUtils.resetDynamoDb
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
-import java.time.Clock
-import java.time.Instant
-import java.time.ZoneId
-import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
 class DynamoDbKeyStorageTest : AbstractKeyStorageTest() {
 

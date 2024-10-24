@@ -4,6 +4,8 @@ import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
+private const val NEW_ACCOUNT_EMAIL_EMAIL_COM = "new-accountmail@email.com"
+
 internal class SimpleEMailMessageFactoryTest {
 
     private val underTest = SimpleEMailMessageFactory("from", "subject", EMailType.WELCOME)
@@ -34,15 +36,15 @@ internal class SimpleEMailMessageFactoryTest {
     @Test
     internal fun `make a new mail message when the sender mail has changed`() {
         val account = anAccount()
-        val actual = underTest.makeMailMessageFor(account, mapOf("key" to "value", "email" to "new-accountmail@email.com"))
+        val actual = underTest.makeMailMessageFor(account, mapOf("key" to "value", "email" to NEW_ACCOUNT_EMAIL_EMAIL_COM))
 
         val expected = EMailMessage(
-                "new-accountmail@email.com", "from", "subject", EMailType.WELCOME,
+            NEW_ACCOUNT_EMAIL_EMAIL_COM, "from", "subject", EMailType.WELCOME,
                 mapOf(
                         "enabled" to account.enabled,
                         "username" to account.username,
                         "authorities" to account.authorities,
-                        "email" to "new-accountmail@email.com",
+                        "email" to NEW_ACCOUNT_EMAIL_EMAIL_COM,
                         "firstName" to account.firstName,
                         "lastName" to account.lastName,
                         "birthDate" to "",

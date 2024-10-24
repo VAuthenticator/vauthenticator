@@ -1,7 +1,7 @@
 package com.vauthenticator.server.mask
 
 import com.vauthenticator.server.support.AccountTestFixture.anAccountWithPhoneNumber
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class SensitivePhoneMaskerTest {
