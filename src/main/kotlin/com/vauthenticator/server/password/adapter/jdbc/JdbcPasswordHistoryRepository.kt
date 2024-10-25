@@ -3,7 +3,6 @@ package com.vauthenticator.server.password.adapter.jdbc
 import com.vauthenticator.server.password.domain.Password
 import com.vauthenticator.server.password.domain.PasswordHistoryRepository
 import org.springframework.jdbc.core.JdbcTemplate
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 import java.time.Clock
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -12,22 +11,13 @@ class JdbcPasswordHistoryRepository(
     private val historyEvaluationLimit: Int,
     private val maxHistoryAllowedSize: Int,
     private val clock: Clock,
-    private val dynamoPasswordHistoryTableName: String,
     private val jdbcTemplate: JdbcTemplate
 ) : PasswordHistoryRepository {
     override fun store(userName: String, password: Password) {
-//        dynamoDbClient.putItem(
-//            PutItemRequest.builder()
-//                .tableName(dynamoPasswordHistoryTableName)
-//                .item(
-//                    mapOf(
-//                        "user_name" to userName.asDynamoAttribute(),
-//                        "created_at" to createdAt().asDynamoAttribute(),
-//                        "password" to password.content.asDynamoAttribute()
-//                    )
-//                )
-//                .build()
-//        )
+        jdbcTemplate.update(
+            "INSERT INTO PASSWORD_HISTORY (user_name,created_at,password) VALUES (?,?,?)",
+            userName, createdAt(), password.content
+        )
     }
 
     private fun createdAt() =
@@ -36,33 +26,34 @@ class JdbcPasswordHistoryRepository(
             .toEpochMilli()
 
     override fun load(userName: String): List<Password> {
-      /*  val items = dynamoDbClient.query(
-            QueryRequest.builder()
-                .tableName(dynamoPasswordHistoryTableName)
-                .scanIndexForward(false)
-                .keyConditionExpression("user_name=:email")
-                .expressionAttributeValues(mapOf(":email" to userName.asDynamoAttribute())).build()
-        ).items()
-
+        val items = jdbcTemplate.query(
+            "SELECT * FROM PASSWORD_HISTORY WHERE user_name=? ORDER BY created_at DESC",
+            { rs, _ ->
+                mapOf(
+                    "user_name" to rs.getString("user_name"),
+                    "created_at" to rs.getLong("created_at"),
+                    "password" to rs.getString("password")
+                )
+            },
+            userName
+        )
         val allowedPassword = items.take(historyEvaluationLimit)
 
         deleteUselessPasswordHistory(items)
-        return allowedPassword.map { Password(it.valueAsStringFor("password")) }*/
-        TODO()
+        return allowedPassword.map { Password(it["password"]!! as String) }
     }
 
-    private fun deleteUselessPasswordHistory(itemsInTheHistory: List<Map<String, AttributeValue>>) {
+    private fun deleteUselessPasswordHistory(itemsInTheHistory: List<Map<String, Any>>) {
         val leftoverSize = itemsInTheHistory.size - maxHistoryAllowedSize
         if (leftoverSize > 0) {
-//            itemsInTheHistory.takeLast(leftoverSize)
-//                .forEach { itemToDelete ->
-//                    dynamoDbClient.deleteItem(
-//                        DeleteItemRequest.builder()
-//                            .tableName(dynamoPasswordHistoryTableName)
-//                            .key(itemToDelete.filterKeys { it != "password" })
-//                            .build()
-//                    )
-//                }
+            itemsInTheHistory.takeLast(leftoverSize)
+                .forEach { itemToDelete ->
+                    jdbcTemplate.update(
+                        "DELETE FROM PASSWORD_HISTORY WHERE user_name=? AND created_at=?",
+                        *itemToDelete.filterKeys { it != "password" }.values.toTypedArray()
+                    )
+
+                }
         }
     }
 }

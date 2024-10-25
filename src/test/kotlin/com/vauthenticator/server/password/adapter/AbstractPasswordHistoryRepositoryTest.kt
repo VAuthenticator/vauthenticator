@@ -2,7 +2,6 @@ package com.vauthenticator.server.password.adapter
 
 import com.vauthenticator.server.password.domain.Password
 import com.vauthenticator.server.password.domain.PasswordHistoryRepository
-import io.mockk.junit5.MockKExtension
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -25,7 +24,6 @@ abstract class AbstractPasswordHistoryRepositoryTest {
 
     @Test
     fun `when store a new password in an empty the history`() {
-
         uut.store(A_USERNAME, Password("A_PASSWORD"))
         val history = uut.load(A_USERNAME)
 
