@@ -3,7 +3,7 @@ package com.vauthenticator.server.password.adapter.spring
 import com.vauthenticator.server.password.domain.VAuthenticatorPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 
-class Argon2PasswordEncoderVAuthenticatorPasswordEncoder(private val passwordEncoder: PasswordEncoder) :
+class Argon2VAuthenticatorPasswordEncoder(private val passwordEncoder: PasswordEncoder) :
     VAuthenticatorPasswordEncoder {
 
     override fun encode(password: String): String = passwordEncoder.encode(password)

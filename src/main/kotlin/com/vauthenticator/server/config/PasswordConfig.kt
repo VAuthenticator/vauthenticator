@@ -1,7 +1,12 @@
 package com.vauthenticator.server.config
 
+import com.vauthenticator.server.account.repository.AccountRepository
+import com.vauthenticator.server.events.VAuthenticatorEventsDispatcher
 import com.vauthenticator.server.password.adapter.dynamodb.DynamoPasswordHistoryRepository
 import com.vauthenticator.server.password.domain.*
+import com.vauthenticator.server.password.domain.changepassword.ChangePassword
+import com.vauthenticator.server.password.domain.changepassword.ChangePasswordEventConsumer
+import com.vauthenticator.server.password.domain.resetpassword.ResetPasswordEventConsumer
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -10,9 +15,17 @@ import org.springframework.context.annotation.Configuration
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import java.time.Clock
 
+@EnableConfigurationProperties(PasswordGeneratorCriteria::class, PasswordPolicyConfigProp::class)
 @Configuration(proxyBeanMethods = false)
-@EnableConfigurationProperties(PasswordPolicyConfigProp::class)
-class PasswordPolicyConfig {
+class PasswordConfig {
+
+    @Bean
+    fun changePasswordEventConsumer(passwordHistoryRepository: PasswordHistoryRepository) =
+        ChangePasswordEventConsumer(passwordHistoryRepository)
+
+    @Bean
+    fun resetPasswordEventConsumer(passwordHistoryRepository: PasswordHistoryRepository) =
+        ResetPasswordEventConsumer(passwordHistoryRepository)
 
     @Bean
     fun passwordPolicy(
@@ -55,8 +68,20 @@ class PasswordPolicyConfig {
         dynamoPasswordHistoryTableName,
         dynamoDbClient
     )
-}
 
+    @Bean
+    fun changePassword(
+        eventsDispatcher: VAuthenticatorEventsDispatcher,
+        passwordPolicy: PasswordPolicy,
+        passwordEncoder: VAuthenticatorPasswordEncoder,
+        accountRepository: AccountRepository
+    ) =
+        ChangePassword(eventsDispatcher, passwordPolicy, passwordEncoder, accountRepository)
+
+    @Bean
+    fun passwordGenerator(passwordGeneratorCriteria: PasswordGeneratorCriteria) =
+        PasswordGenerator(passwordGeneratorCriteria)
+}
 
 @ConfigurationProperties(prefix = "password.policy")
 data class PasswordPolicyConfigProp(

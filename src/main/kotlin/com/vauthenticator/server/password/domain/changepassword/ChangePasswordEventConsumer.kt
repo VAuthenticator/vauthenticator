@@ -7,7 +7,6 @@ import com.vauthenticator.server.password.domain.Password
 import com.vauthenticator.server.password.domain.PasswordHistoryRepository
 import org.springframework.stereotype.Service
 
-@Service
 class ChangePasswordEventConsumer(
     private val passwordHistoryRepository: PasswordHistoryRepository
 ) : EventConsumer {
