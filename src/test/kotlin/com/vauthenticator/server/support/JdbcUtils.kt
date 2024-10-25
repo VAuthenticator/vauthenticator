@@ -30,6 +30,7 @@ object JdbcUtils {
             jdbcTemplate.execute("DROP TABLE IF EXISTS ACCOUNT_ROLE;")
             jdbcTemplate.execute("DROP TABLE IF EXISTS KEYS;")
             jdbcTemplate.execute("DROP TABLE IF EXISTS TICKET;")
+            jdbcTemplate.execute("DROP TABLE IF EXISTS PASSWORD_HISTORY;")
             jdbcTemplate.execute("DROP TABLE IF EXISTS oauth2_authorization;")
             jdbcTemplate.execute(Files.readString(Paths.get("src/main/resources/data/schema.sql")))
         } catch (e: java.lang.Exception) {

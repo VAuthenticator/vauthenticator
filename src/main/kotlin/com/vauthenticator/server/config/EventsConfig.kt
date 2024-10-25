@@ -4,8 +4,8 @@ import com.vauthenticator.server.account.emailverification.SendVerifyEMailChalle
 import com.vauthenticator.server.account.signup.SignUpEventConsumer
 import com.vauthenticator.server.account.welcome.SendWelcomeMailUponSignUpEventConsumer
 import com.vauthenticator.server.events.*
-import com.vauthenticator.server.password.changepassword.ChangePasswordEventConsumer
-import com.vauthenticator.server.password.resetpassword.ResetPasswordEventConsumer
+import com.vauthenticator.server.password.domain.changepassword.ChangePasswordEventConsumer
+import com.vauthenticator.server.password.domain.resetpassword.ResetPasswordEventConsumer
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

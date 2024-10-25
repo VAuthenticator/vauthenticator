@@ -1,7 +1,7 @@
-package com.vauthenticator.server.account.signup
+package com.vauthenticator.server.password.domain.resetpassword
 
 import com.vauthenticator.server.account.Email
-import com.vauthenticator.server.events.SignUpEvent
+import com.vauthenticator.server.events.ResetPasswordEvent
 import com.vauthenticator.server.password.domain.Password
 import com.vauthenticator.server.password.domain.PasswordHistoryRepository
 import com.vauthenticator.server.support.ClientAppFixture
@@ -16,7 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import java.time.Instant
 
 @ExtendWith(MockKExtension::class)
-class SignUpEventConsumerTest {
+class ResetPasswordEventConsumerTest {
 
     @MockK
     lateinit var passwordHistoryRepository: PasswordHistoryRepository
@@ -25,9 +25,9 @@ class SignUpEventConsumerTest {
     fun `when upon a sign up event the password history is updated`() {
         val password = Password("A_PASSWORD")
         val userName = Email("AN_EMAIL")
-        val event = SignUpEvent(userName, ClientAppFixture.aClientAppId(), Instant.now(), password)
+        val event = ResetPasswordEvent(userName, ClientAppFixture.aClientAppId(), Instant.now(), password)
 
-        val uut = SignUpEventConsumer(passwordHistoryRepository)
+        val uut = ResetPasswordEventConsumer(passwordHistoryRepository)
 
         every { passwordHistoryRepository.store(userName.content, password) } just runs
 

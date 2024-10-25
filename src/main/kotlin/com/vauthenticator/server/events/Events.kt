@@ -2,7 +2,7 @@ package com.vauthenticator.server.events
 
 import com.vauthenticator.server.account.Email
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
-import com.vauthenticator.server.password.Password
+import com.vauthenticator.server.password.domain.Password
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.security.authentication.event.AbstractAuthenticationEvent
 import java.time.Instant
@@ -54,7 +54,8 @@ class SignUpEvent(
     userName: Email,
     clientAppId: ClientAppId,
     timeStamp: Instant,
-    password : Password) : VAuthenticatorEvent(userName, clientAppId, timeStamp, password) {
+    password : Password
+) : VAuthenticatorEvent(userName, clientAppId, timeStamp, password) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -70,7 +71,8 @@ class ChangePasswordEvent(
     userName: Email,
     clientAppId: ClientAppId,
     timeStamp: Instant,
-    password : Password) : VAuthenticatorEvent(userName, clientAppId, timeStamp, password) {
+    password : Password
+) : VAuthenticatorEvent(userName, clientAppId, timeStamp, password) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -86,7 +88,8 @@ class ResetPasswordEvent(
     userName: Email,
     clientAppId: ClientAppId,
     timeStamp: Instant,
-    password : Password) : VAuthenticatorEvent(userName, clientAppId, timeStamp, password) {
+    password : Password
+) : VAuthenticatorEvent(userName, clientAppId, timeStamp, password) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

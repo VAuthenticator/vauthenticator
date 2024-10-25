@@ -1,6 +1,6 @@
 package com.vauthenticator.server.oauth2.clientapp.domain
 
-import com.vauthenticator.server.password.VAuthenticatorPasswordEncoder
+import com.vauthenticator.server.password.domain.VAuthenticatorPasswordEncoder
 import java.util.*
 
 class StoreClientApplication(private val clientApplicationRepository: ClientApplicationRepository,

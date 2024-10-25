@@ -1,6 +1,6 @@
 package com.vauthenticator.server.oauth2.clientapp.domain
 
-import com.vauthenticator.server.password.VAuthenticatorPasswordEncoder
+import com.vauthenticator.server.password.domain.VAuthenticatorPasswordEncoder
 import com.vauthenticator.server.support.ClientAppFixture
 import io.mockk.every
 import io.mockk.impl.annotations.MockK

@@ -11,10 +11,10 @@ import com.vauthenticator.server.communication.domain.EMailType
 import com.vauthenticator.server.communication.domain.SimpleEMailMessageFactory
 import com.vauthenticator.server.events.VAuthenticatorEventsDispatcher
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
-import com.vauthenticator.server.password.PasswordPolicy
-import com.vauthenticator.server.password.VAuthenticatorPasswordEncoder
-import com.vauthenticator.server.password.resetpassword.ResetAccountPassword
-import com.vauthenticator.server.password.resetpassword.SendResetPasswordMailChallenge
+import com.vauthenticator.server.password.domain.PasswordPolicy
+import com.vauthenticator.server.password.domain.VAuthenticatorPasswordEncoder
+import com.vauthenticator.server.password.domain.resetpassword.ResetAccountPassword
+import com.vauthenticator.server.password.domain.resetpassword.SendResetPasswordMailChallenge
 import com.vauthenticator.server.ticket.domain.TicketCreator
 import com.vauthenticator.server.ticket.domain.TicketRepository
 import org.springframework.beans.factory.annotation.Value

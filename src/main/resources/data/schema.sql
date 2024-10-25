@@ -60,6 +60,16 @@ CREATE TABLE TICKET
     context               text         not null default '{}'
 );
 
+CREATE TABLE PASSWORD_HISTORY
+(
+    user_name             varchar(255) not null ,
+    created_at            bigint       not null default 0,
+    password              varchar(255) not null,
+
+    primary key (user_name, password)
+);
+
+
 CREATE TABLE CLIENT_APPLICATION
 (
     client_app_id            varchar(255) not null PRIMARY KEY,
