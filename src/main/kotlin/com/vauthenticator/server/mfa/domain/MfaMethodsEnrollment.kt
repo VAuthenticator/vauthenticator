@@ -4,9 +4,9 @@ import com.vauthenticator.server.account.AccountNotFoundException
 import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.mask.SensitiveDataMaskerResolver
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
-import com.vauthenticator.server.ticket.TicketContext
-import com.vauthenticator.server.ticket.TicketCreator
-import com.vauthenticator.server.ticket.TicketId
+import com.vauthenticator.server.ticket.domain.TicketContext
+import com.vauthenticator.server.ticket.domain.TicketCreator
+import com.vauthenticator.server.ticket.domain.TicketId
 import org.slf4j.LoggerFactory
 
 class MfaMethodsEnrollment(

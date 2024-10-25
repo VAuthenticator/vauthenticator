@@ -1,4 +1,4 @@
-package com.vauthenticator.server.ticket
+package com.vauthenticator.server.ticket.domain
 
 import com.vauthenticator.server.extentions.expirationTimeStampInSecondFromNow
 import com.vauthenticator.server.support.AccountTestFixture
@@ -8,7 +8,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import java.time.Clock
@@ -48,6 +48,6 @@ class TicketCreatorTest {
         val createTicketFor =
             uut.createTicketFor(account, clientAppId, TicketContext.empty())
 
-        assertEquals(TICKET_ID, createTicketFor.content)
+        Assertions.assertEquals(TICKET_ID, createTicketFor.content)
     }
 }

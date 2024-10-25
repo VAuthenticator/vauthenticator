@@ -10,8 +10,8 @@ import com.vauthenticator.server.support.MfaFixture.email
 import com.vauthenticator.server.support.MfaFixture.mfaDeviceId
 import com.vauthenticator.server.support.MfaFixture.notAssociatedMfaAccountMethod
 import com.vauthenticator.server.support.TicketFixture.ticketContext
-import com.vauthenticator.server.ticket.TicketCreator
-import com.vauthenticator.server.ticket.TicketId
+import com.vauthenticator.server.ticket.domain.TicketCreator
+import com.vauthenticator.server.ticket.domain.TicketId
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension

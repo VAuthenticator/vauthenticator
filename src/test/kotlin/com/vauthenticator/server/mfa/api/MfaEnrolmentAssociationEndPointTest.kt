@@ -11,7 +11,7 @@ import com.vauthenticator.server.support.A_CLIENT_APP_ID
 import com.vauthenticator.server.support.AccountTestFixture
 import com.vauthenticator.server.support.MfaFixture.mfaDeviceId
 import com.vauthenticator.server.support.SecurityFixture.principalFor
-import com.vauthenticator.server.ticket.TicketId
+import com.vauthenticator.server.ticket.domain.TicketId
 import com.vauthenticator.server.web.ExceptionAdviceController
 import io.mockk.every
 import io.mockk.impl.annotations.MockK

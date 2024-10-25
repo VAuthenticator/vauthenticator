@@ -4,8 +4,8 @@ import com.vauthenticator.server.account.repository.AccountRepository
 import com.vauthenticator.server.communication.domain.EMailSenderService
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
-import com.vauthenticator.server.ticket.TicketCreator
-import com.vauthenticator.server.ticket.TicketId
+import com.vauthenticator.server.ticket.domain.TicketCreator
+import com.vauthenticator.server.ticket.domain.TicketId
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
