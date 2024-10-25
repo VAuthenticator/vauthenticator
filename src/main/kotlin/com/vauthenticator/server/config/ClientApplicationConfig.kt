@@ -9,7 +9,7 @@ import com.vauthenticator.server.oauth2.clientapp.adapter.dynamodb.DynamoDbClien
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.domain.ReadClientApplication
 import com.vauthenticator.server.oauth2.clientapp.domain.StoreClientApplication
-import com.vauthenticator.server.password.VAuthenticatorPasswordEncoder
+import com.vauthenticator.server.password.domain.VAuthenticatorPasswordEncoder
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean

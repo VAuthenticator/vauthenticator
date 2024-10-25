@@ -9,9 +9,9 @@ import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationReposi
 import com.vauthenticator.server.oauth2.clientapp.domain.Scope
 import com.vauthenticator.server.oidc.logout.ClearSessionStateLogoutHandler
 import com.vauthenticator.server.oidc.sessionmanagement.SessionManagementFactory
-import com.vauthenticator.server.password.BcryptVAuthenticatorPasswordEncoder
-import com.vauthenticator.server.password.changepassword.CHANGE_PASSWORD_URL
-import com.vauthenticator.server.password.changepassword.ChangePasswordLoginWorkflowHandler
+import com.vauthenticator.server.password.adapter.spring.BcryptVAuthenticatorPasswordEncoder
+import com.vauthenticator.server.password.domain.changepassword.CHANGE_PASSWORD_URL
+import com.vauthenticator.server.password.domain.changepassword.ChangePasswordLoginWorkflowHandler
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty

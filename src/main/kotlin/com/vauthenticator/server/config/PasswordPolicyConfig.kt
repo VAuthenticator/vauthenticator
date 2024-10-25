@@ -1,7 +1,9 @@
 package com.vauthenticator.server.config
 
-import com.vauthenticator.server.password.*
+import com.vauthenticator.server.password.adapter.dynamodb.DynamoPasswordHistoryRepository
+import com.vauthenticator.server.password.domain.*
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -54,3 +56,11 @@ class PasswordPolicyConfig {
         dynamoDbClient
     )
 }
+
+
+@ConfigurationProperties(prefix = "password.policy")
+data class PasswordPolicyConfigProp(
+    val minSize: Int,
+    val minSpecialSymbol: Int,
+    val enablePasswordReusePrevention: Boolean
+)
