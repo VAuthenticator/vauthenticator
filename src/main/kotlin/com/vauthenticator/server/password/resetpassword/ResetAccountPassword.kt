@@ -8,10 +8,10 @@ import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
 import com.vauthenticator.server.password.Password
 import com.vauthenticator.server.password.PasswordPolicy
 import com.vauthenticator.server.password.VAuthenticatorPasswordEncoder
-import com.vauthenticator.server.ticket.InvalidTicketException
-import com.vauthenticator.server.ticket.Ticket
-import com.vauthenticator.server.ticket.TicketId
-import com.vauthenticator.server.ticket.TicketRepository
+import com.vauthenticator.server.ticket.domain.InvalidTicketException
+import com.vauthenticator.server.ticket.domain.Ticket
+import com.vauthenticator.server.ticket.domain.TicketId
+import com.vauthenticator.server.ticket.domain.TicketRepository
 import java.time.Instant
 import java.util.*
 

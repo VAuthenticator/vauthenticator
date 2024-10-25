@@ -45,11 +45,20 @@ CREATE TABLE KEYS
     key_type                      varchar(255) not null,
     encrypted_private_key         text,
     public_key                    text,
-    enabled                       boolean             not null default false,
-    key_expiration_date_timestamp bigint not null default 0
+    enabled                       boolean      not null default false,
+    key_expiration_date_timestamp bigint       not null default 0
 );
 
 CREATE INDEX keys_key_purpose ON KEYS (key_purpose);
+
+CREATE TABLE TICKET
+(
+    ticket                varchar(255) not null primary key,
+    ttl                   bigint       not null default 0,
+    user_name             varchar(255) not null,
+    client_application_id varchar(255) not null,
+    context               text         not null default '{}'
+);
 
 CREATE TABLE CLIENT_APPLICATION
 (

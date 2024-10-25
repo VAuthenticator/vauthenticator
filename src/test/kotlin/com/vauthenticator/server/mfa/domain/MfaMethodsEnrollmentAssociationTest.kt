@@ -4,10 +4,10 @@ import com.vauthenticator.server.keys.domain.Kid
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
 import com.vauthenticator.server.support.AccountTestFixture
 import com.vauthenticator.server.support.TicketFixture
-import com.vauthenticator.server.ticket.InvalidTicketException
-import com.vauthenticator.server.ticket.Ticket
-import com.vauthenticator.server.ticket.TicketId
-import com.vauthenticator.server.ticket.TicketRepository
+import com.vauthenticator.server.ticket.domain.InvalidTicketException
+import com.vauthenticator.server.ticket.domain.Ticket
+import com.vauthenticator.server.ticket.domain.TicketId
+import com.vauthenticator.server.ticket.domain.TicketRepository
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension

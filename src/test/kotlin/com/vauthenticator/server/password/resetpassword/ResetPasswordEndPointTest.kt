@@ -10,7 +10,7 @@ import com.vauthenticator.server.support.ClientAppFixture.aClientApp
 import com.vauthenticator.server.support.EMAIL
 import com.vauthenticator.server.support.SecurityFixture.principalFor
 import com.vauthenticator.server.support.VAUTHENTICATOR_ADMIN
-import com.vauthenticator.server.ticket.TicketId
+import com.vauthenticator.server.ticket.domain.TicketId
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension

@@ -1,9 +1,9 @@
 package com.vauthenticator.server.mfa.domain
 
-import com.vauthenticator.server.ticket.InvalidTicketException
-import com.vauthenticator.server.ticket.Ticket
-import com.vauthenticator.server.ticket.TicketId
-import com.vauthenticator.server.ticket.TicketRepository
+import com.vauthenticator.server.ticket.domain.InvalidTicketException
+import com.vauthenticator.server.ticket.domain.Ticket
+import com.vauthenticator.server.ticket.domain.TicketId
+import com.vauthenticator.server.ticket.domain.TicketRepository
 
 typealias MfaAssociationVerifier = (ticket: Ticket) -> Unit
 

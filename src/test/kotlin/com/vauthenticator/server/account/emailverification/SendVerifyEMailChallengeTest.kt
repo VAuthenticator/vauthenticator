@@ -12,9 +12,9 @@ import com.vauthenticator.server.oauth2.clientapp.domain.Scopes
 import com.vauthenticator.server.support.A_CLIENT_APP_ID
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import com.vauthenticator.server.support.ClientAppFixture.aClientApp
-import com.vauthenticator.server.ticket.Ticket
-import com.vauthenticator.server.ticket.Ticket.Companion.MFA_SELF_ASSOCIATION_CONTEXT_VALUE
-import com.vauthenticator.server.ticket.TicketId
+import com.vauthenticator.server.ticket.domain.Ticket
+import com.vauthenticator.server.ticket.domain.Ticket.Companion.MFA_SELF_ASSOCIATION_CONTEXT_VALUE
+import com.vauthenticator.server.ticket.domain.TicketId
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension

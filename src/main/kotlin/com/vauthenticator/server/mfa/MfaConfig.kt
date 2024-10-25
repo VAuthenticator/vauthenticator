@@ -16,8 +16,8 @@ import com.vauthenticator.server.mask.SensitiveEmailMasker
 import com.vauthenticator.server.mask.SensitivePhoneMasker
 import com.vauthenticator.server.mfa.adapter.dynamodb.DynamoMfaAccountMethodsRepository
 import com.vauthenticator.server.mfa.domain.*
-import com.vauthenticator.server.ticket.TicketCreator
-import com.vauthenticator.server.ticket.TicketRepository
+import com.vauthenticator.server.ticket.domain.TicketCreator
+import com.vauthenticator.server.ticket.domain.TicketRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean

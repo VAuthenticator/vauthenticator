@@ -1,6 +1,10 @@
-package com.vauthenticator.server.ticket
+package com.vauthenticator.server.ticket.adapter.dynamodb
 
 import com.vauthenticator.server.extentions.*
+import com.vauthenticator.server.ticket.domain.Ticket
+import com.vauthenticator.server.ticket.domain.TicketContext
+import com.vauthenticator.server.ticket.domain.TicketId
+import com.vauthenticator.server.ticket.domain.TicketRepository
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest

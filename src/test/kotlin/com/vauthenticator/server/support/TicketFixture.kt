@@ -1,9 +1,9 @@
 package com.vauthenticator.server.support
 
 import com.vauthenticator.server.mfa.domain.MfaMethod
-import com.vauthenticator.server.ticket.Ticket
-import com.vauthenticator.server.ticket.TicketContext
-import com.vauthenticator.server.ticket.TicketId
+import com.vauthenticator.server.ticket.domain.Ticket
+import com.vauthenticator.server.ticket.domain.TicketContext
+import com.vauthenticator.server.ticket.domain.TicketId
 
 object TicketFixture {
 

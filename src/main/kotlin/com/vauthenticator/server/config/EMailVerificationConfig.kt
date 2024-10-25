@@ -15,7 +15,7 @@ import com.vauthenticator.server.communication.domain.SimpleEMailMessageFactory
 import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollment
 import com.vauthenticator.server.mfa.domain.MfaMethodsEnrollmentAssociation
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
-import com.vauthenticator.server.ticket.TicketRepository
+import com.vauthenticator.server.ticket.domain.TicketRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

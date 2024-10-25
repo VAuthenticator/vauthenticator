@@ -1,4 +1,4 @@
-package com.vauthenticator.server.ticket
+package com.vauthenticator.server.ticket.domain
 
 import java.util.*
 

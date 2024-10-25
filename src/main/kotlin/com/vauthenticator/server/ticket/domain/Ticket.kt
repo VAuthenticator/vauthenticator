@@ -1,13 +1,13 @@
-package com.vauthenticator.server.ticket
+package com.vauthenticator.server.ticket.domain
 
 import com.vauthenticator.server.mfa.domain.MfaDeviceId
 import com.vauthenticator.server.mfa.domain.MfaMethod
-import com.vauthenticator.server.ticket.Ticket.Companion.MFA_CHANNEL_CONTEXT_KEY
-import com.vauthenticator.server.ticket.Ticket.Companion.MFA_DEVICE_ID_CONTEXT_KEY
-import com.vauthenticator.server.ticket.Ticket.Companion.MFA_METHOD_CONTEXT_KEY
-import com.vauthenticator.server.ticket.Ticket.Companion.MFA_NOT_SELF_ASSOCIATION_CONTEXT_VALUE
-import com.vauthenticator.server.ticket.Ticket.Companion.MFA_SELF_ASSOCIATION_CONTEXT_KEY
-import com.vauthenticator.server.ticket.Ticket.Companion.MFA_SELF_ASSOCIATION_CONTEXT_VALUE
+import com.vauthenticator.server.ticket.domain.Ticket.Companion.MFA_CHANNEL_CONTEXT_KEY
+import com.vauthenticator.server.ticket.domain.Ticket.Companion.MFA_DEVICE_ID_CONTEXT_KEY
+import com.vauthenticator.server.ticket.domain.Ticket.Companion.MFA_METHOD_CONTEXT_KEY
+import com.vauthenticator.server.ticket.domain.Ticket.Companion.MFA_NOT_SELF_ASSOCIATION_CONTEXT_VALUE
+import com.vauthenticator.server.ticket.domain.Ticket.Companion.MFA_SELF_ASSOCIATION_CONTEXT_KEY
+import com.vauthenticator.server.ticket.domain.Ticket.Companion.MFA_SELF_ASSOCIATION_CONTEXT_VALUE
 import java.time.Duration
 
 data class Ticket(
