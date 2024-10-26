@@ -1,7 +1,7 @@
 package com.vauthenticator.server.mfa.domain
 
-import com.vauthenticator.server.account.AccountNotFoundException
-import com.vauthenticator.server.account.repository.AccountRepository
+import com.vauthenticator.server.account.domain.AccountNotFoundException
+import com.vauthenticator.server.account.domain.AccountRepository
 import com.vauthenticator.server.mask.SensitiveDataMaskerResolver
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
 import com.vauthenticator.server.ticket.domain.TicketContext

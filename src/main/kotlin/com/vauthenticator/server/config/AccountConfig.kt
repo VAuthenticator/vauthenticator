@@ -1,13 +1,13 @@
 package com.vauthenticator.server.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.vauthenticator.server.account.AccountCacheContentConverter
-import com.vauthenticator.server.account.AccountUpdateAdminAction
-import com.vauthenticator.server.account.SaveAccount
-import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.account.repository.CachedAccountRepository
-import com.vauthenticator.server.account.repository.dynamodb.DynamoDbAccountRepository
-import com.vauthenticator.server.account.repository.jdbc.JdbcAccountRepository
+import com.vauthenticator.server.account.adapter.CachedAccountRepository
+import com.vauthenticator.server.account.adapter.dynamodb.DynamoDbAccountRepository
+import com.vauthenticator.server.account.adapter.jdbc.JdbcAccountRepository
+import com.vauthenticator.server.account.domain.AccountCacheContentConverter
+import com.vauthenticator.server.account.domain.AccountRepository
+import com.vauthenticator.server.account.domain.AccountUpdateAdminAction
+import com.vauthenticator.server.account.domain.SaveAccount
 import com.vauthenticator.server.cache.CacheOperation
 import com.vauthenticator.server.cache.RedisCacheOperation
 import com.vauthenticator.server.role.domain.RoleRepository

@@ -1,6 +1,6 @@
 package com.vauthenticator.server.password.api
 
-import com.vauthenticator.server.account.AccountNotFoundException
+import com.vauthenticator.server.account.domain.AccountNotFoundException
 import com.vauthenticator.server.password.domain.PasswordPolicyViolation
 import com.vauthenticator.server.password.domain.changepassword.ChangePassword
 import com.vauthenticator.server.password.domain.changepassword.ChangePasswordRequest

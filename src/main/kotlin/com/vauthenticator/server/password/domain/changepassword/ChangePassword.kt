@@ -1,8 +1,8 @@
 package com.vauthenticator.server.password.domain.changepassword
 
-import com.vauthenticator.server.account.AccountNotFoundException
-import com.vauthenticator.server.account.Email
-import com.vauthenticator.server.account.repository.AccountRepository
+import com.vauthenticator.server.account.domain.AccountNotFoundException
+import com.vauthenticator.server.account.domain.AccountRepository
+import com.vauthenticator.server.account.domain.Email
 import com.vauthenticator.server.events.ChangePasswordEvent
 import com.vauthenticator.server.events.VAuthenticatorEventsDispatcher
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId

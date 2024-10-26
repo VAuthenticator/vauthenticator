@@ -2,7 +2,7 @@ package com.vauthenticator.server.communication.adapter.javamail
 
 import com.vauthenticator.document.repository.DocumentRepository
 import com.vauthenticator.document.repository.DocumentType
-import com.vauthenticator.server.account.Account
+import com.vauthenticator.server.account.domain.Account
 import com.vauthenticator.server.communication.domain.*
 import jakarta.mail.internet.MimeMessage
 import org.springframework.mail.javamail.JavaMailSender

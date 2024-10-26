@@ -1,6 +1,6 @@
 package com.vauthenticator.server.login.userdetails
 
-import com.vauthenticator.server.account.repository.AccountRepository
+import com.vauthenticator.server.account.domain.AccountRepository
 import com.vauthenticator.server.support.AccountTestFixture
 import io.mockk.every
 import io.mockk.impl.annotations.MockK

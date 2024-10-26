@@ -2,7 +2,7 @@ package com.vauthenticator.server.config
 
 import com.hubspot.jinjava.Jinjava
 import com.vauthenticator.document.repository.DocumentRepository
-import com.vauthenticator.server.account.repository.AccountRepository
+import com.vauthenticator.server.account.domain.AccountRepository
 import com.vauthenticator.server.communication.NoReplyEMailConfiguration
 import com.vauthenticator.server.communication.adapter.JinJavaTemplateResolver
 import com.vauthenticator.server.communication.adapter.javamail.JavaEMailSenderService

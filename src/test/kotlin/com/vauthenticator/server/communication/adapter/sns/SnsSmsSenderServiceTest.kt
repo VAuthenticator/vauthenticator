@@ -1,6 +1,6 @@
 package com.vauthenticator.server.communication.adapter.sns
 
-import com.vauthenticator.server.account.Phone.Companion.phoneFor
+import com.vauthenticator.server.account.domain.Phone.Companion.phoneFor
 import com.vauthenticator.server.communication.domain.SmsMessage
 import com.vauthenticator.server.communication.domain.SmsMessageFactory
 import com.vauthenticator.server.support.AccountTestFixture.anAccount

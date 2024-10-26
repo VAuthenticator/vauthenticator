@@ -1,10 +1,10 @@
 package com.vauthenticator.server.account.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.vauthenticator.server.account.Phone
-import com.vauthenticator.server.account.SaveAccount
-import com.vauthenticator.server.account.repository.AccountRepository
-import com.vauthenticator.server.account.signup.SignUpUse
+import com.vauthenticator.server.account.domain.AccountRepository
+import com.vauthenticator.server.account.domain.Phone
+import com.vauthenticator.server.account.domain.SaveAccount
+import com.vauthenticator.server.account.domain.signup.SignUpUse
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.domain.Scope

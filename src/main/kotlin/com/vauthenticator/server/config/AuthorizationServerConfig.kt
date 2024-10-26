@@ -2,7 +2,7 @@ package com.vauthenticator.server.config
 
 import com.nimbusds.jose.jwk.source.JWKSource
 import com.nimbusds.jose.proc.SecurityContext
-import com.vauthenticator.server.account.repository.AccountRepository
+import com.vauthenticator.server.account.domain.AccountRepository
 import com.vauthenticator.server.keys.adapter.spring.KeysJWKSource
 import com.vauthenticator.server.keys.domain.KeyDecrypter
 import com.vauthenticator.server.keys.domain.KeyRepository

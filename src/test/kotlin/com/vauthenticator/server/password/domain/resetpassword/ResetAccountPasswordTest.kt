@@ -1,6 +1,6 @@
 package com.vauthenticator.server.password.domain.resetpassword
 
-import com.vauthenticator.server.account.repository.AccountRepository
+import com.vauthenticator.server.account.domain.AccountRepository
 import com.vauthenticator.server.events.ResetPasswordEvent
 import com.vauthenticator.server.events.VAuthenticatorEventsDispatcher
 import com.vauthenticator.server.password.api.ResetPasswordRequest

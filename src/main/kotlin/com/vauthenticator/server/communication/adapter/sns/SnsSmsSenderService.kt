@@ -1,6 +1,6 @@
 package com.vauthenticator.server.communication.adapter.sns
 
-import com.vauthenticator.server.account.Account
+import com.vauthenticator.server.account.domain.Account
 import com.vauthenticator.server.communication.domain.MessageContext
 import com.vauthenticator.server.communication.domain.SmsMessageFactory
 import com.vauthenticator.server.communication.domain.SmsSenderService

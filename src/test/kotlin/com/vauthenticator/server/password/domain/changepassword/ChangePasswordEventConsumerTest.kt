@@ -1,6 +1,6 @@
 package com.vauthenticator.server.password.domain.changepassword
 
-import com.vauthenticator.server.account.Email
+import com.vauthenticator.server.account.domain.Email
 import com.vauthenticator.server.events.ChangePasswordEvent
 import com.vauthenticator.server.password.domain.Password
 import com.vauthenticator.server.password.domain.PasswordHistoryRepository
