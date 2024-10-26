@@ -86,6 +86,9 @@ abstract class AbstractMfaAccountMethodsRepositoryTest {
 
     @Test
     fun `when decide what mfa use as default`() {
+        every { keyRepository.createKeyFrom(masterKid, KeyType.SYMMETRIC, KeyPurpose.MFA) } returns key
+        uut.save(email, MfaMethod.EMAIL_MFA_METHOD, email, true)
+
         val expected = Optional.of(mfaDeviceId)
         uut.setAsDefault(email, mfaDeviceId)
         val defaultDevice = uut.getDefaultDevice(email)

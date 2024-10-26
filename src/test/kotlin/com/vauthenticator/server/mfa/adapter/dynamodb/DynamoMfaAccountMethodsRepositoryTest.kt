@@ -10,17 +10,16 @@ import io.mockk.junit5.MockKExtension
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
-class DynamoMfaAccountMethodsRepositoryTest : AbstractMfaAccountMethodsRepositoryTest(){
+class DynamoMfaAccountMethodsRepositoryTest : AbstractMfaAccountMethodsRepositoryTest() {
 
-    override fun initMfaAccountMethodsRepository(): MfaAccountMethodsRepository {
-        return DynamoMfaAccountMethodsRepository(
+    override fun initMfaAccountMethodsRepository() =
+        DynamoMfaAccountMethodsRepository(
             dynamoMfaAccountMethodsTableName,
             dynamoDefaultMfaAccountMethodsTableName,
             dynamoDbClient,
             keyRepository,
             masterKid
         ) { mfaDeviceId }
-    }
 
     override fun resetDatabase() {
         resetDynamoDb()

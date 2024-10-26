@@ -62,13 +62,27 @@ CREATE TABLE TICKET
 
 CREATE TABLE PASSWORD_HISTORY
 (
-    user_name             varchar(255) not null ,
-    created_at            bigint       not null default 0,
-    password              varchar(255) not null,
+    user_name  varchar(255) not null,
+    created_at bigint       not null default 0,
+    password   varchar(255) not null,
 
     primary key (user_name, password)
 );
 
+CREATE TABLE MFA_ACCOUNT_METHODS
+(
+    user_name     varchar(255) not null,
+    mfa_device_id varchar(255) not null,
+    mfa_method    varchar(255) not null,
+    mfa_channel   varchar(255) not null,
+    key_id        varchar(255) not null,
+    associated    varchar(255) not null,
+    default_mfa_method       boolean default false,
+
+    primary key (user_name, mfa_channel)
+);
+
+CREATE INDEX mfa_account_methods_mfa_device_id ON MFA_ACCOUNT_METHODS (mfa_device_id);
 
 CREATE TABLE CLIENT_APPLICATION
 (
