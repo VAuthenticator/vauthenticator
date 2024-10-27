@@ -74,14 +74,14 @@ def store_client_applications():
 
     serialized_scopes=','.join(scopes)
     cur.execute(
-        f"INSERT INTO CLIENT_APPLICATION (client_app_id, secret,scopes,with_pkce,authorized_grant_types,web_server_redirect_uri,access_token_validity,refresh_token_validity,auto_approve,post_logout_redirect_uri,logout_uri) VALUES ('{client_id}','{pass_encoded(client_secret)}','false','{serialized_scopes}','AUTHORIZATION_CODE,REFRESH_TOKEN','http://local.management.vauthenticator.com:8080/login/oauth2/code/client','180','3600','true','http://local.management.vauthenticator.com:8080/secure/admin/index','http://local.management.vauthenticator.com:8080/logout')"
+        f"INSERT INTO CLIENT_APPLICATION (client_app_id, secret,scopes,with_pkce,authorized_grant_types,web_server_redirect_uri,access_token_validity,refresh_token_validity,auto_approve,post_logout_redirect_uri,logout_uri) VALUES ('{client_id}','{pass_encoded(client_secret)}', '{serialized_scopes}',false,'AUTHORIZATION_CODE,REFRESH_TOKEN','http://local.management.vauthenticator.com:8080/login/oauth2/code/client','180','3600','true','http://local.management.vauthenticator.com:8080/secure/admin/index','http://local.management.vauthenticator.com:8080/logout')"
     )
 
     scopes.add("mfa:always")
     serialized_scopes=','.join(scopes)
     serialized_client_id=f"mfa-{client_id}"
     cur.execute(
-        f"INSERT INTO CLIENT_APPLICATION (client_app_id, secret,scopes,with_pkce,authorized_grant_types,web_server_redirect_uri,access_token_validity,refresh_token_validity,auto_approve,post_logout_redirect_uri,logout_uri) VALUES ('{serialized_client_id}','{pass_encoded(client_secret)}','false','{serialized_scopes}','AUTHORIZATION_CODE,REFRESH_TOKEN','http://local.management.vauthenticator.com:8080/login/oauth2/code/client','180','3600','true','http://local.management.vauthenticator.com:8080/secure/admin/index','http://local.management.vauthenticator.com:8080/logout')"
+        f"INSERT INTO CLIENT_APPLICATION (client_app_id, secret,scopes,with_pkce,authorized_grant_types,web_server_redirect_uri,access_token_validity,refresh_token_validity,auto_approve,post_logout_redirect_uri,logout_uri) VALUES ('{serialized_client_id}','{pass_encoded(client_secret)}','{serialized_scopes}',false,'AUTHORIZATION_CODE,REFRESH_TOKEN','http://local.management.vauthenticator.com:8080/login/oauth2/code/client','180','3600','true','http://local.management.vauthenticator.com:8080/secure/admin/index','http://local.management.vauthenticator.com:8080/logout')"
     )
     conn.commit()
 

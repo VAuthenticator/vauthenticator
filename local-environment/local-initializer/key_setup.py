@@ -34,18 +34,23 @@ kms_client = kmsClient()
 
 def store_key(key_table_name, master_key):
     key_pair = kms_client.generate_data_key_pair(KeyId=master_key, KeyPairSpec='RSA_2048')
+
+    master_key_id=key_pair["KeyId"].split("/")[1]
+    key_id=str(uuid.uuid4())
+    encrypted_private_key=base64.b64encode(key_pair["PrivateKeyCiphertextBlob"]).decode()
+    public_key=base64.b64encode(key_pair["PublicKey"]).decode()
+
     if os.getenv("experimental_database_persistence"):
         cur.execute(
-            f" INSERT INTO KEYS(master_key_id, key_id, key_purpose, key_type, encrypted_private_key, public_key, enabled, key_expiration_date_timestamp)  VALUES('{key_pair["KeyId"].split("/")[1]}', '{str(uuid.uuid4()),}', 'SIGNATURE', 'ASYMMETRIC', '{base64.b64encode(key_pair["PrivateKeyCiphertextBlob"]).decode()}','{base64.b64encode(key_pair["PublicKey"]).decode()}' True, 0)")
+            f"INSERT INTO KEYS (master_key_id, key_id, key_purpose, key_type, encrypted_private_key, public_key, enabled, key_expiration_date_timestamp)  VALUES ('{master_key_id}', '{key_id}', 'SIGNATURE', 'ASYMMETRIC', '{encrypted_private_key}','{public_key}', true, 0)")
         conn.commit()
-
     else:
         table = dynamodb.Table(key_table_name)
         table.put_item(Item={
-            "master_key_id": key_pair["KeyId"].split("/")[1],
-            "key_id": str(uuid.uuid4()),
-            "encrypted_private_key": base64.b64encode(key_pair["PrivateKeyCiphertextBlob"]).decode(),
-            "public_key": base64.b64encode(key_pair["PublicKey"]).decode(),
+            "master_key_id": master_key_id,
+            "key_id": key_id,
+            "encrypted_private_key": encrypted_private_key,
+            "public_key": public_key,
             "key_purpose": "SIGNATURE",
             "key_type": "ASYMMETRIC",
             "enabled": True
@@ -56,9 +61,8 @@ if __name__ == '__main__':
     input_master_key = sys.argv[1]
     input_key_table_name = f'VAuthenticator_Signature_Keys{sys.argv[2]}'
 
-    store_key(input_key_table_name, input_master_key)
-
     if os.getenv("experimental_database_persistence"):
+        database_host=sys.argv[3]
         conn = psycopg2.connect(database="postgres",
                                 host=database_host,
                                 user="postgres",
@@ -70,3 +74,6 @@ if __name__ == '__main__':
 
         cur.close()
         conn.close()
+    else:
+        store_key(input_key_table_name, input_master_key)
+
