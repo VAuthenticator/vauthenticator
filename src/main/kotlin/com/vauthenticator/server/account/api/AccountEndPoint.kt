@@ -1,10 +1,10 @@
 package com.vauthenticator.server.account.api
 
-import com.vauthenticator.server.account.*
-import com.vauthenticator.server.account.AccountMandatoryAction.NO_ACTION
-import com.vauthenticator.server.account.Date
+import com.vauthenticator.server.account.domain.AccountMandatoryAction.NO_ACTION
 import com.vauthenticator.server.account.api.SignUpAccountConverter.fromRepresentationToSignedUpAccount
-import com.vauthenticator.server.account.signup.SignUpUse
+import com.vauthenticator.server.account.domain.*
+import com.vauthenticator.server.account.domain.Date
+import com.vauthenticator.server.account.domain.signup.SignUpUse
 import com.vauthenticator.server.extentions.clientAppId
 import com.vauthenticator.server.extentions.oauth2ClientId
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId

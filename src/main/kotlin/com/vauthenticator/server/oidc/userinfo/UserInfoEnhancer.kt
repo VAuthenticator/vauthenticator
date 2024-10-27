@@ -1,7 +1,7 @@
 package com.vauthenticator.server.oidc.userinfo
 
-import com.vauthenticator.server.account.Account
-import com.vauthenticator.server.account.repository.AccountRepository
+import com.vauthenticator.server.account.domain.Account
+import com.vauthenticator.server.account.domain.AccountRepository
 import org.springframework.security.oauth2.core.oidc.OidcUserInfo
 import org.springframework.security.oauth2.server.authorization.oidc.authentication.OidcUserInfoAuthenticationContext
 import java.time.LocalDateTime

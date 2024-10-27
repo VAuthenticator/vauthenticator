@@ -1,7 +1,7 @@
 package com.vauthenticator.server.password.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.vauthenticator.server.account.AccountNotFoundException
+import com.vauthenticator.server.account.domain.AccountNotFoundException
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
 import com.vauthenticator.server.oauth2.clientapp.domain.Scope
 import com.vauthenticator.server.password.domain.PasswordPolicyViolation

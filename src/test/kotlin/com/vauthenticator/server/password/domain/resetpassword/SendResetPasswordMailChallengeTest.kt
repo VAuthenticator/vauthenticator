@@ -1,6 +1,6 @@
 package com.vauthenticator.server.password.domain.resetpassword
 
-import com.vauthenticator.server.account.repository.AccountRepository
+import com.vauthenticator.server.account.domain.AccountRepository
 import com.vauthenticator.server.communication.domain.EMailSenderService
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
 import com.vauthenticator.server.support.AccountTestFixture.anAccount

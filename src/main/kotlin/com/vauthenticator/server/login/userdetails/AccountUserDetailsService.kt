@@ -1,6 +1,6 @@
 package com.vauthenticator.server.login.userdetails
 
-import com.vauthenticator.server.account.repository.AccountRepository
+import com.vauthenticator.server.account.domain.AccountRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.authority.SimpleGrantedAuthority

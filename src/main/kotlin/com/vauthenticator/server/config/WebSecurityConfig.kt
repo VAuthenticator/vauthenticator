@@ -1,6 +1,6 @@
 package com.vauthenticator.server.config
 
-import com.vauthenticator.server.account.repository.AccountRepository
+import com.vauthenticator.server.account.domain.AccountRepository
 import com.vauthenticator.server.login.userdetails.AccountUserDetailsService
 import com.vauthenticator.server.login.workflow.CompositeLoginWorkflowEngine
 import com.vauthenticator.server.login.workflow.LOGIN_ENGINE_BROKER_PAGE

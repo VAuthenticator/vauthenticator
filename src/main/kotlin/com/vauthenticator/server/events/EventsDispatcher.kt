@@ -1,6 +1,6 @@
 package com.vauthenticator.server.events
 
-import com.vauthenticator.server.account.Email
+import com.vauthenticator.server.account.domain.Email
 import com.vauthenticator.server.extentions.oauth2ClientId
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
 import jakarta.servlet.http.HttpServletRequest

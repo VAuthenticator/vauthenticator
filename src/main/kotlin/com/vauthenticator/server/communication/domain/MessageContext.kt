@@ -1,6 +1,6 @@
 package com.vauthenticator.server.communication.domain
 
-import com.vauthenticator.server.account.Account
+import com.vauthenticator.server.account.domain.Account
 
 typealias MessageContext = Map<String, Any>
 

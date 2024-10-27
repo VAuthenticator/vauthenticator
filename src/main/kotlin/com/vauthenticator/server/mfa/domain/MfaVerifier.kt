@@ -1,6 +1,6 @@
 package com.vauthenticator.server.mfa.domain
 
-import com.vauthenticator.server.account.repository.AccountRepository
+import com.vauthenticator.server.account.domain.AccountRepository
 
 interface MfaVerifier {
     fun verifyMfaChallengeToBeAssociatedFor(

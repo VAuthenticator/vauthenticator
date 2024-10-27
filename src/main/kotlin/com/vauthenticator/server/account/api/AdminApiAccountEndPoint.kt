@@ -1,10 +1,6 @@
 package com.vauthenticator.server.account.api
 
-import com.vauthenticator.server.account.Account
-import com.vauthenticator.server.account.AccountMandatoryAction
-import com.vauthenticator.server.account.AccountUpdateAdminAction
-import com.vauthenticator.server.account.AdminAccountApiRequest
-import com.vauthenticator.server.account.repository.AccountRepository
+import com.vauthenticator.server.account.domain.*
 import org.springframework.http.ResponseEntity.noContent
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.security.core.Authentication

@@ -1,7 +1,7 @@
 package com.vauthenticator.server.password.web
 
-import com.vauthenticator.server.account.AccountMandatoryAction
-import com.vauthenticator.server.account.repository.AccountRepository
+import com.vauthenticator.server.account.domain.AccountMandatoryAction
+import com.vauthenticator.server.account.domain.AccountRepository
 import com.vauthenticator.server.i18n.I18nMessageInjector
 import com.vauthenticator.server.i18n.I18nScope
 import com.vauthenticator.server.password.domain.changepassword.*

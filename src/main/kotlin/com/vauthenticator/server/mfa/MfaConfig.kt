@@ -2,7 +2,8 @@ package com.vauthenticator.server.mfa
 
 import com.hubspot.jinjava.Jinjava
 import com.vauthenticator.document.repository.DocumentRepository
-import com.vauthenticator.server.account.repository.AccountRepository
+import com.vauthenticator.server.account.adapter.jdbc.JdbcAccountRepository
+import com.vauthenticator.server.account.domain.AccountRepository
 import com.vauthenticator.server.communication.NoReplyEMailConfiguration
 import com.vauthenticator.server.communication.adapter.JinJavaTemplateResolver
 import com.vauthenticator.server.communication.adapter.javamail.JavaEMailSenderService
@@ -15,6 +16,7 @@ import com.vauthenticator.server.mask.SensitiveDataMaskerResolver
 import com.vauthenticator.server.mask.SensitiveEmailMasker
 import com.vauthenticator.server.mask.SensitivePhoneMasker
 import com.vauthenticator.server.mfa.adapter.dynamodb.DynamoMfaAccountMethodsRepository
+import com.vauthenticator.server.mfa.adapter.jdbc.JdbcMfaAccountMethodsRepository
 import com.vauthenticator.server.mfa.domain.*
 import com.vauthenticator.server.ticket.domain.TicketCreator
 import com.vauthenticator.server.ticket.domain.TicketRepository
@@ -22,6 +24,8 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.mail.javamail.JavaMailSender
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.sns.SnsClient
@@ -30,8 +34,9 @@ import java.util.*
 @Configuration(proxyBeanMethods = false)
 class MfaConfig {
 
-    @Bean
-    fun mfaAccountMethodsRepository(
+    @Bean("mfaAccountMethodsRepository")
+    @Profile("!experimental_database_persistence")
+    fun dynamoDbMfaAccountMethodsRepository(
         keyRepository: KeyRepository,
         dynamoDbClient: DynamoDbClient,
         @Value("\${key.master-key}") masterKey: String,
@@ -42,6 +47,19 @@ class MfaConfig {
             mfaAccountMethodTableName,
             defaultMfaAccountMethodTableName,
             dynamoDbClient,
+            keyRepository,
+            MasterKid(masterKey)
+        ) { MfaDeviceId(UUID.randomUUID().toString()) }
+
+    @Bean("mfaAccountMethodsRepository")
+    @Profile("experimental_database_persistence")
+    fun jdbcMfaAccountMethodsRepository(
+        keyRepository: KeyRepository,
+        jdbcTemplate: JdbcTemplate,
+        @Value("\${key.master-key}") masterKey: String
+    ): MfaAccountMethodsRepository =
+        JdbcMfaAccountMethodsRepository(
+            jdbcTemplate,
             keyRepository,
             MasterKid(masterKey)
         ) { MfaDeviceId(UUID.randomUUID().toString()) }
