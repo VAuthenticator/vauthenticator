@@ -3,6 +3,7 @@ import boto3
 import os
 import sys
 import uuid
+import psycopg2
 from dotenv import load_dotenv
 
 load_dotenv(dotenv_path="env")
@@ -32,17 +33,23 @@ kms_client = kmsClient()
 
 
 def store_key(key_table_name, master_key):
-    table = dynamodb.Table(key_table_name)
     key_pair = kms_client.generate_data_key_pair(KeyId=master_key, KeyPairSpec='RSA_2048')
-    table.put_item(Item={
-        "master_key_id": key_pair["KeyId"].split("/")[1],
-        "key_id": str(uuid.uuid4()),
-        "encrypted_private_key": base64.b64encode(key_pair["PrivateKeyCiphertextBlob"]).decode(),
-        "public_key": base64.b64encode(key_pair["PublicKey"]).decode(),
-        "key_purpose": "SIGNATURE",
-        "key_type": "ASYMMETRIC",
-        "enabled": True
-    })
+    if os.getenv("experimental_database_persistence"):
+        cur.execute(
+            f" INSERT INTO KEYS(master_key_id, key_id, key_purpose, key_type, encrypted_private_key, public_key, enabled, key_expiration_date_timestamp)  VALUES('{key_pair["KeyId"].split("/")[1]}', '{str(uuid.uuid4()),}', 'SIGNATURE', 'ASYMMETRIC', '{base64.b64encode(key_pair["PrivateKeyCiphertextBlob"]).decode()}','{base64.b64encode(key_pair["PublicKey"]).decode()}' True, 0)")
+        conn.commit()
+
+    else:
+        table = dynamodb.Table(key_table_name)
+        table.put_item(Item={
+            "master_key_id": key_pair["KeyId"].split("/")[1],
+            "key_id": str(uuid.uuid4()),
+            "encrypted_private_key": base64.b64encode(key_pair["PrivateKeyCiphertextBlob"]).decode(),
+            "public_key": base64.b64encode(key_pair["PublicKey"]).decode(),
+            "key_purpose": "SIGNATURE",
+            "key_type": "ASYMMETRIC",
+            "enabled": True
+        })
 
 
 if __name__ == '__main__':
@@ -50,3 +57,16 @@ if __name__ == '__main__':
     input_key_table_name = f'VAuthenticator_Signature_Keys{sys.argv[2]}'
 
     store_key(input_key_table_name, input_master_key)
+
+    if os.getenv("experimental_database_persistence"):
+        conn = psycopg2.connect(database="postgres",
+                                host=database_host,
+                                user="postgres",
+                                password="postgres",
+                                port="5432")
+        cur = conn.cursor()
+
+        store_key(input_key_table_name, input_master_key)
+
+        cur.close()
+        conn.close()

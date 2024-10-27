@@ -101,12 +101,10 @@ if __name__ == '__main__':
                                 password="postgres",
                                 port="5432")
         cur = conn.cursor()
-
         create_schema()
 
         store_roles()
         store_account()
-
         store_client_applications()
 
         cur.close()
