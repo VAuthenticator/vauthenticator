@@ -1,4 +1,4 @@
-package com.vauthenticator.server.config
+package com.vauthenticator.server.ticket
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.ticket.adapter.dynamodb.DynamoDbTicketRepository

@@ -1,4 +1,4 @@
-package com.vauthenticator.server.config
+package com.vauthenticator.server.keys
 
 import com.vauthenticator.server.keys.adapter.dynamo.DynamoDbKeyStorage
 import com.vauthenticator.server.keys.adapter.jdbc.JdbcKeyStorage

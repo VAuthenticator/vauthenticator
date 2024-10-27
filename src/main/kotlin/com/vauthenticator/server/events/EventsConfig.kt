@@ -1,9 +1,8 @@
-package com.vauthenticator.server.config
+package com.vauthenticator.server.events
 
 import com.vauthenticator.server.account.domain.emailverification.SendVerifyEMailChallengeUponSignUpEventConsumer
 import com.vauthenticator.server.account.domain.signup.SignUpEventConsumer
 import com.vauthenticator.server.account.domain.welcome.SendWelcomeMailUponSignUpEventConsumer
-import com.vauthenticator.server.events.*
 import com.vauthenticator.server.password.domain.changepassword.ChangePasswordEventConsumer
 import com.vauthenticator.server.password.domain.resetpassword.ResetPasswordEventConsumer
 import org.springframework.context.ApplicationEventPublisher

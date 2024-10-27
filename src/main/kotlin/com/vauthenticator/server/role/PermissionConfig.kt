@@ -1,4 +1,4 @@
-package com.vauthenticator.server.config
+package com.vauthenticator.server.role
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.vauthenticator.server.cache.CacheOperation

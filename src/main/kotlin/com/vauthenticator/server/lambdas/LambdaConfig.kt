@@ -1,7 +1,6 @@
-package com.vauthenticator.server.config
+package com.vauthenticator.server.lambdas
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.vauthenticator.server.lambdas.AwsLambdaFunction
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

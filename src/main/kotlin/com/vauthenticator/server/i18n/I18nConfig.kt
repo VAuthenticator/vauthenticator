@@ -1,8 +1,6 @@
-package com.vauthenticator.server.config
+package com.vauthenticator.server.i18n
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.vauthenticator.server.i18n.I18nMessageInjector
-import com.vauthenticator.server.i18n.I18nMessageRepository
 import com.vauthenticator.server.web.CurrentHttpServletRequestService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
