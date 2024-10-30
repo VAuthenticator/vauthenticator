@@ -1,11 +1,14 @@
 package com.vauthenticator.server.oauth2.clientapp
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.vauthenticator.server.account.adapter.jdbc.JdbcAccountRepository
+import com.vauthenticator.server.account.domain.AccountRepository
 import com.vauthenticator.server.cache.CacheOperation
 import com.vauthenticator.server.cache.RedisCacheOperation
 import com.vauthenticator.server.oauth2.clientapp.adapter.cache.CachedClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.adapter.cache.ClientApplicationCacheContentConverter
 import com.vauthenticator.server.oauth2.clientapp.adapter.dynamodb.DynamoDbClientApplicationRepository
+import com.vauthenticator.server.oauth2.clientapp.adapter.jdbc.JdbcClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.domain.ReadClientApplication
 import com.vauthenticator.server.oauth2.clientapp.domain.StoreClientApplication
@@ -14,7 +17,9 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.security.crypto.password.PasswordEncoder
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import java.time.Duration
@@ -24,15 +29,19 @@ class ClientApplicationConfig {
 
 
     @Bean("clientApplicationRepository")
+    @Profile("experimental_database_persistence")
+    fun jdbcClientApplicationRepository(jdbcTemplate: JdbcTemplate, objectMapper: ObjectMapper) : ClientApplicationRepository =
+        JdbcClientApplicationRepository(jdbcTemplate, objectMapper)
+
+    @Bean("clientApplicationRepository")
     @ConditionalOnProperty(
         name = ["vauthenticator.dynamo-db.client-application.cache.enabled"],
         havingValue = "false",
         matchIfMissing = true
     )
-    fun clientApplicationRepository(
+    @Profile("!experimental_database_persistence")
+    fun dynamoDbClientApplicationRepository(
         dynamoDbClient: DynamoDbClient,
-        passwordEncoder: PasswordEncoder,
-        objectMapper: ObjectMapper,
         @Value("\${vauthenticator.dynamo-db.client-application.table-name}") clientAppTableName: String
     ) = DynamoDbClientApplicationRepository(dynamoDbClient, clientAppTableName)
 
@@ -42,9 +51,9 @@ class ClientApplicationConfig {
         havingValue = "true",
         matchIfMissing = false
     )
+    @Profile("!experimental_database_persistence")
     fun cachedClientApplicationRepository(
         dynamoDbClient: DynamoDbClient,
-        passwordEncoder: PasswordEncoder,
         clientApplicationCacheOperation: CacheOperation<String, String>,
         objectMapper: ObjectMapper,
         @Value("\${vauthenticator.dynamo-db.client-application.cache.enabled:false}") withCash: Boolean,
@@ -61,6 +70,7 @@ class ClientApplicationConfig {
         havingValue = "true",
         matchIfMissing = false
     )
+    @Profile("!experimental_database_persistence")
     fun clientApplicationCacheOperation(
         redisTemplate: RedisTemplate<*, *>,
         @Value("\${vauthenticator.dynamo-db.client-application.cache.ttl}") ttl: Duration,
