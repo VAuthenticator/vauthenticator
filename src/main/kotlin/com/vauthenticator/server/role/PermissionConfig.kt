@@ -37,7 +37,6 @@ class PermissionConfig {
     )
     @Profile("!experimental_database_persistence")
     fun dynamoDbRoleRepository(
-        mapper: ObjectMapper,
         dynamoDbClient: DynamoDbClient,
         @Value("\${vauthenticator.dynamo-db.role.table-name}") roleTableName: String,
         @Value("\${vauthenticator.dynamo-db.role.protected-from-delete}") protectedRoleFromDeletion: List<String>
