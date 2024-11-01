@@ -4,6 +4,10 @@ import com.vauthenticator.server.keys.adapter.dynamo.DynamoDbKeyStorage
 import com.vauthenticator.server.keys.adapter.jdbc.JdbcKeyStorage
 import com.vauthenticator.server.keys.adapter.kms.KmsKeyDecrypter
 import com.vauthenticator.server.keys.adapter.kms.KmsKeyGenerator
+import com.vauthenticator.server.keys.adapter.local.BouncyCastleKeyDecrypter
+import com.vauthenticator.server.keys.adapter.local.BouncyCastleKeyGenerator
+import com.vauthenticator.server.keys.adapter.local.BouncyCastleKeyGeneratorMasterKeyRepository
+import com.vauthenticator.server.keys.adapter.local.KeyCryptographicOperations
 import com.vauthenticator.server.keys.domain.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -18,14 +22,32 @@ import java.util.*
 @Configuration(proxyBeanMethods = false)
 class KeyConfig {
 
-    @Bean
-    fun keyGenerator(kmsClient: KmsClient): KeyGenerator = KmsKeyGenerator(kmsClient)
+    @Profile("aws")
+    @Bean("keyGenerator")
+    fun kmsKeyGenerator(kmsClient: KmsClient): KeyGenerator = KmsKeyGenerator(kmsClient)
 
-    @Bean
-    fun keyDecrypter(kmsClient: KmsClient): KeyDecrypter = KmsKeyDecrypter(kmsClient)
+    @Profile("!aws")
+    @Bean("keyGenerator")
+    fun bouncyCastleKeyGenerator(kmsClient: KmsClient): KeyGenerator = BouncyCastleKeyGenerator(
+        KeyCryptographicOperations(
+            BouncyCastleKeyGeneratorMasterKeyRepository()
+        )
+    )
+
+    @Profile("aws")
+    @Bean("keyDecrypter")
+    fun kmsKeyDecrypter(kmsClient: KmsClient): KeyDecrypter = KmsKeyDecrypter(kmsClient)
+
+    @Profile("!aws")
+    @Bean("keyDecrypter")
+    fun bouncyCastleKeyDecrypter(): KeyDecrypter = BouncyCastleKeyDecrypter(
+        KeyCryptographicOperations(
+            BouncyCastleKeyGeneratorMasterKeyRepository()
+        )
+    )
 
     @Bean("keyStorage")
-    @Profile("!experimental_database_persistence")
+    @Profile("!aws")
     fun dynamoDbKeyStorage(
         clock: Clock,
         dynamoDbClient: DynamoDbClient,
@@ -34,7 +56,7 @@ class KeyConfig {
     ) = DynamoDbKeyStorage(clock, dynamoDbClient, signatureTableName, mfaTableName)
 
     @Bean("keyStorage")
-    @Profile("experimental_database_persistence")
+    @Profile("aws")
     fun jdbcKeyStorage(jdbcTemplate: JdbcTemplate, clock: Clock) = JdbcKeyStorage(jdbcTemplate, clock)
 
     @Bean("keyRepository")

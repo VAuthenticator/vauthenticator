@@ -10,6 +10,6 @@ import org.springframework.context.annotation.Profile
 
 @Configuration
 @EnableAutoConfiguration(exclude = [DataSourceAutoConfiguration::class, DataSourceTransactionManagerAutoConfiguration::class, HibernateJpaAutoConfiguration::class])
-@Profile("!experimental_database_persistence")
+@Profile("!aws")
 class ExcludeDatabaseConfig
 
