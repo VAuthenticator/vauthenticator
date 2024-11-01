@@ -33,16 +33,16 @@ class KeyCryptographicOperations(
     }
 
     fun encryptKeyWith(masterKid: MasterKid, encodedPlainText: ByteArray): ByteArray {
-        val masterKey = repository.maskerKeyFor(masterKid);
-        val key = SecretKeySpec(masterKey.toByteArray(), "AES")
+        val masterKey = decoder.decode(repository.maskerKeyFor(masterKid));
+        val key = SecretKeySpec(masterKey, "AES")
         val cipher = Cipher.getInstance("AES")
         cipher.init(Cipher.ENCRYPT_MODE, key)
         return cipher.doFinal(decoder.decode(encodedPlainText))
     }
 
     fun decryptKeyWith(masterKid: MasterKid, encodedEncryptedText: ByteArray): ByteArray {
-        val masterKey = repository.maskerKeyFor(masterKid);
-        val key = SecretKeySpec(masterKey.toByteArray(), "AES")
+        val masterKey = decoder.decode(repository.maskerKeyFor(masterKid));
+        val key = SecretKeySpec(masterKey, "AES")
         val cipher = Cipher.getInstance("AES")
         cipher.init(Cipher.DECRYPT_MODE, key)
         return cipher.doFinal(decoder.decode(encodedEncryptedText))

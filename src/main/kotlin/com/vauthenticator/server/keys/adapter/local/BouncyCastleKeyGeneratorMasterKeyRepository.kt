@@ -2,7 +2,7 @@ package com.vauthenticator.server.keys.adapter.local
 
 import com.vauthenticator.server.extentions.toSha256
 import com.vauthenticator.server.keys.domain.MasterKid
-val toSha256 = "secret".toSha256()
+val toSha256 = "CrZKwm8YWGN5xYeKlaC9vXUBAFFzKYsqfaOFSrrqQgA="
 
 class BouncyCastleKeyGeneratorMasterKeyRepository {
 
