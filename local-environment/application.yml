@@ -19,6 +19,11 @@ mfa:
   otp:
     length: 6
     timeToLiveInSeconds: 600
+key:
+  master-key:
+    storage:
+      content:
+        key : "CrZKwm8YWGN5xYeKlaC9vXUBAFFzKYsqfaOFSrrqQgA="
 
 document:
   engine: file-system

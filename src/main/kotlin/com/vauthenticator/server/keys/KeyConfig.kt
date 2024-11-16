@@ -4,10 +4,7 @@ import com.vauthenticator.server.keys.adapter.dynamo.DynamoDbKeyStorage
 import com.vauthenticator.server.keys.adapter.jdbc.JdbcKeyStorage
 import com.vauthenticator.server.keys.adapter.kms.KmsKeyDecrypter
 import com.vauthenticator.server.keys.adapter.kms.KmsKeyGenerator
-import com.vauthenticator.server.keys.adapter.local.BouncyCastleKeyDecrypter
-import com.vauthenticator.server.keys.adapter.local.BouncyCastleKeyGenerator
-import com.vauthenticator.server.keys.adapter.local.BouncyCastleKeyGeneratorMasterKeyRepository
-import com.vauthenticator.server.keys.adapter.local.KeyCryptographicOperations
+import com.vauthenticator.server.keys.adapter.local.*
 import com.vauthenticator.server.keys.domain.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -28,9 +25,12 @@ class KeyConfig {
 
     @Profile("!kms")
     @Bean("keyGenerator")
-    fun bouncyCastleKeyGenerator(kmsClient: KmsClient): KeyGenerator = BouncyCastleKeyGenerator(
+    fun bouncyCastleKeyGenerator(
+        kmsClient: KmsClient,
+        storage: BouncyCastleKeyGeneratorMasterKeyStorage
+    ): KeyGenerator = BouncyCastleKeyGenerator(
         KeyCryptographicOperations(
-            BouncyCastleKeyGeneratorMasterKeyRepository()
+            BouncyCastleKeyGeneratorMasterKeyRepository(storage)
         )
     )
 
@@ -40,9 +40,13 @@ class KeyConfig {
 
     @Profile("!kms")
     @Bean("keyDecrypter")
-    fun bouncyCastleKeyDecrypter(): KeyDecrypter = BouncyCastleKeyDecrypter(
+    fun bouncyCastleKeyDecrypter(
+        @Value("\${key.master-key}") maserKid: String,
+        storage: BouncyCastleKeyGeneratorMasterKeyStorage
+    ): KeyDecrypter = BouncyCastleKeyDecrypter(
+        maserKid,
         KeyCryptographicOperations(
-            BouncyCastleKeyGeneratorMasterKeyRepository()
+            BouncyCastleKeyGeneratorMasterKeyRepository(storage)
         )
     )
 
