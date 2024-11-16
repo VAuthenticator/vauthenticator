@@ -37,7 +37,7 @@ class KeyCryptographicOperations(
         val key = SecretKeySpec(masterKey, "AES")
         val cipher = Cipher.getInstance("AES")
         cipher.init(Cipher.ENCRYPT_MODE, key)
-        return cipher.doFinal(decoder.decode(encodedPlainText))
+        return cipher.doFinal(encodedPlainText)
     }
 
     fun decryptKeyWith(masterKid: MasterKid, encodedEncryptedText: ByteArray): ByteArray {

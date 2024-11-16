@@ -6,7 +6,7 @@ import com.vauthenticator.server.keys.domain.MasterKid
 
 class BouncyCastleKeyDecrypter(private val keyCryptographicOperations: KeyCryptographicOperations) : KeyDecrypter {
     override fun decryptKey(encrypted: String): String {
-        return encoder.encode(keyCryptographicOperations.decryptKeyWith(MasterKid(""), encrypted.toByteArray()))
+        return encoder.encode(keyCryptographicOperations.decryptKeyWith(MasterKeyGenrator.aMasterKey, encrypted.toByteArray()))
             .decodeToString()
     }
 }

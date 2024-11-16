@@ -141,4 +141,4 @@ spring:
     password: postgres
   config:
     activate:
-      on-profile: experimental_database_persistence
+      on-profile: default

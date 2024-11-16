@@ -47,7 +47,7 @@ class KeyConfig {
     )
 
     @Bean("keyStorage")
-    @Profile("!aws")
+    @Profile("aws")
     fun dynamoDbKeyStorage(
         clock: Clock,
         dynamoDbClient: DynamoDbClient,
@@ -56,7 +56,7 @@ class KeyConfig {
     ) = DynamoDbKeyStorage(clock, dynamoDbClient, signatureTableName, mfaTableName)
 
     @Bean("keyStorage")
-    @Profile("aws")
+    @Profile("!aws")
     fun jdbcKeyStorage(jdbcTemplate: JdbcTemplate, clock: Clock) = JdbcKeyStorage(jdbcTemplate, clock)
 
     @Bean("keyRepository")
