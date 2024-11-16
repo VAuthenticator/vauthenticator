@@ -35,7 +35,7 @@ import java.util.*
 class MfaConfig {
 
     @Bean("mfaAccountMethodsRepository")
-    @Profile("!aws")
+    @Profile("dynamo")
     fun dynamoDbMfaAccountMethodsRepository(
         keyRepository: KeyRepository,
         dynamoDbClient: DynamoDbClient,
@@ -52,7 +52,7 @@ class MfaConfig {
         ) { MfaDeviceId(UUID.randomUUID().toString()) }
 
     @Bean("mfaAccountMethodsRepository")
-    @Profile("aws")
+    @Profile("database")
     fun jdbcMfaAccountMethodsRepository(
         keyRepository: KeyRepository,
         jdbcTemplate: JdbcTemplate,

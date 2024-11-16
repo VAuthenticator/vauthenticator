@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 
 @Service
-@Profile("!aws")
+@Profile("!kms")
 class KeyInitJob(private val keyRepository: KeyRepository) : ApplicationRunner {
 
     override fun run(args: ApplicationArguments?) {

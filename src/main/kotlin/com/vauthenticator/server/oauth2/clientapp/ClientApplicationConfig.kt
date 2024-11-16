@@ -29,7 +29,7 @@ class ClientApplicationConfig {
 
 
     @Bean("clientApplicationRepository")
-    @Profile("aws")
+    @Profile("database")
     fun jdbcClientApplicationRepository(jdbcTemplate: JdbcTemplate, objectMapper: ObjectMapper) : ClientApplicationRepository =
         JdbcClientApplicationRepository(jdbcTemplate, objectMapper)
 
@@ -39,7 +39,7 @@ class ClientApplicationConfig {
         havingValue = "false",
         matchIfMissing = true
     )
-    @Profile("!aws")
+    @Profile("dynamo")
     fun dynamoDbClientApplicationRepository(
         dynamoDbClient: DynamoDbClient,
         @Value("\${vauthenticator.dynamo-db.client-application.table-name}") clientAppTableName: String
@@ -51,7 +51,7 @@ class ClientApplicationConfig {
         havingValue = "true",
         matchIfMissing = false
     )
-    @Profile("!aws")
+    @Profile("dynamo")
     fun cachedClientApplicationRepository(
         dynamoDbClient: DynamoDbClient,
         clientApplicationCacheOperation: CacheOperation<String, String>,
@@ -70,7 +70,7 @@ class ClientApplicationConfig {
         havingValue = "true",
         matchIfMissing = false
     )
-    @Profile("!aws")
+    @Profile("dynamo")
     fun clientApplicationCacheOperation(
         redisTemplate: RedisTemplate<*, *>,
         @Value("\${vauthenticator.dynamo-db.client-application.cache.ttl}") ttl: Duration,

@@ -98,14 +98,14 @@ class AuthorizationServerConfig {
     }
 
     @Bean("oAuth2AuthorizationService")
-    @Profile("!aws")
+    @Profile("!database")
     fun redisOAuth2AuthorizationService(redisTemplate: RedisTemplate<Any, Any>): OAuth2AuthorizationService {
         return RedisOAuth2AuthorizationService(redisTemplate)
     }
 
 
     @Bean("oAuth2AuthorizationService")
-    @Profile("aws")
+    @Profile("database")
     fun jdbcOAuth2AuthorizationService(
         jdbcTemplate : JdbcTemplate,
         registeredClientRepository : RegisteredClientRepository

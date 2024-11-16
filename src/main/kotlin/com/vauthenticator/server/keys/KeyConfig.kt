@@ -22,11 +22,11 @@ import java.util.*
 @Configuration(proxyBeanMethods = false)
 class KeyConfig {
 
-    @Profile("aws")
+    @Profile("kms")
     @Bean("keyGenerator")
     fun kmsKeyGenerator(kmsClient: KmsClient): KeyGenerator = KmsKeyGenerator(kmsClient)
 
-    @Profile("!aws")
+    @Profile("!kms")
     @Bean("keyGenerator")
     fun bouncyCastleKeyGenerator(kmsClient: KmsClient): KeyGenerator = BouncyCastleKeyGenerator(
         KeyCryptographicOperations(
@@ -34,11 +34,11 @@ class KeyConfig {
         )
     )
 
-    @Profile("aws")
+    @Profile("kms")
     @Bean("keyDecrypter")
     fun kmsKeyDecrypter(kmsClient: KmsClient): KeyDecrypter = KmsKeyDecrypter(kmsClient)
 
-    @Profile("!aws")
+    @Profile("!kms")
     @Bean("keyDecrypter")
     fun bouncyCastleKeyDecrypter(): KeyDecrypter = BouncyCastleKeyDecrypter(
         KeyCryptographicOperations(
@@ -47,7 +47,7 @@ class KeyConfig {
     )
 
     @Bean("keyStorage")
-    @Profile("aws")
+    @Profile("dynamo")
     fun dynamoDbKeyStorage(
         clock: Clock,
         dynamoDbClient: DynamoDbClient,
@@ -56,7 +56,7 @@ class KeyConfig {
     ) = DynamoDbKeyStorage(clock, dynamoDbClient, signatureTableName, mfaTableName)
 
     @Bean("keyStorage")
-    @Profile("!aws")
+    @Profile("database")
     fun jdbcKeyStorage(jdbcTemplate: JdbcTemplate, clock: Clock) = JdbcKeyStorage(jdbcTemplate, clock)
 
     @Bean("keyRepository")

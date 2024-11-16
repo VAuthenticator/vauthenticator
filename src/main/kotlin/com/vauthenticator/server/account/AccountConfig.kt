@@ -56,7 +56,7 @@ class AccountConfig {
 
 
     @Bean("accountRepository")
-    @Profile("aws")
+    @Profile("database")
     fun jdbcAccountRepository(
         jdbcTemplate: JdbcTemplate
     ) = JdbcAccountRepository(jdbcTemplate)
@@ -68,7 +68,7 @@ class AccountConfig {
         havingValue = "false",
         matchIfMissing = true
     )
-    @Profile("!aws")
+    @Profile("dynamo")
     fun dynamoDbAccountRepository(
         mapper: ObjectMapper,
         dynamoDbClient: DynamoDbClient,
@@ -85,7 +85,7 @@ class AccountConfig {
         havingValue = "true",
         matchIfMissing = false
     )
-    @Profile("!aws")
+    @Profile("dynamo")
     fun cachedDynamoDbAccountRepository(
         mapper: ObjectMapper,
         dynamoDbClient: DynamoDbClient,
@@ -106,7 +106,7 @@ class AccountConfig {
         havingValue = "true",
         matchIfMissing = false
     )
-    @Profile("!aws")
+    @Profile("dynamo")
     fun accountCacheOperation(
         redisTemplate: RedisTemplate<*, *>,
         @Value("\${vauthenticator.dynamo-db.account.cache.ttl}") ttl: Duration,

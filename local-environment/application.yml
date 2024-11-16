@@ -141,4 +141,4 @@ spring:
     password: postgres
   config:
     activate:
-      on-profile: default
+      on-profile: database
