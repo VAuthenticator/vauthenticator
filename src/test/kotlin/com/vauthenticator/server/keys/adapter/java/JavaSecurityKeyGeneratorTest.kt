@@ -7,9 +7,13 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import java.security.KeyPair
+import java.security.PrivateKey
+import java.security.PublicKey
 
 @ExtendWith(MockKExtension::class)
 class JavaSecurityKeyGeneratorTest {
@@ -17,28 +21,64 @@ class JavaSecurityKeyGeneratorTest {
     @MockK
     lateinit var keyCryptographicOperations: KeyCryptographicOperations
 
-    /*
-    *
-       val generateRSAKeyPair = keyCryptographicOperations.generateRSAKeyPair()
-        return DataKey(
-            keyCryptographicOperations.encryptKeyWith(masterKid, generateRSAKeyPair.private.encoded),
-            Optional.empty()
-        )
-        * */
+    private val masterKid = MasterKid("A_MASTER_KEY")
+    private val anEncryptedPrivateKEyValueAsByteArray = "AN_ENCRYPTED_PRIVATE_KEY_VALUE".toByteArray()
+    private val aPublicKeyValueAsByteArray = "A_PUBLIC_KEY_VALUE".toByteArray()
+
+    lateinit var uut: JavaSecurityKeyGenerator
+
+    @BeforeEach
+    fun setUp() {
+        uut = JavaSecurityKeyGenerator(keyCryptographicOperations)
+    }
+
     @Test
     fun `when a new data key is created`() {
-        val uut = JavaSecurityKeyGenerator(keyCryptographicOperations)
-        val masterKid = MasterKid("A_MASTER_KEY")
         val keyPair = mockk<KeyPair>()
-        val anEncryptedValueAsByteArray = "AN_ENCRYPTED_VALUE".toByteArray()
+        val privateKey = mockk<PrivateKey>()
 
         every { keyCryptographicOperations.generateRSAKeyPair() } returns keyPair
-        every { keyPair.private } returns mockk {
-            every { keyPair.private.encoded } returns anEncryptedValueAsByteArray
-        }
-        every { keyCryptographicOperations.encryptKeyWith(masterKid, anEncryptedValueAsByteArray) } returns anEncryptedValueAsByteArray
+        every { keyPair.private } returns privateKey
+        every { privateKey.encoded } returns anEncryptedPrivateKEyValueAsByteArray
+
+        every {
+            keyCryptographicOperations.encryptKeyWith(
+                masterKid,
+                anEncryptedPrivateKEyValueAsByteArray
+            )
+        } returns anEncryptedPrivateKEyValueAsByteArray
 
         val actual = uut.dataKeyFor(masterKid)
-        val expected = DataKey.from()
+        val expected = DataKey.from(encoder.encode(anEncryptedPrivateKEyValueAsByteArray).decodeToString(), "")
+        Assertions.assertEquals(expected, actual)
+    }
+
+
+    @Test
+    fun `when a new data key pair is created`() {
+        val keyPair = mockk<KeyPair>()
+        val privateKey = mockk<PrivateKey>()
+        val publicKey = mockk<PublicKey>()
+
+        every { keyCryptographicOperations.generateRSAKeyPair() } returns keyPair
+        every { keyPair.private } returns privateKey
+        every { privateKey.encoded } returns anEncryptedPrivateKEyValueAsByteArray
+
+        every { keyPair.public } returns publicKey
+        every { publicKey.encoded } returns aPublicKeyValueAsByteArray
+
+        every {
+            keyCryptographicOperations.encryptKeyWith(
+                masterKid,
+                anEncryptedPrivateKEyValueAsByteArray
+            )
+        } returns anEncryptedPrivateKEyValueAsByteArray
+
+        val actual = uut.dataKeyPairFor(masterKid)
+        val expected = DataKey.from(
+            encoder.encode(anEncryptedPrivateKEyValueAsByteArray).decodeToString(),
+            encoder.encode(aPublicKeyValueAsByteArray).decodeToString()
+        )
+        Assertions.assertEquals(expected, actual)
     }
 }
