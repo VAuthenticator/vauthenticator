@@ -1,4 +1,4 @@
-package com.vauthenticator.server.keys.adapter.local
+package com.vauthenticator.server.keys.adapter.java
 
 import com.vauthenticator.server.extentions.decoder
 import com.vauthenticator.server.keys.domain.MasterKid
@@ -12,11 +12,11 @@ import javax.crypto.spec.SecretKeySpec
 
 
 class KeyCryptographicOperations(
-    private val repository: BouncyCastleKeyGeneratorMasterKeyRepository,
+    private val repository: KeyGeneratorMasterKeyRepository
 ) {
     companion object {
         init {
-            Security.addProvider(BouncyCastleProvider());
+            Security.addProvider(BouncyCastleProvider())
         }
     }
 

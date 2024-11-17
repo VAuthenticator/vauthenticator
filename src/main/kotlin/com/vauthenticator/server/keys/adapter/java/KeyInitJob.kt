@@ -1,4 +1,4 @@
-package com.vauthenticator.server.keys.adapter.local
+package com.vauthenticator.server.keys.adapter.java
 
 import com.vauthenticator.server.keys.domain.*
 import org.springframework.beans.factory.annotation.Value

@@ -1,4 +1,4 @@
-package com.vauthenticator.server.keys.adapter.local
+package com.vauthenticator.server.keys.adapter.java
 
 import com.vauthenticator.server.keys.domain.MasterKid
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -7,8 +7,8 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 
 
-class BouncyCastleKeyGeneratorMasterKeyRepository(
-    val storage: BouncyCastleKeyGeneratorMasterKeyStorage
+class KeyGeneratorMasterKeyRepository(
+    val storage: KeyGeneratorMasterKeyStorage
 ) {
 
     fun maskerKeyFor(masterKeyId: MasterKid): String {
@@ -19,12 +19,12 @@ class BouncyCastleKeyGeneratorMasterKeyRepository(
 
 @Profile("!kms")
 @Configuration(proxyBeanMethods = false)
-@EnableConfigurationProperties(BouncyCastleKeyGeneratorMasterKeyStorage::class)
-class BouncyCastleKeyGeneratorMasterKeyRepositoryConfig {
+@EnableConfigurationProperties(KeyGeneratorMasterKeyStorage::class)
+class KeyGeneratorMasterKeyRepositoryConfig {
 
 }
 
 @ConfigurationProperties(prefix = "key.master-key.storage")
-data class BouncyCastleKeyGeneratorMasterKeyStorage(val content: Map<String, String>) {
+data class KeyGeneratorMasterKeyStorage(val content: Map<String, String>) {
 
 }

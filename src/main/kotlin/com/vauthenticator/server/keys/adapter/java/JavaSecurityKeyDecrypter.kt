@@ -1,11 +1,10 @@
-package com.vauthenticator.server.keys.adapter.local
+package com.vauthenticator.server.keys.adapter.java
 
 import com.vauthenticator.server.extentions.encoder
 import com.vauthenticator.server.keys.domain.KeyDecrypter
 import com.vauthenticator.server.keys.domain.MasterKid
-import org.springframework.beans.factory.annotation.Value
 
-class BouncyCastleKeyDecrypter(
+class JavaSecurityKeyDecrypter(
     private val maserKid: String,
     private val keyCryptographicOperations: KeyCryptographicOperations
 ) : KeyDecrypter {

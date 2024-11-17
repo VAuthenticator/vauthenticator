@@ -1,4 +1,4 @@
-package com.vauthenticator.server.keys.adapter.local
+package com.vauthenticator.server.keys.adapter.java
 
 import com.vauthenticator.server.keys.domain.DataKey
 import com.vauthenticator.server.keys.domain.KeyGenerator
@@ -6,7 +6,7 @@ import com.vauthenticator.server.keys.domain.MasterKid
 import java.util.*
 
 
-class BouncyCastleKeyGenerator(
+class JavaSecurityKeyGenerator(
     private val keyCryptographicOperations: KeyCryptographicOperations
 ) : KeyGenerator {
 
