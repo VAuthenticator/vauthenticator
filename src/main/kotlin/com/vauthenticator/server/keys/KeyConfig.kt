@@ -29,7 +29,7 @@ class KeyConfig {
         kmsClient: KmsClient,
         storage: KeyGeneratorMasterKeyStorage
     ): KeyGenerator = JavaSecurityKeyGenerator(
-        KeyCryptographicOperations(
+        JavaSecurityCryptographicOperations(
             KeyGeneratorMasterKeyRepository(storage)
         )
     )
@@ -45,7 +45,7 @@ class KeyConfig {
         storage: KeyGeneratorMasterKeyStorage
     ): KeyDecrypter = JavaSecurityKeyDecrypter(
         maserKid,
-        KeyCryptographicOperations(
+        JavaSecurityCryptographicOperations(
             KeyGeneratorMasterKeyRepository(storage)
         )
     )

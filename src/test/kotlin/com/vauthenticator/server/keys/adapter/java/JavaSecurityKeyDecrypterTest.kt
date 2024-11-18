@@ -13,7 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 class JavaSecurityKeyDecrypterTest {
 
     @MockK
-    lateinit var keyCryptographicOperations: KeyCryptographicOperations
+    lateinit var javaSecurityCryptographicOperations: JavaSecurityCryptographicOperations
 
     @Test
     fun `happy path`() {
@@ -21,9 +21,9 @@ class JavaSecurityKeyDecrypterTest {
         val decrypted = "AN_UNENCRYPTED_VALUE".toByteArray()
         val maserKid = "A_MASTER_KEY"
 
-        val uut = JavaSecurityKeyDecrypter(maserKid, keyCryptographicOperations)
+        val uut = JavaSecurityKeyDecrypter(maserKid, javaSecurityCryptographicOperations)
 
-        every { keyCryptographicOperations.decryptKeyWith(MasterKid(maserKid), encrypted.toByteArray()) } returns decrypted
+        every { javaSecurityCryptographicOperations.decryptKeyWith(MasterKid(maserKid), encrypted.toByteArray()) } returns decrypted
 
         val actual = uut.decryptKey(encrypted)
         val expected = encoder.encode(decrypted).decodeToString()

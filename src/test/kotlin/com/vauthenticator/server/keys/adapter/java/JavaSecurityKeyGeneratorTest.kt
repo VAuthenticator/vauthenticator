@@ -19,7 +19,7 @@ import java.security.PublicKey
 class JavaSecurityKeyGeneratorTest {
 
     @MockK
-    lateinit var keyCryptographicOperations: KeyCryptographicOperations
+    lateinit var javaSecurityCryptographicOperations: JavaSecurityCryptographicOperations
 
     private val masterKid = MasterKid("A_MASTER_KEY")
     private val anEncryptedPrivateKEyValueAsByteArray = "AN_ENCRYPTED_PRIVATE_KEY_VALUE".toByteArray()
@@ -29,7 +29,7 @@ class JavaSecurityKeyGeneratorTest {
 
     @BeforeEach
     fun setUp() {
-        uut = JavaSecurityKeyGenerator(keyCryptographicOperations)
+        uut = JavaSecurityKeyGenerator(javaSecurityCryptographicOperations)
     }
 
     @Test
@@ -37,12 +37,12 @@ class JavaSecurityKeyGeneratorTest {
         val keyPair = mockk<KeyPair>()
         val privateKey = mockk<PrivateKey>()
 
-        every { keyCryptographicOperations.generateRSAKeyPair() } returns keyPair
+        every { javaSecurityCryptographicOperations.generateRSAKeyPair() } returns keyPair
         every { keyPair.private } returns privateKey
         every { privateKey.encoded } returns anEncryptedPrivateKEyValueAsByteArray
 
         every {
-            keyCryptographicOperations.encryptKeyWith(
+            javaSecurityCryptographicOperations.encryptKeyWith(
                 masterKid,
                 anEncryptedPrivateKEyValueAsByteArray
             )
@@ -60,7 +60,7 @@ class JavaSecurityKeyGeneratorTest {
         val privateKey = mockk<PrivateKey>()
         val publicKey = mockk<PublicKey>()
 
-        every { keyCryptographicOperations.generateRSAKeyPair() } returns keyPair
+        every { javaSecurityCryptographicOperations.generateRSAKeyPair() } returns keyPair
         every { keyPair.private } returns privateKey
         every { privateKey.encoded } returns anEncryptedPrivateKEyValueAsByteArray
 
@@ -68,7 +68,7 @@ class JavaSecurityKeyGeneratorTest {
         every { publicKey.encoded } returns aPublicKeyValueAsByteArray
 
         every {
-            keyCryptographicOperations.encryptKeyWith(
+            javaSecurityCryptographicOperations.encryptKeyWith(
                 masterKid,
                 anEncryptedPrivateKEyValueAsByteArray
             )

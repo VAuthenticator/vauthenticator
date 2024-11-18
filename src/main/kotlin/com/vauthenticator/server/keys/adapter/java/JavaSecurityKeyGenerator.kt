@@ -7,22 +7,22 @@ import java.util.*
 
 
 class JavaSecurityKeyGenerator(
-    private val keyCryptographicOperations: KeyCryptographicOperations
+    private val javaSecurityCryptographicOperations: JavaSecurityCryptographicOperations
 ) : KeyGenerator {
 
 
     override fun dataKeyPairFor(masterKid: MasterKid): DataKey {
-        val generateRSAKeyPair = keyCryptographicOperations.generateRSAKeyPair()
+        val generateRSAKeyPair = javaSecurityCryptographicOperations.generateRSAKeyPair()
         return DataKey(
-            keyCryptographicOperations.encryptKeyWith(masterKid, generateRSAKeyPair.private.encoded),
+            javaSecurityCryptographicOperations.encryptKeyWith(masterKid, generateRSAKeyPair.private.encoded),
             Optional.of(generateRSAKeyPair.public.encoded)
         )
     }
 
     override fun dataKeyFor(masterKid: MasterKid): DataKey {
-        val generateRSAKeyPair = keyCryptographicOperations.generateRSAKeyPair()
+        val generateRSAKeyPair = javaSecurityCryptographicOperations.generateRSAKeyPair()
         return DataKey(
-            keyCryptographicOperations.encryptKeyWith(masterKid, generateRSAKeyPair.private.encoded),
+            javaSecurityCryptographicOperations.encryptKeyWith(masterKid, generateRSAKeyPair.private.encoded),
             Optional.empty()
         )
     }
