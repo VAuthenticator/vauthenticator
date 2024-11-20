@@ -20,7 +20,7 @@ import java.util.*
 class TicketConfig {
 
     @Bean("ticketRepository")
-    @Profile("!experimental_database_persistence")
+    @Profile("dynamo")
     fun dynamoDbTicketRepository(
         @Value("\${vauthenticator.dynamo-db.ticket.table-name}") tableName: String,
         dynamoDbClient: DynamoDbClient
@@ -28,7 +28,7 @@ class TicketConfig {
 
 
     @Bean("ticketRepository")
-    @Profile("experimental_database_persistence")
+    @Profile("database")
     fun jdbCTicketRepository(
         jdbcTemplate: JdbcTemplate,
         objectMapper: ObjectMapper

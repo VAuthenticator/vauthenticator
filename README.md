@@ -44,3 +44,8 @@ Right now it is based, as said before to the latest version on spring oauth2/ope
 ### local environment
 
 For more details please follow to this link [readme.md](local-environment%2Freadme.md)
+
+### profiling
+
+The application configuration is very versatile and you can decide what persistence and key management provider to use AWS or not AWS native. 
+For more details please refer to the detailed page [here](docs/profiles.md)
