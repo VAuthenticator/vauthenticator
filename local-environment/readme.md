@@ -94,11 +94,8 @@ cd ../../../../../communication/default/mail
 cp *  ../../../dist/mail/templates
 ```
 
-## Postgres usage
+## Installation in a NON AWS Environment 
 
-Postgres is an available option as storage, it is experimental right now, and it is supported only for account and roles.
+Postgres and plain java key management is an available option
 
-In order to activate it is needed to add the corresponding spring profile '''experimental_database_persistence''' and 
-for the init process add to the docker run the environment variable '''experimental_database_persistence=true'''with the command like below:
-
-> docker run --pull=always -e experimental_database_persistence=true -it mrflick72/vauthenticator-local-tenant-installer:latest
+In order to activate aws native service usage like KMS, DynamoDB and so on please use the spring profile '''aws''' default otherwise

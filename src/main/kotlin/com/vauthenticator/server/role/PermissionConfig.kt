@@ -23,7 +23,7 @@ import java.time.Duration
 class PermissionConfig {
 
     @Bean("roleRepository")
-    @Profile("experimental_database_persistence")
+    @Profile("database")
     fun jdbcRoleRepository(
         jdbcTemplate: JdbcTemplate,
         @Value("\${vauthenticator.dynamo-db.role.protected-from-delete}") protectedRoleFromDeletion: List<String>
@@ -35,7 +35,7 @@ class PermissionConfig {
         havingValue = "false",
         matchIfMissing = true
     )
-    @Profile("!experimental_database_persistence")
+    @Profile("dynamo")
     fun dynamoDbRoleRepository(
         dynamoDbClient: DynamoDbClient,
         @Value("\${vauthenticator.dynamo-db.role.table-name}") roleTableName: String,
@@ -49,7 +49,7 @@ class PermissionConfig {
         havingValue = "true",
         matchIfMissing = false
     )
-    @Profile("!experimental_database_persistence")
+    @Profile("dynamo")
     fun cachedDynamoDbRoleRepository(
         mapper: ObjectMapper,
         roleCacheOperation: CacheOperation<String, String>,
@@ -68,7 +68,7 @@ class PermissionConfig {
         havingValue = "true",
         matchIfMissing = false
     )
-    @Profile("!experimental_database_persistence")
+    @Profile("dynamo")
     fun roleCacheOperation(
         redisTemplate: RedisTemplate<*, *>,
         @Value("\${vauthenticator.dynamo-db.role.cache.ttl}") ttl: Duration,
