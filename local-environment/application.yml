@@ -2,6 +2,11 @@ endSessionWithoutDiscovery: true
 oidcEndSessionUrl: ${vauthenticator.host}/oidc/logout
 auth.oidcIss: ${vauthenticator.host}
 
+scheduled:
+  database-cleanup:
+    lock-ttl: 30000
+    cron: "0 * * * * *"
+
 event:
   consumer:
     enable:
