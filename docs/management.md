@@ -11,5 +11,3 @@ Actuator Clean Database enabled for database profile activated
 *Request:* Empty request body
 
 *Response Status:* ```204 NoContent```
-
-```
