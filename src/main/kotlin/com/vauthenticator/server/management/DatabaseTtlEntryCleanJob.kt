@@ -1,4 +1,4 @@
-package com.vauthenticator.server.job
+package com.vauthenticator.server.management
 
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
@@ -54,7 +54,7 @@ class DatabaseTtlEntryCleanJob(
 }
 
 
-@Profile("!kms")
+@Profile("database")
 @Configuration(proxyBeanMethods = false)
 class DatabaseTtlEntryCleanJobConfig() {
 
