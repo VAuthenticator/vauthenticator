@@ -30,6 +30,7 @@ Right now it is based, as said before to the latest version on spring oauth2/ope
 - Post login flow 
   - force to reset password
 - back/front channel logout
+- management api: custom actuator endpoint for more details [look here](docs/management.md)
 
 **Storage:**
 

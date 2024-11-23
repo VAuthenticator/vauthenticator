@@ -1,6 +1,7 @@
 package com.vauthenticator.server.keys.adapter.java
 
 import com.vauthenticator.server.keys.domain.*
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
@@ -15,6 +16,8 @@ class KeyInitJob(
     private val keyRepository: KeyRepository
 ) : ApplicationRunner {
 
+    val logger = LoggerFactory.getLogger(KeyInitJob::class.java)
+
     override fun run(args: ApplicationArguments) {
 
         if (keyStorage.signatureKeys().keys.isEmpty()) {
@@ -23,7 +26,7 @@ class KeyInitJob(
                 keyPurpose = KeyPurpose.SIGNATURE,
                 keyType = KeyType.ASYMMETRIC,
             )
-            println(kid)
+            logger.info("Token Signature Key init job has been executed. Key ID generated: $kid")
         }
 
     }

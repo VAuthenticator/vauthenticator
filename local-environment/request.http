@@ -1,3 +1,11 @@
+### actuator root
+GET {{actuatorHost}}/actuator
+
+
+### acgtuator database-clean-up job
+POST {{actuatorHost}}/actuator/database-clean-up
+
+
 ### login page
 GET {{host}}/login
 
