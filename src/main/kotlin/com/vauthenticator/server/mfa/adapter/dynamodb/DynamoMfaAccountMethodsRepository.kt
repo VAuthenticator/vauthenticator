@@ -83,11 +83,16 @@ class DynamoMfaAccountMethodsRepository(
         mfaChannel: String,
         associated: Boolean
     ): MfaAccountMethod {
-        //todo kid and device id should be the same across save request
+        val (kid, mfaDeviceId) = findBy(userName, mfaMfaMethod, mfaChannel)
+            .map {
+                listOf(it.key, it.mfaDeviceId)
+            }.orElseGet {
+                val kid = keyRepository.createKeyFrom(masterKid, KeyType.SYMMETRIC, KeyPurpose.MFA)
+                val mfaDeviceId = mfaDeviceIdGenerator.invoke()
+                listOf(kid, mfaDeviceId)
+            }
 
-        val kid = keyRepository.createKeyFrom(masterKid, KeyType.SYMMETRIC, KeyPurpose.MFA)
-        val mfaDeviceId = mfaDeviceIdGenerator.invoke()
-        storeOnDynamo(userName, mfaMfaMethod, mfaChannel, mfaDeviceId, kid, associated)
+        storeOnDynamo(userName, mfaMfaMethod, mfaChannel, mfaDeviceId as MfaDeviceId, kid as Kid, associated)
         return MfaAccountMethod(userName, mfaDeviceId, kid, mfaMfaMethod, mfaChannel, associated)
     }
 

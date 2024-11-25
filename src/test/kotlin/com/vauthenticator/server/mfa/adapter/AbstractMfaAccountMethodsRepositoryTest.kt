@@ -35,7 +35,7 @@ abstract class AbstractMfaAccountMethodsRepositoryTest {
 
     @Test
     fun `when a mfa account method is stored`() {
-        every { keyRepository.createKeyFrom(masterKid, KeyType.SYMMETRIC, KeyPurpose.MFA) } returns key
+        whenAKeyIsStored()
 
         uut.save(email, MfaMethod.EMAIL_MFA_METHOD, email, true)
         val mfaAccountMethods = uut.findAll(email)
@@ -86,7 +86,7 @@ abstract class AbstractMfaAccountMethodsRepositoryTest {
 
     @Test
     fun `when decide what mfa use as default`() {
-        every { keyRepository.createKeyFrom(masterKid, KeyType.SYMMETRIC, KeyPurpose.MFA) } returns key
+        whenAKeyIsStored()
         uut.save(email, MfaMethod.EMAIL_MFA_METHOD, email, true)
 
         val expected = Optional.of(mfaDeviceId)
@@ -94,5 +94,29 @@ abstract class AbstractMfaAccountMethodsRepositoryTest {
         val defaultDevice = uut.getDefaultDevice(email)
 
         assertEquals(expected, defaultDevice)
+    }
+
+    @Test
+    fun `when a mfa account method is stored and then enabled`() {
+        whenAKeyIsStored()
+
+        uut.save(email, MfaMethod.EMAIL_MFA_METHOD, email, false)
+        val beforeToBeAssociated = uut.findBy(email, MfaMethod.EMAIL_MFA_METHOD, email).get()
+
+        uut.save(email, MfaMethod.EMAIL_MFA_METHOD, email, true)
+        val afterAssociated = uut.findBy(email, MfaMethod.EMAIL_MFA_METHOD, email).get()
+
+
+        assertEquals(afterAssociated.mfaDeviceId, beforeToBeAssociated.mfaDeviceId)
+        assertEquals(afterAssociated.mfaChannel, beforeToBeAssociated.mfaChannel)
+        assertEquals(afterAssociated.mfaMethod, beforeToBeAssociated.mfaMethod)
+        assertEquals(beforeToBeAssociated.associated,false)
+        assertEquals(afterAssociated.associated, true)
+        assertEquals(afterAssociated.key, beforeToBeAssociated.key)
+        assertEquals(afterAssociated.userName, beforeToBeAssociated.userName)
+    }
+
+    private fun whenAKeyIsStored() {
+        every { keyRepository.createKeyFrom(masterKid, KeyType.SYMMETRIC, KeyPurpose.MFA) } returns key
     }
 }
