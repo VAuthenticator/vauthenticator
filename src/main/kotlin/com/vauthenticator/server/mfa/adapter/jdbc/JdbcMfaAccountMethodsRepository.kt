@@ -47,13 +47,34 @@ class JdbcMfaAccountMethodsRepository(
         mfaChannel: String,
         associated: Boolean
     ): MfaAccountMethod {
-        val kid = keyRepository.createKeyFrom(masterKid, KeyType.SYMMETRIC, KeyPurpose.MFA)
-        val mfaDeviceId = mfaDeviceIdGenerator.invoke()
+        val (kid, mfaDeviceId) = findBy(userName, mfaMfaMethod, mfaChannel)
+            .map {
+                listOf(it.key, it.mfaDeviceId)
+            }.orElseGet {
+                val kid = keyRepository.createKeyFrom(masterKid, KeyType.SYMMETRIC, KeyPurpose.MFA)
+                val mfaDeviceId = mfaDeviceIdGenerator.invoke()
+                listOf(kid, mfaDeviceId)
+            }
 
         jdbcTemplate.update(
-            "INSERT INTO MFA_ACCOUNT_METHODS (user_name, mfa_device_id, mfa_method, mfa_channel, key_id, associated) VALUES (?,?,?,?,?,?)",
-            userName, mfaDeviceId.content, mfaMfaMethod.name, mfaChannel, kid.content(), associated
-        )
+            """INSERT INTO MFA_ACCOUNT_METHODS (user_name, mfa_device_id, mfa_method, mfa_channel, key_id, associated) VALUES (?,?,?,?,?,?) 
+                    ON CONFLICT(user_name, mfa_channel) 
+                    DO UPDATE SET mfa_device_id=?,
+                                mfa_method=?,
+                                key_id=?,
+                                associated=?
+                                """,
+            userName,
+            (mfaDeviceId as MfaDeviceId).content,
+            mfaMfaMethod.name,
+            mfaChannel,
+            (kid as Kid).content(),
+            associated,
+            mfaDeviceId.content,
+            mfaMfaMethod.name,
+            kid.content(),
+            associated
+            )
 
         return MfaAccountMethod(userName, mfaDeviceId, kid, mfaMfaMethod, mfaChannel, associated)
     }
