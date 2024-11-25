@@ -26,8 +26,10 @@ abstract class AbstractMfaAccountMethodsRepositoryTest {
     lateinit var uut: MfaAccountMethodsRepository
     abstract fun initMfaAccountMethodsRepository(): MfaAccountMethodsRepository
     abstract fun resetDatabase()
+
     @BeforeEach
     fun setUp() {
+        every { keyRepository.createKeyFrom(masterKid, KeyType.SYMMETRIC, KeyPurpose.MFA) } returns key
 
         resetDatabase()
         uut = initMfaAccountMethodsRepository()
@@ -35,8 +37,6 @@ abstract class AbstractMfaAccountMethodsRepositoryTest {
 
     @Test
     fun `when a mfa account method is stored`() {
-        whenAKeyIsStored()
-
         uut.save(email, MfaMethod.EMAIL_MFA_METHOD, email, true)
         val mfaAccountMethods = uut.findAll(email)
         assertEquals(
@@ -86,7 +86,6 @@ abstract class AbstractMfaAccountMethodsRepositoryTest {
 
     @Test
     fun `when decide what mfa use as default`() {
-        whenAKeyIsStored()
         uut.save(email, MfaMethod.EMAIL_MFA_METHOD, email, true)
 
         val expected = Optional.of(mfaDeviceId)
@@ -98,8 +97,6 @@ abstract class AbstractMfaAccountMethodsRepositoryTest {
 
     @Test
     fun `when a mfa account method is stored and then enabled`() {
-        whenAKeyIsStored()
-
         uut.save(email, MfaMethod.EMAIL_MFA_METHOD, email, false)
         val beforeToBeAssociated = uut.findBy(email, MfaMethod.EMAIL_MFA_METHOD, email).get()
 
@@ -110,13 +107,10 @@ abstract class AbstractMfaAccountMethodsRepositoryTest {
         assertEquals(afterAssociated.mfaDeviceId, beforeToBeAssociated.mfaDeviceId)
         assertEquals(afterAssociated.mfaChannel, beforeToBeAssociated.mfaChannel)
         assertEquals(afterAssociated.mfaMethod, beforeToBeAssociated.mfaMethod)
-        assertEquals(beforeToBeAssociated.associated,false)
+        assertEquals(beforeToBeAssociated.associated, false)
         assertEquals(afterAssociated.associated, true)
         assertEquals(afterAssociated.key, beforeToBeAssociated.key)
         assertEquals(afterAssociated.userName, beforeToBeAssociated.userName)
     }
 
-    private fun whenAKeyIsStored() {
-        every { keyRepository.createKeyFrom(masterKid, KeyType.SYMMETRIC, KeyPurpose.MFA) } returns key
-    }
 }
