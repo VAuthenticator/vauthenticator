@@ -4,6 +4,7 @@ import com.vauthenticator.server.ticket.domain.InvalidTicketException
 import com.vauthenticator.server.ticket.domain.Ticket
 import com.vauthenticator.server.ticket.domain.TicketId
 import com.vauthenticator.server.ticket.domain.TicketRepository
+import java.util.*
 
 typealias MfaAssociationVerifier = (ticket: Ticket) -> Unit
 
@@ -41,6 +42,13 @@ class MfaMethodsEnrollmentAssociation(
     private fun associate(ticket: String, asDefaultMethod: Boolean, verifier: MfaAssociationVerifier) {
         ticketRepository.loadFor(TicketId(ticket))
             .map { ticket ->
+                mfaAccountMethodsRepository.findBy(ticket.userName, ticket.context.mfaMethod(), ticket.context.mfaChannel())
+                    .ifPresent{
+                        if(it.associated){
+                            revoke(ticket)
+                            throw InvalidTicketException("The ticket $ticket is not a valid ticket, it seems that the mfa associated is already associated")
+                        }
+                    }
                 verifier.invoke(ticket)
                 val mfaAccountMethod = mfaAccountMethodsRepository.save(
                     ticket.userName,

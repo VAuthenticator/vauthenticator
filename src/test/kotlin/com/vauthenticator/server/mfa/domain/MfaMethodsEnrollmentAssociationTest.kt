@@ -8,6 +8,7 @@ import com.vauthenticator.server.ticket.domain.InvalidTicketException
 import com.vauthenticator.server.ticket.domain.Ticket
 import com.vauthenticator.server.ticket.domain.TicketId
 import com.vauthenticator.server.ticket.domain.TicketRepository
+import io.mockk.core.ValueClassSupport.maybeUnboxValueForMethodReturn
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -38,6 +39,14 @@ class MfaMethodsEnrollmentAssociationTest {
         email,
         true
     )
+    private val notAssociatedMfaAccountMethod = MfaAccountMethod(
+        email,
+        MfaDeviceId("A_MFA_DEVICE_ID"),
+        Kid("A_KID"),
+        MfaMethod.EMAIL_MFA_METHOD,
+        email,
+        false
+    )
     private val ticket = TicketFixture.ticketFor(
         RAW_TICKET,
         userName,
@@ -59,6 +68,8 @@ class MfaMethodsEnrollmentAssociationTest {
     @BeforeEach
     fun setUp() {
         underTest = MfaMethodsEnrollmentAssociation(ticketRepository, mfaAccountMethodsRepository, mfaVerifier)
+
+        every { mfaAccountMethodsRepository.findBy(ticket.userName, ticket.context.mfaMethod(), ticket.context.mfaChannel())} returns Optional.of(notAssociatedMfaAccountMethod)
     }
 
     @Test
@@ -145,5 +156,18 @@ class MfaMethodsEnrollmentAssociationTest {
         Assertions.assertThrows(InvalidTicketException::class.java) { underTest.associate(RAW_TICKET, CODE) }
 
         verify { ticketRepository.loadFor(ticketId) }
+    }
+
+    @Test
+    fun `when a multiple ticket has been created after one association all the remaining ticket should be not valid anymore`() {
+        every { ticketRepository.loadFor(ticketId) } returns Optional.of(ticket)
+        every { mfaAccountMethodsRepository.findBy(ticket.userName, ticket.context.mfaMethod(), ticket.context.mfaChannel())} returns Optional.of(mfaAccountMethod)
+        every { ticketRepository.delete(ticket.ticketId) } just runs
+
+        Assertions.assertThrows(InvalidTicketException::class.java) { underTest.associate(RAW_TICKET, CODE) }
+
+        verify { ticketRepository.loadFor(ticketId) }
+        verify { mfaAccountMethodsRepository.findBy(ticket.userName, ticket.context.mfaMethod(), ticket.context.mfaChannel())}
+        verify { ticketRepository.delete(ticket.ticketId) }
     }
 }
