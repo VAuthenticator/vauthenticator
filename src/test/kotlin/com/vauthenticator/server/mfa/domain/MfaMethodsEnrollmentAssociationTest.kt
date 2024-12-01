@@ -68,8 +68,6 @@ class MfaMethodsEnrollmentAssociationTest {
     @BeforeEach
     fun setUp() {
         underTest = MfaMethodsEnrollmentAssociation(ticketRepository, mfaAccountMethodsRepository, mfaVerifier)
-
-        every { mfaAccountMethodsRepository.findBy(ticket.userName, ticket.context.mfaMethod(), ticket.context.mfaChannel())} returns Optional.of(notAssociatedMfaAccountMethod)
     }
 
     @Test
@@ -83,6 +81,8 @@ class MfaMethodsEnrollmentAssociationTest {
                 )
             )
         every { ticketRepository.loadFor(ticketId) } returns Optional.of(ticketWithAutoAssociationFeatureEnabled)
+        every { mfaAccountMethodsRepository.findBy(ticket.userName, ticket.context.mfaMethod(), ticket.context.mfaChannel())} returns Optional.of(notAssociatedMfaAccountMethod)
+
         every {
             mfaAccountMethodsRepository.save(
                 userName,
@@ -96,6 +96,8 @@ class MfaMethodsEnrollmentAssociationTest {
         underTest.associate(RAW_TICKET)
 
         verify { ticketRepository.loadFor(ticketId) }
+        verify { mfaAccountMethodsRepository.findBy(ticket.userName, ticket.context.mfaMethod(), ticket.context.mfaChannel())}
+
         verify {
             mfaAccountMethodsRepository.save(
                 userName,
@@ -110,6 +112,8 @@ class MfaMethodsEnrollmentAssociationTest {
     @Test
     fun `when mfa is associated`() {
         every { ticketRepository.loadFor(ticketId) } returns Optional.of(ticket)
+        every { mfaAccountMethodsRepository.findBy(ticket.userName, ticket.context.mfaMethod(), ticket.context.mfaChannel())} returns Optional.of(notAssociatedMfaAccountMethod)
+
         every {
             mfaVerifier.verifyMfaChallengeToBeAssociatedFor(
                 userName,
@@ -131,6 +135,8 @@ class MfaMethodsEnrollmentAssociationTest {
         underTest.associate(RAW_TICKET, CODE)
 
         verify { ticketRepository.loadFor(ticketId) }
+        verify { mfaAccountMethodsRepository.findBy(ticket.userName, ticket.context.mfaMethod(), ticket.context.mfaChannel())}
+
         verify {
             mfaAccountMethodsRepository.save(
                 userName,
