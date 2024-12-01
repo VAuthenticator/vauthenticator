@@ -76,6 +76,9 @@ management:
     health:
       show-details: ALWAYS
 password:
+  password-history:
+    history-evaluation-limit: 1
+    max-history-allowed-size: 3
   generator-criteria:
     upperCaseCharactersSize: 2
     lowerCaseCharactersSize: 2
@@ -112,8 +115,6 @@ vauthenticator:
         name: client-application
     password-history:
       table-name: VAuthenticator_Password_History_Local_Staging
-      history-evaluation-limit: 1
-      max-history-allowed-size: 3
     keys:
       signature:
         table-name: VAuthenticator_Signature_Keys_Local_Staging

@@ -61,4 +61,8 @@ data class TicketId(val content: String)
 
 data class TicketFeatures(val ttl: Duration)
 
-class InvalidTicketException(message: String) : RuntimeException(message)
+enum class InvalidTicketCause {
+    TICKET_EXPIRED,
+    ALREADY_ASSOCIATED_MFA
+}
+class InvalidTicketException(message: String, val reason : InvalidTicketCause = InvalidTicketCause.TICKET_EXPIRED) : RuntimeException(message)
