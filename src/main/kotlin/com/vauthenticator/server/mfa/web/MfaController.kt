@@ -72,7 +72,6 @@ class MfaController(
             publisher.publishEvent(MfaSuccessEvent(authentication))
             nextHopeLoginWorkflowSuccessHandler.onAuthenticationSuccess(request, response, authentication)
         } catch (e: RuntimeException) {
-            println("ERROR")
             logger.error(e.message, e)
             val mfaException = MfaException("Invalid mfa code")
             publisher.publishEvent(MfaFailureEvent(authentication, mfaException))

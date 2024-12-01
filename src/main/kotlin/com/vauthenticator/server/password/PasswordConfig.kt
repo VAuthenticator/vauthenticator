@@ -12,6 +12,7 @@ import com.vauthenticator.server.communication.domain.SimpleEMailMessageFactory
 import com.vauthenticator.server.events.VAuthenticatorEventsDispatcher
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
 import com.vauthenticator.server.password.adapter.dynamodb.DynamoPasswordHistoryRepository
+import com.vauthenticator.server.password.adapter.jdbc.JdbcPasswordHistoryRepository
 import com.vauthenticator.server.password.domain.*
 import com.vauthenticator.server.password.domain.changepassword.ChangePassword
 import com.vauthenticator.server.password.domain.changepassword.ChangePasswordEventConsumer
@@ -25,6 +26,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.mail.javamail.JavaMailSender
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import java.time.Clock
@@ -68,11 +71,24 @@ class PasswordConfig {
         passwordHistoryRepository
     )
 
+    @Profile("database")
+    @Bean("passwordHistoryRepository")
+    fun jdbcPasswordHistoryRepository(
+        @Value("\${password.password-history.history-evaluation-limit}") historyEvaluationLimit: Int,
+        @Value("\${password.password-history.max-history-allowed-size}") maxHistoryAllowedSize: Int,
+        jdbcTemplate: JdbcTemplate
+    ): JdbcPasswordHistoryRepository = JdbcPasswordHistoryRepository(
+        historyEvaluationLimit,
+        maxHistoryAllowedSize,
+        Clock.systemUTC(),
+        jdbcTemplate
+    )
 
-    @Bean
-    fun passwordHistoryRepository(
-        @Value("\${vauthenticator.dynamo-db.password-history.history-evaluation-limit}") historyEvaluationLimit: Int,
-        @Value("\${vauthenticator.dynamo-db.password-history.max-history-allowed-size}") maxHistoryAllowedSize: Int,
+    @Profile("dynamo")
+    @Bean("passwordHistoryRepository")
+    fun dynamoDbPasswordHistoryRepository(
+        @Value("\${password.password-history.history-evaluation-limit}") historyEvaluationLimit: Int,
+        @Value("\${password.password-history.max-history-allowed-size}") maxHistoryAllowedSize: Int,
         @Value("\${vauthenticator.dynamo-db.password-history.table-name}") dynamoPasswordHistoryTableName: String,
         dynamoDbClient: DynamoDbClient
     ): DynamoPasswordHistoryRepository = DynamoPasswordHistoryRepository(
@@ -131,7 +147,13 @@ class ResetPasswordConfig {
         passwordPolicy: PasswordPolicy,
         ticketRepository: TicketRepository
     ) =
-        ResetAccountPassword(eventsDispatcher, accountRepository, vAuthenticatorPasswordEncoder,passwordPolicy, ticketRepository)
+        ResetAccountPassword(
+            eventsDispatcher,
+            accountRepository,
+            vAuthenticatorPasswordEncoder,
+            passwordPolicy,
+            ticketRepository
+        )
 
     @Bean
     fun resetPasswordMailSender(
