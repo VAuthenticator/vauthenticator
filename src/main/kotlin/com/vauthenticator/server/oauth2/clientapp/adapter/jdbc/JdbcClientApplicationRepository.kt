@@ -83,9 +83,9 @@ class JdbcClientApplicationRepository(private val jdbcTemplate: JdbcTemplate, pr
             clientApp.clientAppId.content,
 
             clientApp.secret.content,
-            clientApp.scopes.content.joinToString { it.content },
+            clientApp.scopes.content.joinToString(separator = ",") { it.content },
             clientApp.withPkce.content,
-            clientApp.authorizedGrantTypes.content.joinToString { it.name },
+            clientApp.authorizedGrantTypes.content.joinToString(separator = ",") { it.name },
             clientApp.webServerRedirectUri.content,
             clientApp.accessTokenValidity.content,
             clientApp.refreshTokenValidity.content,
@@ -95,9 +95,9 @@ class JdbcClientApplicationRepository(private val jdbcTemplate: JdbcTemplate, pr
             clientApp.logoutUri.content,
 
             clientApp.secret.content,
-            clientApp.scopes.content.joinToString { it.content },
+            clientApp.scopes.content.joinToString(separator = ",") { it.content },
             clientApp.withPkce.content,
-            clientApp.authorizedGrantTypes.content.joinToString { it.name },
+            clientApp.authorizedGrantTypes.content.joinToString(separator = ",") { it.name },
             clientApp.webServerRedirectUri.content,
             clientApp.accessTokenValidity.content,
             clientApp.refreshTokenValidity.content,
@@ -116,7 +116,7 @@ class JdbcClientApplicationRepository(private val jdbcTemplate: JdbcTemplate, pr
 
 object JdbcClientApplicationConverter {
 
-    fun fromDbToDomain(rs: ResultSet, objectMapper : ObjectMapper) = ClientApplication(
+    fun fromDbToDomain(rs: ResultSet, objectMapper: ObjectMapper) = ClientApplication(
         clientAppId = ClientAppId(rs.getString("client_app_id")),
         secret = Secret(rs.getString("secret")),
         scopes = Scopes(rs.getString("scopes").split(",").map { Scope(it.trim()) }.toSet()),
@@ -126,10 +126,12 @@ object JdbcClientApplicationConverter {
         webServerRedirectUri = CallbackUri(rs.getString("web_server_redirect_uri")),
         accessTokenValidity = TokenTimeToLive(rs.getLong("access_token_validity")),
         refreshTokenValidity = TokenTimeToLive(rs.getLong("refresh_token_validity")),
-        additionalInformation = Optional.ofNullable(objectMapper.readValue(
-            rs.getString("additional_information"),
-            Map::class.java
-        ) as Map<String, String>).orElse(emptyMap()),
+        additionalInformation = Optional.ofNullable(
+            objectMapper.readValue(
+                rs.getString("additional_information"),
+                Map::class.java
+            ) as Map<String, String>
+        ).orElse(emptyMap()),
         autoApprove = AutoApprove(rs.getBoolean("auto_approve")),
         postLogoutRedirectUri = PostLogoutRedirectUri(rs.getString("post_logout_redirect_uri")),
         logoutUri = LogoutUri(rs.getString("logout_uri"))

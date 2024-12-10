@@ -105,7 +105,8 @@ data class Scope(val content: String) {
             MFA_ENROLLMENT,
 
             READ_CLIENT_APPLICATION,
-            SAVE_CLIENT_APPLICATION
+            SAVE_CLIENT_APPLICATION,
+            DELETE_CLIENT_APPLICATION
         )
 
     }
