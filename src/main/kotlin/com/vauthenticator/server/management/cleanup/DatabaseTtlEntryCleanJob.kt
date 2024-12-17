@@ -1,4 +1,4 @@
-package com.vauthenticator.server.management
+package com.vauthenticator.server.management.cleanup
 
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
@@ -53,17 +53,3 @@ class DatabaseTtlEntryCleanJob(
 
 }
 
-
-@Profile("database")
-@Configuration(proxyBeanMethods = false)
-class DatabaseTtlEntryCleanJobConfig() {
-
-    @Bean
-    fun databaseTtlEntryCleanJob(
-        jdbcTemplate: JdbcTemplate
-    ) = DatabaseTtlEntryCleanJob(jdbcTemplate, Clock.systemUTC())
-
-    @Bean
-    fun databaseTtlEntryCleanJobEndPoint(databaseTtlEntryCleanJob: DatabaseTtlEntryCleanJob) =
-        DatabaseTtlEntryCleanJobEndPoint(databaseTtlEntryCleanJob)
-}

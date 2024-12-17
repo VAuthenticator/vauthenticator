@@ -1,4 +1,4 @@
-package com.vauthenticator.server.management
+package com.vauthenticator.server.management.cleanup
 
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation
