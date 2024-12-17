@@ -6,6 +6,10 @@ GET {{actuatorHost}}/actuator
 POST {{actuatorHost}}/actuator/database-clean-up
 
 
+### acgtuator tenant setup job
+POST {{actuatorHost}}/actuator/tenant-setup
+
+
 ### login page
 GET {{host}}/login
 

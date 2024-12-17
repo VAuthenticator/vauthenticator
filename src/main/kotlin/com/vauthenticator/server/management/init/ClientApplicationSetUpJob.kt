@@ -1,4 +1,4 @@
-package com.vauthenticator.server.init
+package com.vauthenticator.server.management.init
 
 import com.vauthenticator.server.oauth2.clientapp.domain.*
 import com.vauthenticator.server.oauth2.clientapp.domain.AuthorizedGrantType.*
@@ -6,16 +6,12 @@ import com.vauthenticator.server.oauth2.clientapp.domain.Scope.Companion.AVAILAB
 import com.vauthenticator.server.oauth2.clientapp.domain.Scope.Companion.MFA_ALWAYS
 import com.vauthenticator.server.oauth2.clientapp.domain.WithPkce.Companion.disabled
 import com.vauthenticator.server.password.domain.VAuthenticatorPasswordEncoder
-import org.springframework.boot.ApplicationArguments
-import org.springframework.boot.ApplicationRunner
-import org.springframework.stereotype.Service
 
-@Service
 class ClientApplicationSetUpJob(
     private val clientApplicationRepository: ClientApplicationRepository,
     private val passwordEncoder: VAuthenticatorPasswordEncoder
-) : ApplicationRunner {
-    override fun run(args: ApplicationArguments) {
+) {
+    fun execute() {
         clientApplicationRepository.save(m2mDefaultAdminClientApp())
         clientApplicationRepository.save(managementUIDefaultClientApp())
     }

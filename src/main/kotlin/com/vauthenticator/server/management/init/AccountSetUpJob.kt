@@ -1,4 +1,4 @@
-package com.vauthenticator.server.init
+package com.vauthenticator.server.management.init
 
 import com.vauthenticator.server.account.domain.Account
 import com.vauthenticator.server.account.domain.AccountMandatoryAction
@@ -6,18 +6,14 @@ import com.vauthenticator.server.account.domain.AccountRepository
 import com.vauthenticator.server.password.domain.VAuthenticatorPasswordEncoder
 import com.vauthenticator.server.role.domain.Role
 import com.vauthenticator.server.role.domain.RoleRepository
-import org.springframework.boot.ApplicationArguments
-import org.springframework.boot.ApplicationRunner
-import org.springframework.stereotype.Service
 import java.util.*
 
-@Service
 class AccountSetUpJob(
     private val roleRepository: RoleRepository,
     private val accountRepository: AccountRepository,
     private val passwordEncoder: VAuthenticatorPasswordEncoder
-) : ApplicationRunner {
-    override fun run(args: ApplicationArguments) {
+) {
+    fun execute() {
         val userRole = Role("ROLE_USER", "Generic user role")
         val adminRole = Role("VAUTHENTICATOR_ADMIN", "VAuthenticator admin role")
 

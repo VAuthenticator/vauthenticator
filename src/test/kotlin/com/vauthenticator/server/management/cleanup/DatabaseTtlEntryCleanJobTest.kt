@@ -1,4 +1,4 @@
-package com.vauthenticator.server.management
+package com.vauthenticator.server.management.cleanup
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.vauthenticator.server.keys.adapter.jdbc.JdbcKeyStorage

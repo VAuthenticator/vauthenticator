@@ -1,22 +1,17 @@
-package com.vauthenticator.server.init
+package com.vauthenticator.server.management.init
 
 import com.vauthenticator.server.keys.domain.*
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.ApplicationArguments
-import org.springframework.boot.ApplicationRunner
-import org.springframework.stereotype.Service
 
-@Service
-class keySetUpJob(
-    @Value("\${key.master-key}") private val maserKid: String,
+class KeySetUpJob(
+    private val maserKid: String,
     private val keyStorage: KeyStorage,
     private val keyRepository: KeyRepository
-) : ApplicationRunner {
+) {
 
-    val logger = LoggerFactory.getLogger(PermissionSetUpJob::class.java)
+    val logger = LoggerFactory.getLogger(KeySetUpJob::class.java)
 
-    override fun run(args: ApplicationArguments) {
+    fun execute() {
 
         if (keyStorage.signatureKeys().keys.isEmpty()) {
             val firstKid = keyRepository.createKeyFrom(
