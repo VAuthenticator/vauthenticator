@@ -23,7 +23,7 @@
 
         <vauthenticator-starters.version>0.7</vauthenticator-starters.version>
         <io.mockk.version>1.13.12</io.mockk.version>
-        <aws.sdk.version>2.27.15</aws.sdk.version>
+        <aws.sdk.version>2.29.22</aws.sdk.version>
         <greenmail.version>2.1.0-rc-1</greenmail.version>
         <oauth2-authorization-server.version>1.3.1</oauth2-authorization-server.version>
         <wiremock.version>3.0.1</wiremock.version>
