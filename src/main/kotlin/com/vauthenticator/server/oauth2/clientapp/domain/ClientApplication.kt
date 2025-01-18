@@ -50,7 +50,7 @@ data class CallbackUri(val content: String)
 data class PostLogoutRedirectUri(val content: String)
 data class LogoutUri(val content: String)
 
-data class Scopes(val content: Set<Scope>) {
+data class  Scopes(val content: Set<Scope>) {
     companion object {
         fun from(vararg scope: Scope) = Scopes(setOf(*scope))
     }
@@ -94,6 +94,7 @@ data class Scope(val content: String) {
             MAIL_VERIFY,
             RESET_PASSWORD,
             CHANGE_PASSWORD,
+            GENERATE_PASSWORD,
 
             KEY_READER,
             KEY_EDITOR,
