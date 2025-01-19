@@ -4,6 +4,7 @@ import org.postgresql.Driver
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.datasource.SimpleDriverDataSource
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -20,6 +21,8 @@ object JdbcUtils {
             "postgres"
         )
     )
+
+    val namedJdbcTemplate: NamedParameterJdbcTemplate = NamedParameterJdbcTemplate(jdbcTemplate)
 
 
     fun resetDb() {
