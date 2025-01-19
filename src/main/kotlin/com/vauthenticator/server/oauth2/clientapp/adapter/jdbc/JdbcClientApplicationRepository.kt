@@ -22,19 +22,7 @@ private const val FINED_ALL_QUERY = """
 logout_uri FROM CLIENT_APPLICATION
 """
 private const val FINED_ONE_QUERY = """
-    SELECT client_app_id,
-    secret,
-    confidential,
-    scopes,
-    with_pkce,
-    authorized_grant_types,
-    web_server_redirect_uri,
-    access_token_validity,
-    refresh_token_validity,
-    additional_information,
-    auto_approve,
-    post_logout_redirect_uri,
-logout_uri FROM CLIENT_APPLICATION WHERE client_app_id=?
+    $FINED_ALL_QUERY WHERE client_app_id=?
 """
 private const val SAVE_QUERY = """
     INSERT INTO CLIENT_APPLICATION (
