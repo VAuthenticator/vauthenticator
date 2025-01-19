@@ -89,6 +89,7 @@ CREATE TABLE CLIENT_APPLICATION
     client_app_id            varchar(255) not null PRIMARY KEY,
     secret                   varchar(255) not null,
     scopes                   text         not null,
+    confidential             boolean      not null default true,
     with_pkce                boolean      not null default false,
     authorized_grant_types   varchar(255) not null,
     web_server_redirect_uri  varchar(255) not null,
