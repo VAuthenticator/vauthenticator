@@ -13,6 +13,7 @@ object DynamoClientApplicationConverter {
         val dynamoDocument = mutableMapOf(
             "client_id" to clientApp.clientAppId.content.asDynamoAttribute(),
             "client_secret" to clientApp.secret.content.asDynamoAttribute(),
+            "confidential" to clientApp.confidential.asDynamoAttribute(),
             "with_pkce" to clientApp.withPkce.content.asDynamoAttribute(),
             "scopes" to clientApp.scopes.asDynamoAttribute(),
             "authorized_grant_types" to clientApp.authorizedGrantTypes.asDynamoAttribute(),
@@ -32,6 +33,7 @@ object DynamoClientApplicationConverter {
         return ClientApplication(
             clientAppId = ClientAppId(dynamoPayload.valueAsStringFor("client_id")),
             secret = Secret(dynamoPayload.valueAsStringFor("client_secret")),
+            confidential = dynamoPayload.valueAsBoolFor("confidential"),
             withPkce = WithPkce(dynamoPayload.valueAsBoolFor("with_pkce")),
             scopes = Scopes(dynamoPayload.valuesAsListOfStringFor("scopes").map { Scope(it) }.toSet()),
             authorizedGrantTypes = AuthorizedGrantTypes(

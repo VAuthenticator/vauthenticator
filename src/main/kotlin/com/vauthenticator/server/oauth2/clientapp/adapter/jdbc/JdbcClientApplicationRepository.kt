@@ -9,6 +9,7 @@ import java.util.*
 private const val FINED_ALL_QUERY = """
     SELECT client_app_id,
     secret,
+    confidential,
     scopes,
     with_pkce,
     authorized_grant_types,
@@ -23,6 +24,7 @@ logout_uri FROM CLIENT_APPLICATION
 private const val FINED_ONE_QUERY = """
     SELECT client_app_id,
     secret,
+    confidential,
     scopes,
     with_pkce,
     authorized_grant_types,
@@ -38,6 +40,7 @@ private const val SAVE_QUERY = """
     INSERT INTO CLIENT_APPLICATION (
     client_app_id,
     secret,
+    confidential,
     scopes,
     with_pkce,
     authorized_grant_types,
@@ -48,7 +51,8 @@ private const val SAVE_QUERY = """
     auto_approve,
     post_logout_redirect_uri,
     logout_uri)
-     VALUES (?,?,?,?,?,?,?,?,?,?,?,?)  ON CONFLICT(client_app_id) DO UPDATE SET secret=?,
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)  ON CONFLICT(client_app_id) DO UPDATE SET secret=?,
+    confidential=?,
     scopes=?,
     with_pkce=?,
     authorized_grant_types=?,
@@ -83,6 +87,7 @@ class JdbcClientApplicationRepository(private val jdbcTemplate: JdbcTemplate, pr
             clientApp.clientAppId.content,
 
             clientApp.secret.content,
+            clientApp.confidential,
             clientApp.scopes.content.joinToString(separator = ",") { it.content },
             clientApp.withPkce.content,
             clientApp.authorizedGrantTypes.content.joinToString(separator = ",") { it.name },
@@ -95,6 +100,7 @@ class JdbcClientApplicationRepository(private val jdbcTemplate: JdbcTemplate, pr
             clientApp.logoutUri.content,
 
             clientApp.secret.content,
+            clientApp.confidential,
             clientApp.scopes.content.joinToString(separator = ",") { it.content },
             clientApp.withPkce.content,
             clientApp.authorizedGrantTypes.content.joinToString(separator = ",") { it.name },
@@ -119,6 +125,7 @@ object JdbcClientApplicationConverter {
     fun fromDbToDomain(rs: ResultSet, objectMapper: ObjectMapper) = ClientApplication(
         clientAppId = ClientAppId(rs.getString("client_app_id")),
         secret = Secret(rs.getString("secret")),
+        confidential = rs.getBoolean("confidential"),
         scopes = Scopes(rs.getString("scopes").split(",").map { Scope(it.trim()) }.toSet()),
         withPkce = WithPkce(rs.getBoolean("with_pkce")),
         authorizedGrantTypes = AuthorizedGrantTypes(
