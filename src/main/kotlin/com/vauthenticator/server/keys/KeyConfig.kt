@@ -41,7 +41,7 @@ class KeyConfig {
     @Profile("!kms")
     @Bean("keyDecrypter")
     fun JavaSecurityKeyDecrypter(
-        @Value("\${key.master-key}") maserKid: String,
+        @Value("\${key.master-key.value}") maserKid: String,
         storage: KeyGeneratorMasterKeyStorage
     ): KeyDecrypter = JavaSecurityKeyDecrypter(
         maserKid,

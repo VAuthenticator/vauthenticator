@@ -37,7 +37,7 @@ class TenantInitConfig {
 
     @Bean
     fun keySetUpJob(
-        @Value("\${key.master-key}") maserKid: String,
+        @Value("\${key.master-key.value}") maserKid: String,
         keyStorage: KeyStorage,
         keyRepository: KeyRepository
     ) = KeySetUpJob(

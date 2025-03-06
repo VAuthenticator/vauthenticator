@@ -10,7 +10,7 @@ All what you need is enable the relative spring profile as below:
 use ```spring.profiles.active``` with 
 
 - ```database```: to use PostgresSQL 
-- ```dynamo```: to use DyanamoDB
+- ```dynamo```: to use DynamoDB
 - ```kms``` to use KMS
 - omitting ```kms``` to use plain java security api
 
