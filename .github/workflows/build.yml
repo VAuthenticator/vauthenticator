@@ -140,7 +140,7 @@ jobs:
           ls *.js | while read line
           do 
             aws s3 cp $line s3://${{ secrets.VAUTHENTICATOR_BUCKET }}/static-asset/content/asset/${GITHUB_REF##*/}/$line
-            aws s3 cp $line s3://${{ secrets.VAUTHENTICATOR_BUCKET }}/static-asset/content/asset/$line
+            aws s3 cp $line s3://${{ secrets.VAUTHENTICATOR_BUCKET }}/static-asset/content/asset/latest/$line
           
             if [ ${UI_VERSION} ]; then
                aws s3 cp $line s3://${{ secrets.VAUTHENTICATOR_BUCKET }}/static-asset/content/asset/${UI_VERSION}/$line
