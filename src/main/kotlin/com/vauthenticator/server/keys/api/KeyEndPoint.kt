@@ -10,7 +10,7 @@ import java.time.Duration
 
 @RestController
 class KeyEndPoint(
-    @Value("\${key.master-key.value}") private val masterKey: String,
+    @Value("\${key.master-key.id}") private val masterKey: String,
     private val keyRepository: KeyRepository,
     private val signatureKeyRotation: SignatureKeyRotation
 ) {
