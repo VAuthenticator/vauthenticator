@@ -30,7 +30,7 @@ data "aws_iam_policy_document" "vauthenticator_user_s3_policy" {
   statement {
     actions = [
       "s3:*"
-    ],
+    ]
     resources = [
       "arn:aws:s3:::${var.vauthenticator_document_s3_bucket_name}",
       "arn:aws:s3:::${var.vauthenticator_document_s3_bucket_name}/*",
