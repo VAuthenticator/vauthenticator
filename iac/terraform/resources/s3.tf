@@ -3,8 +3,6 @@ module "vauthenticator_s3_bucket" {
   version = "4.6.0"
 
   bucket                  = var.vauthenticator_document_s3_bucket_name
-  acl                     = "private"
-
   force_destroy = true
 
   tags = merge(tomap({ "Name" = var.vauthenticator_document_s3_bucket_name }), var.common_resource_tags)
@@ -14,8 +12,6 @@ module "vauthenticator_management_ui_s3_bucket" {
   version = "4.6.0"
 
   bucket                  = var.vauthenticator_management_ui_document_s3_bucket_name
-  acl                     = "private"
-
   force_destroy = true
 
   tags = merge(tomap({ "Name" = var.vauthenticator_management_ui_document_s3_bucket_name }), var.common_resource_tags)
