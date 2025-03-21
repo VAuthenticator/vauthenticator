@@ -73,8 +73,7 @@ class AccountConfig {
         mapper: ObjectMapper,
         dynamoDbClient: DynamoDbClient,
         roleRepository: RoleRepository,
-        @Value("\${vauthenticator.dynamo-db.account.table-name}") accountTableName: String,
-        @Value("\${vauthenticator.dynamo-db.account.role.table-name}") accountRoleTableName: String
+        @Value("\${vauthenticator.dynamo-db.account.table-name}") accountTableName: String
     ) =
         DynamoDbAccountRepository(dynamoDbClient, accountTableName, roleRepository)
 
@@ -91,8 +90,7 @@ class AccountConfig {
         dynamoDbClient: DynamoDbClient,
         accountCacheOperation: CacheOperation<String, String>,
         roleRepository: RoleRepository,
-        @Value("\${vauthenticator.dynamo-db.account.table-name}") accountTableName: String,
-        @Value("\${vauthenticator.dynamo-db.account.role.table-name}") accountRoleTableName: String
+        @Value("\${vauthenticator.dynamo-db.account.table-name}") accountTableName: String
     ) =
         CachedAccountRepository(
             AccountCacheContentConverter(mapper),

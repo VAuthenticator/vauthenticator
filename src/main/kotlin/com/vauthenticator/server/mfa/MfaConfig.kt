@@ -39,7 +39,7 @@ class MfaConfig {
     fun dynamoDbMfaAccountMethodsRepository(
         keyRepository: KeyRepository,
         dynamoDbClient: DynamoDbClient,
-        @Value("\${key.master-key}") masterKey: String,
+        @Value("\${key.master-key.id}") masterKey: String,
         @Value("\${vauthenticator.dynamo-db.mfa-account-methods.table-name}") mfaAccountMethodTableName: String,
         @Value("\${vauthenticator.dynamo-db.default-mfa-account-methods.table-name}") defaultMfaAccountMethodTableName: String
     ): MfaAccountMethodsRepository =
@@ -56,7 +56,7 @@ class MfaConfig {
     fun jdbcMfaAccountMethodsRepository(
         keyRepository: KeyRepository,
         jdbcTemplate: JdbcTemplate,
-        @Value("\${key.master-key}") masterKey: String
+        @Value("\${key.master-key.id}") masterKey: String
     ): MfaAccountMethodsRepository =
         JdbcMfaAccountMethodsRepository(
             jdbcTemplate,
