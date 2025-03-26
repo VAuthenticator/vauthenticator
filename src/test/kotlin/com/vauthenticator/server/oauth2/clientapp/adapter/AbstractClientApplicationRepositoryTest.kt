@@ -51,6 +51,20 @@ abstract class AbstractClientApplicationRepositoryTest {
 
         assertEquals(Optional.empty<ClientApplication>(), actual)
     }
+    @Test
+    fun `when store a public client application, check if it exist and then delete a client application by client`() {
+        val clientAppId = ClientAppId("client_id")
+        val expected = ClientAppFixture.aClientApp(clientAppId).copy(confidential = false)
+        uut.save(expected)
+        var actual = uut.findOne(clientAppId)
+
+        assertEquals(Optional.of(expected), actual)
+
+        uut.delete(clientAppId)
+        actual = uut.findOne(clientAppId)
+
+        assertEquals(Optional.empty<ClientApplication>(), actual)
+    }
 
     @Test
     fun `when find all client applications`() {

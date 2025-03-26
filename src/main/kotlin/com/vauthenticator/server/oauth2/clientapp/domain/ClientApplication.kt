@@ -3,6 +3,7 @@ package com.vauthenticator.server.oauth2.clientapp.domain
 data class ClientApplication(
     val clientAppId: ClientAppId,
     val secret: Secret,
+    val confidential: Boolean = true,
     val scopes: Scopes,
     val withPkce: WithPkce = WithPkce.disabled,
     val authorizedGrantTypes: AuthorizedGrantTypes,
@@ -36,7 +37,7 @@ data class AuthorizedGrantTypes(val content: List<AuthorizedGrantType>) {
     }
 }
 
-enum class AuthorizedGrantType { CLIENT_CREDENTIALS, PASSWORD, AUTHORIZATION_CODE, IMPLICIT, REFRESH_TOKEN }
+enum class AuthorizedGrantType { CLIENT_CREDENTIALS, AUTHORIZATION_CODE, REFRESH_TOKEN }
 
 data class Secret(val content: String)
 

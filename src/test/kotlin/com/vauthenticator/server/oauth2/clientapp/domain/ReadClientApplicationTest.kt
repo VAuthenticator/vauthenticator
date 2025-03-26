@@ -23,7 +23,7 @@ class ReadClientApplicationTest {
         every { clientApplicationRepository.findOne(clientAppId) } returns Optional.of(aClientApp(clientAppId))
 
         val actual: Optional<ClientApplication> = readClientApplication.findOne(clientAppId)
-        assertEquals(actual, Optional.of(aClientApp(clientAppId, Secret("*******"))))
+        assertEquals(actual, Optional.of(aClientApp(clientAppId = clientAppId, password = Secret("*******"))))
     }
 
     @Test
@@ -34,6 +34,6 @@ class ReadClientApplicationTest {
         every { clientApplicationRepository.findAll() } returns listOf(aClientApp(clientAppId))
 
         val actual: List<ClientApplication> = readClientApplication.findAll()
-        assertEquals(actual, listOf(aClientApp(clientAppId, Secret("*******"))))
+        assertEquals(actual, listOf(aClientApp(clientAppId = clientAppId, password = Secret("*******"))))
     }
 }
