@@ -25,7 +25,7 @@ class JavaEMailSenderService(
 
     private fun mailTemplateFor(email: EMailMessage): String {
         val documentContent =
-            documentRepository.loadDocument(DocumentType.MAIL.content, mailTemplatePathFor(email.type))
+            documentRepository.loadDocument(DocumentType.EMAIL.content, mailTemplatePathFor(email.type))
         return String(documentContent.content)
     }
 

@@ -6,6 +6,6 @@ interface DocumentRepository {
     fun saveDocument(type: String, document: Document)
 
     fun documentKeyFor(type: String, path: String): String {
-        return "%s/%s".formatted(type, path)
+        return "${type}/${path}"
     }
 }

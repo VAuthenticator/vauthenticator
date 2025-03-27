@@ -46,7 +46,7 @@ class EMailEndPointTest {
 
         every {
             documentRepository.loadDocument(
-                DocumentType.MAIL.content,
+                DocumentType.EMAIL.content,
                 EMailType.MFA.path
             )
         } returns Document(
@@ -73,7 +73,7 @@ class EMailEndPointTest {
 
         every {
             documentRepository.saveDocument(
-                DocumentType.MAIL.content,
+                DocumentType.EMAIL.content,
                 Document(
                     "text/html",
                     "templates/welcome.html",

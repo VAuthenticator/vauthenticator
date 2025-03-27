@@ -1,6 +1,7 @@
 package com.vauthenticator.server.management.init
 
 import com.vauthenticator.server.keys.domain.*
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 class KeySetUpJob(
@@ -9,7 +10,9 @@ class KeySetUpJob(
     private val keyRepository: KeyRepository
 ) {
 
-    val logger = LoggerFactory.getLogger(KeySetUpJob::class.java)
+    companion object {
+        val logger: Logger = LoggerFactory.getLogger(KeySetUpJob::class.java)
+    }
 
     fun execute() {
 

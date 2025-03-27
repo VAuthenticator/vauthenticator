@@ -80,7 +80,7 @@ cd ..
 rm -rf dist
 
 mkdir -p dist/static-asset/content/asset/
-mkdir -p dist/mail/templates
+mkdir -p dist/email/templates
 
 cd src/main/frontend
 npm install
@@ -90,8 +90,8 @@ cd dist/asset
 
 cp * ../../../../../dist/static-asset/content/asset/
 
-cd ../../../../../communication/default/mail 
-cp *  ../../../dist/mail/templates
+cd ../../../../../communication/default/email 
+cp *  ../../../dist/email/templates
 ```
 
 ## Installation in a NON AWS Environment 

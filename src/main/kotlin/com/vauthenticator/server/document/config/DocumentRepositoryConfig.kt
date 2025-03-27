@@ -43,7 +43,7 @@ internal class DocumentRepositoryConfig {
                 .refreshAfterWrite(ttl)
                 .build { assetName: Any? ->
                     documentRepository.loadDocument(
-                        DocumentType.MAIL.content,
+                        DocumentType.EMAIL.content,
                         "templates/%s".formatted(assetName)
                     )
                 })
