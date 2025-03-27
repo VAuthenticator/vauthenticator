@@ -1,9 +1,9 @@
 package com.vauthenticator.server.communication.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.vauthenticator.document.repository.Document
-import com.vauthenticator.document.repository.DocumentRepository
-import com.vauthenticator.document.repository.DocumentType
+import com.vauthenticator.server.document.domain.Document
+import com.vauthenticator.server.document.domain.DocumentRepository
+import com.vauthenticator.server.document.domain.DocumentType
 import com.vauthenticator.server.communication.domain.EMailTemplate
 import com.vauthenticator.server.communication.domain.EMailType
 import io.mockk.every
@@ -49,7 +49,11 @@ class EMailEndPointTest {
                 DocumentType.MAIL.content,
                 EMailType.MFA.path
             )
-        } returns Document("", EMailType.MFA.path, "A_TEMPLATE".toByteArray())
+        } returns Document(
+            "",
+            EMailType.MFA.path,
+            "A_TEMPLATE".toByteArray()
+        )
 
         mockMvc.perform(
             get("/api/email-template/${EMailType.MFA}")
@@ -70,7 +74,11 @@ class EMailEndPointTest {
         every {
             documentRepository.saveDocument(
                 DocumentType.MAIL.content,
-                Document("text/html", "templates/welcome.html", "A_TEMPLATE".toByteArray())
+                Document(
+                    "text/html",
+                    "templates/welcome.html",
+                    "A_TEMPLATE".toByteArray()
+                )
             )
         } just runs
 

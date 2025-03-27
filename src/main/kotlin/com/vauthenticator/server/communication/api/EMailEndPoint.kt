@@ -1,8 +1,8 @@
 package com.vauthenticator.server.communication.api
 
-import com.vauthenticator.document.repository.Document
-import com.vauthenticator.document.repository.DocumentRepository
-import com.vauthenticator.document.repository.DocumentType
+import com.vauthenticator.server.document.domain.Document
+import com.vauthenticator.server.document.domain.DocumentRepository
+import com.vauthenticator.server.document.domain.DocumentType
 import com.vauthenticator.server.communication.domain.EMailTemplate
 import com.vauthenticator.server.communication.domain.EMailType
 import org.springframework.http.MediaType
@@ -22,7 +22,11 @@ class EMailEndPoint(private val documentRepository: DocumentRepository) {
     fun saveMailTemplate(@RequestBody request: EMailTemplate): ResponseEntity<Unit> {
         documentRepository.saveDocument(
             DocumentType.MAIL.content, //todo MAIL should be EMAIL
-            Document(MediaType.TEXT_HTML_VALUE, request.emailType.path, request.body.toByteArray())
+            Document(
+                MediaType.TEXT_HTML_VALUE,
+                request.emailType.path,
+                request.body.toByteArray()
+            )
         )
         return ResponseEntity.noContent().build()
     }

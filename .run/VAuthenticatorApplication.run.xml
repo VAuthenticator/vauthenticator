@@ -59,6 +59,7 @@
     </envs>
     <module name="vauthenticator" />
     <option name="SPRING_BOOT_MAIN_CLASS" value="com.vauthenticator.server.VAuthenticatorApplication" />
+    <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/vauthenticator" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="com.vauthenticator.server.*" />

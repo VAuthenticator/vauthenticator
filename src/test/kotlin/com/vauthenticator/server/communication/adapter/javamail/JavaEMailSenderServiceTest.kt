@@ -4,7 +4,7 @@ import com.hubspot.jinjava.Jinjava
 import com.icegreen.greenmail.configuration.GreenMailConfiguration
 import com.icegreen.greenmail.junit5.GreenMailExtension
 import com.icegreen.greenmail.util.ServerSetupTest
-import com.vauthenticator.document.repository.DocumentRepository
+import com.vauthenticator.server.document.domain.DocumentRepository
 import com.vauthenticator.server.communication.adapter.JinJavaTemplateResolver
 import com.vauthenticator.server.communication.domain.EMailSenderService
 import com.vauthenticator.server.communication.domain.EMailType
