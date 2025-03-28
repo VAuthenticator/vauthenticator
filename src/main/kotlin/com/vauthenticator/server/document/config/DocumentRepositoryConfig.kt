@@ -44,7 +44,7 @@ internal class DocumentRepositoryConfig {
                 .build { assetName: Any? ->
                     documentRepository.loadDocument(
                         DocumentType.EMAIL.content,
-                        "templates/%s".formatted(assetName)
+                        "templates/${assetName}"
                     )
                 })
     }
@@ -61,7 +61,7 @@ internal class DocumentRepositoryConfig {
                 .build { assetName: Any? ->
                     documentRepository.loadDocument(
                         DocumentType.STATIC_ASSET.content,
-                        "content/asset/%s".formatted(assetName)
+                        "content/asset/${assetName}"
                     )
                 })
     }
