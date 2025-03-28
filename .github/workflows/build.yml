@@ -127,22 +127,3 @@ jobs:
           cd src/main/frontend
           npm install --legacy-peer-deps
           npm run-script production-build
-
-      - name: load static file on s3
-        uses: aws-actions/configure-aws-credentials@v1-node16
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-      - run: |
-          UI_VERSION=${{github.event.inputs.version}}
-          cd src/main/frontend/dist/asset
-          ls *.js | while read line
-          do 
-            aws s3 cp $line s3://${{ secrets.VAUTHENTICATOR_BUCKET }}/static-asset/content/asset/${GITHUB_REF##*/}/$line
-            aws s3 cp $line s3://${{ secrets.VAUTHENTICATOR_BUCKET }}/static-asset/content/asset/latest/$line
-          
-            if [ ${UI_VERSION} ]; then
-               aws s3 cp $line s3://${{ secrets.VAUTHENTICATOR_BUCKET }}/static-asset/content/asset/${UI_VERSION}/$line
-            fi
-          done
