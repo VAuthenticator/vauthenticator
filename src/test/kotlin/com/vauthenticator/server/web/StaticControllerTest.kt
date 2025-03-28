@@ -1,6 +1,6 @@
 package com.vauthenticator.server.web
 
-import com.vauthenticator.document.repository.Document
+import com.vauthenticator.server.document.domain.Document
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -28,7 +28,11 @@ class StaticControllerTest {
 
     @Test
     fun `when the content is cached`() {
-        every { staticContentLocalCache.get("asset.js", Document::class.java) } returns Document("", "",ByteArray(0))
+        every { staticContentLocalCache.get("asset.js", Document::class.java) } returns Document(
+            "",
+            "",
+            ByteArray(0)
+        )
 
         mokMvc.perform(
             get("/static/content/asset/asset.js")

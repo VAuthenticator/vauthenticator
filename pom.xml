@@ -21,7 +21,6 @@
         <java.version>21</java.version>
         <kotlin.version>1.9.25</kotlin.version>
 
-        <vauthenticator-starters.version>0.7</vauthenticator-starters.version>
         <io.mockk.version>1.13.16</io.mockk.version>
         <aws.sdk.version>2.30.18</aws.sdk.version>
         <greenmail.version>2.1.2</greenmail.version>
@@ -32,11 +31,14 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.vauthenticator</groupId>
-            <artifactId>document-repository-starter</artifactId>
-            <version>${vauthenticator-starters.version}</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>

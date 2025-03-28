@@ -4,12 +4,14 @@ import com.hubspot.jinjava.Jinjava
 import com.icegreen.greenmail.configuration.GreenMailConfiguration
 import com.icegreen.greenmail.junit5.GreenMailExtension
 import com.icegreen.greenmail.util.ServerSetupTest
-import com.vauthenticator.document.repository.DocumentRepository
+import com.vauthenticator.server.document.domain.DocumentRepository
 import com.vauthenticator.server.communication.adapter.JinJavaTemplateResolver
 import com.vauthenticator.server.communication.domain.EMailSenderService
 import com.vauthenticator.server.communication.domain.EMailType
 import com.vauthenticator.server.communication.domain.MessageTemplateResolver
 import com.vauthenticator.server.communication.domain.SimpleEMailMessageFactory
+import com.vauthenticator.server.document.domain.DocumentType
+import com.vauthenticator.server.document.domain.DocumentType.*
 import com.vauthenticator.server.support.AccountTestFixture.anAccount
 import io.mockk.every
 import io.mockk.mockk
@@ -56,7 +58,12 @@ class JavaEMailSenderServiceTest {
             )
         )
 
-        every { documentRepository.loadDocument("mail", EMailType.WELCOME.path).content } returns mailTemplateContent
+        every {
+            documentRepository.loadDocument(
+                EMAIL.content,
+                EMailType.WELCOME.path
+            ).content
+        } returns mailTemplateContent
 
 
         emailSenderService.sendFor(account, emptyMap())
@@ -82,7 +89,7 @@ class JavaEMailSenderServiceTest {
 
         every {
             documentRepository.loadDocument(
-                "mail",
+                EMAIL.content,
                 EMailType.EMAIL_VERIFICATION.path
             ).content
         } returns mailTemplateContent
@@ -115,7 +122,7 @@ class JavaEMailSenderServiceTest {
 
         every {
             documentRepository.loadDocument(
-                "mail",
+                EMAIL.content,
                 EMailType.RESET_PASSWORD.path
             ).content
         } returns mailTemplateContent
