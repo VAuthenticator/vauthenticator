@@ -8,7 +8,7 @@
       </param>
       <param>
         <option name="enabled" value="true" />
-        <option name="name" value="key.master-key" />
+        <option name="name" value="key.master-key.id" />
         <option name="value" value="xxx" />
       </param>
       <param>
@@ -24,6 +24,42 @@
     </envs>
     <module name="vauthenticator" />
     <option name="SPRING_BOOT_MAIN_CLASS" value="com.vauthenticator.server.VAuthenticatorApplication" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="com.vauthenticator.server.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+  <configuration default="false" name="VAuthenticatorApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+    <additionalParameters>
+      <param>
+        <option name="enabled" value="true" />
+        <option name="name" value="spring.config.additional-location" />
+        <option name="value" value="local-environment/application.yml" />
+      </param>
+      <param>
+        <option name="enabled" value="true" />
+        <option name="name" value="key.master-key.value" />
+        <option name="value" value="key" />
+      </param>
+      <param>
+        <option name="enabled" value="true" />
+        <option name="name" value="spring.profiles.active" />
+        <option name="value" value="database" />
+      </param>
+    </additionalParameters>
+    <envs>
+      <env name="AWS_ACCESS_KEY_ID" value="LKIAQAAAAAAADBC364BO" />
+      <env name="AWS_SECRET_ACCESS_KEY" value="0aYwBs/NQp/8uTrglxsE2SI0WfWTZABbQbNR6cGo" />
+      <env name="AWS_REGION" value="eu-central-1" />
+    </envs>
+    <module name="vauthenticator" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.vauthenticator.server.VAuthenticatorApplication" />
+    <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/vauthenticator" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="com.vauthenticator.server.*" />

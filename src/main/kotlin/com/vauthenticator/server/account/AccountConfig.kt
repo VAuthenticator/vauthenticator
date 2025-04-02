@@ -2,7 +2,7 @@ package com.vauthenticator.server.account
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.hubspot.jinjava.Jinjava
-import com.vauthenticator.document.repository.DocumentRepository
+import com.vauthenticator.server.document.domain.DocumentRepository
 import com.vauthenticator.server.account.adapter.CachedAccountRepository
 import com.vauthenticator.server.account.adapter.dynamodb.DynamoDbAccountRepository
 import com.vauthenticator.server.account.adapter.jdbc.JdbcAccountRepository
@@ -73,8 +73,7 @@ class AccountConfig {
         mapper: ObjectMapper,
         dynamoDbClient: DynamoDbClient,
         roleRepository: RoleRepository,
-        @Value("\${vauthenticator.dynamo-db.account.table-name}") accountTableName: String,
-        @Value("\${vauthenticator.dynamo-db.account.role.table-name}") accountRoleTableName: String
+        @Value("\${vauthenticator.dynamo-db.account.table-name}") accountTableName: String
     ) =
         DynamoDbAccountRepository(dynamoDbClient, accountTableName, roleRepository)
 
@@ -91,8 +90,7 @@ class AccountConfig {
         dynamoDbClient: DynamoDbClient,
         accountCacheOperation: CacheOperation<String, String>,
         roleRepository: RoleRepository,
-        @Value("\${vauthenticator.dynamo-db.account.table-name}") accountTableName: String,
-        @Value("\${vauthenticator.dynamo-db.account.role.table-name}") accountRoleTableName: String
+        @Value("\${vauthenticator.dynamo-db.account.table-name}") accountTableName: String
     ) =
         CachedAccountRepository(
             AccountCacheContentConverter(mapper),

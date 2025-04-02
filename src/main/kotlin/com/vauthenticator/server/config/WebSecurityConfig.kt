@@ -85,8 +85,10 @@ class WebSecurityConfig(
                 )
             )
                 .invalidateHttpSession(true)
-
+                .logoutRequestMatcher(
+                    AntPathRequestMatcher("/logout"))
         }
+
 
         http.userDetailsService(accountUserDetailsService)
         http.oauth2ResourceServer { it.jwt {} }

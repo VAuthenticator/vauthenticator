@@ -1,8 +1,7 @@
 package com.vauthenticator.server.mfa
 
 import com.hubspot.jinjava.Jinjava
-import com.vauthenticator.document.repository.DocumentRepository
-import com.vauthenticator.server.account.adapter.jdbc.JdbcAccountRepository
+import com.vauthenticator.server.document.domain.DocumentRepository
 import com.vauthenticator.server.account.domain.AccountRepository
 import com.vauthenticator.server.communication.NoReplyEMailConfiguration
 import com.vauthenticator.server.communication.adapter.JinJavaTemplateResolver
@@ -39,7 +38,7 @@ class MfaConfig {
     fun dynamoDbMfaAccountMethodsRepository(
         keyRepository: KeyRepository,
         dynamoDbClient: DynamoDbClient,
-        @Value("\${key.master-key}") masterKey: String,
+        @Value("\${key.master-key.id}") masterKey: String,
         @Value("\${vauthenticator.dynamo-db.mfa-account-methods.table-name}") mfaAccountMethodTableName: String,
         @Value("\${vauthenticator.dynamo-db.default-mfa-account-methods.table-name}") defaultMfaAccountMethodTableName: String
     ): MfaAccountMethodsRepository =
@@ -56,7 +55,7 @@ class MfaConfig {
     fun jdbcMfaAccountMethodsRepository(
         keyRepository: KeyRepository,
         jdbcTemplate: JdbcTemplate,
-        @Value("\${key.master-key}") masterKey: String
+        @Value("\${key.master-key.id}") masterKey: String
     ): MfaAccountMethodsRepository =
         JdbcMfaAccountMethodsRepository(
             jdbcTemplate,

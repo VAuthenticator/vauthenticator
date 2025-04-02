@@ -21,6 +21,7 @@ mfa:
     timeToLiveInSeconds: 600
 key:
   master-key:
+    id: key
     storage:
       content:
         key : "CrZKwm8YWGN5xYeKlaC9vXUBAFFzKYsqfaOFSrrqQgA="
