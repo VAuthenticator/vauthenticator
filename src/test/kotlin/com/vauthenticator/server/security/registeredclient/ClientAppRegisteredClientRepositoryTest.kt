@@ -11,15 +11,18 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient
 import java.util.*
 
 @ExtendWith(MockKExtension::class)
-internal class ClientAppRegisteredClientRepositoryTest {
+class ClientAppRegisteredClientRepositoryTest {
 
     @MockK
     lateinit var storeClientApplication: StoreClientApplication
@@ -35,28 +38,32 @@ internal class ClientAppRegisteredClientRepositoryTest {
             ClientAppRegisteredClientRepository(storeClientApplication, clientApplicationRepository)
     }
 
-    @Test
-    internal fun `when find a client app by id`() {
+    @ParameterizedTest
+    @ValueSource(booleans = [true , false])
+    fun `when find a client app by id`(confidential : Boolean) {
         every { clientApplicationRepository.findOne(ClientAppId("A_CLIENT_APP_ID")) }
-            .returns(aClientApplication())
+            .returns(aClientApplication(confidential))
 
         val actual = clientAppRegisteredClientRepository.findById("A_CLIENT_APP_ID")
 
-        Assertions.assertEquals(aRegisteredClient(), actual)
+        assertEquals(aRegisteredClient(confidential), actual)
     }
 
-    @Test
-    internal fun `when find a client app by client id`() {
+
+    @ParameterizedTest
+    @ValueSource(booleans = [true , false])
+    fun `when find a client app by client id`(confidential : Boolean) {
         every { clientApplicationRepository.findOne(ClientAppId("A_CLIENT_APP_ID")) }
-            .returns(aClientApplication())
+            .returns(aClientApplication(confidential))
 
         val actual = clientAppRegisteredClientRepository.findByClientId("A_CLIENT_APP_ID")
 
-        Assertions.assertEquals(aRegisteredClient(), actual)
+        assertEquals(aRegisteredClient(confidential), actual)
     }
 
+
     @Test
-    internal fun `when application is not foutn by id or clientId`() {
+    fun `when application is not found by id or clientId`() {
         every { clientApplicationRepository.findOne(ClientAppId("A_CLIENT_APP_ID")) }
             .returns(Optional.empty())
 
@@ -73,12 +80,15 @@ internal class ClientAppRegisteredClientRepositoryTest {
         )
     }
 
-    @Test
-    internal fun `when a new client app is registered`() {
+
+    @ParameterizedTest
+    @ValueSource(booleans = [true , false])
+    fun `when a new client app is registered`(confidential : Boolean) {
         every {
             storeClientApplication.store(
                 aClientApplication().get()
                     .copy(
+                        confidential = confidential,
                         postLogoutRedirectUri = PostLogoutRedirectUri("http://post_logout_redirect_uri"),
                         logoutUri = LogoutUri("http://post_logout_redirect_uri"),
                         scopes = Scopes(setOf(Scope("A_SCOPE"), Scope("ANOTHER_SCOPE")))
@@ -87,7 +97,7 @@ internal class ClientAppRegisteredClientRepositoryTest {
         } just runs
 
         clientAppRegisteredClientRepository.save(
-            RegisteredClient.from(aRegisteredClient()).build()
+            RegisteredClient.from(aRegisteredClient(confidential)).build()
         )
 
     }
