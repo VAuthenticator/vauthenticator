@@ -68,6 +68,7 @@ Authorization: Bearer {{auth_token}}
 {
   "clientAppName": "user-introspection",
   "secret": "s#cr#t!@#",
+  "confidential": "false",
   "withPkce": "false",
   "storePassword": "true",
   "scopes": ["openid", "email", "profile", "mfa:enrollment"],
