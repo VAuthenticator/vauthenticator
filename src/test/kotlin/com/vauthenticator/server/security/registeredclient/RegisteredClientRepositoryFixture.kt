@@ -4,24 +4,33 @@ import com.vauthenticator.server.oauth2.clientapp.domain.*
 import org.springframework.security.oauth2.core.AuthorizationGrantType
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient
+import org.springframework.security.oauth2.server.authorization.settings.ClientSettings
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings
 import java.time.Duration
 import java.util.*
 
 object RegisteredClientRepositoryFixture {
 
-    fun aRegisteredClient(): RegisteredClient = RegisteredClient.withId("A_CLIENT_APP_ID")
+    fun aRegisteredClient(confidential: Boolean): RegisteredClient = RegisteredClient.withId("A_CLIENT_APP_ID")
         .clientId("A_CLIENT_APP_ID")
         .clientSecret("A_SECRET")
-        .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-        .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
-        .clientAuthenticationMethod(ClientAuthenticationMethod.NONE)
+        .clientAuthenticationMethods {
+            if(confidential){
+                it.add(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                it.add(ClientAuthenticationMethod.CLIENT_SECRET_POST)
+            }else{
+                it.add(ClientAuthenticationMethod.NONE)
+            }
+        }
         .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
         .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
         .scope("A_SCOPE")
         .scope("ANOTHER_SCOPE")
         .redirectUri("http://a_call_back")
         .postLogoutRedirectUri("http://post_logout_redirect_uri")
+        .clientSettings(
+            ClientSettings.builder()
+            .build())
         .tokenSettings(
             TokenSettings.builder()
                 .accessTokenTimeToLive(Duration.ofSeconds(100))
@@ -31,7 +40,7 @@ object RegisteredClientRepositoryFixture {
         )
         .build()
 
-    fun aClientApplication(): Optional<ClientApplication> = Optional.ofNullable(
+    fun aClientApplication(confidential : Boolean = true): Optional<ClientApplication> = Optional.ofNullable(
         ClientApplication(
             clientAppId = ClientAppId("A_CLIENT_APP_ID"),
             secret = Secret("A_SECRET"),
@@ -42,6 +51,7 @@ object RegisteredClientRepositoryFixture {
                     AuthorizedGrantType.AUTHORIZATION_CODE
                 )
             ),
+            confidential = confidential,
             webServerRedirectUri = CallbackUri("http://a_call_back"),
             accessTokenValidity = TokenTimeToLive(100),
             refreshTokenValidity = TokenTimeToLive(200),

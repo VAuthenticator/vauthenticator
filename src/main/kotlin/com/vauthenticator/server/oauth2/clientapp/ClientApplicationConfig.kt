@@ -1,8 +1,6 @@
 package com.vauthenticator.server.oauth2.clientapp
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.vauthenticator.server.account.adapter.jdbc.JdbcAccountRepository
-import com.vauthenticator.server.account.domain.AccountRepository
 import com.vauthenticator.server.cache.CacheOperation
 import com.vauthenticator.server.cache.RedisCacheOperation
 import com.vauthenticator.server.oauth2.clientapp.adapter.cache.CachedClientApplicationRepository
@@ -19,8 +17,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import org.springframework.data.redis.core.RedisTemplate
-import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import java.time.Duration
 
@@ -30,8 +27,8 @@ class ClientApplicationConfig {
 
     @Bean("clientApplicationRepository")
     @Profile("database")
-    fun jdbcClientApplicationRepository(jdbcTemplate: JdbcTemplate, objectMapper: ObjectMapper) : ClientApplicationRepository =
-        JdbcClientApplicationRepository(jdbcTemplate, objectMapper)
+    fun jdbcClientApplicationRepository(namedParameterJdbcTemplate: NamedParameterJdbcTemplate, objectMapper: ObjectMapper) : ClientApplicationRepository =
+        JdbcClientApplicationRepository(namedParameterJdbcTemplate, objectMapper)
 
     @Bean("clientApplicationRepository")
     @ConditionalOnProperty(

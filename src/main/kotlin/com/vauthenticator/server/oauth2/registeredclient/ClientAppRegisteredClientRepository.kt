@@ -24,6 +24,7 @@ class ClientAppRegisteredClientRepository(
     override fun save(registeredClient: RegisteredClient) {
         storeClientApplication.store(
             ClientApplication(
+                confidential = registeredClient.isConfidential(),
                 clientAppId = ClientAppId(registeredClient.clientId),
                 logoutUri = LogoutUri(
                     Optional.ofNullable(registeredClient.postLogoutRedirectUris.firstOrNull()).orElseGet { "" }),
@@ -65,14 +66,22 @@ class ClientAppRegisteredClientRepository(
                         )
                     })
                 }
-                .clientAuthenticationMethod(ClientAuthenticationMethod.NONE)
-                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
+                .clientAuthenticationMethods {
+                    if (clientApp.confidential) {
+                        it.add(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                        it.add(ClientAuthenticationMethod.CLIENT_SECRET_POST)
+                    } else {
+                        it.add(ClientAuthenticationMethod.NONE)
+                    }
+                }
                 .scopes { scopes -> scopes.addAll(clientApp.scopes.content.map { it.content }) }
                 .redirectUri(clientApp.webServerRedirectUri.content)
                 .postLogoutRedirectUri(clientApp.postLogoutRedirectUri.content)
                 .clientSettings(
-                    ClientSettings.builder().requireProofKey(clientApp.withPkce.content).build()
+                    ClientSettings.builder()
+                        .requireAuthorizationConsent(false)
+                        .requireProofKey(clientApp.withPkce.content)
+                        .build()
                 )
                 .tokenSettings(
                     TokenSettings.builder()
@@ -88,5 +97,7 @@ class ClientAppRegisteredClientRepository(
             RegisteredClientAppNotFound("Application with id or client_id: $id not found")
         }
 
+    private fun RegisteredClient.isConfidential() =
+        !this.clientAuthenticationMethods.contains(ClientAuthenticationMethod.NONE)
 
 }
