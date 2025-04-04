@@ -17,8 +17,6 @@ import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
@@ -96,41 +94,38 @@ class ClientApplicationEndPointTest {
 
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = ["/client-secret", ""])
-    fun `reset password for a client app`(lastUrlSegment: String) {
+    @Test
+    fun `reset password for a client app`() {
         val clientAppId = aClientAppId()
         val jwtAuthenticationToken = m2mPrincipalFor(A_CLIENT_APP_ID, listOf(Scope.SAVE_CLIENT_APPLICATION.content))
 
         every { storeClientApplication.resetPassword(clientAppId, Secret("secret")) } just runs
 
         mockMvc.perform(
-            patch("/api/client-applications/${clientAppId.content}$lastUrlSegment").contentType(MediaType.APPLICATION_JSON)
+            patch("/api/client-applications/${clientAppId.content}/client-secret").contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(ClientAppSecretRepresentation("secret")))
                 .principal(jwtAuthenticationToken)
         ).andExpect(status().isNoContent)
 
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = ["/client-secret", ""])
-    fun `reset password for a client app fails for insufficient scope`(lastUrlSegment: String) {
+    @Test
+    fun `reset password for a client app fails for insufficient scope`() {
         val clientAppId = aClientAppId()
         val jwtAuthenticationToken = m2mPrincipalFor(A_CLIENT_APP_ID, listOf(Scope.MFA_ENROLLMENT.content))
 
         every { storeClientApplication.resetPassword(clientAppId, Secret("secret")) } just runs
 
         mockMvc.perform(
-            patch("/api/client-applications/${clientAppId.content}$lastUrlSegment").contentType(MediaType.APPLICATION_JSON)
+            patch("/api/client-applications/${clientAppId.content}/client-secret").contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(ClientAppSecretRepresentation("secret")))
                 .principal(jwtAuthenticationToken)
         ).andExpect(status().isForbidden)
 
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = ["/client-secret", ""])
-    fun `reset password for a not existing client app`(lastUrlSegment: String) {
+    @Test
+    fun `reset password for a not existing client app`() {
         val jwtAuthenticationToken = m2mPrincipalFor(A_CLIENT_APP_ID, listOf(Scope.SAVE_CLIENT_APPLICATION.content))
 
         every {
@@ -140,15 +135,14 @@ class ClientApplicationEndPointTest {
         } throws ClientApplicationNotFound("the client application clientApp was not found")
 
         mockMvc.perform(
-            patch("/api/client-applications/clientApp${lastUrlSegment}").contentType(MediaType.APPLICATION_JSON)
+            patch("/api/client-applications/clientApp/client-secret").contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(ClientAppSecretRepresentation("secret")))
                 .principal(jwtAuthenticationToken)
         ).andExpect(status().isNotFound)
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = ["/client-secret", ""])
-    fun `reset password for a not existing client app fails for insufficient scope`(lastUrlSegment: String) {
+    @Test
+    fun `reset password for a not existing client app fails for insufficient scope`() {
         val jwtAuthenticationToken = m2mPrincipalFor(A_CLIENT_APP_ID, listOf(Scope.MFA_ENROLLMENT.content))
 
         every {
@@ -158,7 +152,7 @@ class ClientApplicationEndPointTest {
         } throws ClientApplicationNotFound("the client application clientApp was not found")
 
         mockMvc.perform(
-            patch("/api/client-applications/clientApp${lastUrlSegment}").contentType(MediaType.APPLICATION_JSON)
+            patch("/api/client-applications/clientApp/client-secret").contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(ClientAppSecretRepresentation("secret")))
                 .principal(jwtAuthenticationToken)
         ).andExpect(status().isForbidden)

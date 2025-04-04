@@ -40,19 +40,6 @@ class ClientApplicationEndPoint(
         return ResponseEntity.noContent().build()
     }
 
-    @Deprecated("resetPasswordForClientApplicationV2 should be used")
-    @PatchMapping("/api/client-applications/{clientAppId}")
-    fun resetPasswordForClientApplication(
-        principal: JwtAuthenticationToken,
-        @PathVariable("clientAppId") clientAppId: String,
-        @RequestBody body: ClientAppSecretRepresentation
-    ): ResponseEntity<Unit> {
-        permissionValidator.validate(principal, Scopes.from(Scope.SAVE_CLIENT_APPLICATION))
-
-        storeClientApplication.resetPassword(ClientAppId(clientAppId), Secret(body.secret))
-        return ResponseEntity.noContent().build()
-    }
-
     @GetMapping("/api/client-applications")
     fun viewAllClientApplications(
         principal: JwtAuthenticationToken,
