@@ -88,6 +88,7 @@ data class ClientAppRepresentation(
     var clientAppName: String,
     var secret: String,
     var withPkce: Boolean,
+    var confidential: Boolean,
     var storePassword: Boolean,
     var scopes: List<String>,
     var authorizedGrantTypes: List<String>,
@@ -103,6 +104,7 @@ data class ClientAppRepresentation(
                 clientAppName = clientApplication.clientAppId.content,
                 secret = clientApplication.secret.content,
                 storePassword = storePassword,
+                confidential = clientApplication.confidential,
                 withPkce = clientApplication.withPkce.content,
                 scopes = clientApplication.scopes.content.map { it.content },
                 authorizedGrantTypes = clientApplication.authorizedGrantTypes.content.map { it.name.lowercase() },
@@ -116,6 +118,7 @@ data class ClientAppRepresentation(
         fun fromRepresentationToDomain(clientAppId: String, representation: ClientAppRepresentation) =
             ClientApplication(
                 clientAppId = ClientAppId(clientAppId),
+                confidential = representation.confidential,
                 secret = Secret(representation.secret),
                 withPkce = WithPkce(representation.withPkce),
                 scopes = Scopes(representation.scopes.map { Scope(it) }.toSet()),
