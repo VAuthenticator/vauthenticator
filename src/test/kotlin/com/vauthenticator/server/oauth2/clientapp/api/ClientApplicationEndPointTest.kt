@@ -75,9 +75,50 @@ class ClientApplicationEndPointTest {
     }
 
     @Test
-    fun `store a new client app`() {
+    fun `store a new confidential client app`() {
         val clientAppId = aClientAppId()
         val clientApplication = aClientApp(clientAppId)
+        val representation = ClientAppRepresentation.fromDomainToRepresentation(clientApplication, storePassword = true)
+        val jwtAuthenticationToken = m2mPrincipalFor(A_CLIENT_APP_ID, listOf(Scope.SAVE_CLIENT_APPLICATION.content))
+
+        every { storeClientApplication.store(clientApplication, true) } just runs
+
+        mockMvc.perform(
+            put("/api/client-applications/${clientAppId.content}").content(
+                objectMapper.writeValueAsString(
+                    representation
+                )
+            ).contentType(MediaType.APPLICATION_JSON)
+                .principal(jwtAuthenticationToken)
+        ).andExpect(status().isNoContent)
+
+    }
+
+    @Test
+    fun `store a new public client app`() {
+        val clientAppId = aClientAppId()
+        val clientApplication = aClientApp(clientAppId).copy(confidential = false, secret = Secret(""))
+        val representation = ClientAppRepresentation.fromDomainToRepresentation(clientApplication, storePassword = true)
+        val jwtAuthenticationToken = m2mPrincipalFor(A_CLIENT_APP_ID, listOf(Scope.SAVE_CLIENT_APPLICATION.content))
+
+        every { storeClientApplication.store(clientApplication, true) } just runs
+
+        mockMvc.perform(
+            put("/api/client-applications/${clientAppId.content}").content(
+                objectMapper.writeValueAsString(
+                    representation
+                )
+            ).contentType(MediaType.APPLICATION_JSON)
+                .principal(jwtAuthenticationToken)
+        ).andExpect(status().isNoContent)
+
+    }
+
+    // todo
+    @Test
+    fun `store a new public client app with a non empty password`() {
+        val clientAppId = aClientAppId()
+        val clientApplication = aClientApp(clientAppId).copy(confidential = false, secret = Secret(""))
         val representation = ClientAppRepresentation.fromDomainToRepresentation(clientApplication, storePassword = true)
         val jwtAuthenticationToken = m2mPrincipalFor(A_CLIENT_APP_ID, listOf(Scope.SAVE_CLIENT_APPLICATION.content))
 
