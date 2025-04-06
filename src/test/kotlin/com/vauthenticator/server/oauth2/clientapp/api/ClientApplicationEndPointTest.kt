@@ -75,7 +75,7 @@ class ClientApplicationEndPointTest {
     }
 
     @Test
-    fun `store a new confidential client app`() {
+    fun `store a new client app`() {
         val clientAppId = aClientAppId()
         val clientApplication = aClientApp(clientAppId)
         val representation = ClientAppRepresentation.fromDomainToRepresentation(clientApplication, storePassword = true)
@@ -93,15 +93,14 @@ class ClientApplicationEndPointTest {
         ).andExpect(status().isNoContent)
 
     }
-
     @Test
-    fun `store a new public client app`() {
+    fun `store a new client app fails for unsupported action`() {
         val clientAppId = aClientAppId()
-        val clientApplication = aClientApp(clientAppId).copy(confidential = false, secret = Secret(""))
+        val clientApplication = aClientApp(clientAppId)
         val representation = ClientAppRepresentation.fromDomainToRepresentation(clientApplication, storePassword = true)
         val jwtAuthenticationToken = m2mPrincipalFor(A_CLIENT_APP_ID, listOf(Scope.SAVE_CLIENT_APPLICATION.content))
 
-        every { storeClientApplication.store(clientApplication, true) } just runs
+        every { storeClientApplication.store(clientApplication, true) } throws UnsupportedClientAppOperationException("irrelevant")
 
         mockMvc.perform(
             put("/api/client-applications/${clientAppId.content}").content(
@@ -110,28 +109,7 @@ class ClientApplicationEndPointTest {
                 )
             ).contentType(MediaType.APPLICATION_JSON)
                 .principal(jwtAuthenticationToken)
-        ).andExpect(status().isNoContent)
-
-    }
-
-    // todo
-    @Test
-    fun `store a new public client app with a non empty password`() {
-        val clientAppId = aClientAppId()
-        val clientApplication = aClientApp(clientAppId).copy(confidential = false, secret = Secret(""))
-        val representation = ClientAppRepresentation.fromDomainToRepresentation(clientApplication, storePassword = true)
-        val jwtAuthenticationToken = m2mPrincipalFor(A_CLIENT_APP_ID, listOf(Scope.SAVE_CLIENT_APPLICATION.content))
-
-        every { storeClientApplication.store(clientApplication, true) } just runs
-
-        mockMvc.perform(
-            put("/api/client-applications/${clientAppId.content}").content(
-                objectMapper.writeValueAsString(
-                    representation
-                )
-            ).contentType(MediaType.APPLICATION_JSON)
-                .principal(jwtAuthenticationToken)
-        ).andExpect(status().isNoContent)
+        ).andExpect(status().isInternalServerError)
 
     }
 
@@ -147,6 +125,21 @@ class ClientApplicationEndPointTest {
                 .content(objectMapper.writeValueAsString(ClientAppSecretRepresentation("secret")))
                 .principal(jwtAuthenticationToken)
         ).andExpect(status().isNoContent)
+
+    }
+
+    @Test
+    fun `reset password for a client app  fails for unsupported action`() {
+        val clientAppId = aClientAppId()
+        val jwtAuthenticationToken = m2mPrincipalFor(A_CLIENT_APP_ID, listOf(Scope.SAVE_CLIENT_APPLICATION.content))
+
+        every { storeClientApplication.resetPassword(clientAppId, Secret("secret")) } throws UnsupportedClientAppOperationException("irrelevant")
+
+        mockMvc.perform(
+            patch("/api/client-applications/${clientAppId.content}/client-secret").contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(ClientAppSecretRepresentation("secret")))
+                .principal(jwtAuthenticationToken)
+        ).andExpect(status().isInternalServerError)
 
     }
 
