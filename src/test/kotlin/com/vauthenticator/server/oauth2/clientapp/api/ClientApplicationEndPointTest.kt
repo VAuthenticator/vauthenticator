@@ -93,6 +93,25 @@ class ClientApplicationEndPointTest {
         ).andExpect(status().isNoContent)
 
     }
+    @Test
+    fun `store a new client app fails for unsupported action`() {
+        val clientAppId = aClientAppId()
+        val clientApplication = aClientApp(clientAppId)
+        val representation = ClientAppRepresentation.fromDomainToRepresentation(clientApplication, storePassword = true)
+        val jwtAuthenticationToken = m2mPrincipalFor(A_CLIENT_APP_ID, listOf(Scope.SAVE_CLIENT_APPLICATION.content))
+
+        every { storeClientApplication.store(clientApplication, true) } throws UnsupportedClientAppOperationException("irrelevant")
+
+        mockMvc.perform(
+            put("/api/client-applications/${clientAppId.content}").content(
+                objectMapper.writeValueAsString(
+                    representation
+                )
+            ).contentType(MediaType.APPLICATION_JSON)
+                .principal(jwtAuthenticationToken)
+        ).andExpect(status().isInternalServerError)
+
+    }
 
     @Test
     fun `reset password for a client app`() {
@@ -106,6 +125,21 @@ class ClientApplicationEndPointTest {
                 .content(objectMapper.writeValueAsString(ClientAppSecretRepresentation("secret")))
                 .principal(jwtAuthenticationToken)
         ).andExpect(status().isNoContent)
+
+    }
+
+    @Test
+    fun `reset password for a client app  fails for unsupported action`() {
+        val clientAppId = aClientAppId()
+        val jwtAuthenticationToken = m2mPrincipalFor(A_CLIENT_APP_ID, listOf(Scope.SAVE_CLIENT_APPLICATION.content))
+
+        every { storeClientApplication.resetPassword(clientAppId, Secret("secret")) } throws UnsupportedClientAppOperationException("irrelevant")
+
+        mockMvc.perform(
+            patch("/api/client-applications/${clientAppId.content}/client-secret").contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(ClientAppSecretRepresentation("secret")))
+                .principal(jwtAuthenticationToken)
+        ).andExpect(status().isInternalServerError)
 
     }
 

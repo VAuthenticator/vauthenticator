@@ -80,6 +80,9 @@ class ClientApplicationEndPoint(
     @ExceptionHandler(ClientApplicationNotFound::class)
     fun clientApplicationNotFoundHandler() = ResponseEntity.notFound().build<Unit>()
 
+    @ExceptionHandler(UnsupportedClientAppOperationException::class)
+    fun clientApplicationUnsupportedClientAppOperationExceptionHandler() = ResponseEntity.internalServerError().build<Unit>()
+
 }
 
 data class ClientAppSecretRepresentation(val secret: String)
