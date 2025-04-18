@@ -8,7 +8,7 @@ all written in Kotlin based on Spring Boot 3.x and more over to the latest sprin
 
 ## The Architecture
 
-![](https://github.com/mrFlick72/vauthenticator/blob/master/images/vauthenticator-architecture.png)
+![](https://github.com/mrFlick72/vauthenticator/blob/main/images/vauthenticator-architecture.png)
 
 ## Features
 Right now it is based, as said before to the latest version on spring oauth2/open id connect framework [spring-authorization-server](https://github.com/spring-projects-experimental/spring-authorization-server).
