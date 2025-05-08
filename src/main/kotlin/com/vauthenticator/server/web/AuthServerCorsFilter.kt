@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.MediaType
 import org.springframework.web.filter.OncePerRequestFilter
 
-class CorsFilter(private val clientApplicationRepository: ClientApplicationRepository) : OncePerRequestFilter() {
+class AuthServerCorsFilter(private val clientApplicationRepository: ClientApplicationRepository) : OncePerRequestFilter() {
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,

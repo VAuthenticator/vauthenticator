@@ -13,6 +13,7 @@ import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.http.MediaType
@@ -21,7 +22,7 @@ import org.springframework.mock.web.MockHttpServletResponse
 import java.util.*
 
 @ExtendWith(MockKExtension::class)
-class CorsFilterTest {
+class AuthServerCorsFilterTest {
 
     @MockK
     lateinit var clientApplicationRepository: ClientApplicationRepository
@@ -31,11 +32,15 @@ class CorsFilterTest {
 
     val clientAppId = aClientAppId()
 
+    lateinit var uut: AuthServerCorsFilter
+
+    @BeforeEach
+    fun setUp() {
+        uut = AuthServerCorsFilter(clientApplicationRepository)
+    }
+
     @Test
     fun `when the client app aware endpoints are allowed with client id in the request parameters`() {
-
-        val uut = CorsFilter(clientApplicationRepository)
-
         val request = MockHttpServletRequest()
         val response = MockHttpServletResponse()
 
@@ -54,9 +59,6 @@ class CorsFilterTest {
 
     @Test
     fun `when the client app aware endpoints are allowed with client id in the request body`() {
-
-        val uut = CorsFilter(clientApplicationRepository)
-
         val request = MockHttpServletRequest()
         val response = MockHttpServletResponse()
 
