@@ -18,6 +18,7 @@ object ClientAppFixture {
         WithPkce.enabled,
         AuthorizedGrantTypes.from(AuthorizedGrantType.CLIENT_CREDENTIALS),
         CallbackUri("http://an_uri"),
+        AllowedOrigins(setOf(AllowedOrigin("*"))),
         TokenTimeToLive(10),
         TokenTimeToLive(10),
         emptyMap(),

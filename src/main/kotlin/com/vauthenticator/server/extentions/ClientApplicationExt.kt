@@ -5,6 +5,8 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 
 fun Scopes.asDynamoAttribute(): AttributeValue = AttributeValue.builder().ss(this.content.map { it.content }).build()
 
+fun AllowedOrigins.asDynamoAttribute(): AttributeValue = AttributeValue.builder().ss(this.content.map { it.content }).build()
+
 fun AuthorizedGrantTypes.asDynamoAttribute(): AttributeValue =
     AttributeValue.builder().ss(this.content.map { it.name }).build()
 

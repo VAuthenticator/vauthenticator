@@ -18,6 +18,7 @@ object DynamoClientApplicationConverter {
             "scopes" to clientApp.scopes.asDynamoAttribute(),
             "authorized_grant_types" to clientApp.authorizedGrantTypes.asDynamoAttribute(),
             "web_server_redirect_uri" to clientApp.webServerRedirectUri.content.asDynamoAttribute(),
+            "allowed_origins" to clientApp.allowedOrigins.asDynamoAttribute(),
             "access_token_validity" to clientApp.accessTokenValidity.asDynamoAttribute(),
             "refresh_token_validity" to clientApp.refreshTokenValidity.asDynamoAttribute(),
             "auto_approve" to clientApp.autoApprove.content.asDynamoAttribute(),
@@ -41,6 +42,7 @@ object DynamoClientApplicationConverter {
                     .map { it.uppercase() }
                     .map { AuthorizedGrantType.valueOf(it) }),
             webServerRedirectUri = CallbackUri(dynamoPayload.valueAsStringFor("web_server_redirect_uri")),
+            allowedOrigins = AllowedOrigins(dynamoPayload.valuesAsListOfStringFor("allowed_origins").map { AllowedOrigin(it ) }.toSet()),
             accessTokenValidity = TokenTimeToLive(dynamoPayload.valueAsLongFor("access_token_validity")),
             refreshTokenValidity = TokenTimeToLive(dynamoPayload.valueAsLongFor("refresh_token_validity")),
             autoApprove = AutoApprove(dynamoPayload.valueAsBoolFor("auto_approve")),

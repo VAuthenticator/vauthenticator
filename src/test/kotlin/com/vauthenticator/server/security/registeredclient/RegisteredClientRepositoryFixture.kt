@@ -53,6 +53,7 @@ object RegisteredClientRepositoryFixture {
             ),
             confidential = confidential,
             webServerRedirectUri = CallbackUri("http://a_call_back"),
+            allowedOrigins = AllowedOrigins(setOf(AllowedOrigin("*"))),
             accessTokenValidity = TokenTimeToLive(100),
             refreshTokenValidity = TokenTimeToLive(200),
             additionalInformation = emptyMap(),

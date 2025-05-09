@@ -43,7 +43,7 @@ class ClientAppRegisteredClientRepository(
                 withPkce = WithPkce(registeredClient.clientSettings.isRequireProofKey),
                 webServerRedirectUri = CallbackUri(registeredClient.redirectUris.first()),
                 autoApprove = AutoApprove(registeredClient.clientSettings.isRequireAuthorizationConsent.not()),
-                allowedOrigins = listOf()
+                allowedOrigins = AllowedOrigins.empty()
             ), true
         )
     }
