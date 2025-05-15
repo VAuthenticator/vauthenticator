@@ -19,6 +19,8 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.mock.web.MockHttpServletResponse
+import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings
+import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings.*
 import java.util.*
 
 @ExtendWith(MockKExtension::class)
@@ -36,16 +38,16 @@ class AuthServerCorsFilterTest {
 
     @BeforeEach
     fun setUp() {
-        uut = AuthServerCorsFilter(clientApplicationRepository)
+        uut = AuthServerCorsFilter(builder().issuer("http://localhost").build(),clientApplicationRepository)
     }
 
     @Test
-    fun `when the client app aware endpoints are allowed with client id in the request parameters`() {
+    fun `when token endpoint get client id from the request parameters`() {
         val request = MockHttpServletRequest()
         val response = MockHttpServletResponse()
 
         request.method = "POST"
-        request.requestURI = "/token"
+        request.requestURI = "/oauth2/token"
         request.remoteHost = "example.com"
         request.addParameter("client_id", clientAppId.content)
 
@@ -58,15 +60,33 @@ class AuthServerCorsFilterTest {
     }
 
     @Test
-    fun `when the client app aware endpoints are allowed with client id in the request body`() {
+    fun `when token endpoint get client id from the request body`() {
         val request = MockHttpServletRequest()
         val response = MockHttpServletResponse()
 
         request.method = "POST"
-        request.requestURI = "/token"
+        request.requestURI = "/oauth2/token"
         request.remoteHost = "example.com"
         request.contentType = MediaType.APPLICATION_FORM_URLENCODED_VALUE
         request.setContent("client_id=${clientAppId.content}".toByteArray())
+
+        every { clientApplicationRepository.findOne(clientAppId) } returns Optional.of(aClientApp(clientAppId = clientAppId))
+        every { filterChain.doFilter(request, response) } just runs
+
+        uut.doFilter(request, response, filterChain)
+
+        assertionsFor(request, response)
+    }
+
+    @Test
+    fun `when the authorize  endpoint get client id from the request parameter`() {
+        val request = MockHttpServletRequest()
+        val response = MockHttpServletResponse()
+
+        request.method = "GET"
+        request.requestURI = "/oauth2/authorize"
+        request.remoteHost = "example.com"
+        request.addParameter("client_id", clientAppId.content)
 
         every { clientApplicationRepository.findOne(clientAppId) } returns Optional.of(aClientApp(clientAppId = clientAppId))
         every { filterChain.doFilter(request, response) } just runs
@@ -84,4 +104,5 @@ class AuthServerCorsFilterTest {
 
         verify { filterChain.doFilter(request, response) }
     }
+
 }
