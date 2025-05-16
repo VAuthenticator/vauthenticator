@@ -1,5 +1,7 @@
 package com.vauthenticator.server.web
 
+import com.vauthenticator.server.oauth2.clientapp.domain.AllowedOrigin
+import com.vauthenticator.server.oauth2.clientapp.domain.AllowedOrigins
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
 import com.vauthenticator.server.support.ClientAppFixture.aClientApp
 import com.vauthenticator.server.support.ClientAppFixture.aClientAppId
@@ -14,14 +16,12 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.springframework.http.MediaType
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.mock.web.MockHttpServletResponse
-import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings
-import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings.*
-import java.util.*
+import org.springframework.web.util.UriComponentsBuilder
 
 @ExtendWith(MockKExtension::class)
 class AuthServerCorsFilterTest {
@@ -38,66 +38,55 @@ class AuthServerCorsFilterTest {
 
     @BeforeEach
     fun setUp() {
-        uut = AuthServerCorsFilter(builder().issuer("http://localhost").build(),clientApplicationRepository)
+        uut = AuthServerCorsFilter(clientApplicationRepository)
     }
 
-    @Test
-    fun `when token endpoint get client id from the request parameters`() {
-        val request = MockHttpServletRequest()
+    @ParameterizedTest
+    @ValueSource(strings = ["https://example.com","http://example.com", "http://local.example.com:9090"]) // six numbers
+    fun `when the origin is allowed`(origin: String) {
+        val request = requestFrom(origin)
         val response = MockHttpServletResponse()
 
-        request.method = "POST"
-        request.requestURI = "/oauth2/token"
-        request.remoteHost = "example.com"
-        request.addParameter("client_id", clientAppId.content)
+        val clientApplication = aClientApp(clientAppId = clientAppId).copy(
+            allowedOrigins = AllowedOrigins(
+                setOf(
+                    AllowedOrigin(origin)
+                )
+            )
+        )
 
-        every { clientApplicationRepository.findOne(clientAppId) } returns Optional.of(aClientApp(clientAppId = clientAppId))
+        every { clientApplicationRepository.findAll() } returns listOf(clientApplication)
         every { filterChain.doFilter(request, response) } just runs
 
         uut.doFilter(request, response, filterChain)
 
-        assertionsFor(request, response)
+        assertionsFor(request, response, origin)
     }
 
-    @Test
-    fun `when token endpoint get client id from the request body`() {
+    private fun requestFrom(origin: String): MockHttpServletRequest {
         val request = MockHttpServletRequest()
-        val response = MockHttpServletResponse()
-
-        request.method = "POST"
-        request.requestURI = "/oauth2/token"
-        request.remoteHost = "example.com"
-        request.contentType = MediaType.APPLICATION_FORM_URLENCODED_VALUE
-        request.setContent("client_id=${clientAppId.content}".toByteArray())
-
-        every { clientApplicationRepository.findOne(clientAppId) } returns Optional.of(aClientApp(clientAppId = clientAppId))
-        every { filterChain.doFilter(request, response) } just runs
-
-        uut.doFilter(request, response, filterChain)
-
-        assertionsFor(request, response)
-    }
-
-    @Test
-    fun `when the authorize  endpoint get client id from the request parameter`() {
-        val request = MockHttpServletRequest()
-        val response = MockHttpServletResponse()
-
+        val uriComponents = UriComponentsBuilder.fromUriString(origin).build()
         request.method = "GET"
-        request.requestURI = "/oauth2/authorize"
-        request.remoteHost = "example.com"
-        request.addParameter("client_id", clientAppId.content)
+        request.scheme = uriComponents.scheme.toString()
+        request.serverName = uriComponents.host!!
 
-        every { clientApplicationRepository.findOne(clientAppId) } returns Optional.of(aClientApp(clientAppId = clientAppId))
-        every { filterChain.doFilter(request, response) } just runs
+        when (request.scheme) {
+            "http" -> {
+                if (uriComponents.port == -1) {
+                    request.serverPort = 80
+                } else {
+                    request.serverPort = uriComponents.port
+                }
+            }
 
-        uut.doFilter(request, response, filterChain)
-
-        assertionsFor(request, response)
+            "https" -> request.serverPort = 443
+        }
+        return request
     }
 
-    private fun assertionsFor(request: HttpServletRequest, response: HttpServletResponse) {
-        assertTrue { response.getHeaders("Access-Control-Allow-Origin").contains("example.com") }
+
+    private fun assertionsFor(request: HttpServletRequest, response: HttpServletResponse, origin: String) {
+        assertTrue { response.getHeaders("Access-Control-Allow-Origin").contains(origin) }
         assertTrue { response.getHeaders("Access-Control-Allow-Methods").contains("GET POST OPTION") }
         assertTrue { response.getHeaders("Access-Control-Max-Age").contains("3600") }
         assertTrue { response.getHeaders("Access-Control-Allow-Credentials").contains("true") }
