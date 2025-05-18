@@ -65,22 +65,8 @@ class AuthServerCorsFilterTest {
 
     private fun requestFrom(origin: String): MockHttpServletRequest {
         val request = MockHttpServletRequest()
-        val uriComponents = UriComponentsBuilder.fromUriString(origin).build()
         request.method = "GET"
-        request.scheme = uriComponents.scheme.toString()
-        request.serverName = uriComponents.host!!
-
-        when (request.scheme) {
-            "http" -> {
-                if (uriComponents.port == -1) {
-                    request.serverPort = 80
-                } else {
-                    request.serverPort = uriComponents.port
-                }
-            }
-
-            "https" -> request.serverPort = 443
-        }
+        request.addHeader("Origin", origin)
         return request
     }
 
