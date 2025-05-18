@@ -5,10 +5,8 @@ import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationReposi
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 
-@Component
 class AuthServerCorsFilter(
     private val clientApplicationRepository: ClientApplicationRepository
 ) :

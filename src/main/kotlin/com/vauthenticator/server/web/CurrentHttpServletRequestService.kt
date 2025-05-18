@@ -9,7 +9,6 @@ interface CurrentHttpServletRequestService {
     fun getServletRequest(): HttpServletRequest
 }
 
-@Service
 class SpringCurrentHttpServletRequestService : CurrentHttpServletRequestService {
     override fun getServletRequest(): HttpServletRequest =
         (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes).request
