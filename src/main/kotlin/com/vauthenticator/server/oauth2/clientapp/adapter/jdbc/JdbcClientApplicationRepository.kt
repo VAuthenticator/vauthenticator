@@ -59,7 +59,8 @@ private const val DELETE_QUERY = """DELETE FROM CLIENT_APPLICATION WHERE client_
 
 class JdbcClientApplicationRepository(
     private val namedJdbcTemplate: NamedParameterJdbcTemplate,
-    private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper,
+    private val allowedOriginRepository: AllowedOriginRepository
 ) :
     ClientApplicationRepository {
     override fun findOne(clientAppId: ClientAppId): Optional<ClientApplication> {
@@ -98,10 +99,12 @@ class JdbcClientApplicationRepository(
                     "logout_uri" to clientApp.logoutUri.content
                 )
             )
+        allowedOriginRepository.setAllowedOriginsFor(clientApp.clientAppId, clientApp.allowedOrigins)
     }
 
     override fun delete(clientAppId: ClientAppId) {
         namedJdbcTemplate.update(DELETE_QUERY, mapOf("client_app_id" to clientAppId.content))
+        allowedOriginRepository.deleteAllowedOriginsFor(clientAppId)
     }
 
 }

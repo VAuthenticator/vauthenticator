@@ -6,17 +6,8 @@ import com.vauthenticator.server.oauth2.clientapp.domain.AllowedOrigins
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
 
-class InMemoryAllowedOriginRepository(
-    private val clientApplicationRepository: ClientApplicationRepository
-) : AllowedOriginRepository {
-    private val storage = mutableMapOf<ClientAppId, AllowedOrigins>()
-
-    init {
-        clientApplicationRepository.findAll()
-            .forEach {
-                storage.put(it.clientAppId, it.allowedOrigins)
-            }
-    }
+class InMemoryAllowedOriginRepository(val storage: MutableMap<ClientAppId, AllowedOrigins>) :
+    AllowedOriginRepository {
 
     override fun getAllAvailableAllowedOrigins(): Set<AllowedOrigin> {
         return storage.flatMap { it.value.content.toList() }.toSet()
@@ -24,6 +15,10 @@ class InMemoryAllowedOriginRepository(
 
     override fun setAllowedOriginsFor(clientAppId: ClientAppId, allowedOrigins: AllowedOrigins) {
         storage.put(clientAppId, allowedOrigins)
+    }
+
+    override fun deleteAllowedOriginsFor(clientAppId: ClientAppId) {
+        storage.remove(clientAppId)
     }
 
 }
