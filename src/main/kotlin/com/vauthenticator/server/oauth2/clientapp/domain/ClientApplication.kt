@@ -50,7 +50,8 @@ data class ClientAppId(val content: String) {
 
 data class AllowedOrigins(val content: Set<AllowedOrigin>){
     companion object {
-        fun empty() = AllowedOrigins(emptySet())
+        fun empty() = AllowedOrigins(setOf(AllowedOrigin("*")))
+        fun from(vararg allowedOrigin: AllowedOrigin ) = AllowedOrigins(setOf(*allowedOrigin))
     }
 }
 data class AllowedOrigin(val content: String)
