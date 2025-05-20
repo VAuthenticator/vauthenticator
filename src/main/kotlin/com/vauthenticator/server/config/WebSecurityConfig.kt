@@ -55,7 +55,6 @@ class WebSecurityConfig(
     fun defaultSecurityFilterChain(
         http: HttpSecurity,
         loginWorkflowEngine: AuthenticationSuccessHandler,
-        clientApplicationRepository: ClientApplicationRepository,
         accountUserDetailsService: AccountUserDetailsService
     ): SecurityFilterChain {
         http.csrf {
