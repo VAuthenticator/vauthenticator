@@ -1,6 +1,7 @@
 package com.vauthenticator.server.web
 
 import com.vauthenticator.server.oauth2.clientapp.domain.AllowedOrigin
+import com.vauthenticator.server.oauth2.clientapp.domain.AllowedOriginRepository
 import com.vauthenticator.server.oauth2.clientapp.domain.AllowedOrigins
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
 import com.vauthenticator.server.support.ClientAppFixture.aClientApp
@@ -21,13 +22,15 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.mock.web.MockHttpServletResponse
-import org.springframework.web.util.UriComponentsBuilder
 
 @ExtendWith(MockKExtension::class)
 class AuthServerCorsFilterTest {
 
     @MockK
     lateinit var clientApplicationRepository: ClientApplicationRepository
+
+    @MockK
+    lateinit var allowedOriginRepository: AllowedOriginRepository
 
     @MockK
     lateinit var filterChain: FilterChain
@@ -38,7 +41,7 @@ class AuthServerCorsFilterTest {
 
     @BeforeEach
     fun setUp() {
-        uut = AuthServerCorsFilter(clientApplicationRepository)
+        uut = AuthServerCorsFilter(allowedOriginRepository)
     }
 
     @ParameterizedTest
@@ -47,15 +50,7 @@ class AuthServerCorsFilterTest {
         val request = requestFrom(origin)
         val response = MockHttpServletResponse()
 
-        val clientApplication = aClientApp(clientAppId = clientAppId).copy(
-            allowedOrigins = AllowedOrigins(
-                setOf(
-                    AllowedOrigin(origin)
-                )
-            )
-        )
-
-        every { clientApplicationRepository.findAll() } returns listOf(clientApplication)
+        every { allowedOriginRepository.getAllAvailableAllowedOrigins() } returns setOf(AllowedOrigin(origin))
         every { filterChain.doFilter(request, response) } just runs
 
         uut.doFilter(request, response, filterChain)

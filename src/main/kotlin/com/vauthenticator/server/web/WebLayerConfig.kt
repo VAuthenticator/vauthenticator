@@ -1,5 +1,6 @@
 package com.vauthenticator.server.web
 
+import com.vauthenticator.server.oauth2.clientapp.domain.AllowedOriginRepository
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -8,8 +9,8 @@ import org.springframework.context.annotation.Configuration
 class WebLayerConfig {
 
     @Bean
-    fun authServerCorsFilter(clientApplicationRepository: ClientApplicationRepository) =
-        AuthServerCorsFilter(clientApplicationRepository)
+    fun authServerCorsFilter(allowedOriginRepository: AllowedOriginRepository) =
+        AuthServerCorsFilter( allowedOriginRepository)
 
     @Bean
     fun springCurrentHttpServletRequestService() =
