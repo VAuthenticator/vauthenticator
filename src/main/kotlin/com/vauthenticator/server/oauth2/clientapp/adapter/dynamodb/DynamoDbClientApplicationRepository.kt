@@ -20,6 +20,11 @@ class DynamoDbClientApplicationRepository(
     private val dynamoClientApplicationTableName: String,
     private val allowedOriginRepository: AllowedOriginRepository
 ) : ClientApplicationRepository {
+
+    init {
+        findAll().forEach { allowedOriginRepository.setAllowedOriginsFor(it.clientAppId, it.allowedOrigins) }
+    }
+
     override fun findOne(clientAppId: ClientAppId): Optional<ClientApplication> {
         return  if (clientAppId.content.isEmpty()) Optional.empty() else Optional.of(clientAppId)
             .map {

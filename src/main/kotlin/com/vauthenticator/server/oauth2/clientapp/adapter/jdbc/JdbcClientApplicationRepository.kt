@@ -63,6 +63,10 @@ class JdbcClientApplicationRepository(
     private val allowedOriginRepository: AllowedOriginRepository
 ) :
     ClientApplicationRepository {
+    init {
+        findAll().forEach { allowedOriginRepository.setAllowedOriginsFor(it.clientAppId, it.allowedOrigins) }
+    }
+
     override fun findOne(clientAppId: ClientAppId): Optional<ClientApplication> {
         val queryResult =
             namedJdbcTemplate.query(FINED_ONE_QUERY, mapOf("client_app_id" to clientAppId.content)) { rs, _ ->

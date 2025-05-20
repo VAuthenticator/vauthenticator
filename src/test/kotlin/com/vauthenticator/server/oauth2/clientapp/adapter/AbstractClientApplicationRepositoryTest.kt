@@ -33,6 +33,7 @@ abstract class AbstractClientApplicationRepositoryTest {
 
     @BeforeEach
     fun setUp() {
+        every { allowedOriginRepository.setAllowedOriginsFor(ClientAppId("client_id"), from(AllowedOrigin("*"))) } just runs
         uut = initUnitUnderTest(allowedOriginRepository)
         resetDatabase()
     }

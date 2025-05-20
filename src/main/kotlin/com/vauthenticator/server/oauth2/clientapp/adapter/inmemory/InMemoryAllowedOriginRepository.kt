@@ -4,7 +4,6 @@ import com.vauthenticator.server.oauth2.clientapp.domain.AllowedOrigin
 import com.vauthenticator.server.oauth2.clientapp.domain.AllowedOriginRepository
 import com.vauthenticator.server.oauth2.clientapp.domain.AllowedOrigins
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
-import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
 
 class InMemoryAllowedOriginRepository(val storage: MutableMap<ClientAppId, AllowedOrigins>) :
     AllowedOriginRepository {
