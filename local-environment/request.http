@@ -23,9 +23,11 @@ GET {{host}}/.well-known/oauth-authorization-server
 POST {{host}}/oauth2/token
 Content-Type: application/x-www-form-urlencoded
 
-client_id=admin&client_secret=secret&grant_type=client_credentials&scope=admin:signup admin:key-editor admin:key-reader admin:email-verify admin:client-app-writer
+client_id=admin&client_secret=secret&grant_type=client_credentials&scope=admin:signup admin:client-app-writer
 
-> {% client.global.set("auth_token", response.body.access_token); %}
+> {%
+    client.global.set("auth_token", response.body.access_token);
+%}
 
 ### sign up a new account
 
@@ -34,7 +36,7 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
 {
-  "email": "valerio.vaudi+1@gmail.com",
+  "email": "user@email.com",
   "password": "secret!",
   "firstName": "Admin",
   "lastName": "",
@@ -77,7 +79,8 @@ Authorization: Bearer {{auth_token}}
   "accessTokenValidity": "360",
   "refreshTokenValidity": "360",
   "postLogoutRedirectUri": "http://user-introspection.com:7070",
-  "logoutUri": "http://user-introspection.com:7070"
+  "logoutUri": "http://user-introspection.com:7070",
+  "allowedOrigins": ["*"]
 }
 
 
