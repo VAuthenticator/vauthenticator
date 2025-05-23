@@ -1,24 +1,19 @@
 package com.vauthenticator.server.oauth2.clientapp.adapter.inmemory
 
+import com.vauthenticator.server.oauth2.clientapp.adapter.AbstractAllowedOriginRepositoryTest
 import com.vauthenticator.server.oauth2.clientapp.domain.AllowedOrigin
 import com.vauthenticator.server.oauth2.clientapp.domain.AllowedOriginRepository
 import com.vauthenticator.server.oauth2.clientapp.domain.AllowedOrigins
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
-import io.mockk.junit5.MockKExtension
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
-import kotlin.test.assertEquals
 
-@ExtendWith(MockKExtension::class)
-class InMemoryAllowedOriginRepositoryTest {
+class InMemoryAllowedOriginRepositoryTest : AbstractAllowedOriginRepositoryTest() {
 
 
-    lateinit var uut: AllowedOriginRepository
+    override fun resetDatabase() {
+    }
 
-    @BeforeEach
-    fun setUp() {
-        uut = InMemoryAllowedOriginRepository(
+    override fun initUnitUnderTest(): AllowedOriginRepository {
+        return InMemoryAllowedOriginRepository(
             mutableMapOf(
                 ClientAppId("ONE_CLIENT_APP_ID") to AllowedOrigins(
                     setOf(AllowedOrigin("http://localhost:8080"))
@@ -29,48 +24,4 @@ class InMemoryAllowedOriginRepositoryTest {
         )
     }
 
-    @Test
-    fun `when a application startup happen`() {
-        val expected = setOf(AllowedOrigin("http://localhost:8080"), AllowedOrigin("http://localhost:9090"))
-        val actual = uut.getAllAvailableAllowedOrigins()
-
-        assertEquals(expected, actual)
-    }
-
-    @Test
-    fun `when a new client application has been added`() {
-        uut.setAllowedOriginsFor(
-            ClientAppId("ANOTHER_AGAIN_CLIENT_APP_ID"),
-            AllowedOrigins(setOf(AllowedOrigin("http://localhost:6060")))
-        )
-        val expected = setOf(
-            AllowedOrigin("http://localhost:8080"),
-            AllowedOrigin("http://localhost:9090"),
-            AllowedOrigin("http://localhost:6060")
-        )
-        val actual = uut.getAllAvailableAllowedOrigins()
-
-        assertEquals(expected, actual)
-    }
-
-    @Test
-    fun `when a client application has been updated`() {
-        uut.setAllowedOriginsFor(
-            ClientAppId("ANOTHER_CLIENT_APP_ID"),
-            AllowedOrigins(setOf(AllowedOrigin("http://localhost:6060")))
-        )
-        val expected = setOf(AllowedOrigin("http://localhost:8080"), AllowedOrigin("http://localhost:6060"))
-        val actual = uut.getAllAvailableAllowedOrigins()
-
-        assertEquals(expected, actual)
-    }
-
-    @Test
-    fun `when a client application has been deleted`() {
-        uut.deleteAllowedOriginsFor(ClientAppId("ANOTHER_CLIENT_APP_ID"))
-        val expected = setOf(AllowedOrigin("http://localhost:8080"))
-        val actual = uut.getAllAvailableAllowedOrigins()
-
-        assertEquals(expected, actual)
-    }
 }

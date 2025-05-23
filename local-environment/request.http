@@ -34,7 +34,7 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
 {
-  "email": "user@email.com",
+  "email": "valerio.vaudi+1@gmail.com",
   "password": "secret!",
   "firstName": "Admin",
   "lastName": "",
