@@ -11,12 +11,14 @@ class RedisAllowedOriginRepositoryTest : AbstractAllowedOriginRepositoryTest() {
 
     override fun resetDatabase() {
         val opsForHash = redisTemplate.opsForHash<String, String>()
-        opsForHash.delete("allowed_origin.ONE_CLIENT_APP_ID", "allowed_origin.ONE_CLIENT_APP_ID".toSha256())
-        opsForHash.delete("allowed_origin.ANOTHER_CLIENT_APP_ID", "allowed_origin.ANOTHER_CLIENT_APP_ID".toSha256())
+
+        redisTemplate.keys("allowed_origin.*")
+            .forEach { opsForHash.delete(it, it.toSha256())}
+
 
         opsForHash.put(
             "allowed_origin.ONE_CLIENT_APP_ID",
-            "allowed_origin.ANOTHER_CLIENT_APP_ID".toSha256(),
+            "allowed_origin.ONE_CLIENT_APP_ID".toSha256(),
             "http://localhost:8080"
         )
         opsForHash.put(
