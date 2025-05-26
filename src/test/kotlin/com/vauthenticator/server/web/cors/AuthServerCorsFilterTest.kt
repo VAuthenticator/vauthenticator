@@ -1,5 +1,8 @@
 package com.vauthenticator.server.web.cors
 
+import com.vauthenticator.server.config.FRONT_CHANNEL_LOG_OUT_URL
+import com.vauthenticator.server.config.LOG_IN_URL_PAGE
+import com.vauthenticator.server.config.LOG_OUR_URL
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
 import com.vauthenticator.server.support.ClientAppFixture
 import io.mockk.every
@@ -50,7 +53,10 @@ class AuthServerCorsFilterTest {
             authorizationServerSettings.oidcUserInfoEndpoint,
             authorizationServerSettings.oidcLogoutEndpoint,
             authorizationServerSettings.tokenRevocationEndpoint,
-            authorizationServerSettings.tokenIntrospectionEndpoint
+            authorizationServerSettings.tokenIntrospectionEndpoint,
+            LOG_IN_URL_PAGE,
+            FRONT_CHANNEL_LOG_OUT_URL,
+            LOG_OUR_URL
         )
 
         uut = AuthServerCorsFilter(corsConfigurationResolver, allowedEndpoints)

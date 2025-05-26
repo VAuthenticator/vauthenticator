@@ -1,5 +1,8 @@
 package com.vauthenticator.server.web
 
+import com.vauthenticator.server.config.FRONT_CHANNEL_LOG_OUT_URL
+import com.vauthenticator.server.config.LOG_IN_URL_PAGE
+import com.vauthenticator.server.config.LOG_OUR_URL
 import com.vauthenticator.server.oauth2.clientapp.domain.AllowedOriginRepository
 import com.vauthenticator.server.web.cors.AuthServerCorsFilter
 import com.vauthenticator.server.web.cors.CorsConfigurationResolver
@@ -31,7 +34,10 @@ class WebLayerConfig {
                 providerSettings.oidcUserInfoEndpoint,
                 providerSettings.oidcLogoutEndpoint,
                 providerSettings.tokenRevocationEndpoint,
-                providerSettings.tokenIntrospectionEndpoint
+                providerSettings.tokenIntrospectionEndpoint,
+                LOG_IN_URL_PAGE,
+                FRONT_CHANNEL_LOG_OUT_URL,
+                LOG_OUR_URL
             )
         )
 

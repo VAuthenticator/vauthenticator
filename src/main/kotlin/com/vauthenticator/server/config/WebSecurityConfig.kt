@@ -37,11 +37,13 @@ import java.util.*
 
 const val adminRole = "VAUTHENTICATOR_ADMIN"
 
-private const val LOG_IN_URL_PAGE = "/login"
+const val LOG_IN_URL_PAGE = "/login"
+const val FRONT_CHANNEL_LOG_OUT_URL = "/oidc/logout"
+const val LOG_OUR_URL = "/logout"
 private val WHITE_LIST = arrayOf(
-    "/logout",
-    "/oidc/logout",
-    "/login"
+    LOG_IN_URL_PAGE,
+    FRONT_CHANNEL_LOG_OUT_URL,
+    LOG_OUR_URL
 )
 
 @EnableWebSecurity
