@@ -7,7 +7,9 @@ import com.vauthenticator.server.web.cors.DynamicCorsConfigurationSource
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
+import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings
 import org.springframework.web.cors.CorsConfigurationSource
+import kotlin.collections.listOf
 
 @Configuration(proxyBeanMethods = false)
 class WebLayerConfig {
@@ -15,8 +17,23 @@ class WebLayerConfig {
 
     @Bean
     @Order(Integer.MIN_VALUE)
-    fun authServerCorsFilter(corsConfigurationResolver: CorsConfigurationResolver) =
-        AuthServerCorsFilter(corsConfigurationResolver)
+    fun authServerCorsFilter(
+        corsConfigurationResolver: CorsConfigurationResolver,
+        providerSettings: AuthorizationServerSettings
+    ) =
+        AuthServerCorsFilter(
+            corsConfigurationResolver,
+            listOf(
+                providerSettings.jwkSetEndpoint,
+                providerSettings.authorizationEndpoint,
+                providerSettings.deviceAuthorizationEndpoint,
+                providerSettings.tokenEndpoint,
+                providerSettings.oidcUserInfoEndpoint,
+                providerSettings.oidcLogoutEndpoint,
+                providerSettings.tokenRevocationEndpoint,
+                providerSettings.tokenIntrospectionEndpoint
+            )
+        )
 
     @Bean
     fun corsConfigurationResolver(allowedOriginRepository: AllowedOriginRepository): CorsConfigurationResolver =

@@ -8,6 +8,7 @@ import com.vauthenticator.server.oauth2.clientapp.adapter.cache.ClientApplicatio
 import com.vauthenticator.server.oauth2.clientapp.adapter.dynamodb.DynamoDbClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.adapter.inmemory.InMemoryAllowedOriginRepository
 import com.vauthenticator.server.oauth2.clientapp.adapter.jdbc.JdbcClientApplicationRepository
+import com.vauthenticator.server.oauth2.clientapp.adapter.redis.RedisAllowedOriginRepository
 import com.vauthenticator.server.oauth2.clientapp.domain.AllowedOriginRepository
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.domain.ReadClientApplication
@@ -27,7 +28,8 @@ import java.time.Duration
 class ClientApplicationConfig {
 
     @Bean
-    fun allowedOriginRepository(): AllowedOriginRepository = InMemoryAllowedOriginRepository(mutableMapOf())
+    fun allowedOriginRepository(redisTemplate: RedisTemplate<String, String>): AllowedOriginRepository =
+        RedisAllowedOriginRepository(redisTemplate)
 
     @Bean("clientApplicationRepository")
     @Profile("database")
@@ -64,7 +66,7 @@ class ClientApplicationConfig {
         clientApplicationCacheOperation: CacheOperation<String, String>,
         objectMapper: ObjectMapper,
         @Value("\${vauthenticator.dynamo-db.client-application.table-name}") clientAppTableName: String,
-        allowedOriginRepository : AllowedOriginRepository
+        allowedOriginRepository: AllowedOriginRepository
     ) = CachedClientApplicationRepository(
         ClientApplicationCacheContentConverter(objectMapper),
         clientApplicationCacheOperation,
