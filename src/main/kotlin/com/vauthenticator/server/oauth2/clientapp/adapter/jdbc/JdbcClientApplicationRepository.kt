@@ -14,6 +14,7 @@ private const val FINED_ALL_QUERY = """
     with_pkce,
     authorized_grant_types,
     web_server_redirect_uri,
+    allowed_origins,
     access_token_validity,
     refresh_token_validity,
     additional_information,
@@ -33,18 +34,20 @@ private const val SAVE_QUERY = """
     with_pkce,
     authorized_grant_types,
     web_server_redirect_uri,
+    allowed_origins,
     access_token_validity,
     refresh_token_validity,
     additional_information,
     auto_approve,
     post_logout_redirect_uri,
     logout_uri)
-     VALUES (:client_app_id,:secret,:confidential,:scopes,:with_pkce,:authorized_grant_types,:web_server_redirect_uri,:access_token_validity,:refresh_token_validity,:additional_information,:auto_approve,:post_logout_redirect_uri,:logout_uri)  ON CONFLICT(client_app_id) DO UPDATE SET secret=:secret,
+     VALUES (:client_app_id,:secret,:confidential,:scopes,:with_pkce,:authorized_grant_types,:web_server_redirect_uri,:allowed_origins,:access_token_validity,:refresh_token_validity,:additional_information,:auto_approve,:post_logout_redirect_uri,:logout_uri)  ON CONFLICT(client_app_id) DO UPDATE SET secret=:secret,
     confidential=:confidential,
     scopes=:scopes,
     with_pkce=:with_pkce,
     authorized_grant_types=:authorized_grant_types,
     web_server_redirect_uri=:web_server_redirect_uri,
+    allowed_origins=:allowed_origins,
     access_token_validity=:access_token_validity,
     refresh_token_validity=:refresh_token_validity,
     additional_information=:additional_information,
@@ -56,9 +59,14 @@ private const val DELETE_QUERY = """DELETE FROM CLIENT_APPLICATION WHERE client_
 
 class JdbcClientApplicationRepository(
     private val namedJdbcTemplate: NamedParameterJdbcTemplate,
-    private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper,
+    private val allowedOriginRepository: AllowedOriginRepository
 ) :
     ClientApplicationRepository {
+    init {
+        findAll().forEach { allowedOriginRepository.setAllowedOriginsFor(it.clientAppId, it.allowedOrigins) }
+    }
+
     override fun findOne(clientAppId: ClientAppId): Optional<ClientApplication> {
         val queryResult =
             namedJdbcTemplate.query(FINED_ONE_QUERY, mapOf("client_app_id" to clientAppId.content)) { rs, _ ->
@@ -86,6 +94,7 @@ class JdbcClientApplicationRepository(
                     "with_pkce" to clientApp.withPkce.content,
                     "authorized_grant_types" to clientApp.authorizedGrantTypes.content.joinToString(separator = ",") { it.name },
                     "web_server_redirect_uri" to clientApp.webServerRedirectUri.content,
+                    "allowed_origins" to clientApp.allowedOrigins.content.joinToString(separator = ",") { it.content },
                     "access_token_validity" to clientApp.accessTokenValidity.content,
                     "refresh_token_validity" to clientApp.refreshTokenValidity.content,
                     "additional_information" to objectMapper.writeValueAsString(clientApp.additionalInformation),
@@ -94,10 +103,12 @@ class JdbcClientApplicationRepository(
                     "logout_uri" to clientApp.logoutUri.content
                 )
             )
+        allowedOriginRepository.setAllowedOriginsFor(clientApp.clientAppId, clientApp.allowedOrigins)
     }
 
     override fun delete(clientAppId: ClientAppId) {
         namedJdbcTemplate.update(DELETE_QUERY, mapOf("client_app_id" to clientAppId.content))
+        allowedOriginRepository.deleteAllowedOriginsFor(clientAppId)
     }
 
 }
@@ -113,6 +124,7 @@ object JdbcClientApplicationConverter {
         authorizedGrantTypes = AuthorizedGrantTypes(
             rs.getString("authorized_grant_types").split(",").map { AuthorizedGrantType.valueOf(it) }),
         webServerRedirectUri = CallbackUri(rs.getString("web_server_redirect_uri")),
+        allowedOrigins = AllowedOrigins(rs.getString("allowed_origins").split(",").map { AllowedOrigin(it) }.toSet()),
         accessTokenValidity = TokenTimeToLive(rs.getLong("access_token_validity")),
         refreshTokenValidity = TokenTimeToLive(rs.getLong("refresh_token_validity")),
         additionalInformation = Optional.ofNullable(

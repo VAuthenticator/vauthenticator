@@ -6,7 +6,10 @@ import com.vauthenticator.server.cache.RedisCacheOperation
 import com.vauthenticator.server.oauth2.clientapp.adapter.cache.CachedClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.adapter.cache.ClientApplicationCacheContentConverter
 import com.vauthenticator.server.oauth2.clientapp.adapter.dynamodb.DynamoDbClientApplicationRepository
+import com.vauthenticator.server.oauth2.clientapp.adapter.inmemory.InMemoryAllowedOriginRepository
 import com.vauthenticator.server.oauth2.clientapp.adapter.jdbc.JdbcClientApplicationRepository
+import com.vauthenticator.server.oauth2.clientapp.adapter.redis.RedisAllowedOriginRepository
+import com.vauthenticator.server.oauth2.clientapp.domain.AllowedOriginRepository
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
 import com.vauthenticator.server.oauth2.clientapp.domain.ReadClientApplication
 import com.vauthenticator.server.oauth2.clientapp.domain.StoreClientApplication
@@ -24,11 +27,18 @@ import java.time.Duration
 @Configuration(proxyBeanMethods = false)
 class ClientApplicationConfig {
 
+    @Bean
+    fun allowedOriginRepository(redisTemplate: RedisTemplate<String, String>): AllowedOriginRepository =
+        RedisAllowedOriginRepository(redisTemplate)
 
     @Bean("clientApplicationRepository")
     @Profile("database")
-    fun jdbcClientApplicationRepository(namedParameterJdbcTemplate: NamedParameterJdbcTemplate, objectMapper: ObjectMapper) : ClientApplicationRepository =
-        JdbcClientApplicationRepository(namedParameterJdbcTemplate, objectMapper)
+    fun jdbcClientApplicationRepository(
+        namedParameterJdbcTemplate: NamedParameterJdbcTemplate,
+        objectMapper: ObjectMapper,
+        allowedOriginRepository: AllowedOriginRepository
+    ): ClientApplicationRepository =
+        JdbcClientApplicationRepository(namedParameterJdbcTemplate, objectMapper, allowedOriginRepository)
 
     @Bean("clientApplicationRepository")
     @ConditionalOnProperty(
@@ -39,8 +49,10 @@ class ClientApplicationConfig {
     @Profile("dynamo")
     fun dynamoDbClientApplicationRepository(
         dynamoDbClient: DynamoDbClient,
-        @Value("\${vauthenticator.dynamo-db.client-application.table-name}") clientAppTableName: String
-    ) = DynamoDbClientApplicationRepository(dynamoDbClient, clientAppTableName)
+        @Value("\${vauthenticator.dynamo-db.client-application.table-name}") clientAppTableName: String,
+        allowedOriginRepository: AllowedOriginRepository
+    ): ClientApplicationRepository =
+        DynamoDbClientApplicationRepository(dynamoDbClient, clientAppTableName, allowedOriginRepository)
 
     @Bean("clientApplicationRepository")
     @ConditionalOnProperty(
@@ -53,12 +65,12 @@ class ClientApplicationConfig {
         dynamoDbClient: DynamoDbClient,
         clientApplicationCacheOperation: CacheOperation<String, String>,
         objectMapper: ObjectMapper,
-        @Value("\${vauthenticator.dynamo-db.client-application.cache.enabled:false}") withCash: Boolean,
-        @Value("\${vauthenticator.dynamo-db.client-application.table-name}") clientAppTableName: String
+        @Value("\${vauthenticator.dynamo-db.client-application.table-name}") clientAppTableName: String,
+        allowedOriginRepository: AllowedOriginRepository
     ) = CachedClientApplicationRepository(
         ClientApplicationCacheContentConverter(objectMapper),
         clientApplicationCacheOperation,
-        DynamoDbClientApplicationRepository(dynamoDbClient, clientAppTableName)
+        DynamoDbClientApplicationRepository(dynamoDbClient, clientAppTableName, allowedOriginRepository)
     )
 
     @Bean

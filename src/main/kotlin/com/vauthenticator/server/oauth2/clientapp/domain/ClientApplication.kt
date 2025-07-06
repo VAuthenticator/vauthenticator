@@ -8,6 +8,7 @@ data class ClientApplication(
     val withPkce: WithPkce = WithPkce.disabled,
     val authorizedGrantTypes: AuthorizedGrantTypes,
     val webServerRedirectUri: CallbackUri,
+    val allowedOrigins: AllowedOrigins,
     val accessTokenValidity: TokenTimeToLive,
     val refreshTokenValidity: TokenTimeToLive,
     val additionalInformation: Map<String, Any> = emptyMap(),
@@ -47,6 +48,13 @@ data class ClientAppId(val content: String) {
     }
 }
 
+data class AllowedOrigins(val content: Set<AllowedOrigin>){
+    companion object {
+        fun empty() = AllowedOrigins(setOf(AllowedOrigin("*")))
+        fun from(vararg allowedOrigin: AllowedOrigin ) = AllowedOrigins(setOf(*allowedOrigin))
+    }
+}
+data class AllowedOrigin(val content: String)
 data class CallbackUri(val content: String)
 data class PostLogoutRedirectUri(val content: String)
 data class LogoutUri(val content: String)

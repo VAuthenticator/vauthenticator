@@ -93,6 +93,7 @@ CREATE TABLE CLIENT_APPLICATION
     with_pkce                boolean      not null default false,
     authorized_grant_types   varchar(255) not null,
     web_server_redirect_uri  varchar(255) not null,
+    allowed_origins          varchar(255) not null,
     access_token_validity    integer      not null default 0,
     refresh_token_validity   integer      not null default 0,
     additional_information   text         not null default '',

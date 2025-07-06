@@ -46,6 +46,7 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
 import org.springframework.security.web.DefaultRedirectStrategy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint
+import org.springframework.web.cors.CorsConfigurationSource
 
 
 @Configuration(proxyBeanMethods = false)
@@ -56,6 +57,9 @@ class AuthorizationServerConfig {
 
     @Autowired
     lateinit var accountRepository: AccountRepository
+
+    @Autowired
+    lateinit var corsConfigurationSource : CorsConfigurationSource
 
     @Bean
     fun jwkSource(keyRepository: KeyRepository, keyDecrypter: KeyDecrypter): JWKSource<SecurityContext?> =
@@ -127,6 +131,7 @@ class AuthorizationServerConfig {
     ): SecurityFilterChain {
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http)
         http.csrf { it.disable() }.headers { it.frameOptions { it.disable() } }
+        http.cors { it.configurationSource(corsConfigurationSource) }
 
         val userInfoEnhancer = UserInfoEnhancer(accountRepository)
 

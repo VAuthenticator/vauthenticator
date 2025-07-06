@@ -13,10 +13,14 @@ class ClientApplicationCacheContentConverter(private val objectMapper: ObjectMap
                     clientAppId = ClientAppId(it["clientAppId"] as String),
                     secret = Secret(it["secret"] as String),
                     scopes = Scopes((it["scopes"] as List<String>).map { scope -> Scope(scope) }.toSet()),
-                    authorizedGrantTypes = AuthorizedGrantTypes((it["authorizedGrantTypes"] as List<String>).map(
-                        AuthorizedGrantType::valueOf)),
+                    authorizedGrantTypes = AuthorizedGrantTypes(
+                        (it["authorizedGrantTypes"] as List<String>).map(
+                            AuthorizedGrantType::valueOf
+                        )
+                    ),
                     webServerRedirectUri = CallbackUri(it["webServerRedirectUri"] as String),
-                    accessTokenValidity =  TokenTimeToLive(it["accessTokenValidity"].toString().toLong()),
+                    allowedOrigins = AllowedOrigins((it["allowedOrigins"] as List<String>).map { AllowedOrigin(it) }.toSet()),
+                    accessTokenValidity = TokenTimeToLive(it["accessTokenValidity"].toString().toLong()),
                     refreshTokenValidity = TokenTimeToLive(it["refreshTokenValidity"].toString().toLong()),
                     additionalInformation = it["additionalInformation"] as Map<String, Any>,
                     autoApprove = AutoApprove(it["autoApprove"] as Boolean),
@@ -35,6 +39,7 @@ class ClientApplicationCacheContentConverter(private val objectMapper: ObjectMap
                 "scopes" to source.scopes.content.map(Scope::content),
                 "authorizedGrantTypes" to source.authorizedGrantTypes.content.map(AuthorizedGrantType::name),
                 "webServerRedirectUri" to source.webServerRedirectUri.content,
+                "allowedOrigins" to source.allowedOrigins.content.map(AllowedOrigin::content),
                 "accessTokenValidity" to source.accessTokenValidity.content,
                 "refreshTokenValidity" to source.refreshTokenValidity.content,
                 "additionalInformation" to source.additionalInformation,

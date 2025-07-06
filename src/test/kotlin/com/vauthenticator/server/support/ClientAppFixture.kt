@@ -10,6 +10,7 @@ object ClientAppFixture {
         confidential: Boolean = true,
         password: Secret = Secret("secret"),
         logoutUri: LogoutUri = LogoutUri("http://an_uri"),
+        allowedOrigins: AllowedOrigins = AllowedOrigins.from(AllowedOrigin("*"))
     ) = ClientApplication(
         clientAppId,
         password,
@@ -18,6 +19,7 @@ object ClientAppFixture {
         WithPkce.enabled,
         AuthorizedGrantTypes.from(AuthorizedGrantType.CLIENT_CREDENTIALS),
         CallbackUri("http://an_uri"),
+        allowedOrigins,
         TokenTimeToLive(10),
         TokenTimeToLive(10),
         emptyMap(),

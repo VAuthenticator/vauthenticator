@@ -4,6 +4,7 @@ import com.vauthenticator.server.extentions.asDynamoAttribute
 import com.vauthenticator.server.extentions.filterEmptyMetadata
 import com.vauthenticator.server.oauth2.clientapp.adapter.dynamodb.DynamoClientApplicationConverter.fromDomainToDynamo
 import com.vauthenticator.server.oauth2.clientapp.adapter.dynamodb.DynamoClientApplicationConverter.fromDynamoToDomain
+import com.vauthenticator.server.oauth2.clientapp.domain.AllowedOriginRepository
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientAppId
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplication
 import com.vauthenticator.server.oauth2.clientapp.domain.ClientApplicationRepository
@@ -15,9 +16,15 @@ import software.amazon.awssdk.services.dynamodb.model.ScanRequest
 import java.util.*
 
 class DynamoDbClientApplicationRepository(
-        private val dynamoDbClient: DynamoDbClient,
-        private val dynamoClientApplicationTableName: String
+    private val dynamoDbClient: DynamoDbClient,
+    private val dynamoClientApplicationTableName: String,
+    private val allowedOriginRepository: AllowedOriginRepository
 ) : ClientApplicationRepository {
+
+    init {
+        findAll().forEach { allowedOriginRepository.setAllowedOriginsFor(it.clientAppId, it.allowedOrigins) }
+    }
+
     override fun findOne(clientAppId: ClientAppId): Optional<ClientApplication> {
         return  if (clientAppId.content.isEmpty()) Optional.empty() else Optional.of(clientAppId)
             .map {
@@ -55,6 +62,8 @@ class DynamoDbClientApplicationRepository(
                 .item(fromDomainToDynamo(clientApp))
                 .build()
         )
+
+        allowedOriginRepository.setAllowedOriginsFor(clientApp.clientAppId, clientApp.allowedOrigins)
     }
 
     override fun delete(clientAppId: ClientAppId) {
@@ -68,6 +77,7 @@ class DynamoDbClientApplicationRepository(
                 )
                 .build()
         )
+        allowedOriginRepository.deleteAllowedOriginsFor(clientAppId)
     }
 
 }
