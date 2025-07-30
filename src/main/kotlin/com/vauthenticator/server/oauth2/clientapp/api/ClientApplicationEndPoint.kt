@@ -150,7 +150,7 @@ data class ClientAppInListRepresentation(
     companion object {
         fun fromDomainToRepresentation(clientApplication: ClientApplication) =
             ClientAppInListRepresentation(
-                clientAppName = clientApplication.clientAppId.content,
+                clientAppName = clientApplication.clientAppName.content,
                 clientAppId = clientApplication.clientAppId.content,
                 scopes = clientApplication.scopes.content.map { it.content },
                 authorizedGrantTypes = clientApplication.authorizedGrantTypes.content.map { it.name.lowercase() },
