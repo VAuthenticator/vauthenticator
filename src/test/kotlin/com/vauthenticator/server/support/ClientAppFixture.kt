@@ -13,6 +13,7 @@ object ClientAppFixture {
         allowedOrigins: AllowedOrigins = AllowedOrigins.from(AllowedOrigin("*"))
     ) = ClientApplication(
         clientAppId,
+        ClientAppName("$clientAppId-client-app-name"),
         password,
         confidential,
         Scopes.from(Scope.EMAIL, Scope.OPEN_ID, Scope.PROFILE, Scope.RESET_PASSWORD),

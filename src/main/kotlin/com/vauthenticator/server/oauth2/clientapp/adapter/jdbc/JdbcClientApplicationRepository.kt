@@ -8,6 +8,7 @@ import java.util.*
 
 private const val FINED_ALL_QUERY = """
     SELECT client_app_id,
+    client_app_name,
     secret,
     confidential,
     scopes,
@@ -28,6 +29,7 @@ private const val FINED_ONE_QUERY = """
 private const val SAVE_QUERY = """
     INSERT INTO CLIENT_APPLICATION (
     client_app_id,
+    client_app_name,
     secret,
     confidential,
     scopes,
@@ -41,7 +43,8 @@ private const val SAVE_QUERY = """
     auto_approve,
     post_logout_redirect_uri,
     logout_uri)
-     VALUES (:client_app_id,:secret,:confidential,:scopes,:with_pkce,:authorized_grant_types,:web_server_redirect_uri,:allowed_origins,:access_token_validity,:refresh_token_validity,:additional_information,:auto_approve,:post_logout_redirect_uri,:logout_uri)  ON CONFLICT(client_app_id) DO UPDATE SET secret=:secret,
+     VALUES (:client_app_id,:client_app_name,:secret,:confidential,:scopes,:with_pkce,:authorized_grant_types,:web_server_redirect_uri,:allowed_origins,:access_token_validity,:refresh_token_validity,:additional_information,:auto_approve,:post_logout_redirect_uri,:logout_uri)  ON CONFLICT(client_app_id) DO UPDATE SET secret=:secret,
+    client_app_name=:client_app_name,
     confidential=:confidential,
     scopes=:scopes,
     with_pkce=:with_pkce,
@@ -87,6 +90,7 @@ class JdbcClientApplicationRepository(
                 SAVE_QUERY,
                 mapOf(
                     "client_app_id" to clientApp.clientAppId.content,
+                    "client_app_name" to clientApp.clientAppName.content,
                     "secret" to clientApp.secret.content,
                     "confidential" to clientApp.confidential,
                     "scopes" to
@@ -117,6 +121,7 @@ object JdbcClientApplicationConverter {
 
     fun fromDbToDomain(rs: ResultSet, objectMapper: ObjectMapper) = ClientApplication(
         clientAppId = ClientAppId(rs.getString("client_app_id")),
+        clientAppName = ClientAppName(rs.getString("client_app_name")),
         secret = Secret(rs.getString("secret")),
         confidential = rs.getBoolean("confidential"),
         scopes = Scopes(rs.getString("scopes").split(",").map { Scope(it.trim()) }.toSet()),

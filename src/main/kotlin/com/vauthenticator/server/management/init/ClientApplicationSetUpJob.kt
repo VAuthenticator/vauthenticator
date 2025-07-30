@@ -18,6 +18,7 @@ class ClientApplicationSetUpJob(
 
     private fun managementUIDefaultClientApp() = ClientApplication(
         clientAppId = ClientAppId("vauthenticator-management-ui"),
+        clientAppName = ClientAppName("vauthenticator-management-ui"),
         secret = Secret(passwordEncoder.encode("secret")),
         scopes = Scopes.from(*(AVAILABLE_SCOPES - MFA_ALWAYS).toTypedArray()),
         withPkce = disabled,
@@ -34,6 +35,7 @@ class ClientApplicationSetUpJob(
 
     private fun m2mDefaultAdminClientApp() = ClientApplication(
         clientAppId = ClientAppId("admin"),
+        clientAppName = ClientAppName("admin"),
         secret = Secret(passwordEncoder.encode("secret")),
         scopes = Scopes.from(*(AVAILABLE_SCOPES - MFA_ALWAYS).toTypedArray()),
         withPkce = disabled,

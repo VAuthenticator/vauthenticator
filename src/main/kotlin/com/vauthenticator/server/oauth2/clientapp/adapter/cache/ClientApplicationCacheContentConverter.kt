@@ -11,6 +11,7 @@ class ClientApplicationCacheContentConverter(private val objectMapper: ObjectMap
             .let {
                 ClientApplication(
                     clientAppId = ClientAppId(it["clientAppId"] as String),
+                    clientAppName = ClientAppName(it["clientAppName"] as String),
                     secret = Secret(it["secret"] as String),
                     scopes = Scopes((it["scopes"] as List<String>).map { scope -> Scope(scope) }.toSet()),
                     authorizedGrantTypes = AuthorizedGrantTypes(
@@ -35,6 +36,7 @@ class ClientApplicationCacheContentConverter(private val objectMapper: ObjectMap
         objectMapper.writeValueAsString(
             mapOf(
                 "clientAppId" to source.clientAppId.content,
+                "clientAppName" to source.clientAppName.content,
                 "secret" to source.secret.content,
                 "scopes" to source.scopes.content.map(Scope::content),
                 "authorizedGrantTypes" to source.authorizedGrantTypes.content.map(AuthorizedGrantType::name),
