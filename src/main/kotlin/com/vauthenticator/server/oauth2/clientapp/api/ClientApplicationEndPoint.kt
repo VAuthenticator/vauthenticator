@@ -105,7 +105,7 @@ data class ClientAppRepresentation(
     companion object {
         fun fromDomainToRepresentation(clientApplication: ClientApplication, storePassword: Boolean = false) =
             ClientAppRepresentation(
-                clientAppName = clientApplication.clientAppId.content,
+                clientAppName = clientApplication.clientAppName.content,
                 secret = clientApplication.secret.content,
                 storePassword = storePassword,
                 confidential = clientApplication.confidential,
@@ -123,6 +123,7 @@ data class ClientAppRepresentation(
         fun fromRepresentationToDomain(clientAppId: String, representation: ClientAppRepresentation) =
             ClientApplication(
                 clientAppId = ClientAppId(clientAppId),
+                clientAppName = ClientAppName(representation.clientAppName),
                 confidential = representation.confidential,
                 secret = Secret(representation.secret),
                 withPkce = WithPkce(representation.withPkce),

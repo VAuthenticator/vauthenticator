@@ -26,6 +26,7 @@ class ClientAppRegisteredClientRepository(
             ClientApplication(
                 confidential = registeredClient.isConfidential(),
                 clientAppId = ClientAppId(registeredClient.clientId),
+                clientAppName = ClientAppName(registeredClient.clientName),
                 logoutUri = LogoutUri(
                     Optional.ofNullable(registeredClient.postLogoutRedirectUris.firstOrNull()).orElseGet { "" }),
                 postLogoutRedirectUri = PostLogoutRedirectUri(
@@ -59,6 +60,7 @@ class ClientAppRegisteredClientRepository(
         .map { clientApp ->
             val registeredClientAppDefinition = withId(id)
                 .clientId(id)
+                .clientName(clientApp.clientAppName.content)
                 .clientSecret(clientApp.secret.content)
                 .authorizationGrantTypes { authorizationGrantTypes ->
                     authorizationGrantTypes.addAll(clientApp.authorizedGrantTypes.content.map {

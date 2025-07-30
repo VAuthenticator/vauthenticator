@@ -87,6 +87,7 @@ CREATE INDEX mfa_account_methods_mfa_device_id ON MFA_ACCOUNT_METHODS (mfa_devic
 CREATE TABLE CLIENT_APPLICATION
 (
     client_app_id            varchar(255) not null PRIMARY KEY,
+    client_app_name          varchar(255) not null,
     secret                   varchar(255) not null,
     scopes                   text         not null,
     confidential             boolean      not null default true,

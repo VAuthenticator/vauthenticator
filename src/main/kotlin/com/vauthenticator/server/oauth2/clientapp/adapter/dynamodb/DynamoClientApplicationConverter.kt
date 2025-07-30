@@ -12,6 +12,7 @@ object DynamoClientApplicationConverter {
     ): MutableMap<String, AttributeValue> {
         val dynamoDocument = mutableMapOf(
             "client_id" to clientApp.clientAppId.content.asDynamoAttribute(),
+            "client_name" to clientApp.clientAppName.content.asDynamoAttribute(),
             "client_secret" to clientApp.secret.content.asDynamoAttribute(),
             "confidential" to clientApp.confidential.asDynamoAttribute(),
             "with_pkce" to clientApp.withPkce.content.asDynamoAttribute(),
@@ -33,6 +34,7 @@ object DynamoClientApplicationConverter {
     ): ClientApplication {
         return ClientApplication(
             clientAppId = ClientAppId(dynamoPayload.valueAsStringFor("client_id")),
+            clientAppName = ClientAppName(dynamoPayload.valueAsStringFor("client_name")),
             secret = Secret(dynamoPayload.valueAsStringFor("client_secret")),
             confidential = dynamoPayload.valueAsBoolFor("confidential"),
             withPkce = WithPkce(dynamoPayload.valueAsBoolFor("with_pkce")),

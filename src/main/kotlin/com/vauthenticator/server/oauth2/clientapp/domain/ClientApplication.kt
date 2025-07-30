@@ -2,6 +2,7 @@ package com.vauthenticator.server.oauth2.clientapp.domain
 
 data class ClientApplication(
     val clientAppId: ClientAppId,
+    val clientAppName: ClientAppName,
     val secret: Secret,
     val confidential: Boolean = true,
     val scopes: Scopes,
@@ -16,6 +17,9 @@ data class ClientApplication(
     val postLogoutRedirectUri: PostLogoutRedirectUri,
     val logoutUri: LogoutUri,
 )
+
+@JvmInline
+value class ClientAppName(val content: String)
 
 @JvmInline
 value class WithPkce(val content: Boolean) {

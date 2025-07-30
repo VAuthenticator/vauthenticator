@@ -1,5 +1,6 @@
 {
   "clientAppId": "A_CLIENT_APP_ID",
+  "clientAppName": "A_CLIENT_APP_NAME",
   "secret": "A_SECRET",
   "scopes": ["A_SCOPE","ANOTHER_SCOPE"],
   "authorizedGrantTypes": ["REFRESH_TOKEN", "AUTHORIZATION_CODE"],
