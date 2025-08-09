@@ -57,5 +57,22 @@ class JdbcGroupRepositoryTest {
 
         assertEquals(expected, actual)
     }
+    @Test
+    fun `remove roles to a new group`() {
+        uut.save(Group("a_group", "a description"))
+        uut.roleAssociation("a_group", "a_role_name", "another_role_name")
+        uut.roleDeAssociation("a_group", "another_role_name")
+
+        val actual = uut.loadFor("a_group")
+
+        val expected = GroupWitRoles(
+            group = Group("a_group", "a description"),
+            roles = listOf(
+                Role("a_role_name", "a_role_description"),
+            )
+        )
+
+        assertEquals(expected, actual)
+    }
 
 }

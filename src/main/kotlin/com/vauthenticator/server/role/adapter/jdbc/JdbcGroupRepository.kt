@@ -52,7 +52,13 @@ class JdbcGroupRepository(val jdbcClient: JdbcClient) : GroupRepository {
     }
 
     override fun roleDeAssociation(groupName: String, vararg roleNames: String) {
-        TODO("Not yet implemented")
+        arrayOf(*roleNames)
+            .forEach { roleName ->
+                jdbcClient.sql("DELETE FROM GROUPS_ROLE WHERE group_name=:groupName AND role_name=:roleName;")
+                    .param("groupName", groupName)
+                    .param("roleName", roleName)
+                    .update()
+            }
     }
 
     private fun roleAssociationFor(groupName : String): List<Role> {
