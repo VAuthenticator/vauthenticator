@@ -8,6 +8,7 @@ import com.vauthenticator.server.role.domain.PermissionValidator
 import com.vauthenticator.server.role.domain.RoleCacheContentConverter
 import com.vauthenticator.server.role.adapter.CachedRoleRepository
 import com.vauthenticator.server.role.adapter.dynamodb.DynamoDbRoleRepository
+import com.vauthenticator.server.role.adapter.jdbc.JdbcGroupRepository
 import com.vauthenticator.server.role.adapter.jdbc.JdbcRoleRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
@@ -16,11 +17,18 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.simple.JdbcClient
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import java.time.Duration
 
 @Configuration(proxyBeanMethods = false)
 class PermissionConfig {
+
+    @Bean("groupRepository")
+    @Profile("database")
+    fun jdbcGroupRepository(
+        jdbcClient: JdbcClient,
+    ) = JdbcGroupRepository(jdbcClient)
 
     @Bean("roleRepository")
     @Profile("database")
