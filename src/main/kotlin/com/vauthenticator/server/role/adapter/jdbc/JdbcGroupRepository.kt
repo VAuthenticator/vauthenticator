@@ -3,10 +3,7 @@ package com.vauthenticator.server.role.adapter.jdbc
 import com.vauthenticator.server.role.domain.Group
 import com.vauthenticator.server.role.domain.GroupRepository
 import com.vauthenticator.server.role.domain.GroupWitRoles
-import com.vauthenticator.server.role.domain.ProtectedRoleFromDeletionException
 import com.vauthenticator.server.role.domain.Role
-import com.vauthenticator.server.role.domain.RoleRepository
-import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.simple.JdbcClient
 import org.springframework.transaction.annotation.Transactional
 
@@ -29,7 +26,11 @@ class JdbcGroupRepository(val jdbcClient: JdbcClient) : GroupRepository {
     }
 
     @Transactional(readOnly = true)
-    override fun findAll(): List<Group> = TODO()
+    override fun findAll(): List<Group> {
+        return jdbcClient.sql("SELECT * FROM GROUPS")
+            .query { rs, _ -> Group(rs.getString("name"), rs.getString("description")) }
+            .list()
+    }
 
     override fun save(group: Group) {
         jdbcClient.sql("INSERT INTO GROUPS (name,description) VALUES (:groupName, :description);")

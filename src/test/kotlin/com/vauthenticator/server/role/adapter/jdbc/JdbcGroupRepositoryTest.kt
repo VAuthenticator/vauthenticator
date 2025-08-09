@@ -16,6 +16,7 @@ import org.junit.jupiter.api.assertNull
 import kotlin.test.assertTrue
 
 private const val A_GROUP = "a_group"
+private const val ANOTHER_GROUP = "another_group"
 
 class JdbcGroupRepositoryTest {
 
@@ -37,7 +38,7 @@ class JdbcGroupRepositoryTest {
     }
 
     @Test
-    fun `save a new group`() {
+    fun `when save a new group`() {
         uut.save(Group(A_GROUP, "a description"))
         val actual = uut.loadFor(A_GROUP)
         val expected = GroupWitRoles(group = Group(A_GROUP, "a description"), roles = emptyList())
@@ -46,7 +47,7 @@ class JdbcGroupRepositoryTest {
     }
 
     @Test
-    fun `add roles to a new group`() {
+    fun `when add roles to a new group`() {
         uut.save(Group(A_GROUP, "a description"))
         uut.roleAssociation(A_GROUP, "a_role_name", "another_role_name")
         val actual = uut.loadFor(A_GROUP)
@@ -63,7 +64,7 @@ class JdbcGroupRepositoryTest {
     }
 
     @Test
-    fun `remove roles to a new group`() {
+    fun `when remove roles to a new group`() {
         uut.save(Group(A_GROUP, "a description"))
         uut.roleAssociation(A_GROUP, "a_role_name", "another_role_name")
         uut.roleDeAssociation(A_GROUP, "another_role_name")
@@ -81,7 +82,7 @@ class JdbcGroupRepositoryTest {
     }
 
     @Test
-    fun `delete a new group`() {
+    fun `when delete a new group`() {
         uut.save(Group(A_GROUP, "a description"))
         uut.roleAssociation(A_GROUP, "a_role_name", "another_role_name")
         uut.delete(A_GROUP)
@@ -94,6 +95,21 @@ class JdbcGroupRepositoryTest {
 
         assertNull(actual)
         assertTrue { listOfRows.isEmpty() }
+    }
+
+    @Test
+    fun `when get all groups`() {
+        uut.save(Group(A_GROUP, "a description"))
+        uut.save(Group(ANOTHER_GROUP, "a description"))
+
+        val actual = uut.findAll()
+        assertEquals(
+            listOf(
+                Group(A_GROUP, "a description"),
+                Group(ANOTHER_GROUP, "a description")
+            ), actual
+        )
+
     }
 
 }
