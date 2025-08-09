@@ -38,9 +38,13 @@ class JdbcGroupRepository(val jdbcClient: JdbcClient) : GroupRepository {
             .update()
     }
 
-    override fun delete(groupName: String) = TODO()
+    override fun delete(groupName: String) {
+        jdbcClient.sql("DELETE FROM GROUPS WHERE name=:groupName;")
+            .param("groupName", groupName)
+            .update()
+    }
 
-    override fun roleAssociation(groupName: String,  vararg roleNames: String) {
+    override fun roleAssociation(groupName: String, vararg roleNames: String) {
         arrayOf(*roleNames)
             .forEach { roleName ->
                 jdbcClient.sql("INSERT INTO GROUPS_ROLE (group_name,role_name) VALUES (:groupName, :roleName);")
@@ -61,10 +65,10 @@ class JdbcGroupRepository(val jdbcClient: JdbcClient) : GroupRepository {
             }
     }
 
-    private fun roleAssociationFor(groupName : String): List<Role> {
+    private fun roleAssociationFor(groupName: String): List<Role> {
         return jdbcClient.sql("SELECT * FROM GROUPS_ROLE as group_role join ROLE as role ON group_role.role_name=role.name WHERE group_role.group_name=:groupName;")
             .param("groupName", groupName)
-            .query{rs, _ -> Role(rs.getString("name"), rs.getString("description")) }
+            .query { rs, _ -> Role(rs.getString("name"), rs.getString("description")) }
             .list()
     }
 }
