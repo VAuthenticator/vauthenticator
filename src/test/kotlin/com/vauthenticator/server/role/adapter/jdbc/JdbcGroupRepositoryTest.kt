@@ -47,14 +47,27 @@ class JdbcGroupRepositoryTest {
     }
 
     @Test
+    fun `when save a new group multiple times`() {
+        uut.save(Group(A_GROUP, "a description"))
+        uut.save(Group(A_GROUP, "a description"))
+        uut.save(Group(A_GROUP, "a new description"))
+        val actual = uut.loadFor(A_GROUP)
+        val expected = GroupWitRoles(group = Group(A_GROUP, "a new description"), roles = emptyList())
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
     fun `when add roles to a new group`() {
         uut.save(Group(A_GROUP, "a description"))
         uut.roleAssociation(A_GROUP, "a_role_name", "another_role_name")
+        uut.roleAssociation(A_GROUP, "a_role", "a_role_name", "another_role_name")
         val actual = uut.loadFor(A_GROUP)
 
         val expected = GroupWitRoles(
             group = Group(A_GROUP, "a description"),
             roles = listOf(
+                Role("a_role", "A_ROLE"),
                 Role("a_role_name", "a_role_description"),
                 Role("another_role_name", "another_role_description"),
             )
@@ -67,6 +80,8 @@ class JdbcGroupRepositoryTest {
     fun `when remove roles to a new group`() {
         uut.save(Group(A_GROUP, "a description"))
         uut.roleAssociation(A_GROUP, "a_role_name", "another_role_name")
+        uut.roleDeAssociation(A_GROUP, "another_role_name")
+        uut.roleDeAssociation(A_GROUP, "another_role_name")
         uut.roleDeAssociation(A_GROUP, "another_role_name")
 
         val actual = uut.loadFor(A_GROUP)

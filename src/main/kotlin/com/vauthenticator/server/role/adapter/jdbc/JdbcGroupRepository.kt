@@ -12,11 +12,11 @@ private const val FIND_ONE_QUERY = "SELECT * FROM GROUPS WHERE name=:groupName"
 
 private const val FIND_ALL_QUERY = "SELECT * FROM GROUPS"
 
-private const val SAVE_ONE_GROUP = "INSERT INTO GROUPS (name,description) VALUES (:groupName, :description);"
+private const val SAVE_ONE_GROUP = "INSERT INTO GROUPS (name,description) VALUES (:groupName, :description) ON CONFLICT(name) DO UPDATE SET description=:description;"
 
 private const val DELETE_ONE_GROUP = "DELETE FROM GROUPS WHERE name=:groupName;"
 
-private const val GROUP_ROLE_ASSOCIATION = "INSERT INTO GROUPS_ROLE (group_name,role_name) VALUES (:groupName, :roleName);"
+private const val GROUP_ROLE_ASSOCIATION = "INSERT INTO GROUPS_ROLE (group_name,role_name) VALUES (:groupName, :roleName) ON CONFLICT(group_name,role_name) DO UPDATE SET group_name=:groupName, role_name=:roleName;"
 
 private const val GROUP_ROLE_DE_ASSOCIATION = "DELETE FROM GROUPS_ROLE WHERE group_name=:groupName AND role_name=:roleName;"
 
