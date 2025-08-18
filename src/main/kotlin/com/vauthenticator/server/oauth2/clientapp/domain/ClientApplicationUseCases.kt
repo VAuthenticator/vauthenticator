@@ -38,11 +38,11 @@ class StoreClientApplication(
 
     private fun validate(aClientApp: ClientApplication) {
         if (aClientApp.confidential && aClientApp.secret.content.isBlank()) {
-            throw UnsupportedClientAppOperationException("Client appname is empty or blank and it is not supported cor confidential client applications")
+            throw UnsupportedClientAppOperationException("Client app %${aClientApp.clientAppId} secret is empty or blank and it is not supported for confidential client applications")
         }
 
         if (!aClientApp.confidential && aClientApp.secret.content.isNotBlank()) {
-            throw UnsupportedClientAppOperationException("Client appname is empty or blank and it is not supported cor confidential client applications")
+            throw UnsupportedClientAppOperationException("Client app %${aClientApp.clientAppId} secret is not empty or blank and it is not supported for public client applications")
         }
     }
 
