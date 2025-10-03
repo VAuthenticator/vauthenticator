@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.4</version>
+        <version>3.5.6</version>
         <relativePath/>
     </parent>
 
@@ -22,7 +22,7 @@
         <kotlin.version>1.9.25</kotlin.version>
 
         <io.mockk.version>1.13.16</io.mockk.version>
-        <aws.sdk.version>2.32.19</aws.sdk.version>
+        <aws.sdk.version>2.34.8</aws.sdk.version>
         <greenmail.version>2.1.2</greenmail.version>
         <oauth2-authorization-server.version>1.4.1</oauth2-authorization-server.version>
         <wiremock.version>3.0.1</wiremock.version>
@@ -113,7 +113,7 @@
         <dependency>
             <groupId>com.hubspot.jinjava</groupId>
             <artifactId>jinjava</artifactId>
-            <version>2.7.4</version>
+            <version>2.8.1</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/software.amazon.awssdk/sts -->
