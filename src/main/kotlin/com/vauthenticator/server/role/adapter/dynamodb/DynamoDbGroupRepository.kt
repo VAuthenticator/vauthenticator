@@ -8,7 +8,8 @@ import com.vauthenticator.server.extentions.valueAsStringFor
 import com.vauthenticator.server.role.domain.*
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
-import java.util.Optional
+import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
+import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
 private const val GROUP_NAME_FIELD_NAME = "group_name"
@@ -102,47 +103,22 @@ class DynamoDbGroupRepository(
     }
 
     override fun roleAssociation(groupName: String, vararg roleNames: String) {
-        var version = 0L
-        val allRoles = roleRepository.findAll()
-        val roles = dynamoDbClient.getItem {
-            it.tableName(groupToRoleAssociationTableName)
-                .key(
-                    mutableMapOf(
-                        GROUP_NAME_FIELD_NAME to groupName.asDynamoAttribute()
-                    )
-                )
-        }
-            .item()
-            .let {
-                version = it.valueAsLongFor(VERSION_FIELD_NAME, 0)
-                rolesFrom(it) +
-                        arrayOf(*roleNames).map {
-                            Role(
-                                it,
-                                allRoles.find { role -> role.name == it }?.description ?: ""
-                            )
-                        }
-            }.toSet()
-
-        version += 1
-        dynamoDbClient.putItem {
-            it.tableName(groupToRoleAssociationTableName)
-//                .conditionExpression("$VERSION_FIELD_NAME=:version")
-//                .expressionAttributeValues(mutableMapOf(":version" to (version).asDynamoAttribute()))
-                .item(
-                    mutableMapOf(
-                        GROUP_NAME_FIELD_NAME to groupName.asDynamoAttribute(),
-                        ROLES_FIELD_NAME to roles.map { objectMapper.writeValueAsString(it) }.asDynamoAttribute(),
-                        VERSION_FIELD_NAME to (version).asDynamoAttribute()
-                    )
-                )
-        }
+        roleAssociation(groupName, arrayListOf(*roleNames), true)
     }
 
     override fun roleDeAssociation(groupName: String, vararg roleNames: String) {
-        var version = 0L
-        val allRoles = roleRepository.findAll()
+        roleAssociation(groupName, arrayListOf(*roleNames), false)
+    }
 
+
+    private fun roleAssociation(
+        groupName: String,
+        roleNames: List<String>,
+        associate: Boolean
+    ) {
+        var version = 1L
+        var emptyRolesAssociation = true
+        val allRoles = roleRepository.findAll()
         val roles = dynamoDbClient.getItem {
             it.tableName(groupToRoleAssociationTableName)
                 .key(
@@ -153,31 +129,41 @@ class DynamoDbGroupRepository(
         }
             .item()
             .let {
-                version = it.valueAsLongFor(VERSION_FIELD_NAME, 0)
-                rolesFrom(it) -
-                        arrayOf(*roleNames).map {
-                            Role(
-                                it,
-                                allRoles.find { role -> role.name == it }?.description ?: ""
-                            )
-                        }
+                version = it.valueAsLongFor(VERSION_FIELD_NAME, 1)
+                val rolesFromDb = rolesFrom(it)
+                if (rolesFromDb.isNotEmpty()) {
+                    emptyRolesAssociation = false;
+                }
+                val associatedRoles = roleNames.map {
+                    Role(
+                        it,
+                        allRoles.find { role -> role.name == it }?.description ?: ""
+                    )
+                }.toSet()
+
+                if (associate) {
+                    rolesFromDb + associatedRoles
+                } else {
+                    rolesFromDb - associatedRoles
+                }.toSet()
+
             }
 
-
-        version += 1
-        dynamoDbClient.putItem {
-            it
-                //            .conditionExpression("version < :version")
-//                .expressionAttributeValues(mutableMapOf(":version" to (version).asDynamoAttribute()))
-                .tableName(groupToRoleAssociationTableName)
-                .item(
-                    mutableMapOf(
-                        GROUP_NAME_FIELD_NAME to groupName.asDynamoAttribute(),
-                        ROLES_FIELD_NAME to roles.map { objectMapper.writeValueAsString(it) }.asDynamoAttribute(),
-                        VERSION_FIELD_NAME to (version).asDynamoAttribute()
-                    )
+        val updateItemRequestBuilder = PutItemRequest.builder()
+            .tableName(groupToRoleAssociationTableName)
+            .item(
+                mutableMapOf(
+                    GROUP_NAME_FIELD_NAME to groupName.asDynamoAttribute(),
+                    ROLES_FIELD_NAME to roles.map { objectMapper.writeValueAsString(it) }.asDynamoAttribute(),
+                    VERSION_FIELD_NAME to (version + 1).asDynamoAttribute()
                 )
+            )
+        if (!emptyRolesAssociation) {
+            updateItemRequestBuilder.conditionExpression("$VERSION_FIELD_NAME = :version")
+                .expressionAttributeValues(mutableMapOf(":version" to (version).asDynamoAttribute()))
         }
+
+        dynamoDbClient.putItem(updateItemRequestBuilder.build())
     }
 
     private fun rolesFrom(map: MutableMap<String, AttributeValue>): List<Role> {
