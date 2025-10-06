@@ -23,6 +23,7 @@ class JdbcGroupRepositoryTest : AbstractGroupRepositoryTest() {
     override fun resetDatabase() {
         resetDb()
         initRoleTestsInDB()
+
         roleRepository.save(Role("a_role_name", "a_role_description"))
         roleRepository.save(Role("another_role_name", "another_role_description"))
     }

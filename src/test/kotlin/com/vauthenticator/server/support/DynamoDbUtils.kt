@@ -7,12 +7,13 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.*
 import java.net.URI
 
-
 object DynamoDbUtils {
     const val dynamoPasswordHistoryTableName: String = "TESTING_VAuthenticator_PasswordHistory"
     const val dynamoClientApplicationTableName: String = "TESTING_VAuthenticator_ClientApplication"
     const val dynamoAccountTableName: String = "TESTING_VAuthenticator_Account"
     const val dynamoRoleTableName: String = "TESTING_VAuthenticator_Role"
+    const val dynamoGroupTableName: String = "TESTING_VAuthenticator_Group"
+    const val dynamoGroupToRoleAssociationTableName: String = "TESTING_VAuthenticator_Group_To_Role_Association"
     const val dynamoSignatureKeysTableName: String = "TESTING_VAuthenticator_Signature_Keys"
     const val dynamoMfaKeysTableName: String = "TESTING_VAuthenticator_Mfa_Keys"
     const val dynamoTicketTableName: String = "TESTING_VAuthenticator_ticket"
@@ -67,6 +68,16 @@ object DynamoDbUtils {
             )
             dynamoDbClient.deleteTable(
                 DeleteTableRequest.builder()
+                    .tableName(dynamoGroupTableName)
+                    .build()
+            )
+            dynamoDbClient.deleteTable(
+                DeleteTableRequest.builder()
+                    .tableName(dynamoGroupToRoleAssociationTableName)
+                    .build()
+            )
+            dynamoDbClient.deleteTable(
+                DeleteTableRequest.builder()
                     .tableName(dynamoSignatureKeysTableName)
                     .build()
             )
@@ -92,6 +103,8 @@ object DynamoDbUtils {
             createDynamoClientApplicationTable()
             createDynamoAccountTable()
             createDynamoRoleTable()
+            createDynamoGroupTable()
+            createDynamoGroupToRoleAssociationTable()
             createDynamoSignatureKeysTable()
             createDynamoMfaKeysTable()
             createDynamoTicketTable()
@@ -209,6 +222,48 @@ object DynamoDbUtils {
                 .attributeDefinitions(
                     AttributeDefinition.builder()
                         .attributeName("role_name")
+                        .attributeType(ScalarAttributeType.S)
+                        .build()
+                )
+                .billingMode(BillingMode.PAY_PER_REQUEST)
+                .build()
+        )
+    }
+
+    private fun createDynamoGroupTable() {
+        dynamoDbClient.createTable(
+            CreateTableRequest.builder()
+                .tableName(dynamoGroupTableName)
+                .keySchema(
+                    KeySchemaElement.builder()
+                        .attributeName("group_name")
+                        .keyType(KeyType.HASH)
+                        .build()
+                )
+                .attributeDefinitions(
+                    AttributeDefinition.builder()
+                        .attributeName("group_name")
+                        .attributeType(ScalarAttributeType.S)
+                        .build()
+                )
+                .billingMode(BillingMode.PAY_PER_REQUEST)
+                .build()
+        )
+    }
+
+    private fun createDynamoGroupToRoleAssociationTable() {
+        dynamoDbClient.createTable(
+            CreateTableRequest.builder()
+                .tableName(dynamoGroupToRoleAssociationTableName)
+                .keySchema(
+                    KeySchemaElement.builder()
+                        .attributeName("group_name")
+                        .keyType(KeyType.HASH)
+                        .build()
+                )
+                .attributeDefinitions(
+                    AttributeDefinition.builder()
+                        .attributeName("group_name")
                         .attributeType(ScalarAttributeType.S)
                         .build()
                 )

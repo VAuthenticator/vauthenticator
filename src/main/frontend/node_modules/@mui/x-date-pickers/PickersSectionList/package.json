@@ -1,6 +1,0 @@
-{
-  "sideEffects": false,
-  "module": "./index.js",
-  "main": "../node/PickersSectionList/index.js",
-  "types": "./index.d.ts"
-}
