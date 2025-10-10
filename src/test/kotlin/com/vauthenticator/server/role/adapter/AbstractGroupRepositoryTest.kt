@@ -2,6 +2,7 @@ package com.vauthenticator.server.role.adapter
 
 import com.vauthenticator.server.role.domain.*
 import com.vauthenticator.server.support.JdbcUtils.jdbcClient
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -114,7 +115,17 @@ abstract class AbstractGroupRepositoryTest {
                 Group(ANOTHER_GROUP, "a description")
             ), actual
         )
-
     }
 
+    @Test
+    fun `when an associated role is deleted`() {
+        uut.save(Group(A_GROUP, "a description"))
+        uut.roleAssociation(A_GROUP, "a_role_name", "another_role_name")
+
+        roleRepository.delete("a_role_name")
+
+        val actual = uut.loadFor(A_GROUP)
+
+        assertEquals(actual?.roles, listOf(Role("another_role_name", "another_role_description")))
+    }
 }

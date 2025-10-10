@@ -1,6 +1,7 @@
 package com.vauthenticator.server.role.adapter.dynamodb
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.vauthenticator.server.account.domain.Account
 import com.vauthenticator.server.extentions.asDynamoAttribute
 import com.vauthenticator.server.extentions.filterEmptyMetadata
 import com.vauthenticator.server.extentions.valueAsLongFor
@@ -55,7 +56,9 @@ class DynamoDbGroupRepository(
                     ),
                     roles = roles
                 )
-            }.getOrNull()
+            }
+            .map { stealRoleCleanUpFor(it) }
+            .getOrNull()
 
     }
 
@@ -173,6 +176,16 @@ class DynamoDbGroupRepository(
         } else {
             emptyList()
         }
+    }
+
+    private fun stealRoleCleanUpFor(group: GroupWitRoles): GroupWitRoles {
+        val roles = roleRepository.findAll()
+        val filteredRoles = group.roles.filter { role -> roles.map { it.name }.contains(role.name) }.toSet().toList()
+        val updatedGroup = group.copy(roles = filteredRoles)
+        if (filteredRoles != group.roles) {
+            roleAssociation(group.group.name, filteredRoles.map { it.name }, false)
+        }
+        return updatedGroup
     }
 
 }
