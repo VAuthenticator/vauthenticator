@@ -32,12 +32,12 @@ internal class RoleEndPointTest {
     private val objectMapper = ObjectMapper()
 
     @BeforeEach
-    internal fun setUp() {
+    fun setUp() {
         mokMvc = standaloneSetup(RoleEndPoint(roleRepository)).build()
     }
 
     @Test
-    internal fun `find al roles`() {
+    fun `find al roles`() {
         val roles = listOf(
             Role("a_role1", A_ROLE_DESCRIPTION),
             Role("a_role2", A_ROLE_DESCRIPTION),
@@ -56,7 +56,7 @@ internal class RoleEndPointTest {
     }
 
     @Test
-    internal fun `save a new role`() {
+    fun `save a new role`() {
         val role = Role("a_role", A_ROLE_DESCRIPTION)
         every { roleRepository.save(role) } just runs
 
@@ -71,7 +71,7 @@ internal class RoleEndPointTest {
     }
 
     @Test
-    internal fun `delete a new role`() {
+    fun `delete a new role`() {
         val role = "a_role"
         every { roleRepository.delete(role) } just runs
 
