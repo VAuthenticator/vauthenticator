@@ -21,17 +21,28 @@ class GroupEndPoint(private val groupRepository: GroupRepository) {
     }
 
     @DeleteMapping("/api/groups/{groupId}")
-    fun deleteGroup() {
-        TODO()
+    fun deleteGroup(@PathVariable groupId: String): ResponseEntity<Unit> {
+        groupRepository.delete(groupId)
+        return ResponseEntity.noContent().build()
     }
 
-    @PatchMapping("/api/groups/{groupId}/role/{roleId}")
-    fun associateRoleToAGroup() {
-        TODO()
+    @PutMapping("/api/groups/{groupId}/roles")
+    fun associateRoleToAGroup(
+        @PathVariable groupId: String, @RequestBody representation: RoleToGroupAssociationRepresentation
+    ): ResponseEntity<Unit> = if (representation.haveNoCommonElements()) {
+        groupRepository.roleAssociation(groupId, *representation.toBeAssociated.toTypedArray())
+        groupRepository.roleDeAssociation(groupId, *representation.toBeDeAssociated.toTypedArray())
+        ResponseEntity.noContent().build()
+    } else {
+        ResponseEntity.badRequest().build()
     }
 
-    @DeleteMapping("/api/groups/{groupId}/role/{roleId}")
-    fun deAssociateRoleToAGroup() {
-        TODO()
+}
+
+data class RoleToGroupAssociationRepresentation(
+    val toBeAssociated: List<String>, val toBeDeAssociated: List<String>
+) {
+    fun haveNoCommonElements(): Boolean {
+        return toBeAssociated.intersect(toBeDeAssociated.toSet()).isEmpty()
     }
 }
