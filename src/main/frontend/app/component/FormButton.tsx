@@ -12,7 +12,7 @@ interface FormButtonProps {
 
 const FormButton: React.FC<FormButtonProps> = ({labelPrefix, label, type, onClickHandler, direction, buttonColor}) => {
     return <div dir={direction || ""}>
-        <Grid md={true} sm={true} xs={true}>
+        <Grid size={{ xs: 12 }}>
             <Grid container alignItems="flex-end" style={{marginTop: '10px'}}>
                 <Button
                     type={type || "button"}
