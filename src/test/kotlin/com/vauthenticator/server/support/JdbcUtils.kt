@@ -5,6 +5,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
+import org.springframework.jdbc.core.simple.JdbcClient
 import org.springframework.jdbc.datasource.SimpleDriverDataSource
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -21,6 +22,14 @@ object JdbcUtils {
             "postgres"
         )
     )
+    val jdbcClient: JdbcClient = JdbcClient.create(
+        SimpleDriverDataSource(
+            Driver(),
+            "jdbc:postgresql://localhost:5432/",
+            "postgres",
+            "postgres"
+        )
+    )
 
     val namedJdbcTemplate: NamedParameterJdbcTemplate = NamedParameterJdbcTemplate(jdbcTemplate)
 
@@ -29,6 +38,8 @@ object JdbcUtils {
         try {
             jdbcTemplate.execute("DROP TABLE IF EXISTS CLIENT_APPLICATION;")
             jdbcTemplate.execute("DROP TABLE IF EXISTS ROLE CASCADE;")
+            jdbcTemplate.execute("DROP TABLE IF EXISTS GROUPS CASCADE;")
+            jdbcTemplate.execute("DROP TABLE IF EXISTS GROUPS_ROLE;")
             jdbcTemplate.execute("DROP TABLE IF EXISTS ACCOUNT CASCADE;")
             jdbcTemplate.execute("DROP TABLE IF EXISTS ACCOUNT_ROLE;")
             jdbcTemplate.execute("DROP TABLE IF EXISTS KEYS;")
@@ -43,6 +54,6 @@ object JdbcUtils {
     }
 
     fun initRoleTestsInDB() {
-        jdbcTemplate.update("INSERT INTO ROLE (name,description) VALUES ('a_role','A_ROLE')")
+        jdbcClient.sql("INSERT INTO ROLE (name,description) VALUES ('a_role','A_ROLE')").update()
     }
 }

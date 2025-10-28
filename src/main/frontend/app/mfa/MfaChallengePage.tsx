@@ -124,13 +124,13 @@ const MfaChallengePage: React.FC<MfaChallengePageProps> = ({
 
                         <Separator/>
 
-                        <Grid container sm={12}>
-                            <Grid item sm={4}>
+                        <Grid container size={{ sm: 12 }}>
+                            <Grid size={{ sm: 4 }} >
                                 <FormButton type="button" label={i18nMessages["sendAgainButtonText"]}
                                             onClickHandler={() => sendMfaCode(defaultMfaDevice)}/>
                             </Grid>
-                            <Grid item sm={4}> </Grid>
-                            <Grid item sm={4}>
+                            <Grid size={{ sm: 4 }}> </Grid>
+                            <Grid size={{ sm: 4 }}>
                                 <FormButton type="button" label={i18nMessages["changeMfaMethodButtonText"]}
                                             direction={"rtl"}
                                             onClickHandler={() => handleOpenChooseMFAModal()}/>

@@ -4,6 +4,23 @@ CREATE TABLE ROLE
     description varchar(255) not null DEFAULT ''
 );
 
+CREATE TABLE GROUPS
+(
+    name        varchar(64)  not null PRIMARY KEY,
+    description varchar(255) not null DEFAULT ''
+);
+
+
+CREATE TABLE GROUPS_ROLE
+(
+    group_name        varchar(64)  not null,
+    role_name         varchar(64)  not null,
+
+    FOREIGN KEY (group_name) REFERENCES GROUPS (name) on delete cascade,
+    FOREIGN KEY (role_name) REFERENCES ROLE (name) on delete cascade,
+
+    primary key(group_name, role_name)
+);
 
 CREATE TABLE ACCOUNT
 (
